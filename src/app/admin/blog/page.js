@@ -1,8 +1,10 @@
-
 import Link from 'next/link';
+import Image from 'next/image';
 import { getPosts } from '@/lib/blog-actions';
 import { format } from 'date-fns';
 import PostActions from '@/components/PostActions';
+
+export const dynamic = 'force-dynamic';
 
 export default async function AdminBlogPage() {
     const { posts } = await getPosts(1, 100);
@@ -26,8 +28,8 @@ export default async function AdminBlogPage() {
                     <div key={post.id} className="flex items-center justify-between p-4 rounded-lg bg-card border border-border group hover:border-primary/50 transition-colors">
                         <div className="flex items-center gap-4">
                             {post.cover_image && (
-                                <div className="w-16 h-16 rounded overflow-hidden bg-secondary/20 shrink-0">
-                                    <img src={post.cover_image} alt="" className="w-full h-full object-cover" />
+                                <div className="relative w-16 h-16 rounded overflow-hidden bg-secondary/20 shrink-0">
+                                    <Image src={post.cover_image} alt="" fill className="object-cover" />
                                 </div>
                             )}
                             <div>

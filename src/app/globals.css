@@ -35,40 +35,69 @@
 
 /* Enforce Dark Theme Variables at Root with GOLD/BLACK Theme */
 :root {
-  /* Black Background */
-  --background: oklch(0.129 0.042 264.695);
-  /* Gold/White Text */
-  --foreground: oklch(0.985 0 0);
+  /* Soft Pastel Light Mode */
+  --background: oklch(0.99 0.01 300); /* Slightly warm white */
+  --foreground: oklch(0.3 0.05 300); /* Dark purple-grey text */
 
-  --card: oklch(0.129 0.042 264.695);
-  --card-foreground: oklch(0.985 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.3 0.05 300);
 
-  --popover: oklch(0.129 0.042 264.695);
-  --popover-foreground: oklch(0.985 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.3 0.05 300);
 
-  /* Gold Color for Primary */
-  --primary: oklch(0.795 0.184 86.047);
-  /* Gold-ish */
-  --primary-foreground: oklch(0.129 0.042 264.695);
+  /* Cute Pink Primary */
+  --primary: oklch(0.8 0.15 350);
+  --primary-foreground: oklch(1 0 0);
 
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.985 0 0);
+  /* Soft Blue Secondary */
+  --secondary: oklch(0.92 0.05 240);
+  --secondary-foreground: oklch(0.4 0.1 240);
 
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
+  --muted: oklch(0.96 0.01 300);
+  --muted-foreground: oklch(0.6 0.05 300);
 
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.985 0 0);
+  --accent: oklch(0.94 0.05 330);
+  --accent-foreground: oklch(0.3 0.05 300);
 
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --destructive: oklch(0.6 0.2 20);
+  --destructive-foreground: oklch(0.98 0 0);
 
-  --border: oklch(0.279 0.041 260.031);
-  --input: oklch(0.279 0.041 260.031);
-  --ring: oklch(0.795 0.184 86.047);
-  /* Gold Ring */
+  --border: oklch(0.9 0.05 300);
+  --input: oklch(0.9 0.05 300);
+  --ring: oklch(0.8 0.15 350);
 
-  --radius: 0.5rem;
+  --radius: 1rem;
+}
+
+.dark {
+  /* Soft dreamy dark mode */
+  --background: oklch(0.2 0.05 280); /* Deep Purple */
+  --foreground: oklch(0.95 0.02 300);
+
+  --card: oklch(0.25 0.05 285);
+  --card-foreground: oklch(0.98 0.02 300);
+
+  --popover: oklch(0.25 0.05 285);
+  --popover-foreground: oklch(0.98 0.02 300);
+
+  --primary: oklch(0.7 0.15 350); /* Softer pink for dark mode */
+  --primary-foreground: oklch(0.2 0.05 280);
+
+  --secondary: oklch(0.3 0.08 260);
+  --secondary-foreground: oklch(0.95 0.02 300);
+
+  --muted: oklch(0.3 0.05 280);
+  --muted-foreground: oklch(0.7 0.05 280);
+
+  --accent: oklch(0.35 0.08 330);
+  --accent-foreground: oklch(0.95 0.02 300);
+
+  --destructive: oklch(0.5 0.2 20);
+  --destructive-foreground: oklch(0.98 0 0);
+
+  --border: oklch(0.35 0.05 280);
+  --input: oklch(0.35 0.05 280);
+  --ring: oklch(0.7 0.15 350);
 }
 
 body {

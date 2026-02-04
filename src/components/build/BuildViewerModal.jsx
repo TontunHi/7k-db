@@ -27,15 +27,15 @@ export default function BuildViewerModal({ hero, data, onClose }) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm animate-in fade-in duration-300">
 
             {/* Main Container */}
-            <div className="bg-[#0b0b0b] border border-gray-800 rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col relative shadow-[0_0_60px_rgba(0,0,0,0.8)] overflow-hidden">
+            <div className="bg-card border border-border rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col relative shadow-[0_0_60px_rgba(0,0,0,0.1)] overflow-hidden">
                 {/* Decorative Top Line */}
-                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#FFD700] to-transparent opacity-50"></div>
+                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
 
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row gap-6 p-8 border-b border-gray-800/50 bg-[#080808]">
+                <div className="flex flex-col md:flex-row gap-6 p-8 border-b border-border bg-card/50">
 
                     {/* Hero Image */}
-                    <div className="relative w-20 h-24 md:w-28 md:h-32 rounded-xl overflow-hidden border border-gray-700 shadow-2xl flex-shrink-0 group">
+                    <div className="relative w-20 h-24 md:w-28 md:h-32 rounded-xl overflow-hidden border border-border shadow-2xl flex-shrink-0 group">
                         <Image src={`/heroes/${hero.filename}`} fill className="object-cover transition-transform duration-500 group-hover:scale-110" alt={hero.name} />
                         <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-xl"></div>
                         {/* Shine */}
@@ -45,10 +45,10 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                     {/* Hero Info & Skills */}
                     <div className="flex-1 flex flex-col justify-center space-y-4">
                         <div>
-                            <h2 className="text-3xl font-black text-white tracking-tight uppercase italic transform -skew-x-6 drop-shadow-md">
+                            <h2 className="text-3xl font-black text-foreground tracking-tight uppercase italic transform -skew-x-6 drop-shadow-md">
                                 {hero.name}
                             </h2>
-                            <p className="text-[#FFD700] text-xs font-bold tracking-[0.3em] uppercase opacity-80 mt-1">
+                            <p className="text-primary text-xs font-bold tracking-[0.3em] uppercase opacity-80 mt-1">
                                 {hero.grade.toUpperCase()} HERO
                             </p>
                         </div>
@@ -59,8 +59,8 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                 const rank = getPriorityRank(s)
                                 return (
                                     <div key={i} className={clsx(
-                                        "relative w-12 h-12 md:w-14 md:h-14 bg-black rounded-lg border overflow-visible transition-all duration-300 group/skill",
-                                        rank ? "border-[#FFD700] shadow-[0_0_15px_rgba(255,215,0,0.2)] scale-105" : "border-gray-800 opacity-60 grayscale hover:grayscale-0 hover:opacity-100"
+                                        "relative w-12 h-12 md:w-14 md:h-14 bg-background rounded-lg border overflow-visible transition-all duration-300 group/skill",
+                                        rank ? "border-primary shadow-lg scale-105" : "border-border opacity-60 grayscale hover:grayscale-0 hover:opacity-100"
                                     )}>
                                         <div className="relative w-full h-full overflow-hidden rounded-lg">
                                             <Image src={`/skills/${s}`} fill className="object-cover" alt="skill" />
@@ -69,7 +69,7 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                         {/* Priority Badge - Top Right */}
                                         {rank && (
                                             <div className="absolute -top-2 -right-2 z-10">
-                                                <div className="w-5 h-5 bg-[#FFD700] text-black rounded-full flex items-center justify-center text-[10px] font-bold border-2 border-[#090909] shadow-lg">
+                                                <div className="w-5 h-5 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-[10px] font-bold border-2 border-background shadow-lg">
                                                     {rank}
                                                 </div>
                                             </div>
@@ -77,7 +77,7 @@ export default function BuildViewerModal({ hero, data, onClose }) {
 
                                         {/* Tooltip for skill priority */}
                                         {rank && (
-                                            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-[#FFD700] text-black text-[9px] font-bold px-1.5 rounded opacity-0 group-hover/skill:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                                            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[9px] font-bold px-1.5 rounded opacity-0 group-hover/skill:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                                                 Priority {rank}
                                             </div>
                                         )}
@@ -96,22 +96,23 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 bg-[#0b0b0b] custom-scrollbar">
+                <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 bg-background custom-scrollbar">
 
                     {builds.length > 0 ? builds.map((build, i) => (
-                        <div key={i} className="group bg-[#111] border border-gray-800 rounded-2xl p-6 relative hover:border-gray-600 transition-all shadow-lg hover:shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+                        <div key={i} className="group bg-card border border-border rounded-2xl p-6 relative hover:border-primary/50 transition-all shadow-sm hover:shadow-lg">
                             {/* Decorative Corner */}
-                            <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-gray-800/20 to-transparent rounded-tr-2xl pointer-events-none"></div>
+                            <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-primary/10 to-transparent rounded-tr-2xl pointer-events-none"></div>
 
                             {/* Build Tags */}
+                            {/* Build Tags */}
                             <div className="flex items-center gap-4 mb-8">
-                                <span className="bg-gradient-to-r from-[#FFD700] to-[#E5C100] text-black px-4 py-1.5 rounded-lg text-sm font-black uppercase tracking-wider shadow-[0_0_15px_rgba(255,215,0,0.15)]">
+                                <span className="bg-primary/20 text-primary px-4 py-1.5 rounded-lg text-sm font-black uppercase tracking-wider border border-primary/20">
                                     LVL {build.cLevel}
                                 </span>
-                                <div className="h-6 w-px bg-gray-700"></div>
+                                <div className="h-6 w-px bg-border"></div>
                                 <div className="flex gap-2">
                                     {build.mode.map(m => (
-                                        <span key={m} className="text-gray-300 text-[10px] font-bold uppercase tracking-[0.15em] bg-gray-800/80 px-3 py-1.5 rounded-md border border-gray-700">
+                                        <span key={m} className="text-muted-foreground text-[10px] font-bold uppercase tracking-[0.15em] bg-secondary/50 px-3 py-1.5 rounded-md border border-border">
                                             {m}
                                         </span>
                                     ))}
@@ -122,8 +123,8 @@ export default function BuildViewerModal({ hero, data, onClose }) {
 
                                 {/* Left Column: Equipment */}
                                 <div className="space-y-5">
-                                    <h4 className="flex items-center gap-3 text-white/90 text-xs font-bold uppercase tracking-[0.25em]">
-                                        <span className="w-1.5 h-1.5 bg-[#FFD700] rotate-45"></span> Equipment
+                                    <h4 className="flex items-center gap-3 text-foreground/80 text-xs font-bold uppercase tracking-[0.25em]">
+                                        <span className="w-1.5 h-1.5 bg-primary rotate-45"></span> Equipment
                                     </h4>
 
                                     <div className="grid grid-cols-2 gap-4">
@@ -139,12 +140,12 @@ export default function BuildViewerModal({ hero, data, onClose }) {
 
                                     {/* Accessories */}
                                     <div>
-                                        <h4 className="flex items-center gap-3 text-white/90 text-xs font-bold uppercase tracking-[0.25em] mb-4">
-                                            <span className="w-1.5 h-1.5 bg-[#FFD700] rotate-45"></span> Accessories
+                                        <h4 className="flex items-center gap-3 text-foreground/80 text-xs font-bold uppercase tracking-[0.25em] mb-4">
+                                            <span className="w-1.5 h-1.5 bg-primary rotate-45"></span> Accessories
                                         </h4>
                                         <div className="flex flex-wrap gap-3">
                                             {build.accessories && build.accessories.length > 0 ? build.accessories.map((acc, idx) => (
-                                                <div key={idx} className="relative w-14 h-14 bg-[#151515] border border-gray-700 rounded-xl overflow-hidden group-hover:border-gray-500 transition-colors shadow-md">
+                                                <div key={idx} className="relative w-14 h-14 bg-background border border-border rounded-xl overflow-hidden group-hover:border-primary/50 transition-colors shadow-sm">
                                                     <Image src={`/items/accessory/${acc.image}`} fill className="object-cover" alt="acc" />
                                                 </div>
                                             )) : (
@@ -155,13 +156,13 @@ export default function BuildViewerModal({ hero, data, onClose }) {
 
                                     {/* Substats */}
                                     <div>
-                                        <h4 className="flex items-center gap-3 text-white/90 text-xs font-bold uppercase tracking-[0.25em] mb-4">
-                                            <span className="w-1.5 h-1.5 bg-[#FFD700] rotate-45"></span> Substats Priority
+                                        <h4 className="flex items-center gap-3 text-foreground/80 text-xs font-bold uppercase tracking-[0.25em] mb-4">
+                                            <span className="w-1.5 h-1.5 bg-primary rotate-45"></span> Substats Priority
                                         </h4>
                                         <div className="flex flex-wrap gap-2">
                                             {build.substats && build.substats.length > 0 ? build.substats.map((sub, idx) => (
-                                                <span key={idx} className="group/sub relative bg-[#151515] text-gray-300 border border-gray-700 hover:border-[#FFD700] px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-3 shadow-md transition-colors cursor-default">
-                                                    <span className="w-5 h-5 rounded bg-gray-800 text-[#FFD700] flex items-center justify-center text-[10px] shadow-inner font-black">{idx + 1}</span>
+                                                <span key={idx} className="group/sub relative bg-secondary/30 text-foreground border border-border hover:border-primary px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-3 shadow-sm transition-colors cursor-default">
+                                                    <span className="w-5 h-5 rounded bg-background text-primary flex items-center justify-center text-[10px] shadow-sm font-black">{idx + 1}</span>
                                                     {sub}
                                                 </span>
                                             )) : (
@@ -174,10 +175,10 @@ export default function BuildViewerModal({ hero, data, onClose }) {
 
                             {/* Note */}
                             {build.note && (
-                                <div className="mt-8 pt-6 border-t border-gray-800/50">
-                                    <div className="relative text-gray-400 text-sm leading-relaxed bg-[#0a0a0a] p-5 rounded-xl border border-gray-800/50">
-                                        <div className="absolute top-0 left-0 w-1 h-full bg-gray-800 rounded-l-xl"></div>
-                                        <span className="text-[#FFD700] font-bold mr-2 text-xs uppercase tracking-wider">Note:</span>
+                                <div className="mt-8 pt-6 border-t border-border">
+                                    <div className="relative text-muted-foreground text-sm leading-relaxed bg-secondary/20 p-5 rounded-xl border border-border">
+                                        <div className="absolute top-0 left-0 w-1 h-full bg-primary rounded-l-xl"></div>
+                                        <span className="text-primary font-bold mr-2 text-xs uppercase tracking-wider">Note:</span>
                                         {build.note}
                                     </div>
                                 </div>
@@ -196,21 +197,21 @@ export default function BuildViewerModal({ hero, data, onClose }) {
 
 function ViewerItemCard({ item, type }) {
     if (!item?.image) return (
-        <div className="bg-[#151515] border border-gray-800 rounded-xl h-20 flex items-center justify-center text-gray-700 text-[9px] uppercase tracking-widest font-bold">
+        <div className="bg-secondary/20 border border-border rounded-xl h-20 flex items-center justify-center text-muted-foreground text-[9px] uppercase tracking-widest font-bold">
             Empty Slot
         </div>
     )
 
     return (
-        <div className="bg-[#151515] border border-gray-800 rounded-xl p-3 flex gap-4 items-center shadow-sm hover:border-gray-600 transition-colors group/card">
-            <div className="relative w-14 h-14 bg-black rounded-lg flex-shrink-0 overflow-hidden border border-gray-700/50 shadow-inner group-hover/card:border-[#FFD700]/30 transition-colors">
+        <div className="bg-card border border-border rounded-xl p-3 flex gap-4 items-center shadow-sm hover:border-primary/50 transition-colors group/card">
+            <div className="relative w-14 h-14 bg-background rounded-lg flex-shrink-0 overflow-hidden border border-border shadow-sm group-hover/card:border-primary/30 transition-colors">
                 <Image src={`/items/${type.toLowerCase()}/${item.image}`} fill className="object-cover" alt={type} />
             </div>
             <div className="min-w-0 flex-1">
-                <div className={clsx("text-[10px] font-black uppercase leading-none mb-1.5 tracking-wider", type === "Weapon" ? "text-red-400/80" : "text-blue-400/80")}>
+                <div className={clsx("text-[10px] font-black uppercase leading-none mb-1.5 tracking-wider", type === "Weapon" ? "text-red-400" : "text-blue-400")}>
                     {type}
                 </div>
-                <div className="text-xs text-gray-200 truncate font-bold tracking-tight group-hover/card:text-white transition-colors">
+                <div className="text-xs text-foreground font-bold tracking-tight whitespace-normal leading-tight group-hover/card:text-primary transition-colors">
                     {item.stat}
                 </div>
             </div>

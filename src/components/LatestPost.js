@@ -4,6 +4,8 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
+import Image from 'next/image';
+
 export default function LatestPost({ post }) {
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -11,10 +13,12 @@ export default function LatestPost({ post }) {
         <article className="max-w-4xl mx-auto bg-card rounded-2xl border border-border p-8 md:p-12 shadow-2xl transition-all duration-500">
             {post.cover_image && (
                 <div className="relative w-full aspect-video rounded-xl overflow-hidden mb-10 shadow-lg border border-border/50">
-                    <img
+                    <Image
                         src={post.cover_image}
                         alt={post.title}
-                        className="object-cover w-full h-full"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                 </div>
             )}

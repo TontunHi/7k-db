@@ -3,6 +3,7 @@
 import { getPosts } from "@/lib/blog-actions"
 import LatestPost from "@/components/LatestPost"
 
+export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
     const { posts } = await getPosts(1, 6)
