@@ -10,7 +10,7 @@ import path from 'path';
 export async function getPosts(page = 1, limit = 10) {
     const offset = (page - 1) * limit;
     const [rows] = await pool.query(
-        'SELECT * FROM posts ORDER BY created_at DESC LIMIT ? OFFSET ?',
+        'SELECT id, title, slug, content, excerpt, cover_image, created_at FROM posts ORDER BY created_at DESC LIMIT ? OFFSET ?',
         [limit, offset]
     );
 

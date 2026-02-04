@@ -34,70 +34,86 @@
 }
 
 /* Enforce Dark Theme Variables at Root with GOLD/BLACK Theme */
+/* Enforce Dark Theme Variables at Root with GOLD/BLACK Theme */
 :root {
-  /* Soft Pastel Light Mode */
-  --background: oklch(0.99 0.01 300); /* Slightly warm white */
-  --foreground: oklch(0.3 0.05 300); /* Dark purple-grey text */
+  /* LIGHT MODE (Fallback / Alternative if enforced) - Clean Luxury White/Gold */
+  --background: oklch(0.98 0.01 85);
+  /* Warm White */
+  --foreground: oklch(0.15 0.02 85);
+  /* Deep Gold-Black */
 
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.3 0.05 300);
+  --card-foreground: oklch(0.15 0.02 85);
 
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.3 0.05 300);
+  --popover-foreground: oklch(0.15 0.02 85);
 
-  /* Cute Pink Primary */
-  --primary: oklch(0.8 0.15 350);
-  --primary-foreground: oklch(1 0 0);
+  /* LUXURY GOLD Primary */
+  --primary: #FFD700;
+  /* Pure Gold */
+  --primary-foreground: #000000;
+  /* Distinct Black */
 
-  /* Soft Blue Secondary */
-  --secondary: oklch(0.92 0.05 240);
-  --secondary-foreground: oklch(0.4 0.1 240);
+  /* DEEP ROYAL BLUE Secondary */
+  --secondary: oklch(0.25 0.1 270);
+  /* Deep Navy/Royal */
+  --secondary-foreground: oklch(0.95 0.01 85);
 
-  --muted: oklch(0.96 0.01 300);
-  --muted-foreground: oklch(0.6 0.05 300);
+  --muted: oklch(0.94 0.02 85);
+  --muted-foreground: oklch(0.45 0.05 85);
 
-  --accent: oklch(0.94 0.05 330);
-  --accent-foreground: oklch(0.3 0.05 300);
+  --accent: oklch(0.95 0.04 75);
+  /* Pale Gold Accent */
+  --accent-foreground: oklch(0.2 0.05 75);
 
-  --destructive: oklch(0.6 0.2 20);
+  --destructive: oklch(0.6 0.2 25);
   --destructive-foreground: oklch(0.98 0 0);
 
-  --border: oklch(0.9 0.05 300);
-  --input: oklch(0.9 0.05 300);
-  --ring: oklch(0.8 0.15 350);
+  --border: oklch(0.85 0.05 85);
+  --input: oklch(0.85 0.05 85);
+  --ring: #FFD700;
 
-  --radius: 1rem;
+  --radius: 0.75rem;
 }
 
 .dark {
-  /* Soft dreamy dark mode */
-  --background: oklch(0.2 0.05 280); /* Deep Purple */
-  --foreground: oklch(0.95 0.02 300);
+  /* DARK MODE - The Main Aesthetic - DEEP BLACK & VIBRANT GOLD */
+  --background: oklch(0.12 0.03 260);
+  /* Deep Obsidian/Charcoal (Not pure black) */
+  --foreground: oklch(0.92 0.02 85);
+  /* Off-white/Cream */
 
-  --card: oklch(0.25 0.05 285);
-  --card-foreground: oklch(0.98 0.02 300);
+  --card: oklch(0.16 0.03 260);
+  /* Slightly lighter obsidian */
+  --card-foreground: oklch(0.92 0.02 85);
 
-  --popover: oklch(0.25 0.05 285);
-  --popover-foreground: oklch(0.98 0.02 300);
+  --popover: oklch(0.16 0.03 260);
+  --popover-foreground: oklch(0.92 0.02 85);
 
-  --primary: oklch(0.7 0.15 350); /* Softer pink for dark mode */
-  --primary-foreground: oklch(0.2 0.05 280);
+  /* VIBRANT GOLD Primary */
+  --primary: #FFD700;
+  --primary-foreground: #000000;
 
-  --secondary: oklch(0.3 0.08 260);
-  --secondary-foreground: oklch(0.95 0.02 300);
+  /* MYSTIC PURPLE Secondary (Complementary to Gold) */
+  --secondary: oklch(0.25 0.12 290);
+  /* Deep Rich Purple */
+  --secondary-foreground: oklch(0.92 0.02 85);
 
-  --muted: oklch(0.3 0.05 280);
-  --muted-foreground: oklch(0.7 0.05 280);
+  --muted: oklch(0.22 0.04 260);
+  --muted-foreground: oklch(0.65 0.05 85);
 
-  --accent: oklch(0.35 0.08 330);
-  --accent-foreground: oklch(0.95 0.02 300);
+  --accent: oklch(0.25 0.1 85);
+  /* Dark Gold/Bronze Accent */
+  --accent-foreground: oklch(0.95 0.05 85);
 
-  --destructive: oklch(0.5 0.2 20);
-  --destructive-foreground: oklch(0.98 0 0);
+  --destructive: oklch(0.5 0.2 25);
+  /* Rich Red */
+  --destructive-foreground: oklch(0.95 0.02 85);
 
-  --border: oklch(0.35 0.05 280);
-  --input: oklch(0.35 0.05 280);
-  --ring: oklch(0.7 0.15 350);
+  --border: oklch(0.25 0.05 85);
+  /* Subtle Gold Border */
+  --input: oklch(0.2 0.04 260);
+  --ring: #FFD700;
 }
 
 body {

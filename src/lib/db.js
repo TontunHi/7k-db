@@ -69,6 +69,28 @@ export async function initDB() {
       )
     `);
 
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS stage_setups (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        type ENUM('stage', 'nightmare') NOT NULL DEFAULT 'stage',
+        name VARCHAR(255) NOT NULL,
+        note TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS teams (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        setup_id INT NOT NULL,
+        team_index INT NOT NULL DEFAULT 1,
+        formation VARCHAR(50) NOT NULL,
+        pet_file VARCHAR(255),
+        heroes_json JSON,
+        FOREIGN KEY (setup_id) REFERENCES stage_setups(id) ON DELETE CASCADE
+      )
+    `);
+
     console.log("Database tables initialized");
   } catch (err) {
     console.error("Error initializing DB:", err);

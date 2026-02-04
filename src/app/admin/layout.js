@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { LayoutDashboard, LogOut, FileImage, FileText } from "lucide-react"
+import { LayoutDashboard, LogOut, FileImage, FileText, Map } from "lucide-react"
 import { logout } from "@/lib/actions"
 
 export default function AdminLayout({ children }) {
@@ -32,6 +32,13 @@ export default function AdminLayout({ children }) {
                     >
                         <FileImage className="w-5 h-5" />
                         Manage Builds
+                    </Link>
+                    <Link
+                        href="/admin/stages"
+                        className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-[#FFD700] hover:bg-gray-800/50 rounded-lg transition-colors"
+                    >
+                        <Map className="w-5 h-5" />
+                        Manage Stages
                     </Link>
                     <Link
                         href="/admin/tierlist"

@@ -30,6 +30,17 @@ export async function getHeroData(filename) {
     }
 }
 
+export async function getHeroes() {
+    await ensureDB()
+    const [rows] = await pool.query("SELECT * FROM heroes ORDER BY grade DESC, name ASC")
+    return rows.map(r => ({
+        filename: r.filename,
+        name: r.name,
+        grade: r.grade,
+        skillPriority: typeof r.skill_priority === 'string' ? JSON.parse(r.skill_priority) : (r.skill_priority || [])
+    }))
+}
+
 export async function saveHeroData(hero) {
     await ensureDB()
     // upsert
