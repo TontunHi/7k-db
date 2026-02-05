@@ -1,65 +1,26 @@
 import { getStages, getStageById } from '@/lib/stage-actions'
-import { Map, Skull, Shield, Star, Swords } from 'lucide-react'
-import Image from 'next/image'
-import { cn } from '@/lib/utils'
+import PublicStageView from '@/components/stages/PublicStageView'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata = {
+    title: "Start Rail - Stage Strategy",
+    description: "Optimized team compositions for Main Stage and Nightmare Stage clearing."
+}
 
 export default async function StagesPage() {
     const stages = await getStages('stage')
     const nightmares = await getStages('nightmare')
 
     // We need full details for all stages to render them directly
-    const stageDetails = await Promise.all(stages.map(s => getStageById(s.id)))
-    const nightmareDetails = await Promise.all(nightmares.map(s => getStageById(s.id)))
+    const initialStages = await Promise.all(stages.map(s => getStageById(s.id)))
+    const initialNightmares = await Promise.all(nightmares.map(s => getStageById(s.id)))
 
     return (
-        <div className="space-y-20 pb-20">
-            {/* Hero Header */}
-            <section className="relative text-center space-y-4 py-20 px-4">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full -z-10 opacity-50 pointer-events-none" />
-                <h1 className="text-4xl md:text-6xl font-black tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_auto] animate-shine bg-clip-text text-transparent">
-                    Stage Strategy
-                </h1>
-                <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                    Optimized team compositions for efficient clearing.
-                </p>
-            </section>
-
-            {/* Stages Grid */}
-            <section className="space-y-12 px-4 max-w-7xl mx-auto">
-                <div className="flex items-center gap-3 border-b border-border pb-4">
-                    <Map className="w-8 h-8 text-primary" />
-                    <h2 className="text-3xl font-black">Main Stages</h2>
-                </div>
-
-                <div className="grid grid-cols-1 gap-12">
-                    {stageDetails.map(stage => (
-                        <PublicStageCard key={stage.id} stage={stage} />
-                    ))}
-                    {stageDetails.length === 0 && (
-                        <p className="text-muted-foreground text-center py-10">No stage guides available yet.</p>
-                    )}
-                </div>
-            </section>
-
-            {/* Nightmares Grid */}
-            <section className="space-y-12 px-4 max-w-7xl mx-auto">
-                <div className="flex items-center gap-3 border-b border-border pb-4 text-destructive">
-                    <Skull className="w-8 h-8" />
-                    <h2 className="text-3xl font-black">Nightmare Mode</h2>
-                </div>
-
-                <div className="grid grid-cols-1 gap-12">
-                    {nightmareDetails.map(stage => (
-                        <PublicStageCard key={stage.id} stage={stage} isNightmare />
-                    ))}
-                    {nightmareDetails.length === 0 && (
-                        <p className="text-muted-foreground text-center py-10">No nightmare guides available yet.</p>
-                    )}
-                </div>
-            </section>
-        </div>
+        <PublicStageView 
+            initialStages={initialStages} 
+            initialNightmares={initialNightmares} 
+        />
     )
 }
 
