@@ -133,30 +133,31 @@ export default function TeamBuilder({
         setIsPetOpen(false)
     }
 
-    // Modal Components (simplified inline for this file, could be separate)
+    // Modal Components
     const HeroPicker = () => (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in">
-            <div className="bg-card w-full max-w-4xl h-[80vh] rounded-2xl border border-border flex flex-col shadow-2xl">
-                <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
-                    <h3 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Select Hero</h3>
-                    <button onClick={() => setIsHeroOpen(null)} className="p-2 hover:bg-destructive/10 hover:text-destructive rounded-full transition-colors">
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in">
+            <div className="bg-gray-900 w-full max-w-4xl h-[85vh] rounded-2xl border border-gray-700 flex flex-col shadow-2xl">
+                <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-black/50">
+                    <div>
+                        <h3 className="text-2xl font-black text-white tracking-tight">Select Hero</h3>
+                        <p className="text-sm text-gray-400 mt-1">Choose a hero for this slot</p>
+                    </div>
+                    <button onClick={() => setIsHeroOpen(null)} className="p-3 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400">
                         <X size={24} />
                     </button>
                 </div>
-                <div className="flex-1 overflow-y-auto p-4 grid grid-cols-5 sm:grid-cols-6 md:grid-cols-7 gap-2 auto-rows-max">
+                <div className="flex-1 overflow-y-auto p-6 grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-3 auto-rows-max">
                     {sortedHeroesList.map(h => (
                         <button
                             key={h.filename}
                             onClick={() => handleHeroSelect(h.filename)}
-                            className="group rounded-lg overflow-hidden border border-border hover:border-primary hover:ring-2 hover:ring-primary/50 transition-all bg-black/20"
+                            className="group relative aspect-[3/4] rounded-xl overflow-hidden border-2 border-gray-700 hover:border-[#FFD700] hover:shadow-[0_0_20px_rgba(255,215,0,0.3)] transition-all bg-black"
                         >
                             <Image
                                 src={`/heroes/${h.filename}`}
                                 alt={h.name}
-                                width={128}
-                                height={128}
-                                className="w-full h-auto object-contain group-hover:scale-105 transition-transform"
-                                unoptimized
+                                fill
+                                className="object-cover group-hover:scale-110 transition-transform duration-300"
                             />
                         </button>
                     ))}
@@ -166,22 +167,31 @@ export default function TeamBuilder({
     )
 
     const PetPicker = () => (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in">
-            <div className="bg-card w-full max-w-3xl h-[70vh] rounded-2xl border border-border flex flex-col shadow-2xl">
-                <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
-                    <h3 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Select Pet</h3>
-                    <button onClick={() => setIsPetOpen(false)} className="p-2 hover:bg-destructive/10 hover:text-destructive rounded-full transition-colors">
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in">
+            <div className="bg-gray-900 w-full max-w-3xl max-h-[80vh] rounded-2xl border border-gray-700 flex flex-col shadow-2xl">
+                <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-black/50">
+                    <div>
+                        <h3 className="text-2xl font-black text-white tracking-tight">Select Pet</h3>
+                        <p className="text-sm text-gray-400 mt-1">Choose a pet for this team</p>
+                    </div>
+                    <button onClick={() => setIsPetOpen(false)} className="p-3 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400">
                         <X size={24} />
                     </button>
                 </div>
-                <div className="flex-1 overflow-y-auto p-6 grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-4">
+                <div className="flex-1 overflow-y-auto p-6 grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3">
                     {petsList.map(p => (
                         <button
                             key={p}
                             onClick={() => handlePetSelect(p)}
-                            className="group relative aspect-square rounded-xl overflow-hidden border border-border hover:border-primary hover:ring-2 hover:ring-primary/50 transition-all bg-secondary/10"
+                            className="group flex items-center justify-center aspect-square rounded-xl border-2 border-gray-700 hover:border-[#FFD700] hover:shadow-[0_0_20px_rgba(255,215,0,0.3)] transition-all bg-gradient-to-b from-gray-800 to-black"
                         >
-                            <Image src={p} alt="Pet" fill className="object-contain p-2 group-hover:scale-110 transition-transform" />
+                            <Image 
+                                src={p} 
+                                alt="Pet" 
+                                width={80}
+                                height={80}
+                                className="object-contain group-hover:scale-110 transition-transform duration-300" 
+                            />
                         </button>
                     ))}
                 </div>

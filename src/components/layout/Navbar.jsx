@@ -13,6 +13,7 @@ export default function Navbar() {
         { name: "Home", href: "/" },
         { name: "Builds", href: "/build" },
         { name: "Stages", href: "/stages" },
+        { name: "Castle Rush", href: "/castle-rush" },
         { name: "Tier List", href: "/tierlist" },
     ]
 

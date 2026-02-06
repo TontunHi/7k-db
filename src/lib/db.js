@@ -1,16 +1,18 @@
-import mysql from 'mysql2/promise';
+import mysql from "mysql2/promise";
 
-const pool = global.mysqlPool || mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || '7k_db',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+const pool =
+  global.mysqlPool ||
+  mysql.createPool({
+    host: process.env.DB_HOST || "localhost",
+    user: process.env.DB_USER || "root",
+    password: process.env.DB_PASSWORD || "",
+    database: process.env.DB_NAME || "7k_db",
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+  });
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   global.mysqlPool = pool;
 }
 
@@ -88,6 +90,20 @@ export async function initDB() {
         pet_file VARCHAR(255),
         heroes_json JSON,
         FOREIGN KEY (setup_id) REFERENCES stage_setups(id) ON DELETE CASCADE
+      )
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS castle_rush_sets (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        boss_key VARCHAR(50) NOT NULL,
+        set_index INT NOT NULL DEFAULT 1,
+        formation VARCHAR(50) NOT NULL,
+        pet_file VARCHAR(255),
+        heroes_json JSON,
+        video_url VARCHAR(500),
+        note TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
 

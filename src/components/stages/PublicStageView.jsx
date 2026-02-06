@@ -178,7 +178,7 @@ function PublicStageCard({ stage, isNightmare }) {
                     </h3>
                     <p className="text-gray-500 font-mono text-xs uppercase tracking-widest mt-2 flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-gray-700"></span>
-                        Updated: {new Date(stage.created_at).toLocaleDateString()}
+                        Updated: {new Date(stage.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                     </p>
                 </div>
                     <div className="bg-black/40 backdrop-blur-sm px-6 py-3 rounded-sm border-l-2 border-gray-700 max-w-xl text-sm italic text-gray-400">
@@ -188,8 +188,8 @@ function PublicStageCard({ stage, isNightmare }) {
 
             {/* Teams */}
             <div className="p-6 md:p-8 grid grid-cols-1 xl:grid-cols-2 gap-8 divide-y xl:divide-y-0 xl:divide-x divide-gray-800/50">
-                {stage.teams.map((team) => (
-                    <div key={team.index} className="space-y-6 pt-8 xl:pt-0 first:pt-0 pl-0 xl:first:pl-0 xl:pl-8">
+                {stage.teams.map((team, idx) => (
+                    <div key={team.index || idx} className="space-y-6 pt-8 xl:pt-0 first:pt-0 pl-0 xl:first:pl-0 xl:pl-8">
                         <div className="flex items-center gap-3 mb-6">
                             <div className={cn(
                                 "px-3 py-1 rounded-sm font-bold text-xs uppercase tracking-wider",
