@@ -107,6 +107,20 @@ export async function initDB() {
       )
     `);
 
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS dungeon_sets (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        dungeon_key VARCHAR(50) NOT NULL,
+        set_index INT NOT NULL DEFAULT 1,
+        formation VARCHAR(50) NOT NULL,
+        pet_file VARCHAR(255),
+        heroes_json JSON,
+        video_url VARCHAR(500),
+        note TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     console.log("Database tables initialized");
   } catch (err) {
     console.error("Error initializing DB:", err);

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { LayoutDashboard, LogOut, FileImage, FileText, Map, Crown } from "lucide-react"
+import { LayoutDashboard, LogOut, FileImage, FileText, Map, Crown, Landmark } from "lucide-react"
 import { logout } from "@/lib/actions"
 
 export default function AdminLayout({ children }) {
@@ -46,6 +46,13 @@ export default function AdminLayout({ children }) {
                     >
                         <Crown className="w-5 h-5" />
                         Castle Rush
+                    </Link>
+                    <Link
+                        href="/admin/dungeon"
+                        className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-amber-500 hover:bg-amber-900/20 rounded-lg transition-colors"
+                    >
+                        <Landmark className="w-5 h-5" />
+                        Dungeons
                     </Link>
                     <Link
                         href="/admin/tierlist"
