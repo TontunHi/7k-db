@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { LayoutDashboard, LogOut, FileImage, FileText, Map, Crown, Landmark } from "lucide-react"
+import { LayoutDashboard, LogOut, FileImage, FileText, Map, Crown, Landmark, Skull } from "lucide-react"
 import { logout } from "@/lib/actions"
 
 export default function AdminLayout({ children }) {
@@ -19,13 +19,7 @@ export default function AdminLayout({ children }) {
                         <LayoutDashboard className="w-5 h-5" />
                         Dashboard
                     </Link>
-                    <Link
-                        href="/admin/blog"
-                        className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-[#FFD700] hover:bg-gray-800/50 rounded-lg transition-colors"
-                    >
-                        <FileText className="w-5 h-5" />
-                        Manage Blog
-                    </Link>
+
                     <Link
                         href="/admin/builds"
                         className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-[#FFD700] hover:bg-gray-800/50 rounded-lg transition-colors"
@@ -53,6 +47,13 @@ export default function AdminLayout({ children }) {
                     >
                         <Landmark className="w-5 h-5" />
                         Dungeons
+                    </Link>
+                    <Link
+                        href="/admin/raid"
+                        className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-red-500 hover:bg-red-900/20 rounded-lg transition-colors"
+                    >
+                        <Skull className="w-5 h-5" />
+                        Raids
                     </Link>
                     <Link
                         href="/admin/tierlist"

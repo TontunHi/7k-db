@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { FileImage, ArrowRight, LayoutGrid, Skull, FileText, Trophy, Settings } from "lucide-react"
+import { FileImage, ArrowRight, LayoutGrid, Skull, FileText, Trophy, Settings, Crown, Landmark } from "lucide-react"
 
 export default function AdminDashboard() {
     const adminTools = [
@@ -38,6 +38,33 @@ export default function AdminDashboard() {
             color: "text-rose-400",
             bg: "bg-rose-400/10",
             border: "hover:border-rose-400"
+        },
+        {
+            title: "Castle Rush",
+            desc: "Manage daily boss team recommendations.",
+            icon: Crown,
+            href: "/admin/castle-rush",
+            color: "text-amber-400",
+            bg: "bg-amber-400/10",
+            border: "hover:border-amber-400"
+        },
+        {
+            title: "Dungeons",
+            desc: "Manage dungeon team compositions.",
+            icon: Landmark,
+            href: "/admin/dungeon",
+            color: "text-amber-400",
+            bg: "bg-amber-400/10",
+            border: "hover:border-amber-400"
+        },
+        {
+            title: "Raids",
+            desc: "Manage raid teams and skill rotations.",
+            icon: Skull,
+            href: "/admin/raid",
+            color: "text-red-500",
+            bg: "bg-red-500/10",
+            border: "hover:border-red-500"
         }
     ]
 

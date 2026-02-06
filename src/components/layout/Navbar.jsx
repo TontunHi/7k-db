@@ -15,6 +15,7 @@ export default function Navbar() {
         { name: "Stages", href: "/stages" },
         { name: "Castle Rush", href: "/castle-rush" },
         { name: "Dungeons", href: "/dungeon" },
+        { name: "Raids", href: "/raid" },
         { name: "Tier List", href: "/tierlist" },
     ]
 

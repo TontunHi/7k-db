@@ -58,18 +58,7 @@ export async function initDB() {
       )
     `);
 
-    await connection.query(`
-      CREATE TABLE IF NOT EXISTS posts (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        title VARCHAR(255) NOT NULL,
-        slug VARCHAR(255) UNIQUE NOT NULL,
-        content LONGTEXT,
-        excerpt TEXT,
-        cover_image VARCHAR(255),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-      )
-    `);
+
 
     await connection.query(`
       CREATE TABLE IF NOT EXISTS stage_setups (
@@ -115,6 +104,21 @@ export async function initDB() {
         formation VARCHAR(50) NOT NULL,
         pet_file VARCHAR(255),
         heroes_json JSON,
+        video_url VARCHAR(500),
+        note TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS raid_sets (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        raid_key VARCHAR(50) NOT NULL,
+        set_index INT NOT NULL DEFAULT 1,
+        formation VARCHAR(50) NOT NULL,
+        pet_file VARCHAR(255),
+        heroes_json JSON,
+        skill_rotation JSON,
         video_url VARCHAR(500),
         note TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

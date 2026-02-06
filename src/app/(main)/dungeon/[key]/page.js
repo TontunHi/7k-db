@@ -81,42 +81,53 @@ export default async function DungeonDetailPage({ params }) {
     }))
 
     return (
-        <div className="min-h-screen pb-20">
+        <div className="relative min-h-screen w-full bg-[#050505] overflow-hidden pb-20">
+            {/* Background Effects */}
+            <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+                <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-[#FFD700] opacity-20 blur-[100px]"></div>
+            </div>
+
             {/* Hero Banner */}
-            <div className="relative h-64 md:h-96 overflow-hidden">
-                <Image 
-                    src={dungeon.image} 
-                    alt={dungeon.name} 
-                    fill 
-                    className="object-contain" 
-                    priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black" />
-                
-                {/* Content */}
-                <div className="container mx-auto px-4 h-full relative z-10">
-                    <div className="flex flex-col justify-end h-full pb-12">
-                        <Link 
-                            href="/dungeon" 
-                            className="flex items-center gap-2 text-gray-400 hover:text-[#FFD700] transition-colors mb-6 w-fit backdrop-blur-sm bg-black/30 px-3 py-1.5 rounded-lg border border-gray-700/50"
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                            <span>Back to Dungeons</span>
-                        </Link>
-                        
-                        <div className="flex items-center gap-3 mb-2">
-                            <Landmark className="w-8 h-8 text-[#FFD700]" />
-                            <span className="text-[#FFD700] text-sm font-bold uppercase tracking-wider">Dungeon Guide</span>
+            <div className="relative z-10">
+                <div className="container mx-auto px-4 py-8">
+                    <Link 
+                        href="/dungeon" 
+                        className="inline-flex items-center gap-2 text-gray-400 hover:text-[#FFD700] transition-colors mb-6 backdrop-blur-sm bg-black/30 px-4 py-2 rounded-lg border border-gray-700/50"
+                    >
+                        <ArrowLeft className="w-5 h-5" />
+                        <span>Back to Dungeons</span>
+                    </Link>
+                    
+                    <div className="flex flex-col lg:flex-row gap-8 items-start">
+                        {/* Dungeon Image */}
+                        <div className="relative w-full lg:w-1/2 aspect-[2/1] rounded-2xl overflow-hidden border border-gray-800 bg-gradient-to-br from-[#1a1a1a] to-black shadow-2xl">
+                            <Image 
+                                src={dungeon.image} 
+                                alt={dungeon.name} 
+                                fill 
+                                className="object-contain" 
+                                priority
+                            />
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight drop-shadow-2xl">
-                            {dungeon.name}
-                        </h1>
+                        
+                        {/* Dungeon Info */}
+                        <div className="flex-1 lg:pt-8">
+                            <div className="flex items-center gap-3 mb-4">
+                                <Landmark className="w-10 h-10 text-[#FFD700]" />
+                                <span className="text-[#FFD700] text-sm font-bold uppercase tracking-wider">Dungeon Guide</span>
+                            </div>
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase italic transform -skew-x-3 drop-shadow-2xl">
+                                {dungeon.name}
+                            </h1>
+                            <div className="h-1 w-32 bg-gradient-to-r from-[#FFD700] to-[#FFA500] transform -skew-x-12 mt-4 shadow-[0_0_15px_#FFD700]"></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Teams Section */}
-            <div className="container mx-auto px-4 mt-12">
+            <div className="container mx-auto px-4 mt-8 relative z-10">
                 {parsedSets.length === 0 ? (
                     <div className="text-center py-20 border border-dashed border-gray-700 rounded-2xl bg-gray-900/30">
                         <Users className="w-12 h-12 text-gray-600 mx-auto mb-4" />

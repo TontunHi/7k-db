@@ -4,24 +4,24 @@ import { useState } from "react"
 import Image from "next/image"
 import { clsx } from "clsx"
 import { Loader2 } from "lucide-react"
+import { cn } from "@/lib/utils"
 import BuildViewerModal from "./BuildViewerModal"
 import { fetchHeroBuildData } from "@/lib/viewer-actions"
 
 export default function BuildView({ heroes }) {
     const [activeTab, setActiveTab] = useState("legendary") // 'legendary' | 'rare'
+    const [searchQuery, setSearchQuery] = useState("")
 
     // Popup State
     const [selectedHero, setSelectedHero] = useState(null)
     const [viewerData, setViewerData] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
 
-    // Filter heroes based on active tab
+    // Filter heroes based on active tab and search query
     const filteredHeroes = heroes.filter((hero) => {
-        if (activeTab === "legendary") {
-            return hero.grade.startsWith("l")
-        } else {
-            return hero.grade === "r"
-        }
+        const matchesTab = activeTab === "legendary" ? hero.grade.startsWith("l") : hero.grade === "r"
+        const matchesSearch = hero.name.toLowerCase().includes(searchQuery.toLowerCase())
+        return matchesTab && matchesSearch
     })
 
     const getRankPower = (g) => {
@@ -78,6 +78,21 @@ export default function BuildView({ heroes }) {
                         <p className="text-slate-400 text-lg font-light tracking-wide max-w-xl mx-auto mt-6">
                             Explore optimal equipment and stats for every hero.
                         </p>
+                    </div>
+
+                    {/* Search Input (Stage Style) */}
+                    <div className="w-full max-w-md relative group">
+                        <div className="absolute inset-0 blur-lg opacity-20 transition-opacity group-hover:opacity-40 bg-[#FFD700]"></div>
+                        <input
+                            type="text"
+                            placeholder="Search heroes..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className={cn(
+                                "w-full bg-[#080808]/80 backdrop-blur-md border rounded-xl px-6 py-4 text-center text-lg font-bold text-white uppercase tracking-wider outline-none transition-all placeholder:text-gray-700",
+                                "border-gray-800 focus:border-[#FFD700] focus:shadow-[0_0_30px_rgba(255,215,0,0.2)]"
+                            )}
+                        />
                     </div>
 
                     {/* Tabs */}
