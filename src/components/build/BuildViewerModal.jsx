@@ -35,8 +35,15 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                 <div className="flex flex-col md:flex-row gap-6 p-8 border-b border-border bg-card/50">
 
                     {/* Hero Image */}
-                    <div className="relative w-20 h-24 md:w-28 md:h-32 rounded-xl overflow-hidden border border-border shadow-2xl flex-shrink-0 group">
-                        <Image src={`/heroes/${hero.filename}`} fill className="object-cover transition-transform duration-500 group-hover:scale-110" alt={hero.name} />
+                    <div className="relative w-auto h-auto min-w-[5rem] min-h-[6rem] md:min-w-[7rem] md:min-h-[8rem] rounded-xl overflow-hidden border border-border shadow-2xl flex-shrink-0 group bg-black/20">
+                        <Image 
+                            src={`/heroes/${hero.filename}`} 
+                            width={120} 
+                            height={144} 
+                            className="object-contain w-auto h-full max-h-32 md:max-h-40" 
+                            alt={hero.name} 
+                            style={{ width: 'auto', height: 'auto' }}
+                        />
                         <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-xl"></div>
                         {/* Shine */}
                         <div className="absolute -inset-full top-0 block h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover:animate-shine" />
