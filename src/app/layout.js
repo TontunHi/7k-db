@@ -1,6 +1,7 @@
 import { Inter, Prompt } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "sonner"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -16,8 +17,24 @@ const prompt = Prompt({
 })
 
 export const metadata = {
-  title: "7K DB - Seven Knights Rebirth Database",
-  description: "Comprehensive database for Seven Knights Rebirth characters, items, and guides.",
+  title: {
+    default: "7K DB - Seven Knights Rebirth Database",
+    template: "%s | 7K DB"
+  },
+  description: "The ultimate comprehensive database and guide for Seven Knights Rebirth. Featuring tier lists, hero optimal builds, stage guides, and raid strategies.",
+  keywords: ["Seven Knights Rebirth", "7K Rebirth", "Seven Knights Guide", "7K DB", "Tier List", "Hero Builds"],
+  openGraph: {
+    title: "Seven Knights Rebirth Database - 7K DB",
+    description: "The ultimate comprehensive database and guide for Seven Knights Rebirth. Tier lists, hero optimal builds, stage guides, and raid strategies.",
+    siteName: "7K DB",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Seven Knights Rebirth Database - 7K DB",
+    description: "The ultimate comprehensive database and guide for Seven Knights Rebirth.",
+  }
 }
 
 export default function RootLayout({ children }) {
@@ -33,6 +50,7 @@ export default function RootLayout({ children }) {
           disableTransitionOnChange
         >
           {children}
+          <Toaster theme="dark" position="bottom-right" richColors />
         </ThemeProvider>
       </body>
     </html>

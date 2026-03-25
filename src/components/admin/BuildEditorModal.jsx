@@ -4,6 +4,7 @@ import { useState } from "react"
 import Image from "next/image"
 import { Loader2, Plus, Trash, X, Save, Check, Grid } from "lucide-react"
 import { clsx } from "clsx"
+import { toast } from "sonner"
 
 // Predefined Options
 const MAIN_STATS = [
@@ -63,10 +64,11 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
     }
 
     const handleRemoveBuild = (index) => {
-        if (!confirm("Are you sure you want to delete this build?")) return
+        if (!window.confirm("Are you sure you want to delete this build?")) return
         const newBuilds = [...builds]
         newBuilds.splice(index, 1)
         setBuilds(newBuilds)
+        toast.info("Build removed.")
     }
 
     const updateBuild = (index, field, value) => {
@@ -97,7 +99,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
         if (current.includes(stat)) {
             newBuilds[buildIndex].substats = current.filter(s => s !== stat)
         } else {
-            if (current.length >= 5) return alert("Max 5 Substats")
+            if (current.length >= 5) return toast.error("Max 5 Substats")
             newBuilds[buildIndex].substats = [...current, stat]
         }
         setBuilds(newBuilds)
@@ -123,7 +125,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
             if (multiSelection.includes(image)) {
                 setMultiSelection(multiSelection.filter(i => i !== image))
             } else {
-                if (multiSelection.length >= 5) return alert("Max 5 Accessories")
+                if (multiSelection.length >= 5) return toast.error("Max 5 Accessories")
                 setMultiSelection([...multiSelection, image])
             }
         } else {
@@ -149,46 +151,53 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
 
     const handleSave = async () => {
         setIsSaving(true)
-        await onSave(builds, skillPriority)
-        setIsSaving(false)
-        onClose()
+        try {
+            await onSave(builds, skillPriority)
+            onClose()
+        } catch (err) {
+            console.error(err)
+        } finally {
+            setIsSaving(false)
+        }
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-            <div className="bg-black border border-gray-800 rounded-2xl w-full max-w-5xl h-[90vh] flex flex-col relative shadow-2xl overflow-hidden">
-
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+            <div className="bg-[#0a0a0a] border border-gray-800 rounded-3xl w-full max-w-5xl h-[90vh] flex flex-col relative shadow-[0_0_50px_rgba(0,0,0,1)] overflow-hidden animate-in zoom-in-95 duration-300">
                 {/* Header */}
-                <div className="flex justify-between items-center p-4 border-b border-gray-800 bg-gray-900/50">
-                    <h2 className="text-xl font-bold text-[#FFD700] flex items-center gap-2">
-                        Edit Builds
+                <div className="flex justify-between items-center p-6 border-b border-gray-800 bg-gradient-to-b from-gray-900/80 to-transparent">
+                    <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-yellow-200 flex items-center gap-3 tracking-tight">
+                        <div className="p-2 bg-[#FFD700]/10 rounded-xl">
+                            <Grid className="w-5 h-5 text-[#FFD700]" />
+                        </div>
+                        Edit Builds <span className="text-gray-500 font-medium text-lg ml-2">{hero.name}</span>
                     </h2>
-                    <div className="flex gap-2">
-                        <button onClick={handleAddBuild} className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-1">
-                            <Plus className="w-4 h-4" /> Build
+                    <div className="flex gap-3">
+                        <button onClick={handleAddBuild} className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all hover:shadow-lg">
+                            <Plus className="w-4 h-4" /> New Build
                         </button>
-                        <button onClick={handleSave} disabled={isSaving} className="bg-[#FFD700] hover:bg-[#E5C100] text-black font-bold px-4 py-1.5 rounded-lg text-sm flex items-center gap-2">
+                        <button onClick={handleSave} disabled={isSaving} className="bg-gradient-to-r from-[#FFD700] to-yellow-500 hover:from-yellow-400 hover:to-yellow-400 text-black font-extrabold px-6 py-2 rounded-xl text-sm flex items-center gap-2 shadow-lg shadow-[#FFD700]/20 transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
                             {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                            Save
+                            Save All
                         </button>
-                        <button onClick={onClose} className="p-1.5 hover:bg-gray-800 rounded-full text-gray-400">
-                            <X className="w-5 h-5" />
+                        <button onClick={onClose} className="p-2 hover:bg-red-500/20 hover:text-red-500 rounded-xl text-gray-400 transition-colors ml-2">
+                            <X className="w-6 h-6" />
                         </button>
                     </div>
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
 
                     {/* Global Skill Priority Section */}
-                    <div className="flex items-start gap-4 p-4 bg-gray-900 rounded-xl border border-gray-800 mb-6">
-                        <div className="relative w-20 h-24 rounded-lg overflow-hidden border border-gray-700 flex-shrink-0">
+                    <div className="flex items-start gap-6 p-6 bg-gradient-to-r from-gray-900/60 to-[#0a0a0a] rounded-2xl border border-gray-800 shadow-inner">
+                        <div className="relative w-24 h-32 rounded-xl overflow-hidden border-2 border-gray-700 flex-shrink-0 shadow-xl shadow-black">
                             <Image src={`/heroes/${hero.filename}`} fill className="object-cover" alt={hero.name} />
                         </div>
 
                         <div className="flex-1">
-                            <p className="text-[#FFD700] font-bold uppercase text-xs mb-3">Global Skill Priority</p>
-                            <div className="flex flex-wrap gap-3">
+                            <p className="text-[#FFD700] font-bold uppercase tracking-widest text-xs mb-4">Global Skill Priority</p>
+                            <div className="flex flex-wrap gap-4">
                                 {skills.length > 0 ? skills.map((s, i) => {
                                     const isSelected = skillPriority.includes(s)
                                     const order = isSelected ? skillPriority.indexOf(s) + 1 : null
@@ -197,20 +206,20 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                             key={i}
                                             onClick={() => toggleSkillPriority(s)}
                                             className={clsx(
-                                                "relative w-14 h-14 bg-black rounded-lg cursor-pointer transition-all border-2 group",
-                                                isSelected ? "border-[#FFD700] ring-2 ring-[#FFD700]/20" : "border-gray-800 hover:border-gray-600"
+                                                "relative w-16 h-16 bg-black rounded-xl cursor-pointer transition-all border-2 group shadow-md",
+                                                isSelected ? "border-[#FFD700] ring-4 ring-[#FFD700]/20 scale-105" : "border-gray-800 hover:border-gray-500 hover:scale-105"
                                             )}
                                         >
-                                            <Image src={`/skills/${s}`} fill className="object-cover rounded-md" alt="skill" />
+                                            <Image src={`/skills/${s}`} fill className="object-cover rounded-lg" alt="skill" />
                                             {isSelected && (
-                                                <div className="absolute -top-2 -right-2 bg-[#FFD700] text-black w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shadow-lg z-10 border-2 border-black">
+                                                <div className="absolute -top-2 -right-2 bg-gradient-to-br from-[#FFD700] to-yellow-600 text-black w-6 h-6 rounded-full flex items-center justify-center text-xs font-black shadow-lg shadow-[#FFD700]/50 border-2 border-black z-10 transform scale-110">
                                                     {order}
                                                 </div>
                                             )}
                                         </div>
                                     )
                                 }) : (
-                                    <div className="text-sm text-gray-500">No skills found. Check public/skills/[hero_name]</div>
+                                    <div className="text-sm text-gray-500 bg-black/50 px-4 py-2 rounded-lg border border-gray-800">No skills found. Check public/skills/[hero_name]</div>
                                 )}
                             </div>
                         </div>
@@ -218,29 +227,35 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
 
                     {/* Build List */}
                     {builds.map((build, bIndex) => (
-                        <div key={build.id} className="relative bg-[#0a0a0a] border border-gray-800 rounded-xl p-6 shadow-lg mb-6">
+                        <div key={build.id} className="relative bg-black border border-gray-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden group/build">
+                            {/* Decorative background glow */}
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-[#FFD700]/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
+
                             <button
                                 onClick={() => handleRemoveBuild(bIndex)}
-                                className="absolute top-4 right-4 text-red-900 hover:text-red-500 hover:bg-red-900/20 p-2 rounded-lg transition-colors"
+                                className="absolute top-6 right-6 text-red-400 hover:text-white bg-red-950/30 hover:bg-red-600 p-3 rounded-xl transition-all border border-red-900/50 hover:border-red-500 z-10 hover:scale-110 shadow-lg"
                                 title="Delete Build"
                             >
-                                <Trash className="w-4 h-4" />
+                                <Trash className="w-5 h-5" />
                             </button>
 
-                            <div className="flex flex-wrap gap-4 items-center mb-6 pr-12">
-                                <div className="w-32">
-                                    <label className="text-[10px] text-gray-500 font-bold uppercase block mb-1">C Level</label>
-                                    <select
-                                        value={build.cLevel}
-                                        onChange={(e) => updateBuild(bIndex, "cLevel", e.target.value)}
-                                        className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-[#FFD700] font-bold outline-none focus:border-[#FFD700]"
-                                    >
-                                        {["C0", "C1", "C2", "C3", "C4", "C5", "C6"].map(c => <option key={c} value={c}>{c}</option>)}
-                                    </select>
+                            <div className="flex flex-wrap gap-6 items-end mb-8 pr-16 relative z-10">
+                                <div className="w-36">
+                                    <label className="text-xs text-gray-400 font-bold uppercase tracking-wider block mb-2 ml-1">C Level</label>
+                                    <div className="relative">
+                                        <select
+                                            value={build.cLevel}
+                                            onChange={(e) => updateBuild(bIndex, "cLevel", e.target.value)}
+                                            className="w-full bg-gray-900 border-2 border-gray-800 rounded-xl px-4 py-3 text-sm text-[#FFD700] font-black outline-none focus:border-[#FFD700] transition-colors appearance-none shadow-inner cursor-pointer"
+                                        >
+                                            {["C0", "C1", "C2", "C3", "C4", "C5", "C6"].map(c => <option key={c} value={c}>{c}</option>)}
+                                        </select>
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">▼</div>
+                                    </div>
                                 </div>
                                 <div className="flex-1">
-                                    <label className="text-[10px] text-gray-500 font-bold uppercase block mb-1">Mode</label>
-                                    <div className="flex gap-2">
+                                    <label className="text-xs text-gray-400 font-bold uppercase tracking-wider block mb-2 ml-1">Mode Target</label>
+                                    <div className="flex gap-3">
                                         {["PVE", "PVP"].map(m => (
                                             <button
                                                 key={m}
@@ -251,10 +266,10 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                                     updateBuild(bIndex, "mode", newModes)
                                                 }}
                                                 className={clsx(
-                                                    "px-4 py-1.5 rounded-lg text-xs font-bold border transition-colors",
+                                                    "px-6 py-3 rounded-xl text-sm font-black border-2 transition-all shadow-lg",
                                                     build.mode.includes(m)
-                                                        ? "bg-gray-800 border-[#FFD700] text-[#FFD700]"
-                                                        : "bg-black border-gray-700 text-gray-500 hover:border-gray-600"
+                                                        ? "bg-gradient-to-br from-gray-800 to-gray-900 border-[#FFD700] text-[#FFD700] shadow-[#FFD700]/20"
+                                                        : "bg-black border-gray-800 text-gray-500 hover:border-gray-600 hover:text-gray-300"
                                                 )}
                                             >
                                                 {m}
@@ -264,13 +279,15 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-
+                            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8 relative z-10">
                                 {/* Equipment */}
-                                <div className="space-y-4">
-                                    <h4 className="text-[#FFD700] text-xs font-bold uppercase border-b border-gray-800 pb-2 mb-2">Equipment</h4>
+                                <div className="space-y-5">
+                                    <h4 className="text-[#FFD700] text-xs font-black uppercase tracking-widest border-b border-gray-800 pb-3 mb-2 flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-[#FFD700]"></div>
+                                        Core Equipment
+                                    </h4>
 
-                                    <div className="grid grid-cols-2 gap-2">
+                                    <div className="grid grid-cols-2 gap-3">
                                         <ItemCard
                                             item={build.weapons[0]}
                                             type="Weapon"
@@ -287,7 +304,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                         />
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-2">
+                                    <div className="grid grid-cols-2 gap-3">
                                         <ItemCard
                                             item={build.weapons[1]}
                                             type="Weapon"
@@ -306,41 +323,47 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                 </div>
 
                                 {/* Accessories */}
-                                <div>
-                                    <h4 className="flex justify-between items-end border-b border-gray-800 pb-2 mb-2">
-                                        <span className="text-[#FFD700] text-xs font-bold uppercase">Accessories</span>
-                                        <span className="text-[10px] text-gray-500">{build.accessories?.length || 0}/5 Selected</span>
+                                <div className="space-y-5">
+                                    <h4 className="flex justify-between items-end border-b border-gray-800 pb-3 mb-2">
+                                        <span className="text-[#FFD700] text-xs font-black uppercase tracking-widest flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+                                            Accessories
+                                        </span>
+                                        <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-gray-900 text-gray-400 border border-gray-800">{build.accessories?.length || 0}/5</span>
                                     </h4>
 
                                     <div
                                         onClick={() => openItemSelector(accessories, bIndex, "accessories")}
-                                        className="grid grid-cols-5 gap-1.5 cursor-pointer group"
+                                        className="grid grid-cols-5 gap-3 cursor-pointer group"
                                     >
                                         {Array.from({ length: 5 }).map((_, i) => {
                                             const acc = build.accessories?.[i]
                                             return (
                                                 <div key={i} className={clsx(
-                                                    "aspect-square rounded border flex items-center justify-center relative overflow-hidden transition-all",
+                                                    "aspect-square rounded-xl border-2 flex items-center justify-center relative overflow-hidden transition-all duration-300 shadow-inner",
                                                     acc
-                                                        ? "bg-black border-gray-700 group-hover:border-[#FFD700]"
-                                                        : "bg-gray-900 border-gray-800 border-dashed group-hover:border-gray-600"
+                                                        ? "bg-gray-900 border-gray-700 group-hover:border-[#FFD700]"
+                                                        : "bg-black border-gray-800 border-dashed group-hover:border-[#FFD700]/50 group-hover:bg-[#FFD700]/5"
                                                 )}>
                                                     {acc ? (
-                                                        <Image src={`/items/accessory/${acc.image}`} fill className="object-cover" alt="acc" />
+                                                        <Image src={`/items/accessories/${acc.image}`} fill className="object-cover hover:scale-110 transition-transform duration-500" alt="acc" />
                                                     ) : (
-                                                        <Plus className="w-3 h-3 text-gray-700" />
+                                                        <Plus className="w-5 h-5 text-gray-800 group-hover:text-[#FFD700] transition-colors" />
                                                     )}
                                                 </div>
                                             )
                                         })}
                                     </div>
-                                    <p className="text-[10px] text-gray-500 mt-2 text-center group-hover:text-[#FFD700]">Click to Select</p>
+                                    <p className="text-xs text-gray-600 mt-4 text-center group-hover:text-[#FFD700] transition-colors uppercase tracking-widest font-bold font-mono">Click to Select Accessories</p>
                                 </div>
                             </div>
 
-                            <div className="mt-4 pt-4 border-t border-gray-800">
-                                <label className="text-[10px] text-gray-500 font-bold uppercase block mb-2">Substats Priority</label>
-                                <div className="flex flex-wrap gap-2">
+                            <div className="mt-8 pt-6 border-t border-gray-800 relative z-10">
+                                <label className="text-xs text-gray-400 font-bold uppercase tracking-widest block mb-4 ml-1 flex items-center gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
+                                    Substats Priority
+                                </label>
+                                <div className="flex flex-wrap gap-2.5">
                                     {AVAILABLE_SUBSTATS.map(stat => {
                                         const isSelected = build.substats?.includes(stat)
                                         const order = isSelected ? build.substats.indexOf(stat) + 1 : null
@@ -349,13 +372,13 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                                 key={stat}
                                                 onClick={() => toggleSubstat(bIndex, stat)}
                                                 className={clsx(
-                                                    "px-3 py-1 flex items-center gap-2 text-xs rounded-full border transition-all",
+                                                    "px-4 py-2 flex items-center gap-2 text-xs font-bold rounded-xl border-2 transition-all duration-200",
                                                     isSelected
-                                                        ? "bg-[#FFD700]/10 border-[#FFD700] text-[#FFD700]"
-                                                        : "bg-black border-gray-800 text-gray-500 hover:border-gray-600"
+                                                        ? "bg-[#FFD700]/10 border-[#FFD700] text-[#FFD700] shadow-[0_0_15px_rgba(255,215,0,0.15)] transform scale-105"
+                                                        : "bg-gray-900/50 border-gray-800 text-gray-500 hover:border-gray-600 hover:text-gray-300 hover:bg-gray-900"
                                                 )}
                                             >
-                                                {isSelected && <span className="w-4 h-4 rounded-full bg-[#FFD700] text-black flex items-center justify-center text-[9px] font-bold">{order}</span>}
+                                                {isSelected && <span className="w-5 h-5 rounded-md bg-gradient-to-br from-[#FFD700] to-yellow-600 text-black flex items-center justify-center text-[10px] font-black shadow-sm">{order}</span>}
                                                 {stat}
                                             </button>
                                         )
@@ -363,44 +386,54 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                 </div>
                             </div>
 
-                            <div className="mt-4 pt-4 border-t border-gray-800">
-                                <label className="text-[10px] text-gray-500 font-bold uppercase block mb-1">Note</label>
+                            <div className="mt-8 pt-6 border-t border-gray-800 relative z-10">
+                                <label className="text-xs text-gray-400 font-bold uppercase tracking-widest block mb-3 ml-1 flex items-center gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-purple-400"></div>
+                                    Build Note
+                                </label>
                                 <textarea
                                     value={build.note}
                                     onChange={(e) => updateBuild(bIndex, "note", e.target.value)}
-                                    placeholder="Additional notes..."
-                                    className="w-full bg-black border border-gray-800 rounded-lg p-3 text-sm text-gray-300 h-20 focus:border-[#FFD700] outline-none resize-none"
+                                    placeholder="Add specific instructions, synergy strategies, or alternative options here..."
+                                    className="w-full bg-gray-900/50 border-2 border-gray-800 rounded-xl p-4 text-sm text-gray-200 min-h-[100px] focus:border-[#FFD700] focus:ring-1 focus:ring-[#FFD700] outline-none resize-y transition-all placeholder-gray-700"
                                 />
                             </div>
                         </div>
                     ))}
 
                     {builds.length === 0 && (
-                        <div className="text-center py-20 text-gray-600">
-                            No builds yet. Click "Build" button.
+                        <div className="text-center py-32 bg-gray-900/20 border-2 border-dashed border-gray-800 rounded-3xl">
+                            <Grid className="w-12 h-12 text-gray-700 mx-auto mb-4" />
+                            <p className="text-gray-500 font-bold uppercase tracking-widest mb-4">No builds yet</p>
+                            <button onClick={handleAddBuild} className="bg-[#FFD700] text-black px-6 py-2.5 rounded-xl font-bold shadow-lg hover:bg-yellow-400 transition-colors">
+                                Create Primary Build
+                            </button>
                         </div>
                     )}
                 </div>
 
                 {selectorOpen && (
-                    <div className="absolute inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
-                        <div className="bg-[#0f0f0f] border border-gray-700 rounded-xl w-full max-w-2xl h-[70vh] flex flex-col shadow-2xl overflow-hidden">
-                            <div className="flex justify-between items-center p-4 border-b border-gray-800 bg-[#161616]">
-                                <h3 className="text-white font-bold flex items-center gap-2 text-sm">
-                                    {selectorTarget.type === "accessories" ? "Select Accessories (Max 5)" : "Select Item"}
+                    <div className="absolute inset-0 z-[60] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+                        <div className="bg-[#0a0a0a] border border-gray-700 rounded-3xl w-full max-w-3xl h-[80vh] flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden animate-in zoom-in-95 duration-200">
+                            <div className="flex justify-between items-center p-6 border-b border-gray-800 bg-gradient-to-b from-gray-900 to-[#0a0a0a]">
+                                <h3 className="text-[#FFD700] font-black uppercase tracking-widest flex items-center gap-3 text-sm">
+                                    <Grid className="w-5 h-5" />
+                                    {selectorTarget.type === "accessories" ? "Select Accessories (Max 5)" : "Select Equipment"}
                                 </h3>
-                                <div className="flex gap-2">
+                                <div className="flex gap-3 items-center">
                                     {selectorTarget.type === "accessories" && (
-                                        <button onClick={confirmMultiSelect} className="bg-[#FFD700] text-black px-4 py-1 rounded-md text-xs font-bold hover:bg-[#E5C100]">
+                                        <button onClick={confirmMultiSelect} className="bg-gradient-to-r from-[#FFD700] to-yellow-500 text-black px-6 py-2 rounded-xl text-sm font-black shadow-lg shadow-[#FFD700]/20 hover:scale-105 active:scale-95 transition-all">
                                             Confirm ({multiSelection.length})
                                         </button>
                                     )}
-                                    <button onClick={() => setSelectorOpen(false)} className="text-gray-400 hover:text-white px-2"><X className="w-5 h-5" /></button>
+                                    <button onClick={() => setSelectorOpen(false)} className="bg-gray-800 hover:bg-red-500 rounded-xl p-2 text-gray-400 hover:text-white transition-all">
+                                        <X className="w-5 h-5" />
+                                    </button>
                                 </div>
                             </div>
 
-                            <div className="flex-1 overflow-y-auto p-4 bg-[#0a0a0a]">
-                                <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 gap-1">
+                            <div className="flex-1 overflow-y-auto p-6 bg-[#050505] custom-scrollbar">
+                                <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 gap-3">
                                     {selectorItems.map((img) => {
                                         const isSelected = selectorTarget.type === "accessories" ? multiSelection.includes(img) : false
                                         return (
@@ -408,20 +441,20 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                                 key={img}
                                                 onClick={() => handleSelectorClick(img)}
                                                 className={clsx(
-                                                    "relative aspect-square bg-[#1a1a1a] border rounded overflow-hidden group transition-all",
-                                                    isSelected ? "border-[#FFD700] ring-1 ring-[#FFD700] z-10" : "border-gray-800 hover:border-[#FFD700] hover:z-10"
+                                                    "relative aspect-square bg-[#111] border-2 rounded-xl overflow-hidden group transition-all shadow-md",
+                                                    isSelected ? "border-[#FFD700] ring-4 ring-[#FFD700]/30 z-10 scale-105" : "border-gray-800 hover:border-gray-500 hover:z-10 hover:scale-105"
                                                 )}
                                                 title={img}
                                             >
                                                 <Image
-                                                    src={`/items/${(selectorTarget.type === 'weapons' ? 'weapon' : selectorTarget.type === 'armors' ? 'armor' : 'accessory')}/${img}`}
+                                                    src={`/items/${(selectorTarget.type === 'weapons' ? 'weapon' : selectorTarget.type === 'armors' ? 'armor' : 'accessories')}/${img}`}
                                                     fill
-                                                    className="object-cover group-hover:scale-110 transition-transform"
+                                                    className="object-cover group-hover:scale-110 transition-transform duration-500"
                                                     alt="item"
                                                 />
                                                 {isSelected && (
-                                                    <div className="absolute top-0.5 right-0.5 bg-[#FFD700] text-black w-3 h-3 rounded-full flex items-center justify-center text-[8px] font-bold shadow-sm z-10">
-                                                        <Check className="w-2 h-2" />
+                                                    <div className="absolute top-1.5 right-1.5 bg-gradient-to-br from-[#FFD700] to-yellow-600 text-black w-5 h-5 rounded-full flex items-center justify-center shadow-lg z-10 border border-black transform scale-110">
+                                                        <Check className="w-3 h-3 font-black" />
                                                     </div>
                                                 )}
                                             </button>
@@ -440,29 +473,32 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
 
 function ItemCard({ item, type, stats, onClick, onStatChange }) {
     return (
-        <div className="bg-[#0f0f0f] rounded-lg p-2 flex gap-2 items-center border border-gray-800 hover:border-gray-700 transition-colors">
+        <div className="bg-gradient-to-r from-gray-900/80 to-black rounded-xl p-3 flex gap-3 items-center border border-gray-800 hover:border-[#FFD700]/50 hover:shadow-lg hover:shadow-[#FFD700]/5 transition-all group/item">
             <button
                 onClick={onClick}
-                className="relative w-12 h-12 bg-black rounded border border-gray-700 hover:border-[#FFD700] flex-shrink-0 transition-colors"
+                className="relative w-14 h-14 bg-black rounded-lg border-2 border-gray-700 group-hover/item:border-[#FFD700] flex-shrink-0 transition-colors shadow-inner overflow-hidden"
                 title={`Select ${type}`}
             >
                 {item.image ? (
-                    <Image src={`/items/${type.toLowerCase()}/${item.image}`} fill className="object-cover rounded-[3px]" alt={type} />
+                    <Image src={`/items/${type.toLowerCase()}/${item.image}`} fill className="object-cover hover:scale-110 transition-transform" alt={type} />
                 ) : (
-                    <div className="absolute inset-0 flex items-center justify-center text-[8px] text-gray-700 uppercase tracking-wider">Select</div>
+                    <div className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-gray-700 uppercase tracking-widest bg-gray-900/50 group-hover/item:text-[#FFD700] group-hover/item:bg-[#FFD700]/5 transition-colors">Select</div>
                 )}
             </button>
-            <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-center mb-0.5">
-                    <div className={clsx("text-[9px] font-bold uppercase tracking-wider", type === "Weapon" ? "text-red-400" : "text-blue-400")}>{type}</div>
+            <div className="flex-1 min-w-0 flex flex-col justify-center">
+                <div className="flex justify-between items-center mb-1.5">
+                    <div className={clsx("text-[10px] font-black uppercase tracking-widest", type === "Weapon" ? "text-red-400" : "text-blue-400")}>{type}</div>
                 </div>
-                <select
-                    value={item.stat}
-                    onChange={(e) => onStatChange(e.target.value)}
-                    className="w-full bg-black border border-gray-700 text-[10px] text-gray-300 rounded px-1.5 py-1 outline-none focus:border-gray-600"
-                >
-                    {stats.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
+                <div className="relative">
+                    <select
+                        value={item.stat}
+                        onChange={(e) => onStatChange(e.target.value)}
+                        className="w-full bg-black/60 border border-gray-700 text-xs text-gray-300 font-bold rounded-lg px-2 py-1.5 outline-none focus:border-[#FFD700] transition-colors appearance-none cursor-pointer"
+                    >
+                        {stats.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-600 text-[10px]">▼</div>
+                </div>
             </div>
         </div>
     )

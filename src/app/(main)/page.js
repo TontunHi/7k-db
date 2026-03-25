@@ -3,6 +3,11 @@ import { Sword, Map, Skull, Landmark, Trophy, ArrowRight, Crown } from 'lucide-r
 
 export const dynamic = 'force-dynamic';
 
+export const metadata = {
+    title: 'Home | 7K DB',
+    description: 'Welcome to the ultimate Seven Knights Rebirth database. Find hero builds, tier lists, and complete stage guides.',
+};
+
 export default async function HomePage() {
     
     const FEATURES = [

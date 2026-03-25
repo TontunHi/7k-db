@@ -6,6 +6,7 @@ import { openEditor, saveEditor } from "@/lib/editor-actions"
 import Image from "next/image"
 import { Trash2, Upload, Loader2, Edit, X, Plus } from "lucide-react"
 import BuildEditorModal from "@/components/admin/BuildEditorModal"
+import { toast } from "sonner"
 
 export default function BuildManager({ heroes }) {
     const [isUploading, setIsUploading] = useState(false)
@@ -23,7 +24,7 @@ export default function BuildManager({ heroes }) {
         e.preventDefault()
         if (!heroFile) return
         if (skillFiles.length > 0 && !skillFolderName) {
-            alert("Please enter a Skill Folder Name for the skills.")
+            toast.error("Please enter a Skill Folder Name for the skills.")
             return
         }
 
@@ -38,6 +39,7 @@ export default function BuildManager({ heroes }) {
             }
 
             await uploadHeroImage(data)
+            toast.success("Hero uploaded successfully!")
 
             // Reset
             setHeroFile(null)
@@ -45,18 +47,19 @@ export default function BuildManager({ heroes }) {
             setSkillFolderName("")
             e.target.reset()
         } catch (err) {
-            alert("Failed to upload: " + err.message)
+            toast.error("Failed to upload: " + err.message)
         } finally {
             setIsUploading(false)
         }
     }
 
     async function handleDelete(filename) {
-        if (!confirm("Are you sure you want to delete this hero?")) return
+        if (!window.confirm("Are you sure you want to delete this hero?")) return
         try {
             await deleteHeroImage(filename)
+            toast.success("Hero deleted successfully.")
         } catch (err) {
-            alert("Failed to delete")
+            toast.error("Failed to delete hero.")
         }
     }
 
@@ -69,7 +72,7 @@ export default function BuildManager({ heroes }) {
             setEditorOpen(true)
         } catch (err) {
             console.error(err)
-            alert("Failed to load editor: " + err.message)
+            toast.error("Failed to load editor: " + err.message)
         } finally {
             setIsLoadingEditor(false)
         }
@@ -77,111 +80,159 @@ export default function BuildManager({ heroes }) {
 
     async function handleSaveBuilds(newBuilds, newSkillPriority) {
         if (!currentHero) return
-        await saveEditor(
-            currentHero.filename,
-            newBuilds,
-            newSkillPriority,
-            currentHero.name,
-            currentHero.grade
-        )
+        try {
+            await saveEditor(
+                currentHero.filename,
+                newBuilds,
+                newSkillPriority,
+                currentHero.name,
+                currentHero.grade
+            )
+            toast.success("Builds saved successfully!")
+        } catch (error) {
+            toast.error("Failed to save builds.")
+        }
     }
 
     return (
-        <div className="space-y-8">
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold text-white">Manage Builds</h1>
-                <span className="text-sm text-gray-500">{heroes.length} Heroes Total</span>
+        <div className="space-y-8 animate-in fade-in duration-500">
+            {/* Header */}
+            <div className="flex justify-between items-end border-b border-gray-800 pb-4">
+                <div>
+                    <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-yellow-200 tracking-tight">
+                        Manage Builds
+                    </h1>
+                    <p className="text-sm text-gray-400 mt-1">Upload and manage hero builds and skills</p>
+                </div>
+                <div className="bg-gray-900 border border-gray-800 px-4 py-2 rounded-xl flex items-center shadow-inner">
+                    <span className="text-lg font-bold text-[#FFD700]">{heroes.length}</span>
+                    <span className="text-sm text-gray-400 ml-2 uppercase tracking-wider font-semibold">Heroes Total</span>
+                </div>
             </div>
 
             {/* Upload Form */}
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-                <h2 className="text-lg font-bold text-[#FFD700] mb-4 flex items-center gap-2">
-                    <Upload className="w-5 h-5" />
+            <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 hover:border-gray-700 transition-colors rounded-2xl p-6 shadow-2xl shadow-black/50">
+                <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                    <div className="p-2 bg-[#FFD700]/10 rounded-lg">
+                        <Upload className="w-5 h-5 text-[#FFD700]" />
+                    </div>
                     Upload New Hero
                 </h2>
 
-                {/* Changed to Grid for better alignment and equal sizing */}
-                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+                    
                     {/* Hero Image Input */}
-                    <div className="space-y-2 w-full">
-                        <label className="text-xs text-gray-500 uppercase font-bold">Hero Image</label>
-                        <div className="relative border border-gray-700 bg-black rounded-lg h-10 flex items-center px-2 hover:border-[#FFD700] transition-colors">
+                    <div className="space-y-2">
+                        <label className="text-xs text-gray-400 uppercase tracking-widest font-bold ml-1">Hero Image</label>
+                        <div className="relative group">
                             <input
                                 type="file"
+                                id="hero-upload"
                                 required
                                 accept="image/*"
                                 onChange={(e) => setHeroFile(e.target.files[0])}
-                                className="w-full text-xs text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-gray-800 file:text-[#FFD700] hover:file:bg-gray-700 cursor-pointer focus:outline-none"
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                             />
+                            <div className={`flex flex-col items-center justify-center border-2 border-dashed ${heroFile ? 'border-[#FFD700] bg-[#FFD700]/5' : 'border-gray-700 bg-black/50'} rounded-xl h-24 hover:border-[#FFD700] transition-colors group-hover:bg-gray-900/50`}>
+                                {heroFile ? (
+                                    <span className="text-sm font-semibold text-[#FFD700] truncate px-4 w-full text-center">{heroFile.name}</span>
+                                ) : (
+                                    <>
+                                        <Plus className="w-6 h-6 text-gray-500 group-hover:text-[#FFD700] mb-1 transition-colors" />
+                                        <span className="text-xs text-gray-500 font-medium group-hover:text-gray-300">Choose image...</span>
+                                    </>
+                                )}
+                            </div>
                         </div>
                     </div>
 
                     {/* Skill Folder Name Input */}
-                    <div className="space-y-2 w-full">
-                        <label className="text-xs text-gray-500 uppercase font-bold">Skill Folder Name</label>
-                        <div className="relative border border-gray-700 bg-black rounded-lg h-10 flex items-center px-3 hover:border-[#FFD700] transition-colors">
+                    <div className="space-y-2">
+                        <label className="text-xs text-gray-400 uppercase tracking-widest font-bold ml-1">Skill Folder</label>
+                        <div className="relative">
                             <input
                                 type="text"
                                 value={skillFolderName}
                                 onChange={(e) => setSkillFolderName(e.target.value)}
                                 placeholder="e.g. Ace"
-                                className="w-full bg-transparent border-none outline-none text-sm text-white placeholder-gray-600 focus:ring-0"
+                                className="w-full bg-black/50 border-2 border-gray-700 rounded-xl h-24 px-4 text-white text-base placeholder-gray-600 focus:outline-none focus:border-[#FFD700] focus:ring-1 focus:ring-[#FFD700] transition-all hover:border-gray-600 text-center"
                             />
                         </div>
                     </div>
 
                     {/* Skill Images Input */}
-                    <div className="space-y-2 w-full">
-                        <label className="text-xs text-gray-500 uppercase font-bold">Skill Files</label>
-                        <div className="relative border border-gray-700 bg-black rounded-lg h-10 flex items-center px-2 hover:border-[#FFD700] transition-colors">
+                    <div className="space-y-2">
+                        <label className="text-xs text-gray-400 uppercase tracking-widest font-bold ml-1">Skill Files</label>
+                        <div className="relative group">
                             <input
                                 type="file"
                                 multiple
                                 accept="image/*"
                                 onChange={(e) => setSkillFiles(e.target.files)}
-                                className="w-full text-xs text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-gray-800 file:text-[#FFD700] hover:file:bg-gray-700 cursor-pointer focus:outline-none"
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                             />
+                            <div className={`flex flex-col items-center justify-center border-2 border-dashed ${skillFiles.length > 0 ? 'border-[#FFD700] bg-[#FFD700]/5' : 'border-gray-700 bg-black/50'} rounded-xl h-24 hover:border-[#FFD700] transition-colors group-hover:bg-gray-900/50`}>
+                                {skillFiles.length > 0 ? (
+                                    <span className="text-sm font-semibold text-[#FFD700] truncate px-4 w-full text-center">{skillFiles.length} files selected</span>
+                                ) : (
+                                    <>
+                                        <Plus className="w-6 h-6 text-gray-500 group-hover:text-[#FFD700] mb-1 transition-colors" />
+                                        <span className="text-xs text-gray-500 font-medium group-hover:text-gray-300">Choose skills...</span>
+                                    </>
+                                )}
+                            </div>
                         </div>
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={isUploading}
-                        className="h-10 w-full bg-[#FFD700] hover:bg-[#E5C100] text-black font-bold rounded-lg disabled:opacity-50 flex items-center justify-center gap-2 transition-colors uppercase text-xs tracking-wider"
-                    >
-                        {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Upload"}
-                    </button>
+                    {/* Submit Button */}
+                    <div className="space-y-2 h-full flex flex-col justify-end">
+                        <button
+                            type="submit"
+                            disabled={isUploading}
+                            className="h-24 w-full bg-gradient-to-br from-[#FFD700] to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black font-extrabold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-center justify-center gap-2 transition-all transform hover:scale-[1.02] active:scale-[0.98] uppercase tracking-widest shadow-lg shadow-[#FFD700]/20"
+                        >
+                            {isUploading ? (
+                                <Loader2 className="w-6 h-6 animate-spin" />
+                            ) : (
+                                <>
+                                    <Upload className="w-6 h-6" />
+                                    <span>Upload Hero</span>
+                                </>
+                            )}
+                        </button>
+                    </div>
+
                 </form>
 
-                <div className="flex gap-4 mt-2">
-                    {heroFile && <div className="text-[10px] text-[#FFD700]">Hero: {heroFile.name}</div>}
-                    {skillFiles.length > 0 && <div className="text-[10px] text-[#FFD700]">Skills: {skillFiles.length} files</div>}
+                <div className="mt-8 flex items-center justify-between p-4 bg-black/40 rounded-xl border border-gray-800">
+                    <p className="text-xs text-gray-400 flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
+                        Filename: <code className="text-[#FFD700] font-mono bg-black px-1.5 py-0.5 rounded shadow-inner">grade_Name.ext</code> (e.g. <code className="text-[#FFD700] font-mono bg-black px-1.5 py-0.5 rounded shadow-inner">l++_ace.png</code>). 
+                        Skill Folder should match the Name exactly.
+                    </p>
                 </div>
-
-                <p className="text-[10px] text-gray-600 mt-2">
-                    * Filename: <code>grade_Name.ext</code> (e.g. <code>l++_Ace.png</code>). Skill Folder should match (e.g. <code>Ace</code>).
-                </p>
             </div>
 
             {/* List */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
                 {heroes.map((hero) => (
                     <div
                         key={hero.filename}
-                        className="group relative bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-gray-700 transition-colors"
+                        className="group relative bg-black border border-gray-800 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:border-[#FFD700]/50 hover:shadow-[0_0_20px_rgba(255,215,0,0.15)] hover:-translate-y-1"
                     >
-                        <div onClick={() => handleEdit(hero)} className="cursor-pointer">
-                            <div className="aspect-[4/5] relative">
+                        <div onClick={() => handleEdit(hero)} className="cursor-pointer h-full">
+                            <div className="aspect-[4/5] relative bg-gray-900 overflow-hidden">
                                 <Image
                                     src={`/heroes/${hero.filename}`}
                                     alt={hero.name}
                                     fill
-                                    className="object-cover transition-opacity"
+                                    className="object-cover transition-transform duration-500 group-hover:scale-110"
                                 />
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <div className="bg-black/80 text-[#FFD700] px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2">
-                                        <Edit className="w-3 h-3" /> Edit
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center backdrop-blur-[2px]">
+                                    <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                        <div className="bg-[#FFD700] text-black px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 shadow-lg shadow-[#FFD700]/30 hover:bg-yellow-300 transition-colors">
+                                            <Edit className="w-4 h-4" /> Edit Build
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -192,18 +243,19 @@ export default function BuildManager({ heroes }) {
                                 e.stopPropagation();
                                 handleDelete(hero.filename)
                             }}
-                            className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-lg hover:bg-red-500 hover:text-white transition-colors opacity-0 group-hover:opacity-100 z-10"
-                            title="Delete"
+                            className="absolute top-3 right-3 p-3 bg-red-500/80 backdrop-blur-md text-white rounded-xl hover:bg-red-600 transition-all duration-300 opacity-0 group-hover:opacity-100 z-20 border border-red-400 hover:border-red-300 transform scale-95 group-hover:scale-110 shadow-lg hover:shadow-red-500/50"
+                            title="Delete Hero"
                         >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-5 h-5" />
                         </button>
                     </div>
                 ))}
             </div>
 
             {isLoadingEditor && (
-                <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
-                    <Loader2 className="w-8 h-8 text-[#FFD700] animate-spin" />
+                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in">
+                    <Loader2 className="w-12 h-12 text-[#FFD700] animate-spin mb-4" />
+                    <p className="text-[#FFD700] font-bold tracking-widest animate-pulse uppercase">Loading Editor...</p>
                 </div>
             )}
 

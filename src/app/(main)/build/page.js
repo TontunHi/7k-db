@@ -39,6 +39,13 @@ export default async function BuildPage() {
                 }
             })
             .filter((h) => h !== null) // Remove unknowns
+            .sort((a, b) => {
+                const gradeOrder = { "l++": 0, "l+": 1, "l": 2, "r": 3 }
+                const ga = gradeOrder[a.grade] ?? 99
+                const gb = gradeOrder[b.grade] ?? 99
+                if (ga !== gb) return ga - gb
+                return a.name.localeCompare(b.name)
+            })
 
     } catch (error) {
         console.error("Error reading hero files:", error)

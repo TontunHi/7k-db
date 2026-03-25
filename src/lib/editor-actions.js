@@ -12,7 +12,7 @@ export async function openEditor(filename) {
     const [weapons, armors, accessories, skills] = await Promise.all([
         getItemImages('weapon'),
         getItemImages('armor'),
-        getItemImages('accessory'),
+        getItemImages('accessories'),
         getHeroSkills(filename)
     ])
 
