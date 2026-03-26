@@ -1,7 +1,13 @@
 import Link from "next/link"
-import { LayoutDashboard, LogOut, FileImage, FileText, Map, Crown, Landmark, Skull } from "lucide-react"
+import { LayoutDashboard, LogOut, FileImage, FileText, Map, Crown, Landmark, Skull, Compass } from "lucide-react"
 import { logout } from "@/lib/actions"
 
+export const metadata = {
+    title: {
+        template: '%s | 7K Admin',
+        default: 'Admin Dashboard | 7K Admin'
+    }
+}
 export default function AdminLayout({ children }) {
     return (
         <div className="min-h-screen bg-black flex">
@@ -40,6 +46,13 @@ export default function AdminLayout({ children }) {
                     >
                         <Crown className="w-5 h-5" />
                         Castle Rush
+                    </Link>
+                    <Link
+                        href="/admin/advent"
+                        className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-violet-400 hover:bg-violet-900/20 rounded-lg transition-colors"
+                    >
+                        <Compass className="w-5 h-5" />
+                        Advent Expedition
                     </Link>
                     <Link
                         href="/admin/dungeon"

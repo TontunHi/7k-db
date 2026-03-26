@@ -1,7 +1,7 @@
 import PublicTierlistView from "@/components/tierlist/PublicTierlistView"
 
 export const metadata = {
-    title: "Start Rail - Tier List",
+    title: "Tier List",
     description: "Best heroes for PVE, PVP, and Raid modes."
 }
 

@@ -13,7 +13,7 @@ export async function generateMetadata({ params }) {
     if (!dungeon) return { title: 'Dungeon Not Found' }
     
     return {
-        title: `${dungeon.name} - Dungeon Guides | 7K Database`,
+        title: `${dungeon.name} - Dungeon Guides`,
         description: `Team recommendations for ${dungeon.name}.`
     }
 }

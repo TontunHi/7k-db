@@ -3,7 +3,7 @@ import path from "path"
 import BuildView from "@/components/build/BuildView"
 
 export const metadata = {
-    title: "Hero Builds | 7K DB",
+    title: "Hero Builds",
     description: "Recommended builds for Legendary and Rare heroes.",
 }
 
@@ -44,7 +44,7 @@ export default async function BuildPage() {
                 const ga = gradeOrder[a.grade] ?? 99
                 const gb = gradeOrder[b.grade] ?? 99
                 if (ga !== gb) return ga - gb
-                return a.name.localeCompare(b.name)
+                return a.filename.localeCompare(b.filename)
             })
 
     } catch (error) {

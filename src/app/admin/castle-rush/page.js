@@ -5,6 +5,8 @@ import { Crown } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
+export const metadata = { title: 'Castle Rush' }
+
 export default async function AdminCastleRushPage() {
     const bosses = await getBosses()
 

@@ -4,7 +4,7 @@ import PublicStageView from '@/components/stages/PublicStageView'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-    title: "Start Rail - Stage Strategy",
+    title: "Stage Strategy",
     description: "Optimized team compositions for Main Stage and Nightmare Stage clearing."
 }
 

@@ -6,7 +6,7 @@ import { Skull } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-    title: "Raids - 7K Database",
+    title: "Raids",
     description: "Raid guides, team recommendations and skill rotations for Seven Knights 2 Rebirth."
 }
 

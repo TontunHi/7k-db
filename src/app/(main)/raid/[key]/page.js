@@ -13,7 +13,7 @@ export async function generateMetadata({ params }) {
     if (!raid) return { title: 'Raid Not Found' }
     
     return {
-        title: `${raid.name} - Raid Guide | 7K Database`,
+        title: `${raid.name} - Raid Guide`,
         description: `Team recommendations and skill rotations for ${raid.name}.`
     }
 }

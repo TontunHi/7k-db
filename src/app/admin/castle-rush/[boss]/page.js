@@ -4,7 +4,7 @@ import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Crown } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Crown, Zap, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { 
     getBossInfo, 
@@ -15,6 +15,13 @@ import {
 } from '@/lib/castle-rush-actions'
 import { getAllHeroes, getPets, getFormations } from '@/lib/stage-actions'
 import TeamBuilder from '@/components/admin/TeamBuilder'
+
+// Helper to get hero skill image path
+function getSkillImagePath(heroFilename, skillNumber) {
+    if (!heroFilename) return null
+    const folderName = heroFilename.replace('.png', '')
+    return `/skills/${folderName}/${skillNumber}.png`
+}
 
 export default function BossDetailPage({ params }) {
     const router = useRouter()
@@ -27,6 +34,9 @@ export default function BossDetailPage({ params }) {
     const [formations, setFormations] = useState([])
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
+    const [skillErrors, setSkillErrors] = useState({})
+    // Skill picker state: { setIdx, slotIdx } or null
+    const [skillPicker, setSkillPicker] = useState(null)
 
     useEffect(() => {
         async function loadData() {
@@ -56,6 +66,7 @@ export default function BossDetailPage({ params }) {
             formation: formations[0]?.value || '2-3',
             pet_file: '',
             heroes: [null, null, null, null, null],
+            skill_rotation: [],
             video_url: '',
             note: '',
             _isNew: true,
@@ -100,6 +111,7 @@ export default function BossDetailPage({ params }) {
                 formation: set.formation,
                 pet_file: set.pet_file,
                 heroes: set.heroes,
+                skill_rotation: set.skill_rotation,
                 video_url: set.video_url,
                 note: set.note
             }
@@ -111,10 +123,55 @@ export default function BossDetailPage({ params }) {
             }
         }
         
-        // Reload data
         const setsData = await getSetsByBoss(bossKey)
         setSets(setsData.map(s => ({ ...s, _dirty: false })))
         setSaving(false)
+    }
+
+    // --- Skill Slot Handlers ---
+    const handleAddSlot = (setIdx) => {
+        const updated = [...sets]
+        const rotation = [...(updated[setIdx].skill_rotation || [])]
+        rotation.push({ label: '', skill: null })
+        updated[setIdx] = { ...updated[setIdx], skill_rotation: rotation, _dirty: true }
+        setSets(updated)
+    }
+
+    const handleUpdateSlotLabel = (setIdx, slotIdx, label) => {
+        const updated = [...sets]
+        const rotation = [...(updated[setIdx].skill_rotation || [])]
+        rotation[slotIdx] = { ...rotation[slotIdx], label }
+        updated[setIdx] = { ...updated[setIdx], skill_rotation: rotation, _dirty: true }
+        setSets(updated)
+    }
+
+    const handleSelectSkillForSlot = (setIdx, slotIdx, skillKey) => {
+        const updated = [...sets]
+        const rotation = [...(updated[setIdx].skill_rotation || [])]
+        rotation[slotIdx] = { ...rotation[slotIdx], skill: skillKey }
+        updated[setIdx] = { ...updated[setIdx], skill_rotation: rotation, _dirty: true }
+        setSets(updated)
+        setSkillPicker(null)
+    }
+
+    const handleClearSlotSkill = (setIdx, slotIdx) => {
+        const updated = [...sets]
+        const rotation = [...(updated[setIdx].skill_rotation || [])]
+        rotation[slotIdx] = { ...rotation[slotIdx], skill: null }
+        updated[setIdx] = { ...updated[setIdx], skill_rotation: rotation, _dirty: true }
+        setSets(updated)
+    }
+
+    const handleDeleteSlot = (setIdx, slotIdx) => {
+        const updated = [...sets]
+        const rotation = [...(updated[setIdx].skill_rotation || [])]
+        rotation.splice(slotIdx, 1)
+        updated[setIdx] = { ...updated[setIdx], skill_rotation: rotation, _dirty: true }
+        setSets(updated)
+    }
+
+    const handleSkillError = (key) => {
+        setSkillErrors(prev => ({ ...prev, [key]: true }))
     }
 
     if (loading) {
@@ -131,12 +188,84 @@ export default function BossDetailPage({ params }) {
 
     const hasDirty = sets.some(s => s._dirty)
 
+    // Skill Picker Modal
+    const SkillPickerModal = () => {
+        if (!skillPicker) return null
+        const { setIdx, slotIdx } = skillPicker
+        const set = sets[setIdx]
+        const teamHeroes = set.heroes || []
+
+        return (
+            <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-md">
+                <div className="bg-gray-900 w-full max-w-2xl rounded-2xl border border-gray-700 shadow-2xl overflow-hidden">
+                    <div className="p-5 border-b border-gray-800 flex justify-between items-center bg-black/50">
+                        <div>
+                            <h3 className="text-xl font-black text-white">เลือกสกิล</h3>
+                            <p className="text-sm text-gray-400 mt-1">เลือกสกิลจาก Hero ในทีม</p>
+                        </div>
+                        <button onClick={() => setSkillPicker(null)} className="p-2 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400">
+                            <X size={22} />
+                        </button>
+                    </div>
+                    <div className="p-5 space-y-4 max-h-[60vh] overflow-y-auto">
+                        {teamHeroes.map((heroFile, heroIdx) => {
+                            if (!heroFile) return null
+                            const heroName = heroFile.replace(/^(l\+\+|l\+|l|r|uc|c)_/i, '').replace(/\.[^/.]+$/, '').replace(/_/g, ' ')
+
+                            return (
+                                <div key={heroIdx} className="space-y-2">
+                                    <div className="flex items-center gap-2">
+                                        <div className="relative w-8 h-8 rounded-md overflow-hidden border border-gray-700">
+                                            <Image src={`/heroes/${heroFile}`} alt={heroName} fill className="object-cover" />
+                                        </div>
+                                        <span className="text-sm font-bold text-gray-300 capitalize">{heroName}</span>
+                                    </div>
+                                    <div className="flex gap-2 ml-10">
+                                        {[1, 2, 3, 4].map(skillNum => {
+                                            const skillKey = `${heroIdx}-${skillNum}`
+                                            const skillPath = getSkillImagePath(heroFile, skillNum)
+                                            const errKey = `pick-${heroIdx}-${skillNum}`
+                                            const hasError = skillErrors[errKey]
+
+                                            return (
+                                                <button
+                                                    key={skillNum}
+                                                    type="button"
+                                                    onClick={() => handleSelectSkillForSlot(setIdx, slotIdx, skillKey)}
+                                                    className="relative w-14 h-14 rounded-lg overflow-hidden border-2 border-gray-700 hover:border-[#FFD700] hover:shadow-[0_0_15px_rgba(255,215,0,0.3)] transition-all bg-gray-900"
+                                                >
+                                                    {skillPath && !hasError ? (
+                                                        <Image
+                                                            src={skillPath}
+                                                            alt={`Skill ${skillNum}`}
+                                                            fill
+                                                            className="object-contain p-0.5"
+                                                            onError={() => handleSkillError(errKey)}
+                                                        />
+                                                    ) : (
+                                                        <span className="text-gray-600 text-xs flex items-center justify-center w-full h-full">S{skillNum}</span>
+                                                    )}
+                                                </button>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                            )
+                        })}
+                        {!teamHeroes.some(h => h) && (
+                            <p className="text-center text-gray-500 py-8">ยังไม่มี Hero ในทีม</p>
+                        )}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div className="flex gap-6 pb-20">
             {/* Left Sidebar - Boss Image */}
             <div className="hidden lg:block w-64 flex-shrink-0">
                 <div className="sticky top-8 space-y-4">
-                    {/* Back Button */}
                     <Link 
                         href="/admin/castle-rush" 
                         className="flex items-center gap-2 px-4 py-3 text-gray-400 hover:text-[#FFD700] hover:bg-gray-800/50 rounded-lg transition-colors w-full"
@@ -146,13 +275,7 @@ export default function BossDetailPage({ params }) {
                     </Link>
 
                     <div className="relative aspect-[2/3] rounded-xl overflow-hidden border border-gray-800 bg-gradient-to-b from-gray-900 to-black">
-                        <Image 
-                            src={boss.image} 
-                            alt={boss.name} 
-                            fill 
-                            className="object-contain object-center" 
-                            priority
-                        />
+                        <Image src={boss.image} alt={boss.name} fill className="object-contain object-center" priority />
                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent p-4 pt-12">
                             <div className="flex items-center gap-2 mb-2">
                                 <Crown className="w-5 h-5 text-[#FFD700]" />
@@ -217,83 +340,181 @@ export default function BossDetailPage({ params }) {
                         </div>
                     )}
 
-                    {sets.map((set, idx) => (
-                        <div 
-                            key={set.id} 
-                            className={cn(
-                                "bg-gray-900/50 border rounded-xl overflow-hidden",
-                                set._dirty ? "border-[#FFD700]/50" : "border-gray-800"
-                            )}
-                        >
-                            {/* Team Header */}
-                            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800 bg-gray-900/50">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-[#FFD700]/10 flex items-center justify-center text-[#FFD700] font-black">
-                                        {idx + 1}
+                    {sets.map((set, idx) => {
+                        const hasHeroes = set.heroes?.some(h => h !== null)
+                        const rotation = set.skill_rotation || []
+
+                        return (
+                            <div 
+                                key={set.id} 
+                                className={cn(
+                                    "bg-gray-900/50 border rounded-xl overflow-hidden",
+                                    set._dirty ? "border-[#FFD700]/50" : "border-gray-800"
+                                )}
+                            >
+                                {/* Team Header */}
+                                <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800 bg-gray-900/50">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-[#FFD700]/10 flex items-center justify-center text-[#FFD700] font-black">
+                                            {idx + 1}
+                                        </div>
+                                        <h3 className="text-lg font-bold text-white">Team {idx + 1}</h3>
+                                        {set._dirty && <span className="px-2 py-0.5 bg-[#FFD700]/20 text-[#FFD700] text-xs font-bold rounded">Unsaved</span>}
                                     </div>
-                                    <h3 className="text-lg font-bold text-white">
-                                        Team {idx + 1}
-                                    </h3>
-                                    {set._dirty && <span className="px-2 py-0.5 bg-[#FFD700]/20 text-[#FFD700] text-xs font-bold rounded">Unsaved</span>}
+                                    <button
+                                        onClick={() => handleDeleteSet(idx)}
+                                        className="text-gray-500 hover:text-red-400 transition-colors p-2 hover:bg-red-500/10 rounded-lg"
+                                    >
+                                        <Trash2 className="w-5 h-5" />
+                                    </button>
                                 </div>
-                                <button
-                                    onClick={() => handleDeleteSet(idx)}
-                                    className="text-gray-500 hover:text-red-400 transition-colors p-2 hover:bg-red-500/10 rounded-lg"
-                                >
-                                    <Trash2 className="w-5 h-5" />
-                                </button>
-                            </div>
 
-                            <div className="p-5 space-y-6">
-                                {/* Team Builder */}
-                                <TeamBuilder
-                                    team={{
-                                        index: idx + 1,
-                                        formation: set.formation,
-                                        pet_file: set.pet_file,
-                                        heroes: set.heroes
-                                    }}
-                                    index={idx}
-                                    heroesList={heroes}
-                                    petsList={pets}
-                                    formations={formations}
-                                    onUpdate={(teamData) => handleTeamUpdate(idx, teamData)}
-                                    onRemove={null}
-                                />
-
-                                {/* Video URL */}
-                                <div className="space-y-2">
-                                    <label className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
-                                        <Video className="w-4 h-4" />
-                                        Video URL
-                                    </label>
-                                    <input
-                                        type="url"
-                                        value={set.video_url || ''}
-                                        onChange={(e) => handleUpdateSet(idx, 'video_url', e.target.value)}
-                                        placeholder="https://youtube.com/watch?v=..."
-                                        className="w-full bg-black border border-gray-800 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#FFD700] transition-colors"
+                                <div className="p-5 space-y-6">
+                                    {/* Team Builder */}
+                                    <TeamBuilder
+                                        team={{
+                                            index: idx + 1,
+                                            formation: set.formation,
+                                            pet_file: set.pet_file,
+                                            heroes: set.heroes
+                                        }}
+                                        index={idx}
+                                        heroesList={heroes}
+                                        petsList={pets}
+                                        formations={formations}
+                                        onUpdate={(teamData) => handleTeamUpdate(idx, teamData)}
+                                        onRemove={null}
                                     />
-                                </div>
 
-                                {/* Note */}
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                                        Note
-                                    </label>
-                                    <textarea
-                                        value={set.note || ''}
-                                        onChange={(e) => handleUpdateSet(idx, 'note', e.target.value)}
-                                        placeholder="Optional notes for this team..."
-                                        rows={2}
-                                        className="w-full bg-black border border-gray-800 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#FFD700] transition-colors resize-none"
-                                    />
+                                    {/* ===== Skill Slots Row ===== */}
+                                    <div className="space-y-3">
+                                        <div className="flex items-center justify-between">
+                                            <label className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                                <Zap className="w-4 h-4 text-[#FFD700]" />
+                                                Skill Rotation
+                                            </label>
+                                        </div>
+
+                                        <div className="bg-black/40 rounded-xl border border-gray-800 p-4">
+                                            <div className="flex flex-wrap items-end gap-1.5">
+                                                {rotation.map((slot, slotIdx) => {
+                                                    const [hIdx, sNum] = (slot.skill || '').split('-').map(Number)
+                                                    const heroFile = set.heroes?.[hIdx]
+                                                    const skillPath = slot.skill ? getSkillImagePath(heroFile, sNum) : null
+                                                    const errKey = `slot-${set.id}-${slotIdx}`
+                                                    const hasError = skillErrors[errKey]
+
+                                                    return (
+                                                        <div key={slotIdx} className="flex flex-col items-center group">
+                                                            {/* Editable Label */}
+                                                            <input
+                                                                type="text"
+                                                                value={slot.label || ''}
+                                                                onChange={(e) => handleUpdateSlotLabel(idx, slotIdx, e.target.value)}
+                                                                placeholder="..."
+                                                                className="w-14 text-center text-[10px] font-bold text-[#FFD700]/80 bg-transparent border-none outline-none placeholder-gray-600 mb-0.5 truncate"
+                                                            />
+                                                            {/* Skill Square */}
+                                                            <div className="relative">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setSkillPicker({ setIdx: idx, slotIdx })}
+                                                                    disabled={!hasHeroes}
+                                                                    className={cn(
+                                                                        "w-12 h-12 rounded-md overflow-hidden border-2 flex items-center justify-center transition-all",
+                                                                        slot.skill 
+                                                                            ? "border-[#FFD700]/50 bg-gray-900 hover:border-[#FFD700]" 
+                                                                            : "border-gray-700 border-dashed bg-gray-900/30 hover:border-gray-500",
+                                                                        !hasHeroes && "cursor-not-allowed opacity-40"
+                                                                    )}
+                                                                >
+                                                                    {slot.skill && heroFile && skillPath && !hasError ? (
+                                                                        <Image
+                                                                            src={skillPath}
+                                                                            alt=""
+                                                                            fill
+                                                                            className="object-contain p-0.5"
+                                                                            onError={() => handleSkillError(errKey)}
+                                                                        />
+                                                                    ) : (
+                                                                        <Plus className="w-4 h-4 text-gray-600" />
+                                                                    )}
+                                                                </button>
+                                                                {/* Delete btn on hover */}
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={(e) => { e.stopPropagation(); handleDeleteSlot(idx, slotIdx) }}
+                                                                    className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full items-center justify-center text-[8px] hidden group-hover:flex shadow"
+                                                                >
+                                                                    ✕
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })}
+
+                                                {/* Add Slot Button */}
+                                                <div className="flex flex-col items-center">
+                                                    <div className="h-[14px]" /> {/* spacer for label alignment */}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleAddSlot(idx)}
+                                                        disabled={!hasHeroes}
+                                                        className={cn(
+                                                            "w-12 h-12 rounded-md border-2 border-dashed flex items-center justify-center transition-all",
+                                                            hasHeroes
+                                                                ? "border-[#FFD700]/30 text-[#FFD700]/50 hover:border-[#FFD700] hover:text-[#FFD700] hover:bg-[#FFD700]/5"
+                                                                : "border-gray-700 text-gray-700 cursor-not-allowed"
+                                                        )}
+                                                    >
+                                                        <Plus className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            {!hasHeroes && (
+                                                <p className="text-gray-600 text-xs mt-2">ใส่ Heroes ในทีมก่อนเพื่อเลือก Skills</p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Video URL */}
+                                    <div className="space-y-2">
+                                        <label className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                            <Video className="w-4 h-4" />
+                                            Video URL
+                                        </label>
+                                        <input
+                                            type="url"
+                                            value={set.video_url || ''}
+                                            onChange={(e) => handleUpdateSet(idx, 'video_url', e.target.value)}
+                                            placeholder="https://youtube.com/watch?v=..."
+                                            className="w-full bg-black border border-gray-800 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#FFD700] transition-colors"
+                                        />
+                                    </div>
+
+                                    {/* Note */}
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                            Note
+                                        </label>
+                                        <textarea
+                                            value={set.note || ''}
+                                            onChange={(e) => handleUpdateSet(idx, 'note', e.target.value)}
+                                            placeholder="Optional notes for this team..."
+                                            rows={2}
+                                            className="w-full bg-black border border-gray-800 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#FFD700] transition-colors resize-none"
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        )
+                    })}
                 </div>
             </div>
+
+            {/* Skill Picker Modal */}
+            <SkillPickerModal />
         </div>
     )
 }

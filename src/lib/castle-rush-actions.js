@@ -44,12 +44,15 @@ export async function getSetsByBoss(bossKey) {
         ...row,
         heroes: typeof row.heroes_json === 'string' 
             ? JSON.parse(row.heroes_json) 
-            : (row.heroes_json || [])
+            : (row.heroes_json || []),
+        skill_rotation: typeof row.skill_rotation === 'string'
+            ? JSON.parse(row.skill_rotation)
+            : (row.skill_rotation || [])
     }))
 }
 
 export async function createSet(data) {
-    // data: { boss_key, formation, pet_file, heroes: [], video_url, note }
+    // data: { boss_key, formation, pet_file, heroes: [], skill_rotation: [], video_url, note }
     await initDB()
     
     try {
@@ -61,9 +64,9 @@ export async function createSet(data) {
         const nextIndex = countResult[0].next_index
 
         const [result] = await pool.query(
-            `INSERT INTO castle_rush_sets (boss_key, set_index, formation, pet_file, heroes_json, video_url, note)
-             VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [data.boss_key, nextIndex, data.formation, data.pet_file, JSON.stringify(data.heroes), data.video_url, data.note]
+            `INSERT INTO castle_rush_sets (boss_key, set_index, formation, pet_file, heroes_json, skill_rotation, video_url, note)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [data.boss_key, nextIndex, data.formation, data.pet_file, JSON.stringify(data.heroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
         )
 
         revalidatePath('/admin/castle-rush')
@@ -81,9 +84,9 @@ export async function updateSet(id, data) {
     try {
         await pool.query(
             `UPDATE castle_rush_sets 
-             SET formation = ?, pet_file = ?, heroes_json = ?, video_url = ?, note = ?
+             SET formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
              WHERE id = ?`,
-            [data.formation, data.pet_file, JSON.stringify(data.heroes), data.video_url, data.note, id]
+            [data.formation, data.pet_file, JSON.stringify(data.heroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
         )
 
         revalidatePath('/admin/castle-rush')

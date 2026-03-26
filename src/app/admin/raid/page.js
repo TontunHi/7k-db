@@ -5,6 +5,8 @@ import { Skull } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
+export const metadata = { title: 'Raids' }
+
 export default async function AdminRaidPage() {
     const raids = await getRaids()
 

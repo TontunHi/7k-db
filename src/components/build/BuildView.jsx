@@ -35,7 +35,7 @@ export default function BuildView({ heroes }) {
         const rankA = getRankPower(a.grade)
         const rankB = getRankPower(b.grade)
         if (rankA !== rankB) return rankB - rankA
-        return a.name.localeCompare(b.name)
+        return a.filename.localeCompare(b.filename)
     })
 
     const handleHeroClick = async (hero) => {

@@ -13,6 +13,8 @@ function getGradeFromFilename(filename) {
 
 export const dynamic = 'force-dynamic'
 
+export const metadata = { title: 'Hero Builds' }
+
 export default async function AdminBuildsPage() {
     const heroesDir = path.join(process.cwd(), "public", "heroes")
     let heroes = []

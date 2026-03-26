@@ -5,6 +5,8 @@ import { Landmark } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
+export const metadata = { title: 'Dungeons' }
+
 export default async function AdminDungeonPage() {
     const dungeons = await getDungeons()
 

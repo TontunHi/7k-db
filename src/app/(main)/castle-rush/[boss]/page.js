@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { getBossInfo, getSetsByBoss } from '@/lib/castle-rush-actions'
-import { Crown, ArrowLeft, Video, ExternalLink, Users } from 'lucide-react'
+import { Crown, ArrowLeft, Video, ExternalLink, Users, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 
@@ -13,7 +13,7 @@ export async function generateMetadata({ params }) {
     if (!boss) return { title: 'Boss Not Found' }
     
     return {
-        title: `${boss.name} - Castle Rush | 7K Database`,
+        title: `${boss.name} - Castle Rush`,
         description: `Team recommendations for Castle Rush boss ${boss.name}.`
     }
 }
@@ -62,6 +62,13 @@ function getStaggerClass(formation, index) {
     return ''
 }
 
+// Helper to get hero skill image path
+function getSkillImagePath(heroFilename, skillNumber) {
+    if (!heroFilename) return null
+    const folderName = heroFilename.replace('.png', '')
+    return `/skills/${folderName}/${skillNumber}.png`
+}
+
 export default async function CastleRushBossPage({ params }) {
     const { boss: bossKey } = await params
     const boss = await getBossInfo(bossKey)
@@ -77,7 +84,10 @@ export default async function CastleRushBossPage({ params }) {
         ...set,
         heroes: typeof set.heroes_json === 'string' 
             ? JSON.parse(set.heroes_json) 
-            : (set.heroes_json || set.heroes || [])
+            : (set.heroes_json || set.heroes || []),
+        skill_rotation: typeof set.skill_rotation === 'string'
+            ? JSON.parse(set.skill_rotation)
+            : (set.skill_rotation || [])
     }))
 
     return (
@@ -214,6 +224,43 @@ export default async function CastleRushBossPage({ params }) {
                                             </div>
                                         </div>
                                     </div>
+
+                                    {/* Skill Rotation Slots */}
+                                    {set.skill_rotation?.length > 0 && (
+                                        <div className="mt-6 space-y-3">
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <Zap className="w-4 h-4 text-[#FFD700]" />
+                                                <span className="text-sm font-bold text-[#FFD700] uppercase tracking-wider">Skill Rotation</span>
+                                            </div>
+                                            <div className="flex flex-wrap items-end gap-1 bg-black/40 rounded-xl border border-gray-800 p-3">
+                                                {set.skill_rotation.map((slot, sIdx) => {
+                                                    const [hIdx, sNum] = (slot.skill || '').split('-').map(Number)
+                                                    const hFile = set.heroes?.[hIdx]
+                                                    const sPath = slot.skill ? getSkillImagePath(hFile, sNum) : null
+
+                                                    return (
+                                                        <div key={sIdx} className="flex flex-col items-center">
+                                                            {/* Label */}
+                                                            {slot.label && (
+                                                                <span className="text-[10px] font-bold text-[#FFD700]/70 mb-0.5 truncate max-w-[40px]">
+                                                                    {slot.label}
+                                                                </span>
+                                                            )}
+                                                            {!slot.label && <div className="h-[14px]" />}
+                                                            {/* Skill Image */}
+                                                            <div className="relative w-10 h-10 rounded-md overflow-hidden border border-[#FFD700]/20 bg-gray-900">
+                                                                {hFile && sPath ? (
+                                                                    <Image src={sPath} alt="" fill className="object-contain p-0.5" />
+                                                                ) : (
+                                                                    <div className="w-full h-full flex items-center justify-center text-gray-700 text-xs">-</div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
 
                                     {/* Note */}
                                     {set.note && (

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Sword, Map, Skull, Landmark, Trophy, ArrowRight, Crown } from 'lucide-react'
+import { Sword, Map, Skull, Landmark, Trophy, ArrowRight, Crown, Compass } from 'lucide-react'
 
 export const dynamic = 'force-dynamic';
 
@@ -50,6 +50,14 @@ export default async function HomePage() {
             href: "/castle-rush", 
             color: "from-amber-500 to-yellow-600",
             glow: "group-hover:shadow-[0_0_30px_rgba(245,158,11,0.3)]"
+        },
+        { 
+            title: "Advent Expedition", 
+            desc: "Expedition bosses", 
+            icon: Compass, 
+            href: "/advent", 
+            color: "from-violet-500 to-purple-600",
+            glow: "group-hover:shadow-[0_0_30px_rgba(139,92,246,0.3)]"
         },
         { 
             title: "Tier List", 

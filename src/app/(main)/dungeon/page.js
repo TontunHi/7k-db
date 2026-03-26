@@ -6,7 +6,7 @@ import { Landmark } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-    title: "Dungeons - 7K Database",
+    title: "Dungeons",
     description: "Dungeon guides and team recommendations for Seven Knights 2 Rebirth."
 }
 

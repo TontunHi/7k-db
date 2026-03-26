@@ -6,7 +6,7 @@ import { Crown } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-    title: "Castle Rush - 7K Database",
+    title: "Castle Rush",
     description: "Daily Castle Rush boss team recommendations and strategies."
 }
 
