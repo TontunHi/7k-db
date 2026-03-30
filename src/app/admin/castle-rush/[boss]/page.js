@@ -4,14 +4,15 @@ import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Crown, Zap, X } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Crown, Zap, X, Pencil } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { 
     getBossInfo, 
     getSetsByBoss, 
     createSet, 
     updateSet, 
-    deleteSet 
+    deleteSet,
+    getBosses
 } from '@/lib/castle-rush-actions'
 import { getAllHeroes, getPets, getFormations } from '@/lib/stage-actions'
 import TeamBuilder from '@/components/admin/TeamBuilder'
@@ -34,6 +35,7 @@ export default function BossDetailPage({ params }) {
     const [formations, setFormations] = useState([])
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
+    const [allBosses, setAllBosses] = useState([])
     const [skillErrors, setSkillErrors] = useState({})
     // Skill picker state: { setIdx, slotIdx } or null
     const [skillPicker, setSkillPicker] = useState(null)
@@ -41,14 +43,16 @@ export default function BossDetailPage({ params }) {
     useEffect(() => {
         async function loadData() {
             setLoading(true)
-            const [bossInfo, setsData, heroesData, petsData, formationsData] = await Promise.all([
+            const [bossInfo, setsData, heroesData, petsData, formationsData, allBossesData] = await Promise.all([
                 getBossInfo(bossKey),
                 getSetsByBoss(bossKey),
                 getAllHeroes(),
                 getPets(),
-                getFormations()
+                getFormations(),
+                getBosses()
             ])
             setBoss(bossInfo)
+            setAllBosses(allBossesData)
             setSets(setsData.map(s => ({ ...s, _dirty: false })))
             setHeroes(heroesData)
             setPets(petsData)
@@ -63,6 +67,7 @@ export default function BossDetailPage({ params }) {
             id: `new-${Date.now()}`,
             boss_key: bossKey,
             set_index: sets.length + 1,
+            team_name: '',
             formation: formations[0]?.value || '2-3',
             pet_file: '',
             heroes: [null, null, null, null, null],
@@ -108,6 +113,7 @@ export default function BossDetailPage({ params }) {
 
             const data = {
                 boss_key: bossKey,
+                team_name: set.team_name,
                 formation: set.formation,
                 pet_file: set.pet_file,
                 heroes: set.heroes,
@@ -263,8 +269,8 @@ export default function BossDetailPage({ params }) {
 
     return (
         <div className="flex gap-6 pb-20">
-            {/* Left Sidebar - Boss Image */}
-            <div className="hidden lg:block w-64 flex-shrink-0">
+            {/* Left Sidebar - Boss Image (Horizontal) */}
+            <div className="hidden lg:block w-72 flex-shrink-0">
                 <div className="sticky top-8 space-y-4">
                     <Link 
                         href="/admin/castle-rush" 
@@ -274,14 +280,45 @@ export default function BossDetailPage({ params }) {
                         <span className="font-medium">Back to Bosses</span>
                     </Link>
 
-                    <div className="relative aspect-[2/3] rounded-xl overflow-hidden border border-gray-800 bg-gradient-to-b from-gray-900 to-black">
-                        <Image src={boss.image} alt={boss.name} fill className="object-contain object-center" priority />
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent p-4 pt-12">
-                            <div className="flex items-center gap-2 mb-2">
-                                <Crown className="w-5 h-5 text-[#FFD700]" />
-                                <span className="text-xs text-gray-400 uppercase tracking-wider font-bold">Castle Rush</span>
+                    <div className="relative aspect-[3168/514] rounded-xl overflow-hidden border border-gray-800 bg-gradient-to-b from-gray-900 to-black">
+                        <Image src={boss.image} alt={boss.name} fill className="object-cover" priority />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                            <div className="flex items-center gap-2 mb-1">
+                                <Crown className="w-4 h-4 text-[#FFD700]" />
+                                <span className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Castle Rush</span>
                             </div>
-                            <h2 className="text-2xl font-black text-white">{boss.name}</h2>
+                            <h2 className="text-xl font-black text-white">{boss.name}</h2>
+                        </div>
+                    </div>
+
+                    {/* Bosses List */}
+                    <div className="mt-8 space-y-3 pt-6 border-t border-gray-800">
+                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider px-2">Select Boss</h3>
+                        <div className="space-y-2 pr-2">
+                            {allBosses.map((b) => (
+                                <Link
+                                    key={b.key}
+                                    href={`/admin/castle-rush/${b.key}`}
+                                    className={cn(
+                                        "group relative block w-full aspect-[3168/514] rounded-lg overflow-hidden transition-all border",
+                                        b.key === boss.key 
+                                            ? "border-[#FFD700] ring-1 ring-[#FFD700] shadow-[0_0_15px_rgba(255,215,0,0.3)]" 
+                                            : "border-gray-800/80 hover:border-gray-500"
+                                    )}
+                                >
+                                    <Image src={b.image} alt={b.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors" />
+                                    <div className="absolute inset-0 flex items-center justify-center p-2">
+                                        <h4 className={cn(
+                                            "font-black tracking-widest uppercase text-sm drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]", 
+                                            b.key === boss.key ? "text-[#FFD700]" : "text-white group-hover:text-[#FFD700]"
+                                        )}>
+                                            {b.name}
+                                        </h4>
+                                    </div>
+                                </Link>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -352,13 +389,22 @@ export default function BossDetailPage({ params }) {
                                     set._dirty ? "border-[#FFD700]/50" : "border-gray-800"
                                 )}
                             >
-                                {/* Team Header */}
+                                {/* Team Header with editable name */}
                                 <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800 bg-gray-900/50">
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-lg bg-[#FFD700]/10 flex items-center justify-center text-[#FFD700] font-black">
                                             {idx + 1}
                                         </div>
-                                        <h3 className="text-lg font-bold text-white">Team {idx + 1}</h3>
+                                        <div className="flex items-center gap-2">
+                                            <Pencil className="w-3.5 h-3.5 text-gray-500" />
+                                            <input
+                                                type="text"
+                                                value={set.team_name || ''}
+                                                onChange={(e) => handleUpdateSet(idx, 'team_name', e.target.value)}
+                                                placeholder={`Team ${idx + 1}`}
+                                                className="bg-transparent border-none outline-none text-lg font-bold text-white placeholder-gray-500 w-48 focus:ring-0"
+                                            />
+                                        </div>
                                         {set._dirty && <span className="px-2 py-0.5 bg-[#FFD700]/20 text-[#FFD700] text-xs font-bold rounded">Unsaved</span>}
                                     </div>
                                     <button

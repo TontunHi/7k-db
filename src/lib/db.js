@@ -92,6 +92,7 @@ export async function initDB() {
         id INT AUTO_INCREMENT PRIMARY KEY,
         boss_key VARCHAR(50) NOT NULL,
         set_index INT NOT NULL DEFAULT 1,
+        team_name VARCHAR(100),
         formation VARCHAR(50) NOT NULL,
         pet_file VARCHAR(255),
         heroes_json JSON,
@@ -105,6 +106,13 @@ export async function initDB() {
     // Add skill_rotation column if missing (for existing databases)
     try {
       await connection.query(`ALTER TABLE castle_rush_sets ADD COLUMN skill_rotation JSON AFTER heroes_json`);
+    } catch (e) {
+      // Column already exists, ignore
+    }
+
+    // Add team_name column if missing (for existing databases)
+    try {
+      await connection.query(`ALTER TABLE castle_rush_sets ADD COLUMN team_name VARCHAR(100) AFTER set_index`);
     } catch (e) {
       // Column already exists, ignore
     }
@@ -143,6 +151,7 @@ export async function initDB() {
         id INT AUTO_INCREMENT PRIMARY KEY,
         boss_key VARCHAR(50) NOT NULL,
         set_index INT NOT NULL DEFAULT 1,
+        team_name VARCHAR(100),
         team1_formation VARCHAR(50) NOT NULL DEFAULT '2-3',
         team1_pet_file VARCHAR(255),
         team1_heroes_json JSON,
@@ -156,6 +165,13 @@ export async function initDB() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Add team_name column if missing (for existing databases)
+    try {
+      await connection.query(`ALTER TABLE advent_expedition_sets ADD COLUMN team_name VARCHAR(100) AFTER set_index`);
+    } catch (e) {
+      // Column already exists, ignore
+    }
 
     console.log("Database tables initialized successfully via secure connection.");
   } catch (err) {

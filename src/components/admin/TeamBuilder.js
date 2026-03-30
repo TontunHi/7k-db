@@ -201,14 +201,6 @@ export default function TeamBuilder({
 
     return (
         <div className="space-y-8 bg-muted/5 rounded-3xl p-6 md:p-8 border border-border/50">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div className="bg-primary/10 text-primary px-4 py-1.5 rounded-full font-bold text-sm uppercase tracking-wider border border-primary/20">
-                    Team {team.index}
-                </div>
-                {/* Remove Button removed as requested */}
-            </div>
-
             {/* Formation Selector */}
             <div className="space-y-3">
                 <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
@@ -228,7 +220,7 @@ export default function TeamBuilder({
                     <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                         <Swords className="w-3 h-3" /> Heroes
                     </label>
-                    <div className="grid grid-cols-5 gap-2 sm:gap-3 pb-8"> {/* pb-8 for stagger space */}
+                    <div className="grid grid-cols-5 gap-2 sm:gap-3 pb-8 max-w-[380px] md:max-w-[500px]"> {/* pb-8 for stagger space */}
                         {[0, 1, 2, 3, 4].map((i) => {
                             const type = getSlotType(team.formation, i)
                             const heroFile = team.heroes?.[i]

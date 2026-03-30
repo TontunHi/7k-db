@@ -42,33 +42,41 @@ export default async function CastleRushPage() {
                     </div>
                 </div>
 
-                {/* Boss Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                {/* Boss Grid - Horizontal cards, 2 columns */}
+                <div className="grid grid-cols-1 gap-6">
                     {bosses.map((boss) => (
                         <Link
                             key={boss.key}
                             href={`/castle-rush/${boss.key}`}
-                            className="group relative flex flex-col items-center transition-transform duration-500 hover:-translate-y-2"
+                            className="group relative overflow-hidden rounded-2xl border border-gray-800/50 hover:border-[#FFD700]/40 transition-all duration-500 hover:shadow-[0_0_40px_rgba(255,215,0,0.15)]"
                         >
-                            {/* Boss Image - Frameless & Large */}
-                            <div className="relative w-full aspect-[2/3] overflow-visible">
+                            {/* Boss Image - Horizontal */}
+                            <div className="relative aspect-[3168/514] bg-gradient-to-br from-[#1a1a1a] to-black overflow-hidden">
                                 {/* Glow effect behind */}
-                                <div className="absolute inset-4 bg-[#FFD700] blur-[40px] opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
+                                <div className="absolute inset-0 bg-[#FFD700] blur-[60px] opacity-0 group-hover:opacity-10 transition-opacity duration-700" />
                                 
                                 <Image
                                     src={boss.image}
                                     alt={boss.name}
                                     fill
-                                    className="object-contain object-bottom drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-500"
+                                    className="object-cover group-hover:scale-105 transition-transform duration-700"
                                 />
+
+                                {/* Bottom Gradient Overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                                <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent" />
                             </div>
 
-                            {/* Name Bar */}
-                            <div className="mt-4 text-center">
-                                <h3 className="text-2xl font-black text-white group-hover:text-[#FFD700] transition-colors tracking-tight uppercase">
+                            {/* Name Overlay */}
+                            <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <Crown className="w-5 h-5 text-[#FFD700] opacity-80" />
+                                    <span className="text-[#FFD700]/60 text-xs font-bold uppercase tracking-widest">Castle Rush</span>
+                                </div>
+                                <h3 className="text-2xl md:text-3xl font-black text-white group-hover:text-[#FFD700] transition-colors tracking-tight uppercase">
                                     {boss.name}
                                 </h3>
-                                <div className="h-0.5 w-0 group-hover:w-full bg-[#FFD700] transition-all duration-300 mx-auto mt-2" />
+                                <div className="h-0.5 w-0 group-hover:w-24 bg-gradient-to-r from-[#FFD700] to-[#FFA500] transition-all duration-500 mt-2" />
                             </div>
                         </Link>
                     ))}

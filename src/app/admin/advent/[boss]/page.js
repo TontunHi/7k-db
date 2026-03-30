@@ -144,6 +144,7 @@ export default function AdventBossDetailPage({ params }) {
             id: `new-${Date.now()}`,
             boss_key: bossKey,
             set_index: sets.length + 1,
+            team_name: '',
             team1_formation: formations[0]?.value || '2-3',
             team1_pet_file: '',
             team1_heroes: [null, null, null, null, null],
@@ -194,6 +195,7 @@ export default function AdventBossDetailPage({ params }) {
 
             const data = {
                 boss_key: bossKey,
+                team_name: set.team_name,
                 team1_formation: set.team1_formation,
                 team1_pet_file: set.team1_pet_file,
                 team1_heroes: set.team1_heroes,
@@ -435,7 +437,13 @@ export default function AdventBossDetailPage({ params }) {
                                     <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400 font-black">
                                         {idx + 1}
                                     </div>
-                                    <h3 className="text-lg font-bold text-white">Set {idx + 1}</h3>
+                                    <input
+                                        type="text"
+                                        value={set.team_name || ''}
+                                        onChange={(e) => handleUpdateSet(idx, 'team_name', e.target.value)}
+                                        placeholder={`Set ${idx + 1}`}
+                                        className="text-lg font-bold bg-transparent border-none outline-none text-white focus:ring-0 p-0 placeholder-gray-500 max-w-[200px]"
+                                    />
                                     {set._dirty && <span className="px-2 py-0.5 bg-violet-500/20 text-violet-400 text-xs font-bold rounded">Unsaved</span>}
                                 </div>
                                 <button

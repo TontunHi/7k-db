@@ -244,7 +244,9 @@ export default async function AdventBossPage({ params }) {
                                         <div className="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-400 font-black text-lg">
                                             {idx + 1}
                                         </div>
-                                        <h3 className="text-xl font-bold text-white">Set {idx + 1}</h3>
+                                        <h3 className="text-xl font-bold text-white">
+                                            {set.team_name || `Set ${idx + 1}`}
+                                        </h3>
                                     </div>
                                     
                                     {set.video_url && (

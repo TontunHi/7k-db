@@ -98,7 +98,7 @@ export default async function CastleRushBossPage({ params }) {
                 <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-[#FFD700] opacity-20 blur-[100px]"></div>
             </div>
 
-            {/* Hero Banner */}
+            {/* Hero Banner - Horizontal */}
             <div className="relative z-10">
                 <div className="container mx-auto px-4 py-8">
                     <Link 
@@ -109,25 +109,26 @@ export default async function CastleRushBossPage({ params }) {
                         <span>Back to Castle Rush</span>
                     </Link>
                     
-                    <div className="flex flex-col lg:flex-row gap-8 items-start">
-                        {/* Boss Image */}
-                        <div className="relative w-full lg:w-1/2 aspect-[2/3] md:aspect-[3/4] lg:aspect-[1/1] rounded-2xl overflow-hidden border border-gray-800 bg-gradient-to-br from-[#1a1a1a] to-black shadow-2xl">
-                            <Image 
-                                src={boss.image} 
-                                alt={boss.name} 
-                                fill 
-                                className="object-contain" 
-                                priority
-                            />
-                        </div>
+                    {/* Boss Banner - Full width horizontal */}
+                    <div className="relative w-full aspect-[3168/514] rounded-2xl overflow-hidden border border-gray-800 bg-gradient-to-br from-[#1a1a1a] to-black shadow-2xl mb-2">
+                        <Image 
+                            src={boss.image} 
+                            alt={boss.name} 
+                            fill 
+                            className="object-cover" 
+                            priority
+                        />
+                        {/* Gradient overlays */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
                         
-                        {/* Boss Info */}
-                        <div className="flex-1 lg:pt-12">
-                            <div className="flex items-center gap-3 mb-4">
-                                <Crown className="w-10 h-10 text-[#FFD700]" />
+                        {/* Boss Info Overlay */}
+                        <div className="absolute bottom-0 left-0 p-6 md:p-8">
+                            <div className="flex items-center gap-3 mb-3">
+                                <Crown className="w-8 h-8 text-[#FFD700]" />
                                 <span className="text-[#FFD700] text-sm font-bold uppercase tracking-wider">Castle Rush Boss</span>
                             </div>
-                            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-tight uppercase italic transform -skew-x-3 drop-shadow-2xl">
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase italic transform -skew-x-3 drop-shadow-2xl">
                                 {boss.name}
                             </h1>
                             <div className="h-1 w-32 bg-gradient-to-r from-[#FFD700] to-[#FFA500] transform -skew-x-12 mt-4 shadow-[0_0_15px_#FFD700]"></div>
@@ -137,7 +138,7 @@ export default async function CastleRushBossPage({ params }) {
             </div>
 
             {/* Teams Section */}
-            <div className="container mx-auto px-4 mt-8 relative z-10">
+            <div className="container mx-auto px-4 mt-4 relative z-10">
                 {parsedSets.length === 0 ? (
                     <div className="text-center py-20 border border-dashed border-gray-700 rounded-2xl bg-gray-900/30">
                         <Users className="w-12 h-12 text-gray-600 mx-auto mb-4" />
@@ -157,7 +158,9 @@ export default async function CastleRushBossPage({ params }) {
                                             {idx + 1}
                                         </div>
                                         <div>
-                                            <h3 className="text-xl font-bold text-white">Team {idx + 1}</h3>
+                                            <h3 className="text-xl font-bold text-white">
+                                                {set.team_name || `Team ${idx + 1}`}
+                                            </h3>
                                             <p className="text-sm text-gray-400">Formation: {set.formation?.replace('-', ' - ')}</p>
                                         </div>
                                     </div>
@@ -177,9 +180,9 @@ export default async function CastleRushBossPage({ params }) {
                                 </div>
 
                                 <div className="p-6">
-                                    <div className="flex flex-col md:flex-row gap-8">
+                                    <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 w-full">
                                         {/* Heroes Grid */}
-                                        <div className="flex-1 grid grid-cols-5 gap-3 pb-6">
+                                        <div className="w-full max-w-[380px] md:max-w-[500px] grid grid-cols-5 gap-2 md:gap-3 pb-6">
                                             {[0, 1, 2, 3, 4].map(i => {
                                                 const heroFile = set.heroes?.[i]
                                                 const type = getSlotType(set.formation, i)
@@ -225,14 +228,14 @@ export default async function CastleRushBossPage({ params }) {
                                         </div>
                                     </div>
 
-                                    {/* Skill Rotation Slots */}
+                                    {/* Skill Rotation Slots - Larger icons */}
                                     {set.skill_rotation?.length > 0 && (
                                         <div className="mt-6 space-y-3">
                                             <div className="flex items-center gap-2 mb-3">
-                                                <Zap className="w-4 h-4 text-[#FFD700]" />
+                                                <Zap className="w-5 h-5 text-[#FFD700]" />
                                                 <span className="text-sm font-bold text-[#FFD700] uppercase tracking-wider">Skill Rotation</span>
                                             </div>
-                                            <div className="flex flex-wrap items-end gap-1 bg-black/40 rounded-xl border border-gray-800 p-3">
+                                            <div className="flex flex-wrap items-end gap-1.5 bg-black/40 rounded-xl border border-gray-800 p-4">
                                                 {set.skill_rotation.map((slot, sIdx) => {
                                                     const [hIdx, sNum] = (slot.skill || '').split('-').map(Number)
                                                     const hFile = set.heroes?.[hIdx]
@@ -242,13 +245,13 @@ export default async function CastleRushBossPage({ params }) {
                                                         <div key={sIdx} className="flex flex-col items-center">
                                                             {/* Label */}
                                                             {slot.label && (
-                                                                <span className="text-[10px] font-bold text-[#FFD700]/70 mb-0.5 truncate max-w-[40px]">
+                                                                <span className="text-[10px] font-bold text-[#FFD700]/70 mb-1 truncate max-w-[48px]">
                                                                     {slot.label}
                                                                 </span>
                                                             )}
                                                             {!slot.label && <div className="h-[14px]" />}
-                                                            {/* Skill Image */}
-                                                            <div className="relative w-10 h-10 rounded-md overflow-hidden border border-[#FFD700]/20 bg-gray-900">
+                                                            {/* Skill Image - Increased size */}
+                                                            <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-[#FFD700]/30 bg-gray-900 shadow-md">
                                                                 {hFile && sPath ? (
                                                                     <Image src={sPath} alt="" fill className="object-contain p-0.5" />
                                                                 ) : (

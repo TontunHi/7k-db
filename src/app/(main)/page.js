@@ -4,7 +4,7 @@ import { Sword, Map, Skull, Landmark, Trophy, ArrowRight, Crown, Compass } from 
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-    title: 'Home | 7K DB',
+    title: 'Home',
     description: 'Welcome to the ultimate Seven Knights Rebirth database. Find hero builds, tier lists, and complete stage guides.',
 };
 
