@@ -173,6 +173,37 @@ export async function initDB() {
       // Column already exists, ignore
     }
 
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS arena_teams (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        team_index INT NOT NULL DEFAULT 1,
+        team_name VARCHAR(100),
+        formation VARCHAR(50) NOT NULL,
+        pet_file VARCHAR(255),
+        heroes_json JSON,
+        skill_rotation JSON,
+        video_url VARCHAR(500),
+        note TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS guild_war_teams (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        team_index INT NOT NULL DEFAULT 1,
+        type VARCHAR(50) NOT NULL, /* attacker or defender */
+        team_name VARCHAR(100),
+        formation VARCHAR(50) NOT NULL,
+        pet_file VARCHAR(255),
+        heroes_json JSON,
+        skill_rotation JSON,
+        video_url VARCHAR(500),
+        note TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     console.log("Database tables initialized successfully via secure connection.");
   } catch (err) {
     console.error("Error initializing DB:", err);

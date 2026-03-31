@@ -55,9 +55,6 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                             <h2 className="text-3xl font-black text-foreground tracking-tight uppercase italic transform -skew-x-6 drop-shadow-md">
                                 {hero.name}
                             </h2>
-                            <p className="text-primary text-xs font-bold tracking-[0.3em] uppercase opacity-80 mt-1">
-                                {hero.grade.toUpperCase()} HERO
-                            </p>
                         </div>
 
                         {/* Skills Row (4 3 2 1) */}

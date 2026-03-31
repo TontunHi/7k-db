@@ -245,7 +245,7 @@ export default function BossDetailPage({ params }) {
                                                             src={skillPath}
                                                             alt={`Skill ${skillNum}`}
                                                             fill
-                                                            className="object-contain p-0.5"
+                                                            className="object-cover"
                                                             onError={() => handleSkillError(errKey)}
                                                         />
                                                     ) : (
@@ -479,7 +479,7 @@ export default function BossDetailPage({ params }) {
                                                                             src={skillPath}
                                                                             alt=""
                                                                             fill
-                                                                            className="object-contain p-0.5"
+                                                                            className="object-cover"
                                                                             onError={() => handleSkillError(errKey)}
                                                                         />
                                                                     ) : (

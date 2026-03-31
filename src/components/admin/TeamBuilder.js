@@ -69,7 +69,9 @@ export default function TeamBuilder({
     petsList,
     formations,
     onUpdate,
-    onRemove
+    onRemove,
+    maxHeroes = 5,
+    className
 }) {
     // team: { index, formation, pet_file, heroes: [file1, file2...] }
     // heroesList: [{ filename, name, grade }]
@@ -200,7 +202,7 @@ export default function TeamBuilder({
     )
 
     return (
-        <div className="space-y-8 bg-muted/5 rounded-3xl p-6 md:p-8 border border-border/50">
+        <div className={cn("space-y-8 bg-muted/5 rounded-3xl p-6 md:p-8 border border-border/50", className)}>
             {/* Formation Selector */}
             <div className="space-y-3">
                 <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
@@ -225,19 +227,25 @@ export default function TeamBuilder({
                             const type = getSlotType(team.formation, i)
                             const heroFile = team.heroes?.[i]
                             const stagger = getStaggerClass(team.formation, i)
+                            const currentCount = team.heroes?.filter(h => h !== null).length || 0
+                            const isDisabled = !heroFile && currentCount >= maxHeroes
 
                             return (
                                 <button
                                     key={i}
                                     type="button"
-                                    onClick={() => setIsHeroOpen(i)}
+                                    onClick={() => !isDisabled && setIsHeroOpen(i)}
                                     className={cn(
-                                        "relative aspect-[3/4] rounded-lg border flex items-center justify-center transition-all overflow-hidden group hover:shadow-xl hover:z-10",
+                                        "relative aspect-[3/4] rounded-lg border flex items-center justify-center transition-all overflow-hidden",
+                                        !isDisabled && "group hover:shadow-xl hover:z-10",
                                         stagger,
                                         type === 'front'
-                                            ? "border-sky-500/30 bg-sky-500/5 hover:bg-sky-500/10 hover:border-sky-500" // Blue
-                                            : "border-rose-500/30 bg-rose-500/5 hover:bg-rose-500/10 hover:border-rose-500", // Red
-                                        !heroFile && "border-dashed"
+                                            ? "border-sky-500/30 bg-sky-500/5"
+                                            : "border-rose-500/30 bg-rose-500/5",
+                                        !isDisabled && type === 'front' && "hover:bg-sky-500/10 hover:border-sky-500",
+                                        !isDisabled && type !== 'front' && "hover:bg-rose-500/10 hover:border-rose-500",
+                                        !heroFile && "border-dashed",
+                                        isDisabled && "opacity-20 cursor-not-allowed grayscale"
                                     )}
                                 >
                                     {heroFile ? (

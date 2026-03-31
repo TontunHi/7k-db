@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { LayoutDashboard, LogOut, FileImage, FileText, Map, Crown, Landmark, Skull, Compass } from "lucide-react"
+import { LayoutDashboard, LogOut, FileImage, FileText, Map, Crown, Landmark, Skull, Compass, Swords, Shield } from "lucide-react"
 import { logout } from "@/lib/actions"
 
 export const metadata = {
@@ -46,6 +46,20 @@ export default function AdminLayout({ children }) {
                     >
                         <Crown className="w-5 h-5" />
                         Castle Rush
+                    </Link>
+                    <Link
+                        href="/admin/arena"
+                        className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-indigo-400 hover:bg-indigo-900/20 rounded-lg transition-colors"
+                    >
+                        <Swords className="w-5 h-5" />
+                        Arena Teams
+                    </Link>
+                    <Link
+                        href="/admin/guild-war"
+                        className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-red-400 hover:bg-red-900/20 rounded-lg transition-colors"
+                    >
+                        <Shield className="w-5 h-5" />
+                        Guild War Teams
                     </Link>
                     <Link
                         href="/admin/advent"
