@@ -9,7 +9,7 @@ const BOSS_ORDER = [
     { key: 'ae_kyle', name: 'Kyle', image: '/advent_expedition/ae_kyle.png' },
     { key: 'ae_yeonhee', name: 'Yeonhee', image: '/advent_expedition/ae_yeonhee.png' },
     { key: 'ae_karma', name: 'Karma', image: '/advent_expedition/ae_karma.png' },
-    { key: 'ae_god_of_destruction', name: 'God Of Destruction', image: null },
+    { key: 'ae_god_of_destruction', name: 'God Of Destruction', image: '/advent_expedition/ae_god_of_destruction.png' },
 ]
 
 export async function getBosses() {
