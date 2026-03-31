@@ -39,45 +39,60 @@ export default async function AdventExpeditionPage() {
                             </h2>
                             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-violet-500 to-purple-500 transform -skew-x-12 shadow-[0_0_15px_rgba(139,92,246,0.5)] transition-all group-hover:w-64"></div>
                         </div>
-                        <p className="text-slate-400 text-lg font-light tracking-wide max-w-xl mx-auto mt-6">
-                            Boss team recommendations with dual-team compositions.
-                        </p>
+                        {/* Removed the redundant subtitle as requested */}
                     </div>
                 </div>
 
                 {/* Boss Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     {bosses.map((boss) => (
                         <Link
                             key={boss.key}
                             href={`/advent/${boss.key}`}
-                            className="group relative flex flex-col items-center transition-transform duration-500 hover:-translate-y-2"
+                            className="group relative flex flex-col items-center transition-all duration-500 hover:-translate-y-3"
                         >
-                            {/* Boss Image Card */}
-                            <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden border border-gray-800 bg-gradient-to-b from-gray-900 to-black">
-                                {/* Glow effect */}
-                                <div className="absolute inset-0 bg-violet-500 opacity-0 group-hover:opacity-10 transition-opacity duration-500 z-10" />
+                            {/* Boss Image Card - Enhanced Tech Style */}
+                            <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden border border-violet-500/10 bg-black shadow-2xl">
+                                {/* Dynamic Glow Background */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-violet-600/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                                 
-                                {boss.image && !boss.image.includes('undefined') ? (
-                                    <Image
-                                        src={boss.image}
-                                        alt={boss.name}
-                                        fill
-                                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center">
-                                        <Compass className="w-20 h-20 text-gray-700 group-hover:text-violet-500/50 transition-colors" />
-                                    </div>
-                                )}
-                            </div>
+                                {/* Background Hex Pattern (Subtle) */}
+                                <div className="absolute inset-0 opacity-[0.03] bg-[url('/patterns/hex.svg')] bg-repeat pointer-events-none" />
 
-                            {/* Name Bar */}
-                            <div className="mt-4 text-center">
-                                <h3 className="text-xl font-black text-white group-hover:text-violet-400 transition-colors tracking-tight uppercase">
-                                    {boss.name}
-                                </h3>
-                                <div className="h-0.5 w-0 group-hover:w-full bg-violet-400 transition-all duration-300 mx-auto mt-2" />
+                                {/* Image with Skewed Clip Path */}
+                                <div className="absolute inset-0 p-1">
+                                    <div className="relative w-full h-full clip-path-skew overflow-hidden bg-gray-900 border border-white/5">
+                                        {boss.image && !boss.image.includes('undefined') ? (
+                                            <Image
+                                                src={boss.image}
+                                                alt={boss.name}
+                                                fill
+                                                className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center">
+                                                <Compass className="w-20 h-20 text-gray-800 group-hover:text-violet-500/50 transition-colors" />
+                                            </div>
+                                        )}
+                                        {/* Overlay Gradient */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+                                    </div>
+                                </div>
+
+                                {/* Floating Tech Details (Corner accents) */}
+                                <div className="absolute top-4 left-4 w-6 h-6 border-t-2 border-l-2 border-violet-500/40 opacity-0 group-hover:opacity-100 transition-all duration-500" />
+                                <div className="absolute bottom-4 right-4 w-6 h-6 border-b-2 border-r-2 border-violet-500/40 opacity-0 group-hover:opacity-100 transition-all duration-500" />
+
+                                {/* Boss Name Glassmorphism Overlay */}
+                                <div className="absolute bottom-0 left-0 right-0 p-6 backdrop-blur-md bg-black/60 border-t border-white/10 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                                    <h3 className="text-xl font-black text-white group-hover:text-violet-400 transition-colors tracking-tight uppercase flex items-center justify-between">
+                                        {boss.name}
+                                        <div className="w-8 h-8 rounded-full bg-violet-600/20 border border-violet-500/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Compass className="w-4 h-4 text-violet-400" />
+                                        </div>
+                                    </h3>
+                                    <div className="h-0.5 w-full bg-gradient-to-r from-violet-500 to-transparent scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 mt-2" />
+                                </div>
                             </div>
                         </Link>
                     ))}

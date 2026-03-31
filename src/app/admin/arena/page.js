@@ -42,7 +42,7 @@ export default function AdminArenaPage() {
                 getPets(),
                 getFormations()
             ])
-            setTeams(teamsData.map(s => ({ ...s, _dirty: false })))
+            setTeams(teamsData.map(s => ({ ...s, _dirty: false, _isMinimized: false })))
             setHeroes(heroesData)
             setPets(petsData)
             setFormations(formationsData)
@@ -62,8 +62,10 @@ export default function AdminArenaPage() {
             skill_rotation: [],
             video_url: '',
             note: '',
+            note: '',
             _isNew: true,
-            _dirty: true
+            _dirty: true,
+            _isMinimized: false
         }
         setTeams([...teams, newTeam])
     }
@@ -118,7 +120,7 @@ export default function AdminArenaPage() {
         
         // After save, just reload order from db
         const teamsData = await getArenaTeams()
-        setTeams(teamsData.map(s => ({ ...s, _dirty: false })))
+        setTeams(teamsData.map(s => ({ ...s, _dirty: false, _isMinimized: false })))
         setSaving(false)
     }
 
@@ -332,32 +334,54 @@ export default function AdminArenaPage() {
                                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FFD700]/10 to-[#FFD700]/5 flex items-center justify-center text-[#FFD700] font-black border border-[#FFD700]/20 shadow-[0_0_15px_rgba(255,215,0,0.05)]">
                                         {idx + 1}
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <Pencil className="w-4 h-4 text-gray-500" />
-                                        <input
-                                            type="text"
-                                            value={team.team_name || ''}
-                                            onChange={(e) => handleUpdateTeam(idx, 'team_name', e.target.value)}
-                                            placeholder={`Arena Team ${idx + 1}`}
-                                            className="bg-transparent border-none outline-none text-xl font-black text-white placeholder-gray-600 w-64 focus:ring-0 focus:text-[#FFD700] transition-colors"
-                                        />
+                                    <div className="flex flex-col">
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="text-xl font-black text-white px-3 py-1 rounded-lg bg-white/5 border border-white/10 italic transform -skew-x-6">
+                                                {team.team_name || `Untitled Arena Team`}
+                                            </h3>
+                                            {team._dirty && (
+                                                <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                                            )}
+                                        </div>
                                     </div>
-                                    {team._dirty && (
-                                        <span className="px-2.5 py-1 bg-[#FFD700]/10 text-[#FFD700] text-[10px] font-black uppercase tracking-widest rounded-md border border-[#FFD700]/20">
-                                            Unsaved
-                                        </span>
-                                    )}
                                 </div>
-                                <button
-                                    onClick={() => handleDeleteTeam(idx)}
-                                    className="text-gray-500 hover:text-red-400 transition-colors p-2.5 hover:bg-red-500/10 rounded-xl flex items-center gap-2 group border border-transparent hover:border-red-500/20"
-                                >
-                                    <Trash2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                                    <span className="sm:hidden font-medium text-sm">Delete Team</span>
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => handleUpdateTeam(idx, 'team_name', prompt('Enter team name:', team.team_name || '') || team.team_name)}
+                                        className="text-gray-400 hover:text-white transition-colors p-2.5 hover:bg-white/10 rounded-xl"
+                                        title="Rename Team"
+                                    >
+                                        <Pencil className="w-5 h-5" />
+                                    </button>
+                                    <button
+                                        onClick={() => handleUpdateTeam(idx, '_isMinimized', !team._isMinimized)}
+                                        className="text-gray-400 hover:text-white transition-colors p-2.5 hover:bg-white/10 rounded-xl"
+                                    >
+                                        {team._isMinimized ? <Plus className="w-5 h-5" /> : <X className="w-5 h-5 rotate-45" />}
+                                    </button>
+                                    <div className="w-px h-6 bg-gray-800 mx-1" />
+                                    <button
+                                        onClick={() => handleDeleteTeam(idx)}
+                                        className="text-gray-500 hover:text-red-400 transition-colors p-2.5 hover:bg-red-500/10 rounded-xl"
+                                    >
+                                        <Trash2 className="w-5 h-5" />
+                                    </button>
+                                </div>
                             </div>
 
-                            <div className="p-6 space-y-8">
+                            {!team._isMinimized && (
+                            <div className="p-6 space-y-8 animate-in fade-in slide-in-from-top-2 duration-300">
+                                {/* Team Name Inline Edit (Secondary) */}
+                                <div className="flex items-center gap-3 px-1">
+                                    <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Name:</span>
+                                    <input
+                                        type="text"
+                                        value={team.team_name || ''}
+                                        onChange={(e) => handleUpdateTeam(idx, 'team_name', e.target.value)}
+                                        placeholder="Enter Team Name..."
+                                        className="bg-transparent border-b border-gray-800 focus:border-[#FFD700] outline-none text-white font-bold text-sm px-1 py-0.5 transition-colors w-full max-w-sm"
+                                    />
+                                </div>
                                 {/* Team Builder */}
                                 <TeamBuilder
                                     team={{
@@ -499,6 +523,7 @@ export default function AdminArenaPage() {
                                     </div>
                                 </div>
                             </div>
+                            )}
                         </div>
                     )
                 })}

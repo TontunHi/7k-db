@@ -229,25 +229,8 @@ export default function GuildWarView({ attackers, defenders }) {
                                     </div>
 
                                     <div className="p-4 flex-1 flex flex-col gap-4">
-                                        {/* Core Setup Row: Pet + 5-Slot Formation Grid */}
+                                        {/* Core Setup Row: Formation Grid + Pet */}
                                         <div className="flex items-center gap-4 bg-gray-950/40 p-4 rounded-xl border border-gray-800/40">
-                                            
-                                            {/* Pet Badge - Compact */}
-                                            <div className="flex flex-col items-center shrink-0">
-                                                <div className={cn(
-                                                    "relative w-16 h-16 flex items-center justify-center rounded-lg border bg-gradient-to-b from-gray-900 to-black shadow-lg",
-                                                    activeTab === 'attacker' ? "border-red-950" : "border-amber-950"
-                                                )}>
-                                                    {set.pet_file ? (
-                                                        <Image src={set.pet_file} alt="Pet" fill className="object-contain p-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)] hover:scale-110 transition-transform duration-500" />
-                                                    ) : (
-                                                        <span className="text-gray-700 text-[10px] font-bold">-</span>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            {/* Divider */}
-                                            <div className="w-px h-12 bg-gray-800/50" />
                                             
                                             {/* 5-Slot Formation Grid Display */}
                                             <div className="flex-1 grid grid-cols-5 gap-1.5 max-w-[280px]">
@@ -294,6 +277,28 @@ export default function GuildWarView({ attackers, defenders }) {
                                                         </div>
                                                     )
                                                 })}
+                                            </div>
+
+                                            {/* Divider */}
+                                            <div className="w-px h-12 bg-gray-800/50 mx-2" />
+
+                                            {/* Pet Badge - Moved to Right */}
+                                            <div className="flex flex-col items-center shrink-0">
+                                                <div className={cn(
+                                                    "relative w-16 h-16 flex items-center justify-center rounded-lg border bg-gradient-to-b from-gray-900 to-black shadow-lg overflow-hidden",
+                                                    activeTab === 'attacker' ? "border-red-950/50" : "border-amber-950/50"
+                                                )}>
+                                                    {set.pet_file ? (
+                                                        <Image src={set.pet_file} alt="Pet" fill className="object-contain p-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)] hover:scale-110 transition-transform duration-500" />
+                                                    ) : (
+                                                        <span className="text-gray-700 text-[10px] font-bold">-</span>
+                                                    )}
+                                                    {/* Small Label Overlay */}
+                                                    <div className={cn(
+                                                        "absolute bottom-0 left-0 right-0 py-0.5 text-center text-[8px] font-black uppercase tracking-tighter bg-black/60",
+                                                        activeTab === 'attacker' ? "text-red-400" : "text-amber-400"
+                                                    )}>PET</div>
+                                                </div>
                                             </div>
                                         </div>
 

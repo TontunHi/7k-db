@@ -24,19 +24,8 @@ export default function BuildView({ heroes }) {
         return matchesTab && matchesSearch
     })
 
-    const getRankPower = (g) => {
-        if (g === "l++") return 3
-        if (g === "l+") return 2
-        if (g === "l") return 1
-        return 0
-    }
-
-    const sortedHeroes = [...filteredHeroes].sort((a, b) => {
-        const rankA = getRankPower(a.grade)
-        const rankB = getRankPower(b.grade)
-        if (rankA !== rankB) return rankB - rankA
-        return a.filename.localeCompare(b.filename)
-    })
+    // Heroes are already sorted by the server (page.js) by grade + filename
+    const sortedHeroes = filteredHeroes
 
     const handleHeroClick = async (hero) => {
         setIsLoading(true)

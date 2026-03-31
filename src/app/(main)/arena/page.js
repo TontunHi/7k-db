@@ -121,156 +121,140 @@ export default async function ArenaPage() {
                         <p className="text-gray-500 max-w-md mx-auto">The administrator hasn't configured any team recommendations yet. Check back soon for the latest meta setups.</p>
                     </div>
                 ) : (
-                    <div className="space-y-10">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10">
                         {parsedSets.map((set, idx) => (
                             <div 
                                 key={set.id} 
-                                className="bg-gradient-to-br from-gray-900/80 to-black border border-gray-800 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm relative group"
+                                className="bg-gradient-to-br from-gray-950 to-black border border-gray-800 rounded-2xl overflow-hidden shadow-xl relative group transition-all duration-500 flex flex-col"
                             >
                                 {/* Team Header */}
-                                <div className="flex flex-col md:flex-row md:items-center justify-between px-8 py-6 border-b border-gray-800 bg-gray-900/40 relative overflow-hidden gap-4">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                    
-                                    <div className="flex items-center gap-5 relative z-10">
-                                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-indigo-400 font-black text-2xl border border-indigo-500/30 shadow-[0_0_20px_rgba(99,102,241,0.15)]">
-                                            <Hash className="w-5 h-5 absolute opacity-30 -translate-x-3 -translate-y-3" />
-                                            {idx + 1}
-                                        </div>
-                                        <div>
-                                            <h3 className="text-2xl font-black text-white tracking-wide">
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between px-6 py-4 border-b border-gray-800 bg-black/40 relative gap-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-indigo-400 font-black text-sm border border-indigo-500/30 shadow-md">
+                                                {idx + 1}
+                                            </div>
+                                            <h3 className="text-base md:text-lg font-black text-white tracking-wide">
                                                 {set.team_name || `Arena Team ${idx + 1}`}
                                             </h3>
-                                            {/* Formation implicitly shown in the layout below */}
                                         </div>
-                                    </div>
                                     
-                                    {set.video_url && (
-                                        <a 
-                                            href={set.video_url} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            className="relative z-10 flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-red-500/25 active:scale-95 border border-red-500/50"
-                                        >
-                                            <Video className="w-4 h-4" />
-                                            Watch Guide
-                                            <ExternalLink className="w-3.5 h-3.5" />
-                                        </a>
-                                    )}
-                                </div>
-
-                                <div className="p-8">
-                                    <div className="flex flex-col xl:flex-row items-center justify-center gap-10 xl:gap-16 w-full relative">
-                                        
-                                        {/* Heroes Grid */}
-                                        <div className="w-full max-w-[420px] md:max-w-[550px] grid grid-cols-5 gap-3 md:gap-4 pb-8">
-                                            {[0, 1, 2, 3, 4].map(i => {
-                                                const heroFile = set.heroes?.[i]
-                                                const type = getSlotType(set.formation, i)
-                                                const stagger = getStaggerClass(set.formation, i)
-                                                const isFront = type === 'front'
-
-                                                return (
-                                                    <div
-                                                        key={i}
-                                                        className={cn(
-                                                            "relative aspect-[3/4] rounded-xl overflow-hidden border-[3px] flex items-center justify-center bg-gray-950 transition-all duration-300 shadow-xl",
-                                                            stagger,
-                                                            isFront
-                                                                ? "border-sky-500/60 shadow-[0_0_15px_rgba(14,165,233,0.15)] group-hover:border-sky-400"
-                                                                : "border-rose-500/60 shadow-[0_0_15px_rgba(244,63,94,0.15)] group-hover:border-rose-400"
-                                                        )}
-                                                    >
-                                                        {heroFile ? (
-                                                            <Image
-                                                                src={`/heroes/${heroFile}`}
-                                                                alt="Hero"
-                                                                fill
-                                                                className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                                            />
-                                                        ) : (
-                                                            <div className="text-gray-700 text-xs font-bold uppercase tracking-widest opacity-50">Empty</div>
-                                                        )}
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
-
-                                        {/* Divider (Desktop) */}
-                                        <div className="hidden xl:block w-px h-40 bg-gradient-to-b from-transparent via-gray-700 to-transparent"></div>
-
-                                        {/* Pet */}
-                                        <div className="w-full xl:w-40 flex flex-col items-center justify-center p-6 border border-gray-800 rounded-2xl bg-gradient-to-b from-gray-900/50 to-black shadow-inner">
-                                            <div className="flex items-center gap-2 mb-4 w-full justify-center pb-2 border-b border-gray-800">
-                                                <span className="text-sm font-black uppercase tracking-widest text-[#FFD700]">Pet</span>
-                                            </div>
-                                            <div className="relative w-24 h-24 filter drop-shadow-[0_0_15px_rgba(255,215,0,0.15)] group-hover:drop-shadow-[0_0_20px_rgba(255,215,0,0.3)] transition-all duration-300">
-                                                {set.pet_file ? (
-                                                    <Image src={set.pet_file} alt="Pet" fill className="object-contain hover:scale-110 transition-transform duration-300" />
-                                                ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-gray-700 font-bold uppercase tracking-widest text-xs">-</div>
-                                                )}
-                                            </div>
-                                        </div>
+                                        {set.video_url && (
+                                            <a 
+                                                href={set.video_url} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-2 px-4 py-2 bg-gray-800/50 hover:bg-gray-800 text-white rounded-lg text-xs font-bold transition-all border border-gray-700"
+                                            >
+                                                <Video className="w-3.5 h-3.5 text-red-500" />
+                                                Guide
+                                                <ExternalLink className="w-3 h-3 ml-0.5 text-gray-400" />
+                                            </a>
+                                        )}
                                     </div>
 
-                                    {/* Skill Rotation Slots */}
-                                    {set.skill_rotation?.length > 0 && (
-                                        <div className="mt-12 space-y-6 relative w-full flex flex-col items-center">
-                                            <div className="inline-flex items-center gap-3 mb-2 px-8 py-2.5 bg-gradient-to-r from-transparent via-indigo-500/10 to-transparent border-t border-b border-indigo-500/5">
-                                                <Zap className="w-5 h-5 text-indigo-400" />
-                                                <span className="text-sm font-black text-white uppercase tracking-widest">Skill Rotation Play</span>
-                                            </div>
+                                    <div className="p-4 flex-1 flex flex-col gap-4">
+                                        {/* Core Setup Row: Formation Grid + Pet */}
+                                        <div className="flex items-center gap-4 bg-gray-950/40 p-4 rounded-xl border border-gray-800/40">
                                             
-                                            <div className="flex flex-wrap items-center justify-center gap-3 lg:gap-4 w-full px-4">
-                                                {set.skill_rotation.map((slot, sIdx) => {
-                                                    const [hIdx, sNum] = (slot.skill || '').split('-').map(Number)
-                                                    const hFile = set.heroes?.[hIdx]
-                                                    const sPath = slot.skill ? getSkillImagePath(hFile, sNum) : null
-                                                    const isLast = sIdx === set.skill_rotation.length - 1;
-
-                                                    // Use label if provided, or fallback to auto-increment ID
-                                                    const displayLabel = slot.label || String(sIdx + 1);
+                                            {/* 5-Slot Formation Grid */}
+                                            <div className="flex-1 grid grid-cols-5 gap-1.5 max-w-[280px]">
+                                                {[0, 1, 2, 3, 4].map(i => {
+                                                    const heroFile = set.heroes?.[i]
+                                                    const type = getSlotType(set.formation, i)
+                                                    const stagger = getStaggerClass(set.formation, i)
+                                                    const isFront = type === 'front'
 
                                                     return (
-                                                        <div key={sIdx} className="flex items-center gap-3 lg:gap-4">
-                                                            <div className="flex flex-col items-center group/skill p-2 bg-gray-900/50 rounded-2xl border border-gray-800 shadow-xl hover:bg-gray-800 transition-all duration-300 relative">
-                                                                
-                                                                {/* Circular Rank/Order badge at top-left corner */}
-                                                                <div className="absolute -top-3 -left-3 min-w-[28px] h-7 px-1.5 bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-full flex items-center justify-center text-[12px] font-black border-2 border-black z-10 shadow-[0_0_15px_rgba(99,102,241,0.5)]">
-                                                                    {displayLabel}
+                                                        <div
+                                                            key={i}
+                                                            className={cn(
+                                                                "relative aspect-[3/4] rounded-lg overflow-hidden border-2 flex flex-col transition-all duration-500 shadow-lg",
+                                                                stagger,
+                                                                heroFile 
+                                                                    ? (isFront ? "border-sky-500/70 bg-sky-950/20" : "border-rose-600/70 bg-rose-950/20")
+                                                                    : "border-gray-800/40 border-dashed bg-black/20"
+                                                            )}
+                                                        >
+                                                            {heroFile && (
+                                                                <div className="relative flex-1">
+                                                                    <Image src={`/heroes/${heroFile}`} alt="Hero" fill className="object-cover transition-transform duration-500" />
+                                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
                                                                 </div>
-                                                                
-                                                                {/* Skill Image */}
-                                                                <div className="relative w-16 h-16 rounded-xl overflow-hidden border-[2px] border-gray-700/50 bg-gray-950 shadow-inner group-hover/skill:border-indigo-400 group-hover/skill:shadow-[0_0_20px_rgba(99,102,241,0.3)] transition-all duration-300 transform group-hover/skill:-translate-y-1">
-                                                                    {hFile && sPath ? (
-                                                                        <Image src={sPath} alt="" fill className="object-cover group-hover/skill:scale-110 transition-transform duration-300" />
-                                                                    ) : (
-                                                                        <div className="w-full h-full flex items-center justify-center text-gray-700 text-xs font-bold opacity-50">-</div>
-                                                                    )}
+                                                            )}
+                                                            {!heroFile && (
+                                                                <div className="absolute inset-0 flex items-center justify-center opacity-20">
+                                                                    <div className={cn("w-1.5 h-1.5 rounded-full", isFront ? "bg-sky-500" : "bg-gray-600")} />
                                                                 </div>
-                                                            </div>
-                                                            
-                                                            {/* Arrow connecting to the next skill */}
-                                                            {!isLast && (
-                                                                <ArrowRight className="w-6 h-6 text-gray-700 group-hover/skill:text-indigo-500/50 transition-colors shrink-0" />
                                                             )}
                                                         </div>
                                                     )
                                                 })}
                                             </div>
-                                        </div>
-                                    )}
 
-                                    {/* Note */}
-                                    {set.note && (
-                                        <div className="mt-8 p-5 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl relative">
-                                            <div className="absolute top-0 left-6 -translate-y-1/2 bg-black px-2 text-[10px] font-black uppercase tracking-widest text-indigo-400/70">
-                                                Strategy Note
+                                            {/* Divider */}
+                                            <div className="w-px h-12 bg-gray-800/50 mx-2" />
+
+                                            {/* Pet Badge - Moved to Right */}
+                                            <div className="flex flex-col items-center shrink-0">
+                                                <div className="relative w-16 h-16 flex items-center justify-center rounded-lg border border-indigo-900/50 bg-gradient-to-b from-gray-900 to-black shadow-lg overflow-hidden">
+                                                    {set.pet_file ? (
+                                                        <Image src={set.pet_file} alt="Pet" fill className="object-contain p-2 hover:scale-110 transition-transform duration-500" />
+                                                    ) : (
+                                                        <span className="text-gray-700 text-[10px] font-bold">-</span>
+                                                    )}
+                                                    {/* Small Label Overlay */}
+                                                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-[8px] font-black text-indigo-400 py-0.5 text-center uppercase tracking-tighter">PET</div>
+                                                </div>
                                             </div>
-                                            <p className="text-gray-300 text-sm leading-relaxed">{set.note}</p>
                                         </div>
-                                    )}
-                                </div>
+
+                                        {/* Skill Rotation - Extra Compact */}
+                                        {set.skill_rotation?.length > 0 && (
+                                            <div className="space-y-2">
+                                                <div className="flex items-center gap-2 px-1">
+                                                    <Zap className="w-3 h-3 text-indigo-400" />
+                                                    <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">Skill Sequence</span>
+                                                </div>
+                                                
+                                                <div className="flex flex-wrap items-center gap-1.5 w-full bg-black/40 rounded-xl border border-gray-800/30 p-3">
+                                                    {set.skill_rotation.map((slot, sIdx) => {
+                                                        const [hIdx, sNum] = (slot.skill || '').split('-').map(Number)
+                                                        const hFile = set.heroes?.[hIdx]
+                                                        const sPath = slot.skill ? getSkillImagePath(hFile, sNum) : null
+                                                        const isLast = sIdx === set.skill_rotation.length - 1;
+                                                        const displayLabel = slot.label || String(sIdx + 1);
+
+                                                        return (
+                                                            <div key={sIdx} className="flex items-center gap-1">
+                                                                <div className="flex flex-col items-center group/skill p-0.5 bg-gray-900/90 rounded-lg border border-gray-800 hover:bg-gray-800 transition-all duration-300 relative">
+                                                                    <div className="absolute -top-1.5 -left-1.5 min-w-[16px] h-4 px-1 bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-full flex items-center justify-center text-[8px] font-black border border-black z-10 shadow-lg">
+                                                                        {displayLabel}
+                                                                    </div>
+                                                                    <div className="relative w-9 h-9 rounded-md overflow-hidden border border-gray-800 bg-gray-950">
+                                                                        {hFile && sPath ? (
+                                                                            <Image src={sPath} alt="" fill className="object-cover" />
+                                                                        ) : (
+                                                                            <div className="w-full h-full flex items-center justify-center text-gray-800 text-[10px] font-bold">-</div>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                                {!isLast && <ArrowRight size={8} className="text-gray-900 opacity-50" />}
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Strategy Note - Extra Compact */}
+                                        {set.note && (
+                                            <div className="mt-auto p-3 bg-white/[0.02] border border-gray-800/30 rounded-lg relative">
+                                                <p className="text-gray-500 leading-snug text-[11px] italic line-clamp-3">
+                                                    &quot;{set.note}&quot;
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
                             </div>
                         ))}
                     </div>
