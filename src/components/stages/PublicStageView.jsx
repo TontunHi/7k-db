@@ -5,6 +5,8 @@ import Image from "next/image"
 import { clsx } from "clsx"
 import { Shield, Star, Map, Skull } from "lucide-react"
 import { cn } from "@/lib/utils"
+import FormationGrid from '@/components/shared/FormationGrid'
+import PetDisplay from '@/components/shared/PetDisplay'
 
 const MODES = [
     { id: "stage", label: "Main Stage", icon: Map },
@@ -204,59 +206,38 @@ function PublicStageCard({ stage, isNightmare }) {
 
                         <div className="flex flex-col md:flex-row gap-8">
                             {/* Heroes */}
-                            <div className="flex-1 grid grid-cols-5 gap-3 pb-8">
-                                {[0, 1, 2, 3, 4].map(i => {
-                                    const heroFile = team.heroes[i]
-                                    const type = getSlotType(team.formation, i)
-                                    const stagger = getStaggerClass(team.formation, i)
-                                    const isFront = type === 'front'
-
-                                    return (
-                                        <div
-                                            key={i}
-                                            className={cn(
-                                                "relative aspect-[3/4] rounded-sm overflow-hidden border flex items-center justify-center bg-black transition-all duration-300 group/hero",
-                                                stagger,
-                                                isFront 
-                                                    ? "border-sky-900/40" // Front
-                                                    : "border-gray-800"   // Back
-                                            )}
-                                        >
-                                            {heroFile ? (
-                                                <>
-                                                    <Image
-                                                        src={`/heroes/${heroFile}`}
-                                                        alt="Hero"
-                                                        fill
-                                                        className="object-cover transition-transform duration-500 group-hover/hero:scale-110"
-                                                        sizes="(max-width: 768px) 20vw, 10vw"
-                                                    />
-                                                    
-                                                    {/* Shine Effect */}
-                                                    <div className="absolute -inset-full top-0 block h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover/hero:animate-shine" />
-                                                </>
-                                            ) : (
-                                                <div className="text-gray-800 text-xs font-mono">EMPTY</div>
-                                            )}
-                                        </div>
+                            <FormationGrid 
+                                formation={team.formation} 
+                                heroes={team.heroes} 
+                                staggerAmount="translate-y-8"
+                                customClasses={{
+                                    container: "grid grid-cols-5 gap-3 pb-8 max-w-full",
+                                    emptyRender: ({isFront}) => (
+                                        <div className="absolute inset-0 flex items-center justify-center text-gray-800 text-xs font-mono">EMPTY</div>
+                                    ),
+                                    cardString: "bg-black border aspect-[3/4] rounded-sm overflow-hidden transition-all duration-300 group/hero shadow-none",
+                                    image: "group-hover/hero:scale-110",
+                                    renderOverlay: ({isFront, type, heroFile}) => (
+                                        <div className="absolute -inset-full top-0 block h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover/hero:animate-shine" />
                                     )
-                                })}
-                            </div>
+                                }}
+                            />
 
                             {/* Pet */}
-                            <div className="w-full md:w-28 flex flex-col items-center justify-center p-4 border border-gray-800 rounded-sm bg-black/40 relative group/pet self-start mt-2">
-                                <span className="absolute -top-2.5 bg-[#080808] px-2 text-[10px] font-bold uppercase text-gray-500 tracking-[0.2em] flex items-center gap-1">
+                            <div className="self-start mt-2 border border-gray-800 rounded-sm bg-black/40 relative">
+                                <PetDisplay 
+                                    petFile={team.pet_file} 
+                                    hideLabel={true}
+                                    customClasses={{
+                                        container: "items-center justify-center p-4 relative group/pet",
+                                        wrapper: "w-16 h-16 border-none bg-transparent shadow-none group-hover/pet:scale-110 duration-300",
+                                        image: "drop-shadow-[0_0_10px_rgba(0,0,0,0.5)] p-0",
+                                        emptyText: "text-2xl font-black text-gray-800"
+                                    }}
+                                />
+                                <span className="absolute -top-2.5 ml-2 bg-[#080808] px-2 text-[10px] font-bold uppercase text-gray-500 tracking-[0.2em] flex items-center gap-1 z-10 block w-max">
                                     <Star className="w-3 h-3 text-[#FFD700]" /> Pet
                                 </span>
-                                <div className="relative w-16 h-16 transition-transform group-hover/pet:scale-110 duration-300">
-                                    {team.pet_file ? (
-                                        <Image src={team.pet_file} alt="Pet" fill className="object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-gray-800 text-2xl font-black">
-                                            ?
-                                        </div>
-                                    )}
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -264,55 +245,4 @@ function PublicStageCard({ stage, isNightmare }) {
             </div>
         </div>
     )
-}
-
-function getSlotType(formation, index) {
-    if (!formation) return 'neutral'
-
-    if (formation === '1-4') {
-        // Slot 3 (Index 2) is Front/Blue. Rest are Back/Red
-        if (index === 2) return 'front'
-        return 'back'
-    }
-    if (formation === '4-1') {
-        // Slot 3 (Index 2) is Back/Red. Rest are Front/Blue
-        if (index === 2) return 'back'
-        return 'front'
-    }
-    if (formation === '2-3') {
-        // Slots 2,4 (Indices 1,3) are Front/Blue. Rest (0,2,4 -> 1,3,5) are Back/Red
-        if (index === 1 || index === 3) return 'front'
-        return 'back'
-    }
-    if (formation === '3-2') {
-        // Slots 2,4 (Indices 1,3) are Back/Red. Rest Front/Blue
-        if (index === 1 || index === 3) return 'back'
-        return 'front'
-    }
-
-    const [front, back] = formation.split('-').map(Number)
-    if (index < front) return 'front'
-    return 'back'
-}
-
-function getStaggerClass(formation, index) {
-    if (!formation) return ''
-
-    // 1-4: Slots 1,2,4,5 (Indices 0,1,3,4) move down
-    if (formation === '1-4') {
-        if ([0, 1, 3, 4].includes(index)) return 'translate-y-8'
-    }
-    // 2-3: Slots 1,3,5 (Indices 0,2,4) move down
-    if (formation === '2-3') {
-        if ([0, 2, 4].includes(index)) return 'translate-y-8'
-    }
-    // 3-2: Slots 2,4 (Indices 1,3) move down
-    if (formation === '3-2') {
-        if ([1, 3].includes(index)) return 'translate-y-8'
-    }
-    // 4-1: Slot 3 (Index 2) moves down
-    if (formation === '4-1') {
-        if (index === 2) return 'translate-y-8'
-    }
-    return ''
 }

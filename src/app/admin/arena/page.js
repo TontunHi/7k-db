@@ -15,6 +15,11 @@ import {
 import { getAllHeroes, getPets, getFormations } from '@/lib/stage-actions'
 import TeamBuilder from '@/components/admin/TeamBuilder'
 
+import { toast } from 'sonner'
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { SortableItem } from '@/components/admin/SortableItem'
+
 // Helper to get hero skill image path
 function getSkillImagePath(heroFilename, skillNumber) {
     if (!heroFilename) return null
@@ -42,7 +47,7 @@ export default function AdminArenaPage() {
                 getPets(),
                 getFormations()
             ])
-            setTeams(teamsData.map(s => ({ ...s, _dirty: false, _isMinimized: false })))
+            setTeams(teamsData.map(s => ({ ...s, id: s.id || `db-${s.team_index}-${Date.now()}`, _dirty: false, _isMinimized: false })))
             setHeroes(heroesData)
             setPets(petsData)
             setFormations(formationsData)
@@ -98,30 +103,70 @@ export default function AdminArenaPage() {
 
     const handleSaveAll = async () => {
         setSaving(true)
-        for (const team of teams) {
-            if (!team._dirty) continue
-
-            const data = {
-                team_name: team.team_name,
-                formation: team.formation,
-                pet_file: team.pet_file,
-                heroes: team.heroes,
-                skill_rotation: team.skill_rotation,
-                video_url: team.video_url,
-                note: team.note
-            }
-
-            if (team._isNew) {
-                await createArenaTeam(data)
-            } else {
-                await updateArenaTeam(team.id, data)
-            }
-        }
         
-        // After save, just reload order from db
-        const teamsData = await getArenaTeams()
-        setTeams(teamsData.map(s => ({ ...s, _dirty: false, _isMinimized: false })))
-        setSaving(false)
+        const savePromise = new Promise(async (resolve, reject) => {
+            try {
+                for (const team of teams) {
+                    if (!team._dirty) continue
+
+                    const data = {
+                        team_name: team.team_name,
+                        team_index: team.team_index, // Include updated index
+                        formation: team.formation,
+                        pet_file: team.pet_file,
+                        heroes: team.heroes,
+                        skill_rotation: team.skill_rotation,
+                        video_url: team.video_url,
+                        note: team.note
+                    }
+
+                    if (team._isNew) {
+                        await createArenaTeam(data)
+                    } else {
+                        await updateArenaTeam(team.id, data)
+                    }
+                }
+                
+                // After save, just reload order from db
+                const teamsData = await getArenaTeams()
+                setTeams(teamsData.map(s => ({ ...s, id: s.id || `db-${s.team_index}-${Date.now()}`, _dirty: false, _isMinimized: false })))
+                
+                resolve()
+            } catch (err) {
+                reject(err)
+            } finally {
+                setSaving(false)
+            }
+        });
+
+        toast.promise(savePromise, {
+            loading: 'Saving Arena configurations...',
+            success: 'Arena configurations saved successfully 😎',
+            error: (err) => `Failed to save: ${err.message}`
+        })
+    }
+
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    )
+
+    const handleDragEnd = (event) => {
+        const { active, over } = event
+        if (over && active.id !== over.id) {
+            setTeams((items) => {
+                const oldIndex = items.findIndex(t => t.id === active.id)
+                const newIndex = items.findIndex(t => t.id === over.id)
+                const newArr = arrayMove(items, oldIndex, newIndex)
+                
+                // Reassign team_index and mark dirty
+                return newArr.map((team, idx) => ({
+                    ...team,
+                    team_index: idx + 1,
+                    _dirty: true
+                }))
+            })
+        }
     }
 
     // --- Skill Slot Handlers ---
@@ -300,34 +345,36 @@ export default function AdminArenaPage() {
             </div>
 
             {/* Teams List */}
-            <div className="space-y-6">
-                {teams.length === 0 && (
-                    <div className="text-center py-24 border border-dashed border-gray-700 rounded-2xl bg-gray-900/30">
-                        <ShieldAlert className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                        <h3 className="text-xl font-black text-gray-300 mb-2">No Teams Configured</h3>
-                        <p className="text-gray-500 text-sm">Create your first Arena team setup to display to users.</p>
-                        <button
-                            onClick={handleAddTeam}
-                            className="mt-6 inline-flex items-center gap-2 bg-[#FFD700]/10 text-[#FFD700] px-6 py-2 rounded-lg font-bold hover:bg-[#FFD700]/20 transition-all border border-[#FFD700]/20"
-                        >
-                            <Plus className="w-4 h-4" />
-                            Add First Team
-                        </button>
-                    </div>
-                )}
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <div className="space-y-6">
+                    {teams.length === 0 && (
+                        <div className="text-center py-24 border border-dashed border-gray-700 rounded-2xl bg-gray-900/30">
+                            <ShieldAlert className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                            <h3 className="text-xl font-black text-gray-300 mb-2">No Teams Configured</h3>
+                            <p className="text-gray-500 text-sm">Create your first Arena team setup to display to users.</p>
+                            <button
+                                onClick={handleAddTeam}
+                                className="mt-6 inline-flex items-center gap-2 bg-[#FFD700]/10 text-[#FFD700] px-6 py-2 rounded-lg font-bold hover:bg-[#FFD700]/20 transition-all border border-[#FFD700]/20"
+                            >
+                                <Plus className="w-4 h-4" />
+                                Add First Team
+                            </button>
+                        </div>
+                    )}
 
-                {teams.map((team, idx) => {
+                    <SortableContext items={teams.map(t => t.id)} strategy={verticalListSortingStrategy}>
+                        {teams.map((team, idx) => {
                     const hasHeroes = team.heroes?.some(h => h !== null)
                     const rotation = team.skill_rotation || []
 
                     return (
-                        <div 
-                            key={team.id} 
-                            className={cn(
-                                "bg-gray-900/40 border rounded-2xl overflow-hidden shadow-lg transition-all",
-                                team._dirty ? "border-[#FFD700]/50" : "border-gray-800"
-                            )}
-                        >
+                        <SortableItem key={team.id} id={team.id}>
+                            <div 
+                                className={cn(
+                                    "bg-gray-900/40 border-y border-r rounded-r-2xl overflow-hidden shadow-lg transition-all flex-1 min-w-0 flex flex-col",
+                                    team._dirty ? "border-[#FFD700]/50" : "border-gray-800"
+                                )}
+                            >
                             {/* Team Header */}
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between px-6 py-4 border-b border-gray-800 bg-black/40 gap-4">
                                 <div className="flex items-center gap-4">
@@ -524,10 +571,13 @@ export default function AdminArenaPage() {
                                 </div>
                             </div>
                             )}
-                        </div>
+                            </div>
+                        </SortableItem>
                     )
                 })}
+                </SortableContext>
             </div>
+            </DndContext>
 
             <SkillPickerModal />
         </div>

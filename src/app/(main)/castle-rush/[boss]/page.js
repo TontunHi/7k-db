@@ -18,56 +18,9 @@ export async function generateMetadata({ params }) {
     }
 }
 
-// Helper functions for formation display
-function getSlotType(formation, index) {
-    if (!formation) return 'neutral'
-    
-    if (formation === '1-4') {
-        if (index === 2) return 'front'
-        return 'back'
-    }
-    if (formation === '4-1') {
-        if (index === 2) return 'back'
-        return 'front'
-    }
-    if (formation === '2-3') {
-        if (index === 1 || index === 3) return 'front'
-        return 'back'
-    }
-    if (formation === '3-2') {
-        if (index === 1 || index === 3) return 'back'
-        return 'front'
-    }
-    
-    const [front] = formation.split('-').map(Number)
-    if (index < front) return 'front'
-    return 'back'
-}
-
-function getStaggerClass(formation, index) {
-    if (!formation) return ''
-    
-    if (formation === '1-4') {
-        if ([0, 1, 3, 4].includes(index)) return 'translate-y-6'
-    }
-    if (formation === '2-3') {
-        if ([0, 2, 4].includes(index)) return 'translate-y-6'
-    }
-    if (formation === '3-2') {
-        if ([1, 3].includes(index)) return 'translate-y-6'
-    }
-    if (formation === '4-1') {
-        if (index === 2) return 'translate-y-6'
-    }
-    return ''
-}
-
-// Helper to get hero skill image path
-function getSkillImagePath(heroFilename, skillNumber) {
-    if (!heroFilename) return null
-    const folderName = heroFilename.replace('.png', '')
-    return `/skills/${folderName}/${skillNumber}.png`
-}
+import FormationGrid from '@/components/shared/FormationGrid'
+import PetDisplay from '@/components/shared/PetDisplay'
+import SkillSequence from '@/components/shared/SkillSequence'
 
 export default async function CastleRushBossPage({ params }) {
     const { boss: bossKey } = await params
@@ -182,88 +135,38 @@ export default async function CastleRushBossPage({ params }) {
                                 <div className="p-6">
                                     <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 w-full">
                                         {/* Heroes Grid */}
-                                        <div className="w-full max-w-[380px] md:max-w-[500px] grid grid-cols-5 gap-2 md:gap-3 pb-6">
-                                            {[0, 1, 2, 3, 4].map(i => {
-                                                const heroFile = set.heroes?.[i]
-                                                const type = getSlotType(set.formation, i)
-                                                const stagger = getStaggerClass(set.formation, i)
-                                                const isFront = type === 'front'
-
-                                                return (
-                                                    <div
-                                                        key={i}
-                                                        className={cn(
-                                                            "relative aspect-[3/4] rounded-lg overflow-hidden border-2 flex items-center justify-center bg-black transition-all duration-300",
-                                                            stagger,
-                                                            isFront
-                                                                ? "border-sky-500/50"
-                                                                : "border-rose-500/50"
-                                                        )}
-                                                    >
-                                                        {heroFile ? (
-                                                            <Image
-                                                                src={`/heroes/${heroFile}`}
-                                                                alt="Hero"
-                                                                fill
-                                                                className="object-cover"
-                                                            />
-                                                        ) : (
-                                                            <div className="text-gray-700 text-xs">Empty</div>
-                                                        )}
-                                                    </div>
-                                                )
-                                            })}
+                                        <div className="w-full max-w-[380px] md:max-w-[500px]">
+                                            <FormationGrid 
+                                                formation={set.formation} 
+                                                heroes={set.heroes}
+                                                customClasses={{
+                                                    container: "grid grid-cols-5 gap-2 md:gap-3 pb-6 max-w-full",
+                                                    emptyRender: ({isFront}) => (
+                                                        <div className="absolute inset-0 flex items-center justify-center text-gray-700 text-xs">Empty</div>
+                                                    ),
+                                                    cardString: "bg-black border-2 aspect-[3/4] rounded-lg overflow-hidden transition-all duration-300"
+                                                }}
+                                            />
                                         </div>
 
                                         {/* Pet */}
-                                        <div className="w-full md:w-32 flex flex-col items-center justify-center p-4 border border-gray-800 rounded-xl bg-gray-900/30">
-                                            <span className="text-xs font-bold uppercase text-gray-500 mb-2">Pet</span>
-                                            <div className="relative w-20 h-20">
-                                                {set.pet_file ? (
-                                                    <Image src={set.pet_file} alt="Pet" fill className="object-contain" />
-                                                ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-gray-700">-</div>
-                                                )}
-                                            </div>
-                                        </div>
+                                        <PetDisplay 
+                                            petFile={set.pet_file} 
+                                            hideLabel={true}
+                                            customClasses={{
+                                                wrapper: "w-20 h-20 border-none bg-transparent shadow-none"
+                                            }}
+                                        />
                                     </div>
 
                                     {/* Skill Rotation Slots - Larger icons */}
-                                    {set.skill_rotation?.length > 0 && (
-                                        <div className="mt-6 space-y-3">
-                                            <div className="flex items-center gap-2 mb-3">
-                                                <Zap className="w-5 h-5 text-[#FFD700]" />
-                                                <span className="text-sm font-bold text-[#FFD700] uppercase tracking-wider">Skill Rotation</span>
-                                            </div>
-                                            <div className="flex flex-wrap items-end gap-1.5 bg-black/40 rounded-xl border border-gray-800 p-4">
-                                                {set.skill_rotation.map((slot, sIdx) => {
-                                                    const [hIdx, sNum] = (slot.skill || '').split('-').map(Number)
-                                                    const hFile = set.heroes?.[hIdx]
-                                                    const sPath = slot.skill ? getSkillImagePath(hFile, sNum) : null
-
-                                                    return (
-                                                        <div key={sIdx} className="flex flex-col items-center">
-                                                            {/* Label */}
-                                                            {slot.label && (
-                                                                <span className="text-[10px] font-bold text-[#FFD700]/70 mb-1 truncate max-w-[48px]">
-                                                                    {slot.label}
-                                                                </span>
-                                                            )}
-                                                            {!slot.label && <div className="h-[14px]" />}
-                                                            {/* Skill Image - Increased size */}
-                                                            <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-[#FFD700]/30 bg-gray-900 shadow-md">
-                                                                {hFile && sPath ? (
-                                                                    <Image src={sPath} alt="" fill className="object-contain p-0.5" />
-                                                                ) : (
-                                                                    <div className="w-full h-full flex items-center justify-center text-gray-700 text-xs">-</div>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
-                                        </div>
-                                    )}
+                                    <SkillSequence 
+                                        skillRotation={set.skill_rotation} 
+                                        heroes={set.heroes} 
+                                        customClasses={{
+                                            container: "mt-6 space-y-3",
+                                        }}
+                                    />
 
                                     {/* Note */}
                                     {set.note && (

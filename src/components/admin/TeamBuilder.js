@@ -6,61 +6,7 @@ import { Plus, X, Shield, Swords, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import FormationSelector from './FormationSelector'
 
-// Helper to determine slot color/role based on formation and index
-function getSlotType(formation, index) {
-    if (!formation) return 'neutral'
-    // Logic based on specific request (Index 0-4 = Slots 1-5)
-    // Front = Blue, Back = Red
-
-    if (formation === '1-4') {
-        // Slot 3 (Index 2) is Front/Blue. Rest are Back/Red
-        if (index === 2) return 'front'
-        return 'back'
-    }
-    if (formation === '4-1') {
-        // Slot 3 (Index 2) is Back/Red. Rest are Front/Blue
-        if (index === 2) return 'back'
-        return 'front'
-    }
-    if (formation === '2-3') {
-        // Slots 2,4 (Indices 1,3) are Front/Blue. Rest (0,2,4 -> 1,3,5) are Back/Red
-        if (index === 1 || index === 3) return 'front'
-        return 'back'
-    }
-    if (formation === '3-2') {
-        // Slots 2,4 (Indices 1,3) are Back/Red. Rest Front/Blue
-        if (index === 1 || index === 3) return 'back'
-        return 'front'
-    }
-
-    // Default fallback
-    const [front, back] = formation.split('-').map(Number)
-    if (index < front) return 'front'
-    return 'back'
-}
-
-function getStaggerClass(formation, index) {
-    if (!formation) return ''
-
-    // Logic requested:
-    // 1-4: Slots 1,2,4,5 (Indices 0,1,3,4) move down
-    if (formation === '1-4') {
-        if ([0, 1, 3, 4].includes(index)) return 'translate-y-8'
-    }
-    // 2-3: Slots 1,3,5 (Indices 0,2,4) move down
-    if (formation === '2-3') {
-        if ([0, 2, 4].includes(index)) return 'translate-y-8'
-    }
-    // 3-2: Slots 2,4 (Indices 1,3) move down
-    if (formation === '3-2') {
-        if ([1, 3].includes(index)) return 'translate-y-8'
-    }
-    // 4-1: Slot 3 (Index 2) moves down
-    if (formation === '4-1') {
-        if (index === 2) return 'translate-y-8'
-    }
-    return ''
-}
+import { getSlotType, getStaggerClass } from '@/lib/formation-utils'
 
 export default function TeamBuilder({
     team,

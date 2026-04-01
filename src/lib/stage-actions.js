@@ -181,7 +181,11 @@ export async function getAllHeroes() {
             const dbData = dbMap.get(filename)
             // Use DB data if valid, else derive from filename
             const displayName = dbData?.name || filename.replace(/\.[^/.]+$/, "").replace(/_/g, " ")
-            const grade = dbData?.grade || 'N/A'
+            let grade = dbData?.grade
+            if (!grade) {
+                const match = filename.match(/^(l\+\+|l\+|l|r|uc|c)_/i)
+                grade = match ? match[1].toLowerCase() : 'N/A'
+            }
 
             return {
                 filename,
@@ -205,5 +209,126 @@ export async function getAllHeroes() {
     } catch (error) {
         console.error("Error getting all heroes:", error)
         return []
+    }
+}
+
+export async function getAllSkills() {
+    const skillsDir = path.join(process.cwd(), 'public', 'skills')
+    try {
+        if (!fs.existsSync(skillsDir)) return []
+        const folders = await fs.promises.readdir(skillsDir)
+        
+        let allSkills = []
+        for (const folder of folders) {
+            const folderPath = path.join(skillsDir, folder)
+            const stat = await fs.promises.stat(folderPath)
+            if (stat.isDirectory()) {
+                const files = await fs.promises.readdir(folderPath)
+                const validFiles = files.filter(f => /\.(png|jpg|jpeg|webp)$/i.test(f))
+                for (const file of validFiles) {
+                    allSkills.push({
+                        folder,
+                        filename: file,
+                        path: `/skills/${folder}/${file}`
+                    })
+                }
+            }
+        }
+        
+        const gradeOrder = { 'l++': 6, 'l+': 5, 'l': 4, 'r': 3, 'uc': 2, 'c': 1 }
+        allSkills.sort((a, b) => {
+            const getGrade = f => f.match(/^(l\+\+|l\+|l|r|uc|c)_/i)?.[1].toLowerCase() || ''
+            const gA = gradeOrder[getGrade(a.folder)] || 0
+            const gB = gradeOrder[getGrade(b.folder)] || 0
+            if (gA !== gB) return gB - gA
+            if (a.folder !== b.folder) return a.folder.localeCompare(b.folder)
+            
+            // Sort skill numbers properly (1.png before 10.png)
+            const numA = parseInt(a.filename) || 0
+            const numB = parseInt(b.filename) || 0
+            if (numA !== numB) return numA - numB
+            return a.filename.localeCompare(b.filename)
+        })
+        
+        return allSkills
+    } catch (error) {
+        console.error("Error reading skills:", error)
+        return []
+    }
+}
+
+export async function getHeroProfile(id) {
+    await initDB()
+    const filename = id.includes('.') ? id : `${id}.png`
+    
+    // 1. Basic Data
+    const [heroRows] = await pool.query('SELECT * FROM heroes WHERE filename = ?', [filename])
+    const hero = heroRows[0] || { filename, name: id.replace(/_/g, ' '), grade: 'N/A' }
+    
+    // 2. Builds
+    const [buildRows] = await pool.query('SELECT * FROM builds WHERE hero_filename = ?', [filename])
+    const builds = buildRows.map(b => ({
+        ...b,
+        modes: typeof b.modes === 'string' ? JSON.parse(b.modes) : (b.modes || []),
+        weapons: typeof b.weapons === 'string' ? JSON.parse(b.weapons) : (b.weapons || []),
+        armors: typeof b.armors === 'string' ? JSON.parse(b.armors) : (b.armors || []),
+        accessories: typeof b.accessories === 'string' ? JSON.parse(b.accessories) : (b.accessories || []),
+        substats: typeof b.substats === 'string' ? JSON.parse(b.substats) : (b.substats || [])
+    }))
+
+    // 3. Skills
+    const heroFolder = id.replace(/\.[^/.]+$/, "")
+    const skillsDir = path.join(process.cwd(), 'public', 'skills', heroFolder)
+    let skillImages = []
+    if (fs.existsSync(skillsDir)) {
+        const files = await fs.promises.readdir(skillsDir)
+        skillImages = files.filter(f => /\.(png|jpg|jpeg|webp)$/i.test(f)).map(f => `/skills/${heroFolder}/${f}`)
+    }
+
+    // 4. Cross References (Where is this hero used?)
+    const usedIn = []
+
+    // Helper to check JSON column for filename
+    const checkTeam = (teamJson, filename) => {
+        const heroes = typeof teamJson === 'string' ? JSON.parse(teamJson) : (teamJson || [])
+        return heroes.includes(filename)
+    }
+
+    // Simple LIKE search is easier for cross-reference at this scale
+    const pattern = `%${filename}%`
+
+    // Castle Rush
+    const [cr] = await pool.query('SELECT boss_key, team_name FROM castle_rush_sets WHERE heroes_json LIKE ?', [pattern])
+    cr.forEach(item => usedIn.push({ type: 'Castle Rush', name: item.team_name || item.boss_key, link: `/castle-rush/${item.boss_key}` }))
+
+    // Raid
+    const [raid] = await pool.query('SELECT raid_key FROM raid_sets WHERE heroes_json LIKE ?', [pattern])
+    raid.forEach(item => usedIn.push({ type: 'Raid', name: item.raid_key, link: `/raid/${item.raid_key}` }))
+
+    // Dungeon
+    const [dungeon] = await pool.query('SELECT dungeon_key FROM dungeon_sets WHERE heroes_json LIKE ?', [pattern])
+    dungeon.forEach(item => usedIn.push({ type: 'Dungeon', name: item.dungeon_key, link: `/dungeon/${item.dungeon_key}` }))
+
+    // Advent
+    const [advent] = await pool.query('SELECT boss_key, team_name FROM advent_expedition_sets WHERE team1_heroes_json LIKE ? OR team2_heroes_json LIKE ?', [pattern, pattern])
+    advent.forEach(item => usedIn.push({ type: 'Advent', name: item.team_name || item.boss_key, link: `/advent/${item.boss_key}` }))
+
+    // Arena
+    const [arena] = await pool.query('SELECT team_name FROM arena_teams WHERE heroes_json LIKE ?', [pattern])
+    if (arena.length > 0) usedIn.push({ type: 'Arena', name: 'Recommended Teams', link: '/arena' })
+
+    // Stages
+    const [stages] = await pool.query(`
+        SELECT DISTINCT s.id, s.name 
+        FROM stage_setups s 
+        JOIN teams t ON s.id = t.setup_id 
+        WHERE t.heroes_json LIKE ?`, [pattern])
+    stages.forEach(item => usedIn.push({ type: 'Stage Guide', name: item.name, link: `/stages?id=${item.id}` }))
+
+    return {
+        ...hero,
+        builds,
+        skills: skillImages,
+        usedIn: usedIn.filter((v, i, a) => a.findIndex(t => (t.type === v.type && t.name === v.name)) === i) // Unique references
     }
 }

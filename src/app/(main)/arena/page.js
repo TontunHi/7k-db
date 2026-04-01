@@ -10,56 +10,9 @@ export const metadata = {
     description: 'Check out the best Arena teams, formations, and skill rotations.'
 }
 
-// Helper functions for formation display
-function getSlotType(formation, index) {
-    if (!formation) return 'neutral'
-    
-    if (formation === '1-4') {
-        if (index === 2) return 'front'
-        return 'back'
-    }
-    if (formation === '4-1') {
-        if (index === 2) return 'back'
-        return 'front'
-    }
-    if (formation === '2-3') {
-        if (index === 1 || index === 3) return 'front'
-        return 'back'
-    }
-    if (formation === '3-2') {
-        if (index === 1 || index === 3) return 'back'
-        return 'front'
-    }
-    
-    const [front] = formation.split('-').map(Number)
-    if (index < front) return 'front'
-    return 'back'
-}
-
-function getStaggerClass(formation, index) {
-    if (!formation) return ''
-    
-    if (formation === '1-4') {
-        if ([0, 1, 3, 4].includes(index)) return 'translate-y-6'
-    }
-    if (formation === '2-3') {
-        if ([0, 2, 4].includes(index)) return 'translate-y-6'
-    }
-    if (formation === '3-2') {
-        if ([1, 3].includes(index)) return 'translate-y-6'
-    }
-    if (formation === '4-1') {
-        if (index === 2) return 'translate-y-6'
-    }
-    return ''
-}
-
-// Helper to get hero skill image path
-function getSkillImagePath(heroFilename, skillNumber) {
-    if (!heroFilename) return null
-    const folderName = heroFilename.replace('.png', '')
-    return `/skills/${folderName}/${skillNumber}.png`
-}
+import FormationGrid from '@/components/shared/FormationGrid'
+import PetDisplay from '@/components/shared/PetDisplay'
+import SkillSequence from '@/components/shared/SkillSequence'
 
 export default async function ArenaPage() {
     const sets = await getArenaTeams()
@@ -157,94 +110,17 @@ export default async function ArenaPage() {
                                         <div className="flex items-center gap-4 bg-gray-950/40 p-4 rounded-xl border border-gray-800/40">
                                             
                                             {/* 5-Slot Formation Grid */}
-                                            <div className="flex-1 grid grid-cols-5 gap-1.5 max-w-[280px]">
-                                                {[0, 1, 2, 3, 4].map(i => {
-                                                    const heroFile = set.heroes?.[i]
-                                                    const type = getSlotType(set.formation, i)
-                                                    const stagger = getStaggerClass(set.formation, i)
-                                                    const isFront = type === 'front'
-
-                                                    return (
-                                                        <div
-                                                            key={i}
-                                                            className={cn(
-                                                                "relative aspect-[3/4] rounded-lg overflow-hidden border-2 flex flex-col transition-all duration-500 shadow-lg",
-                                                                stagger,
-                                                                heroFile 
-                                                                    ? (isFront ? "border-sky-500/70 bg-sky-950/20" : "border-rose-600/70 bg-rose-950/20")
-                                                                    : "border-gray-800/40 border-dashed bg-black/20"
-                                                            )}
-                                                        >
-                                                            {heroFile && (
-                                                                <div className="relative flex-1">
-                                                                    <Image src={`/heroes/${heroFile}`} alt="Hero" fill className="object-cover transition-transform duration-500" />
-                                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
-                                                                </div>
-                                                            )}
-                                                            {!heroFile && (
-                                                                <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                                                                    <div className={cn("w-1.5 h-1.5 rounded-full", isFront ? "bg-sky-500" : "bg-gray-600")} />
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
+                                            <FormationGrid formation={set.formation} heroes={set.heroes} />
 
                                             {/* Divider */}
                                             <div className="w-px h-12 bg-gray-800/50 mx-2" />
 
                                             {/* Pet Badge - Moved to Right */}
-                                            <div className="flex flex-col items-center shrink-0">
-                                                <div className="relative w-16 h-16 flex items-center justify-center rounded-lg border border-indigo-900/50 bg-gradient-to-b from-gray-900 to-black shadow-lg overflow-hidden">
-                                                    {set.pet_file ? (
-                                                        <Image src={set.pet_file} alt="Pet" fill className="object-contain p-2 hover:scale-110 transition-transform duration-500" />
-                                                    ) : (
-                                                        <span className="text-gray-700 text-[10px] font-bold">-</span>
-                                                    )}
-                                                    {/* Small Label Overlay */}
-                                                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-[8px] font-black text-indigo-400 py-0.5 text-center uppercase tracking-tighter">PET</div>
-                                                </div>
-                                            </div>
+                                            <PetDisplay petFile={set.pet_file} />
                                         </div>
 
                                         {/* Skill Rotation - Extra Compact */}
-                                        {set.skill_rotation?.length > 0 && (
-                                            <div className="space-y-2">
-                                                <div className="flex items-center gap-2 px-1">
-                                                    <Zap className="w-3 h-3 text-indigo-400" />
-                                                    <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">Skill Sequence</span>
-                                                </div>
-                                                
-                                                <div className="flex flex-wrap items-center gap-1.5 w-full bg-black/40 rounded-xl border border-gray-800/30 p-3">
-                                                    {set.skill_rotation.map((slot, sIdx) => {
-                                                        const [hIdx, sNum] = (slot.skill || '').split('-').map(Number)
-                                                        const hFile = set.heroes?.[hIdx]
-                                                        const sPath = slot.skill ? getSkillImagePath(hFile, sNum) : null
-                                                        const isLast = sIdx === set.skill_rotation.length - 1;
-                                                        const displayLabel = slot.label || String(sIdx + 1);
-
-                                                        return (
-                                                            <div key={sIdx} className="flex items-center gap-1">
-                                                                <div className="flex flex-col items-center group/skill p-0.5 bg-gray-900/90 rounded-lg border border-gray-800 hover:bg-gray-800 transition-all duration-300 relative">
-                                                                    <div className="absolute -top-1.5 -left-1.5 min-w-[16px] h-4 px-1 bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-full flex items-center justify-center text-[8px] font-black border border-black z-10 shadow-lg">
-                                                                        {displayLabel}
-                                                                    </div>
-                                                                    <div className="relative w-9 h-9 rounded-md overflow-hidden border border-gray-800 bg-gray-950">
-                                                                        {hFile && sPath ? (
-                                                                            <Image src={sPath} alt="" fill className="object-cover" />
-                                                                        ) : (
-                                                                            <div className="w-full h-full flex items-center justify-center text-gray-800 text-[10px] font-bold">-</div>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                                {!isLast && <ArrowRight size={8} className="text-gray-900 opacity-50" />}
-                                                            </div>
-                                                        )
-                                                    })}
-                                                </div>
-                                            </div>
-                                        )}
+                                        <SkillSequence skillRotation={set.skill_rotation} heroes={set.heroes} />
 
                                         {/* Strategy Note - Extra Compact */}
                                         {set.note && (

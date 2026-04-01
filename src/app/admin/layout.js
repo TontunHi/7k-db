@@ -2,6 +2,8 @@ import Link from "next/link"
 import { LayoutDashboard, LogOut, FileImage, FileText, Map, Crown, Landmark, Skull, Compass, Swords, Shield } from "lucide-react"
 import { logout } from "@/lib/actions"
 
+import { Toaster } from 'sonner'
+
 export const metadata = {
     title: {
         template: '%s | 7K Admin',
@@ -11,6 +13,7 @@ export const metadata = {
 export default function AdminLayout({ children }) {
     return (
         <div className="min-h-screen bg-black flex">
+            <Toaster theme="dark" position="top-center" richColors />
             {/* Sidebar */}
             <aside className="w-64 border-r border-gray-800 bg-gray-900/30 hidden md:flex flex-col">
                 <div className="p-6 border-b border-gray-800">
@@ -32,6 +35,13 @@ export default function AdminLayout({ children }) {
                     >
                         <FileImage className="w-5 h-5" />
                         Manage Builds
+                    </Link>
+                    <Link
+                        href="/admin/assets"
+                        className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-[#FFD700] hover:bg-gray-800/50 rounded-lg transition-colors"
+                    >
+                        <FileImage className="w-5 h-5 text-indigo-400" />
+                        Asset Manager
                     </Link>
                     <Link
                         href="/admin/stages"

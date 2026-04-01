@@ -18,55 +18,9 @@ export async function generateMetadata({ params }) {
     }
 }
 
-// Helper functions for formation display
-function getSlotType(formation, index) {
-    if (!formation) return 'neutral'
-    
-    if (formation === '1-4') {
-        if (index === 2) return 'front'
-        return 'back'
-    }
-    if (formation === '4-1') {
-        if (index === 2) return 'back'
-        return 'front'
-    }
-    if (formation === '2-3') {
-        if (index === 1 || index === 3) return 'front'
-        return 'back'
-    }
-    if (formation === '3-2') {
-        if (index === 1 || index === 3) return 'back'
-        return 'front'
-    }
-    
-    const [front] = formation.split('-').map(Number)
-    if (index < front) return 'front'
-    return 'back'
-}
-
-function getStaggerClass(formation, index) {
-    if (!formation) return ''
-    
-    if (formation === '1-4') {
-        if ([0, 1, 3, 4].includes(index)) return 'translate-y-6'
-    }
-    if (formation === '2-3') {
-        if ([0, 2, 4].includes(index)) return 'translate-y-6'
-    }
-    if (formation === '3-2') {
-        if ([1, 3].includes(index)) return 'translate-y-6'
-    }
-    if (formation === '4-1') {
-        if (index === 2) return 'translate-y-6'
-    }
-    return ''
-}
-
-function getSkillImagePath(heroFilename, skillNumber) {
-    if (!heroFilename) return null
-    const folderName = heroFilename.replace('.png', '')
-    return `/skills/${folderName}/${skillNumber}.png`
-}
+import FormationGrid from '@/components/shared/FormationGrid'
+import PetDisplay from '@/components/shared/PetDisplay'
+import SkillSequence from '@/components/shared/SkillSequence'
 
 // Reusable team display component
 function TeamDisplay({ heroes, formation, petFile, skillRotation, teamLabel, teamColor }) {
@@ -91,79 +45,35 @@ function TeamDisplay({ heroes, formation, petFile, skillRotation, teamLabel, tea
 
             <div className="flex flex-col md:flex-row gap-6">
                 {/* Heroes Grid */}
-                <div className="flex-1 grid grid-cols-5 gap-3 pb-6">
-                    {[0, 1, 2, 3, 4].map(i => {
-                        const heroFile = heroes?.[i]
-                        const type = getSlotType(formation, i)
-                        const stagger = getStaggerClass(formation, i)
-                        const isFront = type === 'front'
-
-                        return (
-                            <div
-                                key={i}
-                                className={cn(
-                                    "relative aspect-[3/4] rounded-lg overflow-hidden border-2 flex items-center justify-center bg-black transition-all duration-300",
-                                    stagger,
-                                    isFront ? "border-sky-500/50" : "border-rose-500/50"
-                                )}
-                            >
-                                {heroFile ? (
-                                    <Image src={`/heroes/${heroFile}`} alt="Hero" fill className="object-cover" />
-                                ) : (
-                                    <div className="text-gray-700 text-xs">Empty</div>
-                                )}
-                            </div>
+                <FormationGrid 
+                    formation={formation} 
+                    heroes={heroes} 
+                    customClasses={{
+                        container: "grid grid-cols-5 gap-3 pb-6 max-w-full",
+                        emptyRender: ({isFront}) => (
+                            <div className="absolute inset-0 flex items-center justify-center text-gray-700 text-xs">Empty</div>
+                        ),
+                        cardString: cn(
+                            "bg-black border-2 aspect-[3/4] rounded-lg overflow-hidden transition-all duration-300"
                         )
-                    })}
-                </div>
+                    }}
+                />
 
                 {/* Pet */}
-                <div className="w-full md:w-32 flex flex-col items-center justify-center p-4 border border-gray-800 rounded-xl bg-gray-900/30">
-                    <span className="text-xs font-bold uppercase text-gray-500 mb-2">Pet</span>
-                    <div className="relative w-20 h-20">
-                        {petFile ? (
-                            <Image src={petFile} alt="Pet" fill className="object-contain" />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-700">-</div>
-                        )}
-                    </div>
-                </div>
+                <PetDisplay 
+                    petFile={petFile} 
+                    hideLabel={true}
+                    customClasses={{
+                        wrapper: "w-20 h-20 border-none bg-transparent shadow-none"
+                    }}
+                />
             </div>
 
             {/* Skill Rotation Slots */}
-            {skillRotation?.length > 0 && (
-                <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                        <Zap className="w-3.5 h-3.5 text-violet-400" />
-                        <span className="text-xs font-bold text-violet-400 uppercase tracking-wider">Skill Rotation</span>
-                    </div>
-                    <div className="flex flex-wrap items-end gap-1 bg-black/40 rounded-xl border border-gray-800 p-3">
-                        {skillRotation.map((slot, sIdx) => {
-                            const [hIdx, sNum] = (slot.skill || '').split('-').map(Number)
-                            const hFile = heroes?.[hIdx]
-                            const sPath = slot.skill ? getSkillImagePath(hFile, sNum) : null
-
-                            return (
-                                <div key={sIdx} className="flex flex-col items-center">
-                                    {slot.label && (
-                                        <span className="text-[10px] font-bold text-violet-400/70 mb-0.5 truncate max-w-[40px]">
-                                            {slot.label}
-                                        </span>
-                                    )}
-                                    {!slot.label && <div className="h-[14px]" />}
-                                    <div className="relative w-10 h-10 rounded-md overflow-hidden border border-violet-500/20 bg-gray-900">
-                                        {hFile && sPath ? (
-                                            <Image src={sPath} alt="" fill className="object-contain p-0.5" />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-gray-700 text-xs">-</div>
-                                        )}
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </div>
-                </div>
-            )}
+            <SkillSequence 
+                skillRotation={skillRotation} 
+                heroes={heroes} 
+            />
         </div>
     )
 }
