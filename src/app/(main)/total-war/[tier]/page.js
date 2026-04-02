@@ -7,7 +7,7 @@ import FormationGrid from '@/components/shared/FormationGrid'
 import PetDisplay from '@/components/shared/PetDisplay'
 import SkillSequence from '@/components/shared/SkillSequence'
 import { ArrowLeft, Users, Swords, Layers } from 'lucide-react'
-import { getHeroImageMap } from '@/lib/hero-utils'
+import { getHeroImageMap } from '@/lib/hero-utils-server'
 
 export const dynamic = 'force-dynamic'
 

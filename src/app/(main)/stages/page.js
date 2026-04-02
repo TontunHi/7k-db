@@ -1,6 +1,6 @@
 import { getStages, getStageById } from '@/lib/stage-actions'
 import PublicStageView from '@/components/stages/PublicStageView'
-import { getHeroImageMap } from '@/lib/hero-utils'
+import { getHeroImageMap } from '@/lib/hero-utils-server'
 
 export const dynamic = 'force-dynamic'
 

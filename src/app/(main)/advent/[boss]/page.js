@@ -4,7 +4,7 @@ import { getBossInfo, getSetsByBoss } from '@/lib/advent-actions'
 import { Compass, ArrowLeft, Video, ExternalLink, Users, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { notFound } from 'next/navigation'
-import { getHeroImageMap } from '@/lib/hero-utils'
+import { getHeroImageMap } from '@/lib/hero-utils-server'
 
 export const dynamic = 'force-dynamic'
 

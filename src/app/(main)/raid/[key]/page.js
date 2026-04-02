@@ -4,7 +4,7 @@ import { getRaidInfo, getSetsByRaid } from '@/lib/raid-actions'
 import { Skull, ArrowLeft, Video, ExternalLink, Users, Star, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { notFound } from 'next/navigation'
-import { getHeroImageMap } from '@/lib/hero-utils'
+import { getHeroImageMap } from '@/lib/hero-utils-server'
 
 export const dynamic = 'force-dynamic'
 

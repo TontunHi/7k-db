@@ -1,6 +1,6 @@
 import { getGuildWarTeams } from '@/lib/guild-war-actions'
 import GuildWarView from '@/components/guild-war/GuildWarView'
-import { getHeroImageMap } from '@/lib/hero-utils'
+import { getHeroImageMap } from '@/lib/hero-utils-server'
 
 export const dynamic = 'force-dynamic'
 

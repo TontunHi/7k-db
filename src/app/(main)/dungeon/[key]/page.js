@@ -4,7 +4,7 @@ import { getDungeonInfo, getSetsByDungeon } from '@/lib/dungeon-actions'
 import { Landmark, ArrowLeft, Video, ExternalLink, Users, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { notFound } from 'next/navigation'
-import { getHeroImageMap } from '@/lib/hero-utils'
+import { getHeroImageMap } from '@/lib/hero-utils-server'
 
 export const dynamic = 'force-dynamic'
 

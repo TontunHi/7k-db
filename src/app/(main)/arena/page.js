@@ -2,7 +2,7 @@ import Image from 'next/image'
 import { getArenaTeams } from '@/lib/arena-actions'
 import { Swords, Video, ExternalLink, Users, Zap, Hash, ArrowRight, Shield } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { getHeroImageMap } from '@/lib/hero-utils'
+import { getHeroImageMap } from '@/lib/hero-utils-server'
 
 export const dynamic = 'force-dynamic'
 
