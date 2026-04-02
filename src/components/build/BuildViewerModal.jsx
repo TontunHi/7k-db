@@ -67,7 +67,13 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                         rank ? "border-primary shadow-lg scale-105" : "border-border opacity-60 grayscale hover:grayscale-0 hover:opacity-100"
                                     )}>
                                         <div className="relative w-full h-full overflow-hidden rounded-lg">
-                                            <Image src={`/skills/${s}`} fill className="object-cover" alt="skill" />
+                                            <Image 
+                                                src={`/skills/${s}`} 
+                                                fill 
+                                                className="object-cover" 
+                                                alt="skill" 
+                                                sizes="(max-width: 768px) 56px, 64px"
+                                            />
                                         </div>
 
                                         {/* Priority Badge - Top Right */}
@@ -150,7 +156,13 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                         <div className="flex flex-wrap gap-3">
                                             {build.accessories && build.accessories.length > 0 ? build.accessories.map((acc, idx) => (
                                                 <div key={idx} className="relative w-14 h-14 bg-background border border-border rounded-xl overflow-hidden group-hover:border-primary/50 transition-colors shadow-sm">
-                                                    <Image src={`/items/accessory/${acc.image}`} fill className="object-cover" alt="acc" />
+                                                    <Image 
+                                                        src={`/items/accessory/${acc.image}`} 
+                                                        fill 
+                                                        className="object-cover" 
+                                                        alt="acc" 
+                                                        sizes="56px"
+                                                    />
                                                 </div>
                                             )) : (
                                                 <span className="text-gray-600 text-xs italic">None selected</span>
@@ -209,7 +221,13 @@ function ViewerItemCard({ item, type }) {
     return (
         <div className="bg-card border border-border rounded-xl p-3 flex gap-4 items-center shadow-sm hover:border-primary/50 transition-colors group/card">
             <div className="relative w-14 h-14 bg-background rounded-lg flex-shrink-0 overflow-hidden border border-border shadow-sm group-hover/card:border-primary/30 transition-colors">
-                <Image src={`/items/${type.toLowerCase()}/${item.image}`} fill className="object-cover" alt={type} />
+                <Image 
+                    src={`/items/${type.toLowerCase()}/${item.image}`} 
+                    fill 
+                    className="object-cover" 
+                    alt={type} 
+                    sizes="56px"
+                />
             </div>
             <div className="min-w-0 flex-1">
                 <div className={clsx("text-[10px] font-black uppercase leading-none mb-1.5 tracking-wider", type === "Weapon" ? "text-red-400" : "text-blue-400")}>

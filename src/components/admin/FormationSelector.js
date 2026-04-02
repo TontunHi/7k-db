@@ -27,6 +27,7 @@ export default function FormationSelector({ formations, value, onChange }) {
                             alt={fmt.name}
                             fill
                             className="object-contain drop-shadow-md"
+                            sizes="48px"
                         />
                     </div>
                     <span className={cn(

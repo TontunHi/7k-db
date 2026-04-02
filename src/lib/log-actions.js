@@ -32,10 +32,14 @@ export async function getRecentUpdates(limit = 10) {
     try {
         await initDB()
         const [rows] = await pool.query(
-            `SELECT * FROM site_updates ORDER BY created_at DESC LIMIT ?`,
+            `SELECT *, UNIX_TIMESTAMP(created_at) AS unix_ts FROM site_updates ORDER BY created_at DESC LIMIT ?`,
             [limit]
         )
-        return rows
+        // Convert unix_ts (seconds) to a proper ISO string in UTC so the client can parse correctly
+        return rows.map(r => ({
+            ...r,
+            created_at: new Date(Number(r.unix_ts) * 1000).toISOString()
+        }))
     } catch (err) {
         console.error('[getRecentUpdates] Error:', err.message)
         return []

@@ -13,28 +13,29 @@ export async function openEditor(filename) {
     const [weapons, armors, accessories, skills] = await Promise.all([
         getItemImages('weapon'),
         getItemImages('armor'),
-        getItemImages('accessories'),
+        getItemImages('accessory'),
         getHeroSkills(filename)
     ])
 
     return {
         builds,
-        heroData: heroDataRaw || { skillPriority: [] }, // Default if no data
+        heroData: heroDataRaw || { skillPriority: [], is_new_hero: false }, // Default if no data
         resources: {
             weapons,
             armors,
-            accessories,
+            accessories: accessories,
             skills
         }
     }
 }
 
-export async function saveEditor(filename, builds, skillPriority, heroName, grade) {
+export async function saveEditor(filename, builds, skillPriority, heroName, grade, isNewHero) {
     // Save Hero Data first (Global Skill Priority)
     await saveHeroData({
         filename,
         name: heroName,
         grade: grade,
+        is_new_hero: isNewHero,
         skillPriority
     })
 

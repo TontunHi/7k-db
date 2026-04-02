@@ -26,17 +26,28 @@ export async function getHeroData(filename) {
         filename: data.filename,
         name: data.name,
         grade: data.grade,
+        is_new_hero: !!data.is_new_hero,
         skillPriority: typeof data.skill_priority === 'string' ? JSON.parse(data.skill_priority) : (data.skill_priority || [])
     }
 }
 
+export async function getHeroesMetadata() {
+    await ensureDB()
+    const [rows] = await pool.query("SELECT filename, is_new_hero FROM heroes")
+    return rows.reduce((acc, r) => {
+        acc[r.filename] = { is_new_hero: !!r.is_new_hero }
+        return acc
+    }, {})
+}
+
 export async function getHeroes() {
     await ensureDB()
-    const [rows] = await pool.query("SELECT * FROM heroes ORDER BY grade DESC, name ASC")
+    const [rows] = await pool.query("SELECT * FROM heroes ORDER BY is_new_hero DESC, grade DESC, name ASC")
     return rows.map(r => ({
         filename: r.filename,
         name: r.name,
         grade: r.grade,
+        is_new_hero: !!r.is_new_hero,
         skillPriority: typeof r.skill_priority === 'string' ? JSON.parse(r.skill_priority) : (r.skill_priority || [])
     }))
 }
@@ -45,11 +56,11 @@ export async function saveHeroData(hero) {
     await ensureDB()
     // upsert
     await pool.query(`
-    INSERT INTO heroes (filename, name, grade, skill_priority)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO heroes (filename, name, grade, skill_priority, is_new_hero)
+    VALUES (?, ?, ?, ?, ?)
     ON DUPLICATE KEY UPDATE 
-    name = VALUES(name), grade = VALUES(grade), skill_priority = VALUES(skill_priority)
-  `, [hero.filename, hero.name, hero.grade, JSON.stringify(hero.skillPriority || [])])
+    name = VALUES(name), grade = VALUES(grade), skill_priority = VALUES(skill_priority), is_new_hero = VALUES(is_new_hero)
+  `, [hero.filename, hero.name, hero.grade, JSON.stringify(hero.skillPriority || []), hero.is_new_hero ? 1 : 0])
 }
 
 export async function getHeroBuilds(heroFilename) {

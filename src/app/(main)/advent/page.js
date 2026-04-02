@@ -81,6 +81,7 @@ export default async function AdventExpeditionPage() {
                                                         "object-cover group-hover:scale-110 transition-transform duration-700",
                                                         isSpecial ? "object-top" : "object-cover"
                                                     )}
+                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                                                 />
                                                 {/* Overlay Gradient */}
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />

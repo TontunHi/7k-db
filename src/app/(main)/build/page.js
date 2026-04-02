@@ -1,6 +1,7 @@
 import fs from "fs"
 import path from "path"
 import BuildView from "@/components/build/BuildView"
+import { getHeroesMetadata } from "@/lib/build-db"
 
 export const metadata = {
     title: "Hero Builds",
@@ -24,7 +25,10 @@ export default async function BuildPage() {
     let heroes = []
 
     try {
-        const files = await fs.promises.readdir(heroesDir)
+        const [files, metadata] = await Promise.all([
+            fs.promises.readdir(heroesDir),
+            getHeroesMetadata()
+        ])
 
         heroes = files
             .filter((file) => /\.(png|jpg|jpeg|webp)$/i.test(file)) // Filter Image Files
@@ -36,14 +40,21 @@ export default async function BuildPage() {
                     filename: file,
                     grade: grade,
                     name: file.replace(/^(l\+\+|l\+|l|r)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " "),
+                    is_new_hero: metadata[file]?.is_new_hero || false
                 }
             })
             .filter((h) => h !== null) // Remove unknowns
             .sort((a, b) => {
+                // 1. is_new_hero
+                if (a.is_new_hero !== b.is_new_hero) return b.is_new_hero ? 1 : -1
+
+                // 2. grade
                 const gradeOrder = { "l++": 0, "l+": 1, "l": 2, "r": 3 }
                 const ga = gradeOrder[a.grade] ?? 99
                 const gb = gradeOrder[b.grade] ?? 99
                 if (ga !== gb) return ga - gb
+
+                // 3. filename
                 return a.filename.localeCompare(b.filename)
             })
 

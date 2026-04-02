@@ -40,6 +40,7 @@ const AVAILABLE_SUBSTATS = [
 export default function BuildEditorModal({ hero, skills, weapons, armors, accessories, initialBuilds, initialSkillPriority, onSave, onClose }) {
     const [builds, setBuilds] = useState(initialBuilds || [])
     const [skillPriority, setSkillPriority] = useState(initialSkillPriority || [])
+    const [isNewHero, setIsNewHero] = useState(hero.is_new_hero || false)
     const [isSaving, setIsSaving] = useState(false)
 
     // Item Selector State
@@ -152,7 +153,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
     const handleSave = async () => {
         setIsSaving(true)
         try {
-            await onSave(builds, skillPriority)
+            await onSave(builds, skillPriority, isNewHero)
             onClose()
         } catch (err) {
             console.error(err)
@@ -173,6 +174,18 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                         Edit Builds <span className="text-gray-500 font-medium text-lg ml-2">{hero.name}</span>
                     </h2>
                     <div className="flex gap-3">
+                        <div className="flex items-center gap-2 bg-gray-800/50 px-4 py-2 rounded-xl border border-gray-700">
+                            <input
+                                type="checkbox"
+                                id="newHeroCheckbox"
+                                checked={isNewHero}
+                                onChange={(e) => setIsNewHero(e.target.checked)}
+                                className="w-4 h-4 rounded border-gray-700 text-[#FFD700] focus:ring-[#FFD700] bg-black cursor-pointer"
+                            />
+                            <label htmlFor="newHeroCheckbox" className="text-sm font-bold text-gray-300 cursor-pointer select-none">
+                                New Hero
+                            </label>
+                        </div>
                         <button onClick={handleAddBuild} className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all hover:shadow-lg">
                             <Plus className="w-4 h-4" /> New Build
                         </button>
@@ -192,7 +205,13 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                     {/* Global Skill Priority Section */}
                     <div className="flex items-start gap-6 p-6 bg-gradient-to-r from-gray-900/60 to-[#0a0a0a] rounded-2xl border border-gray-800 shadow-inner">
                         <div className="relative w-24 h-32 rounded-xl overflow-hidden border-2 border-gray-700 flex-shrink-0 shadow-xl shadow-black">
-                            <Image src={`/heroes/${hero.filename}`} fill className="object-cover" alt={hero.name} />
+                            <Image 
+                                src={`/heroes/${hero.filename}`} 
+                                fill 
+                                className="object-cover" 
+                                alt={hero.name} 
+                                sizes="(max-width: 768px) 96px, 120px"
+                            />
                         </div>
 
                         <div className="flex-1">
@@ -210,7 +229,13 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                                 isSelected ? "border-[#FFD700] ring-4 ring-[#FFD700]/20 scale-105" : "border-gray-800 hover:border-gray-500 hover:scale-105"
                                             )}
                                         >
-                                            <Image src={`/skills/${s}`} fill className="object-cover rounded-lg" alt="skill" />
+                                            <Image 
+                                                src={`/skills/${s}`} 
+                                                fill 
+                                                className="object-cover rounded-lg" 
+                                                alt="skill" 
+                                                sizes="64px"
+                                            />
                                             {isSelected && (
                                                 <div className="absolute -top-2 -right-2 bg-gradient-to-br from-[#FFD700] to-yellow-600 text-black w-6 h-6 rounded-full flex items-center justify-center text-xs font-black shadow-lg shadow-[#FFD700]/50 border-2 border-black z-10 transform scale-110">
                                                     {order}
@@ -346,7 +371,13 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                                         : "bg-black border-gray-800 border-dashed group-hover:border-[#FFD700]/50 group-hover:bg-[#FFD700]/5"
                                                 )}>
                                                     {acc ? (
-                                                        <Image src={`/items/accessories/${acc.image}`} fill className="object-cover hover:scale-110 transition-transform duration-500" alt="acc" />
+                                                        <Image 
+                                                            src={`/items/accessory/${acc.image}`} 
+                                                            fill 
+                                                            className="object-cover hover:scale-110 transition-transform duration-500" 
+                                                            alt="acc" 
+                                                            sizes="64px"
+                                                        />
                                                     ) : (
                                                         <Plus className="w-5 h-5 text-gray-800 group-hover:text-[#FFD700] transition-colors" />
                                                     )}
@@ -447,10 +478,11 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                                 title={img}
                                             >
                                                 <Image
-                                                    src={`/items/${(selectorTarget.type === 'weapons' ? 'weapon' : selectorTarget.type === 'armors' ? 'armor' : 'accessories')}/${img}`}
+                                                    src={`/items/${(selectorTarget.type === 'weapons' ? 'weapon' : selectorTarget.type === 'armors' ? 'armor' : 'accessory')}/${img}`}
                                                     fill
                                                     className="object-cover group-hover:scale-110 transition-transform duration-500"
                                                     alt="item"
+                                                    sizes="64px"
                                                 />
                                                 {isSelected && (
                                                     <div className="absolute top-1.5 right-1.5 bg-gradient-to-br from-[#FFD700] to-yellow-600 text-black w-5 h-5 rounded-full flex items-center justify-center shadow-lg z-10 border border-black transform scale-110">
@@ -480,7 +512,13 @@ function ItemCard({ item, type, stats, onClick, onStatChange }) {
                 title={`Select ${type}`}
             >
                 {item.image ? (
-                    <Image src={`/items/${type.toLowerCase()}/${item.image}`} fill className="object-cover hover:scale-110 transition-transform" alt={type} />
+                    <Image 
+                        src={`/items/${type.toLowerCase()}/${item.image}`} 
+                        fill 
+                        className="object-cover hover:scale-110 transition-transform" 
+                        alt={type} 
+                        sizes="64px"
+                    />
                 ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-gray-700 uppercase tracking-widest bg-gray-900/50 group-hover/item:text-[#FFD700] group-hover/item:bg-[#FFD700]/5 transition-colors">Select</div>
                 )}

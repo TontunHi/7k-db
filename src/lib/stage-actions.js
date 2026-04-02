@@ -4,6 +4,7 @@ import pool, { initDB } from './db'
 import { revalidatePath } from 'next/cache'
 import fs from 'fs'
 import path from 'path'
+import { logSiteUpdate } from './log-actions'
 
 // === DATABASE ACTIONS ===
 
@@ -57,6 +58,9 @@ export async function createStage(data) {
         }
 
         await connection.commit()
+        
+        await logSiteUpdate('STAGE', data.name || 'Stage', 'CREATE', `Added stage guide: ${data.name || 'Stage'}`)
+        
         revalidatePath('/admin/stages')
         revalidatePath('/stages')
         return { success: true, id: setupId }
@@ -91,6 +95,9 @@ export async function updateStage(id, data) {
         }
 
         await connection.commit()
+        
+        await logSiteUpdate('STAGE', data.name || 'Stage', 'UPDATE', `Updated stage guide: ${data.name || 'Stage'}`)
+        
         revalidatePath('/admin/stages')
         revalidatePath('/stages')
         revalidatePath(`/admin/stages/${id}`)

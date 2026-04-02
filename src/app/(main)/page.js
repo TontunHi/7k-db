@@ -166,7 +166,7 @@ export default async function HomePage() {
                                     ))}
                                 </div>
                             }>
-                                <RecentUpdates />
+                                <RecentUpdates key="recent-updates-widget" />
                             </Suspense>
                         </div>
                     </div>

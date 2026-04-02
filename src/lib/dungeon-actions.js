@@ -2,6 +2,7 @@
 
 import pool, { initDB } from './db'
 import { revalidatePath } from 'next/cache'
+import { logSiteUpdate } from './log-actions'
 
 // Fixed dungeon order
 const DUNGEON_ORDER = [
@@ -65,6 +66,9 @@ export async function createSet(data) {
             [data.dungeon_key, nextIndex, data.formation, data.pet_file, JSON.stringify(data.heroes), data.video_url, data.note]
         )
 
+        const dungeonName = DUNGEON_ORDER.find(d => d.key === data.dungeon_key)?.name || 'Dungeon';
+        await logSiteUpdate('DUNGEON', dungeonName, 'CREATE', `Added new strategy for ${dungeonName}`);
+
         revalidatePath('/admin/dungeon')
         revalidatePath(`/admin/dungeon/${data.dungeon_key}`)
         revalidatePath('/dungeon')
@@ -84,6 +88,12 @@ export async function updateSet(id, data) {
              WHERE id = ?`,
             [data.formation, data.pet_file, JSON.stringify(data.heroes), data.video_url, data.note, id]
         )
+
+        const [rows] = await pool.query('SELECT dungeon_key FROM dungeon_sets WHERE id = ?', [id]);
+        if (rows.length > 0) {
+            const dungeonName = DUNGEON_ORDER.find(d => d.key === rows[0].dungeon_key)?.name || 'Dungeon';
+            await logSiteUpdate('DUNGEON', dungeonName, 'UPDATE', `Updated strategy for ${dungeonName}`);
+        }
 
         revalidatePath('/admin/dungeon')
         revalidatePath('/dungeon')

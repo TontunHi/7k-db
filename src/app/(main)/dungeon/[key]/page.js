@@ -67,6 +67,7 @@ export default async function DungeonDetailPage({ params }) {
                                 fill 
                                 className="object-contain" 
                                 priority
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
                             />
                         </div>
                         

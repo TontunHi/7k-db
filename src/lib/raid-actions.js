@@ -2,6 +2,7 @@
 
 import pool, { initDB } from './db'
 import { revalidatePath } from 'next/cache'
+import { logSiteUpdate } from './log-actions'
 
 // Raids with actual images - names derived from filenames
 const RAID_ORDER = [
@@ -65,6 +66,9 @@ export async function createSet(data) {
             [data.raid_key, nextIndex, data.formation, data.pet_file, JSON.stringify(data.heroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
         )
 
+        const raidName = RAID_ORDER.find(r => r.key === data.raid_key)?.name || 'Raid';
+        await logSiteUpdate('RAID', raidName, 'CREATE', `Added new strategy for ${raidName}`);
+
         revalidatePath('/admin/raid')
         revalidatePath(`/admin/raid/${data.raid_key}`)
         revalidatePath('/raid')
@@ -84,6 +88,12 @@ export async function updateSet(id, data) {
              WHERE id = ?`,
             [data.formation, data.pet_file, JSON.stringify(data.heroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
         )
+
+        const [rows] = await pool.query('SELECT raid_key FROM raid_sets WHERE id = ?', [id]);
+        if (rows.length > 0) {
+            const raidName = RAID_ORDER.find(r => r.key === rows[0].raid_key)?.name || 'Raid';
+            await logSiteUpdate('RAID', raidName, 'UPDATE', `Updated strategy for ${raidName}`);
+        }
 
         revalidatePath('/admin/raid')
         revalidatePath('/raid')

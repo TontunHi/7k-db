@@ -70,6 +70,7 @@ export default async function CastleRushBossPage({ params }) {
                             fill 
                             className="object-cover" 
                             priority
+                            sizes="100vw"
                         />
                         {/* Gradient overlays */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />

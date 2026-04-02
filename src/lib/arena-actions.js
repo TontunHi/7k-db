@@ -2,6 +2,7 @@
 
 import pool, { initDB } from './db'
 import { revalidatePath } from 'next/cache'
+import { logSiteUpdate } from './log-actions'
 
 export async function getArenaTeams() {
     await initDB()
@@ -37,6 +38,8 @@ export async function createArenaTeam(data) {
             [nextIndex, data.team_name || null, data.formation, data.pet_file, JSON.stringify(data.heroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
         )
 
+        await logSiteUpdate('ARENA', data.team_name || 'Arena Team', 'CREATE', `Added new Arena Team${data.team_name ? `: ${data.team_name}` : ''}`)
+
         revalidatePath('/admin/arena')
         revalidatePath('/arena')
         
@@ -55,6 +58,8 @@ export async function updateArenaTeam(id, data) {
              WHERE id = ?`,
             [data.team_name || null, data.formation, data.pet_file, JSON.stringify(data.heroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
         )
+
+        await logSiteUpdate('ARENA', data.team_name || 'Arena Team', 'UPDATE', `Updated Arena Team${data.team_name ? `: ${data.team_name}` : ''}`)
 
         revalidatePath('/admin/arena')
         revalidatePath('/arena')

@@ -60,6 +60,7 @@ export default async function RaidPage() {
                                     alt={raid.name}
                                     fill
                                     className="object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] transition-transform duration-500 group-hover:scale-105"
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 />
                             </div>
 

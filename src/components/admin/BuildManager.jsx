@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { uploadHeroImage, deleteHeroImage } from "@/lib/admin-actions"
 import { openEditor, saveEditor } from "@/lib/editor-actions"
 import Image from "next/image"
@@ -13,6 +14,7 @@ export default function BuildManager({ heroes }) {
     const [currentHero, setCurrentHero] = useState(null)
     const [editorData, setEditorData] = useState(null)
     const [isLoadingEditor, setIsLoadingEditor] = useState(false)
+    const router = useRouter()
 
     async function handleDelete(filename) {
         if (!window.confirm("Are you sure you want to delete this hero?")) return
@@ -39,7 +41,7 @@ export default function BuildManager({ heroes }) {
         }
     }
 
-    async function handleSaveBuilds(newBuilds, newSkillPriority) {
+    async function handleSaveBuilds(newBuilds, newSkillPriority, isNewHero) {
         if (!currentHero) return
         try {
             await saveEditor(
@@ -47,9 +49,11 @@ export default function BuildManager({ heroes }) {
                 newBuilds,
                 newSkillPriority,
                 currentHero.name,
-                currentHero.grade
+                currentHero.grade,
+                isNewHero
             )
             toast.success("Builds saved successfully!")
+            router.refresh()
         } catch (error) {
             toast.error("Failed to save builds.")
         }
@@ -85,7 +89,13 @@ export default function BuildManager({ heroes }) {
                                     alt={hero.name}
                                     fill
                                     className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
                                 />
+                                {hero.is_new_hero && (
+                                    <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-[#FFD700] text-black text-[10px] font-black rounded-md shadow-[0_0_10px_rgba(255,215,0,0.5)] uppercase tracking-widest animate-pulse">
+                                        New
+                                    </div>
+                                )}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center backdrop-blur-[2px]">
                                     <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                                         <div className="bg-[#FFD700] text-black px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 shadow-lg shadow-[#FFD700]/30 hover:bg-yellow-300 transition-colors">
@@ -126,6 +136,7 @@ export default function BuildManager({ heroes }) {
                     accessories={editorData.resources.accessories}
                     initialBuilds={editorData.builds}
                     initialSkillPriority={editorData.heroData.skillPriority}
+                    initialIsNewHero={editorData.heroData.is_new_hero}
                     onSave={handleSaveBuilds}
                     onClose={() => setEditorOpen(false)}
                 />

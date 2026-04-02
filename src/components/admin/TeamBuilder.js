@@ -106,6 +106,7 @@ export default function TeamBuilder({
                                 alt={h.name}
                                 fill
                                 className="object-cover group-hover:scale-110 transition-transform duration-300"
+                                sizes="(max-width: 768px) 25vw, 15vw"
                             />
                         </button>
                     ))}
@@ -241,7 +242,13 @@ export default function TeamBuilder({
                     >
                         {team.pet_file ? (
                             <>
-                                <Image src={team.pet_file} alt="Pet" fill className="object-contain p-2 group-hover:scale-110 transition-transform" />
+                                <Image 
+                                    src={team.pet_file} 
+                                    alt="Pet" 
+                                    fill 
+                                    className="object-contain p-2 group-hover:scale-110 transition-transform" 
+                                    sizes="96px"
+                                />
                                 <div
                                     className="absolute top-1 right-1 p-1 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 hover:bg-destructive transition-all z-10"
                                     onClick={(e) => {

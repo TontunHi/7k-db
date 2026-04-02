@@ -137,6 +137,18 @@ export default function BuildView({ heroes }) {
 
 
 
+                                    {/* NEW Badge */}
+                                    {hero.is_new_hero && (
+                                        <div className="absolute top-2 left-2 z-20">
+                                            <div className="relative group/badge">
+                                                <div className="absolute inset-0 bg-[#FFD700] blur-md opacity-50 group-hover/badge:opacity-100 transition-opacity animate-pulse"></div>
+                                                <div className="relative bg-gradient-to-br from-[#FFD700] via-[#FDB931] to-[#FFA500] text-black text-[10px] font-black px-2.5 py-1 rounded-md shadow-xl border border-white/20 uppercase tracking-tighter transform -rotate-2">
+                                                    NEW HERO
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {/* Shine Effect */}
                                     <div className="absolute -inset-full top-0 block h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover:animate-shine" />
                                 </div>

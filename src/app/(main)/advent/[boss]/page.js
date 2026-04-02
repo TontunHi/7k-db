@@ -111,7 +111,7 @@ export default async function AdventBossPage({ params }) {
                         {/* Boss Image */}
                         <div className="relative w-full lg:w-1/2 aspect-[2/3] md:aspect-[3/4] lg:aspect-[1/1] rounded-2xl overflow-hidden border border-gray-800 bg-gradient-to-br from-[#1a1a1a] to-black shadow-2xl">
                             {boss.image && !boss.image.includes('undefined') ? (
-                                <Image src={boss.image} alt={boss.name} fill className="object-contain" priority />
+                                <Image src={boss.image} alt={boss.name} fill className="object-contain" priority sizes="(max-width: 768px) 100vw, 50vw" />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center">
                                     <Compass className="w-24 h-24 text-gray-700" />

@@ -71,6 +71,7 @@ export default async function RaidDetailPage({ params }) {
                                 fill 
                                 className="object-contain" 
                                 priority
+                                sizes="(max-width: 768px) 100vw, 50vw"
                             />
                         </div>
                         
@@ -186,6 +187,7 @@ export default async function RaidDetailPage({ params }) {
                                                                             alt="Skill 2"
                                                                             fill
                                                                             className="object-contain p-1"
+                                                                            sizes="56px"
                                                                         />
                                                                     ) : (
                                                                         <span className="text-gray-700 text-xs">-</span>
@@ -218,6 +220,7 @@ export default async function RaidDetailPage({ params }) {
                                                                             alt="Skill 3"
                                                                             fill
                                                                             className="object-contain p-1"
+                                                                            sizes="56px"
                                                                         />
                                                                     ) : (
                                                                         <span className="text-gray-700 text-xs">-</span>

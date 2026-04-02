@@ -103,7 +103,7 @@ export default function PublicTierlistView() {
                                                 <th key={type} className="p-4 border-b border-gray-800 bg-[#050505] min-w-[140px] relative">
                                                     <div className="flex flex-col items-center gap-3">
                                                         <div className="relative h-10 w-full transition-transform hover:-translate-y-1 duration-300">
-                                                            <Image src={`/logo_tiers/type/${type.toLowerCase()}.png`} fill className="object-contain drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]" alt={type} />
+                                                            <Image src={`/logo_tiers/type/${type.toLowerCase()}.png`} fill className="object-contain drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]" alt={type} sizes="96px" />
                                                         </div>
                                                         {/* Underline for columns */}
                                                         <div className="w-8 h-[1px] bg-gray-700"></div>
@@ -120,7 +120,7 @@ export default function PublicTierlistView() {
                                                 {/* Rank Row Header */}
                                                 <th className="p-4 border-r border-gray-800/50 bg-[#050505] relative w-32">
                                                     <div className="relative h-20 w-full mx-auto transition-transform group-hover:scale-110 duration-300">
-                                                        <Image src={`/logo_tiers/rank_tier/${rank}.png`} fill className="object-contain drop-shadow-[0_0_15px_rgba(0,0,0,0.8)]" alt={rank} />
+                                                        <Image src={`/logo_tiers/rank_tier/${rank}.png`} fill className="object-contain drop-shadow-[0_0_15px_rgba(0,0,0,0.8)]" alt={rank} sizes="80px" />
                                                     </div>
                                                     {/* Side accent */}
                                                     <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-gray-800 to-transparent group-hover:via-[#FFD700] transition-colors duration-500"></div>
@@ -139,7 +139,7 @@ export default function PublicTierlistView() {
                                                                         key={hero.heroFilename}
                                                                         className="relative w-[60px] h-[72px] bg-black bg-gradient-to-b from-[#1a1a1a] to-black rounded-sm border border-gray-700 overflow-hidden shadow-lg hover:z-20 hover:scale-[1.2] hover:border-[#FFD700] hover:shadow-[0_0_25px_rgba(255,215,0,0.5)] transition-all duration-200 cursor-pointer group/hero"
                                                                     >
-                                                                        <Image src={`/heroes/${hero.heroFilename}`} fill className="object-cover" alt="hero" />
+                                                                        <Image src={`/heroes/${hero.heroFilename}`} fill className="object-cover" alt="hero" sizes="60px" />
 
                                                                         {/* Shine effect */}
                                                                         <div className="absolute -inset-full top-0 block h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-40 group-hover/hero:animate-shine" />

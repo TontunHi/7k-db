@@ -249,7 +249,7 @@ export default function TierlistManager({ heroes }) {
                             {TYPES.map(type => (
                                 <th key={type} className="p-4 bg-gray-900 border-b border-gray-800 text-center border-l border-gray-800">
                                     <div className="relative h-8 w-24 mx-auto">
-                                        <Image src={`/logo_tiers/type/${type.toLowerCase()}.png`} fill className="object-contain" alt={type} />
+                                        <Image src={`/logo_tiers/type/${type.toLowerCase()}.png`} fill className="object-contain" alt={type} sizes="96px" />
                                     </div>
                                 </th>
                             ))}
@@ -260,7 +260,7 @@ export default function TierlistManager({ heroes }) {
                             <tr key={rank} className="border-b border-gray-800/50 hover:bg-gray-900/20">
                                 <th className="p-4 bg-gray-900/50 border-r border-gray-800 font-bold text-gray-300 text-center">
                                     <div className="relative h-12 w-12 mx-auto">
-                                        <Image src={`/logo_tiers/rank_tier/${rank}.png`} fill className="object-contain" alt={rank} />
+                                        <Image src={`/logo_tiers/rank_tier/${rank}.png`} fill className="object-contain" alt={rank} sizes="48px" />
                                     </div>
                                 </th>
                                 {TYPES.map(type => {
@@ -288,7 +288,7 @@ export default function TierlistManager({ heroes }) {
                                                         title={`${getNameFromFilename(entry.heroFilename)} — Click to reassign, drag to move`}
                                                     >
                                                         <div className="w-full h-full rounded overflow-hidden">
-                                                            <Image src={`/heroes/${entry.heroFilename}`} fill className="object-cover" alt="hero" />
+                                                            <Image src={`/heroes/${entry.heroFilename}`} fill className="object-cover" alt="hero" sizes="48px" />
                                                         </div>
                                                         {/* Edit overlay on hover */}
                                                         <div className="absolute inset-0 rounded bg-black/60 items-center justify-center hidden group-hover:flex pointer-events-none">
@@ -333,7 +333,7 @@ export default function TierlistManager({ heroes }) {
                             className="relative w-14 h-16 bg-black rounded-lg border border-gray-600 cursor-grab hover:scale-105 transition-all group overflow-hidden hover:border-[#FFD700]"
                             title={hero.name}
                         >
-                            <Image src={`/heroes/${hero.filename}`} fill className="object-cover" alt={hero.name} />
+                            <Image src={`/heroes/${hero.filename}`} fill className="object-cover" alt={hero.name} sizes="56px" />
                             <div className="absolute inset-0 bg-black/60 items-center justify-center hidden group-hover:flex pointer-events-none">
                                 <Plus className="w-6 h-6 text-[#FFD700]" />
                             </div>
@@ -372,7 +372,7 @@ export default function TierlistManager({ heroes }) {
                                             onClick={() => selectRank(r)}
                                             className="bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-[#FFD700] p-3 rounded-lg flex items-center justify-center transition-all h-16 relative"
                                         >
-                                            <Image src={`/logo_tiers/rank_tier/${r}.png`} fill className="object-contain p-2" alt={r} />
+                                            <Image src={`/logo_tiers/rank_tier/${r}.png`} fill className="object-contain p-2" alt={r} sizes="64px" />
                                         </button>
                                     ))}
                                 </div>
@@ -386,7 +386,7 @@ export default function TierlistManager({ heroes }) {
                                     <div className="flex items-center gap-2 ml-2">
                                         <span className="text-gray-400 text-sm">Target Rank:</span>
                                         <div className="relative w-8 h-8">
-                                            <Image src={`/logo_tiers/rank_tier/${tempRank}.png`} fill className="object-contain" alt={tempRank} />
+                                            <Image src={`/logo_tiers/rank_tier/${tempRank}.png`} fill className="object-contain" alt={tempRank} sizes="32px" />
                                         </div>
                                     </div>
                                 </div>
@@ -398,7 +398,7 @@ export default function TierlistManager({ heroes }) {
                                             onClick={() => selectType(t)}
                                             className="bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-[#FFD700] p-3 rounded-lg flex items-center justify-center transition-all h-16 relative"
                                         >
-                                            <Image src={`/logo_tiers/type/${t.toLowerCase()}.png`} fill className="object-contain p-2" alt={t} />
+                                            <Image src={`/logo_tiers/type/${t.toLowerCase()}.png`} fill className="object-contain p-2" alt={t} sizes="64px" />
                                         </button>
                                     ))}
                                 </div>

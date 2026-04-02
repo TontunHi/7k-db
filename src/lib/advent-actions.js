@@ -2,6 +2,7 @@
 
 import pool, { initDB } from './db'
 import { revalidatePath } from 'next/cache'
+import { logSiteUpdate } from './log-actions'
 
 // Fixed boss order
 const BOSS_ORDER = [
@@ -76,6 +77,9 @@ export async function createSet(data) {
             ]
         )
 
+        const bossName = BOSS_ORDER.find(b => b.key === data.boss_key)?.name || 'Advent Boss';
+        await logSiteUpdate('ADVENT', data.team_name || bossName, 'CREATE', `Added strategy for ${bossName}${data.team_name ? ` (${data.team_name})` : ''}`);
+
         revalidatePath('/admin/advent')
         revalidatePath(`/admin/advent/${data.boss_key}`)
         revalidatePath('/advent')
@@ -102,6 +106,12 @@ export async function updateSet(id, data) {
                 data.video_url, data.note, id
             ]
         )
+
+        const [rows] = await pool.query('SELECT boss_key FROM advent_expedition_sets WHERE id = ?', [id]);
+        if (rows.length > 0) {
+            const bossName = BOSS_ORDER.find(b => b.key === rows[0].boss_key)?.name || 'Advent Boss';
+            await logSiteUpdate('ADVENT', data.team_name || bossName, 'UPDATE', `Updated strategy for ${bossName}${data.team_name ? ` (${data.team_name})` : ''}`);
+        }
 
         revalidatePath('/admin/advent')
         revalidatePath('/advent')

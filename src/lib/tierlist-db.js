@@ -3,6 +3,7 @@
 import pool, { initDB } from "@/lib/db"
 import fs from "fs"
 import path from "path"
+import { logSiteUpdate } from "@/lib/log-actions"
 
 let dbInitialized = false
 async function ensureDB() {
@@ -53,11 +54,15 @@ export async function saveTierlistEntry(data) {
         rank_tier = VALUES(rank_tier),
         hero_type = VALUES(hero_type)
     `, [heroFilename, category, rank, type])
+
+    await logSiteUpdate('TIERLIST', name, 'UPDATE', `Updated Tier List: ${name} [${category.toUpperCase()}] to Rank ${rank}`)
 }
 
 export async function removeTierlistEntry(heroFilename, category) {
     await ensureDB()
+    const name = getNameFromFilename(heroFilename)
     await pool.query("DELETE FROM tierlist WHERE hero_filename = ? AND category = ?", [heroFilename, category])
+    await logSiteUpdate('TIERLIST', name, 'DELETE', `Removed from Tier List: ${name} [${category.toUpperCase()}]`)
 }
 
 // Logic to parse filename

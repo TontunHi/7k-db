@@ -1,32 +1,43 @@
 import Link from 'next/link'
-import { Clock, Sword, Crown, Shield, Swords, Star, RefreshCw } from 'lucide-react'
+import { Clock, Sword, Crown, Shield, Swords, Star, RefreshCw, Trophy, Crosshair, Compass, Skull, Landmark, Map } from 'lucide-react'
 import { getRecentUpdates } from '@/lib/log-actions'
 
 const CONTENT_CONFIG = {
-    HERO:        { icon: Sword,   color: '#3b82f6', label: 'Hero Build',    href: '/build' },
-    CASTLE_RUSH: { icon: Crown,   color: '#f59e0b', label: 'Castle Rush',   href: '/castle-rush' },
-    GUILD_WAR:   { icon: Shield,  color: '#ef4444', label: 'Guild War',     href: '/guild-war' },
-    TOTAL_WAR:   { icon: Swords,  color: '#fb7185', label: 'Total War',     href: '/total-war' },
-    RAID:        { icon: Star,    color: '#8b5cf6', label: 'Raid',          href: '/raid' },
-    DUNGEON:     { icon: Star,    color: '#10b981', label: 'Dungeon',       href: '/dungeon' },
-    STAGE:       { icon: Star,    color: '#FFD700', label: 'Stage Guide',   href: '/stages' },
+    HERO:        { icon: Sword,     color: '#3b82f6', label: 'Hero Build',    href: '/build' },
+    CASTLE_RUSH: { icon: Crown,     color: '#f59e0b', label: 'Castle Rush',   href: '/castle-rush' },
+    GUILD_WAR:   { icon: Shield,    color: '#ef4444', label: 'Guild War',     href: '/guild-war' },
+    TOTAL_WAR:   { icon: Swords,    color: '#fb7185', label: 'Total War',     href: '/total-war' },
+    RAID:        { icon: Skull,     color: '#8b5cf6', label: 'Raid',          href: '/raid' },
+    DUNGEON:     { icon: Landmark,  color: '#10b981', label: 'Dungeon',       href: '/dungeon' },
+    STAGE:       { icon: Map,       color: '#FFD700', label: 'Stage Guide',   href: '/stages' },
+    TIERLIST:    { icon: Trophy,    color: '#a855f7', label: 'Tier List',     href: '/tierlist' },
+    ARENA:       { icon: Crosshair, color: '#eab308', label: 'Arena',         href: '/arena' },
+    ADVENT:      { icon: Compass,   color: '#8b5cf6', label: 'Advent',        href: '/advent' },
+}
+
+function parseDbDate(dateStr) {
+    // created_at is now an ISO string (e.g. '2026-04-02T12:40:00.000Z')
+    // new Date() handles this correctly in all environments
+    return new Date(dateStr)
 }
 
 function formatDate(dateStr) {
-    const d = new Date(dateStr)
-    const dd = String(d.getDate()).padStart(2, '0')
-    const mm = String(d.getMonth() + 1).padStart(2, '0')
-    const yy = String(d.getFullYear()).slice(2)
-    return `${dd}/${mm}/${yy}`
+    const d = parseDbDate(dateStr)
+    return d.toLocaleDateString('th-TH', {
+        timeZone: 'Asia/Bangkok',
+        day: '2-digit',
+        month: '2-digit',
+        year: '2-digit'
+    })
 }
 
 function timeAgo(dateStr) {
     const now = new Date()
-    const then = new Date(dateStr)
-    const diffMs = now - then
+    const then = parseDbDate(dateStr)
+    const diffMs = now.getTime() - then.getTime()
     const diffMins = Math.floor(diffMs / 60000)
-    const diffHrs = Math.floor(diffMins / 60)
-    const diffDays = Math.floor(diffHrs / 24)
+    const diffHrs = Math.floor(diffMs / 3600000)
+    const diffDays = Math.floor(diffMs / 86400000)
 
     if (diffMins < 1) return 'Just now'
     if (diffMins < 60) return `${diffMins}m ago`

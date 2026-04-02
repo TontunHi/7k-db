@@ -34,7 +34,8 @@ export async function initDB() {
         filename VARCHAR(255) PRIMARY KEY,
         name VARCHAR(255),
         grade VARCHAR(50),
-        skill_priority JSON
+        skill_priority JSON,
+        is_new_hero TINYINT(1) DEFAULT 0
       )
     `);
 
@@ -248,6 +249,13 @@ export async function initDB() {
     try {
       await connection.query(`ALTER TABLE total_war_teams ADD CONSTRAINT fk_tw_team_set FOREIGN KEY (set_id) REFERENCES total_war_sets(id) ON DELETE CASCADE`);
     } catch (e) { /* Already exists */ }
+
+    // Add is_new_hero column to heroes table if missing
+    try {
+      await connection.query(`ALTER TABLE heroes ADD COLUMN is_new_hero TINYINT(1) DEFAULT 0 AFTER skill_priority`);
+    } catch (e) {
+      // Column already exists, ignore
+    }
 
     // ─── Site Updates Log ─────────────────────────────────────────────────────
     await connection.query(`

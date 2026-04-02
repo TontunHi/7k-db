@@ -1,6 +1,7 @@
 import fs from "fs"
 import path from "path"
 import BuildManager from "@/components/admin/BuildManager"
+import { getHeroesMetadata } from "@/lib/build-db"
 
 // Logic to parse filename to grade (Same as BuildPage to ensure consistency)
 function getGradeFromFilename(filename) {
@@ -24,7 +25,10 @@ export default async function AdminBuildsPage() {
             await fs.promises.mkdir(heroesDir, { recursive: true })
         }
 
-        const files = await fs.promises.readdir(heroesDir)
+        const [files, metadata] = await Promise.all([
+            fs.promises.readdir(heroesDir),
+            getHeroesMetadata()
+        ])
 
         heroes = files
             .filter((file) => /\.(png|jpg|jpeg|webp)$/i.test(file))
@@ -36,14 +40,24 @@ export default async function AdminBuildsPage() {
                     filename: file,
                     grade: grade,
                     name: file.replace(/^(l\+\+|l\+|l|r)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " "),
+                    is_new_hero: metadata[file]?.is_new_hero || false
                 }
             })
             .filter((h) => h !== null)
 
-            // Sort for admin view (l++ > l+ > l > r)
+            // Sort logic: is_new_hero > grade > filename
             .sort((a, b) => {
-                const grades = { "l++": 4, "l+": 3, "l": 2, "r": 1 }
-                return grades[b.grade] - grades[a.grade]
+                // 1. is_new_hero
+                if (a.is_new_hero !== b.is_new_hero) return b.is_new_hero ? 1 : -1
+
+                // 2. grade
+                const gradesOrder = { "l++": 4, "l+": 3, "l": 2, "r": 1 }
+                const rankA = gradesOrder[a.grade] || 0
+                const rankB = gradesOrder[b.grade] || 0
+                if (rankA !== rankB) return rankB - rankA
+
+                // 3. filename
+                return a.filename.localeCompare(b.filename)
             })
 
     } catch (error) {

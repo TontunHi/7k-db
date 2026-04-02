@@ -60,6 +60,7 @@ export default async function CastleRushPage() {
                                     alt={boss.name}
                                     fill
                                     className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                    sizes="100vw"
                                 />
 
                                 {/* Bottom Gradient Overlay */}
