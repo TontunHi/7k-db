@@ -50,7 +50,7 @@ export async function createStage(data) {
         const setupId = res.insertId
 
         for (const team of data.teams) {
-            const slugifiedHeroes = (team.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+            const slugifiedHeroes = (team.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
             await connection.query(
                 `INSERT INTO teams (setup_id, team_index, formation, pet_file, heroes_json)
                  VALUES (?, ?, ?, ?, ?)`,
@@ -88,7 +88,7 @@ export async function updateStage(id, data) {
         await connection.query('DELETE FROM teams WHERE setup_id = ?', [id])
 
         for (const team of data.teams) {
-            const slugifiedHeroes = (team.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+            const slugifiedHeroes = (team.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
             await connection.query(
                 `INSERT INTO teams (setup_id, team_index, formation, pet_file, heroes_json)
                  VALUES (?, ?, ?, ?, ?)`,

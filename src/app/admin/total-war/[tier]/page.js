@@ -20,7 +20,7 @@ import TeamBuilder from '@/components/admin/TeamBuilder'
 
 function getSkillImagePath(heroFilename, skillNumber) {
     if (!heroFilename) return null
-    return `/skills/${heroFilename.replace('.png', '')}/${skillNumber}.png`
+    return `/skills/${heroFilename.replace(/\.[^/.]+$/, '')}/${skillNumber}.webp`
 }
 
 // ─── Skill Picker Modal ────────────────────────────────────────────────────────

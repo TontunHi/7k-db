@@ -6,12 +6,12 @@ import { logSiteUpdate } from './log-actions'
 
 // Fixed dungeon order
 const DUNGEON_ORDER = [
-    { key: '01_fire', name: 'Fire Particle Dungeon', image: '/dungeon/01_fire_particle_dungeon.png' },
-    { key: '02_water', name: 'Water Particle Dungeon', image: '/dungeon/02_water_particle_dungeon.png' },
-    { key: '03_earth', name: 'Earth Particle Dungeon', image: '/dungeon/03_earth_particle_dungeon.png' },
-    { key: '04_light', name: 'Light Particle Dungeon', image: '/dungeon/04_light_particle_dungeon.png' },
-    { key: '05_darkness', name: 'Darkness Particle Dungeon', image: '/dungeon/05_darkness_particle_dungeon.png' },
-    { key: '06_gold', name: 'Gold Particle Dungeon', image: '/dungeon/06_gold_particle_dungeon.png' },
+    { key: '01_fire', name: 'Fire Particle Dungeon', image: '/dungeon/01_fire_particle_dungeon.webp' },
+    { key: '02_water', name: 'Water Particle Dungeon', image: '/dungeon/02_water_particle_dungeon.webp' },
+    { key: '03_earth', name: 'Earth Particle Dungeon', image: '/dungeon/03_earth_particle_dungeon.webp' },
+    { key: '04_light', name: 'Light Particle Dungeon', image: '/dungeon/04_light_particle_dungeon.webp' },
+    { key: '05_darkness', name: 'Darkness Particle Dungeon', image: '/dungeon/05_darkness_particle_dungeon.webp' },
+    { key: '06_gold', name: 'Gold Particle Dungeon', image: '/dungeon/06_gold_particle_dungeon.webp' },
 ]
 
 export async function getDungeons() {
@@ -60,7 +60,7 @@ export async function createSet(data) {
         )
         const nextIndex = countResult[0].next_index
 
-        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
         const [result] = await pool.query(
             `INSERT INTO dungeon_sets (dungeon_key, set_index, formation, pet_file, heroes_json, video_url, note)
@@ -84,7 +84,7 @@ export async function createSet(data) {
 
 export async function updateSet(id, data) {
     try {
-        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
         await pool.query(
             `UPDATE dungeon_sets 

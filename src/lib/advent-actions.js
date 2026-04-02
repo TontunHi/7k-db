@@ -6,11 +6,11 @@ import { logSiteUpdate } from './log-actions'
 
 // Fixed boss order
 const BOSS_ORDER = [
-    { key: 'ae_teo', name: 'Teo', image: '/advent_expedition/ae_teo.png' },
-    { key: 'ae_kyle', name: 'Kyle', image: '/advent_expedition/ae_kyle.png' },
-    { key: 'ae_yeonhee', name: 'Yeonhee', image: '/advent_expedition/ae_yeonhee.png' },
-    { key: 'ae_karma', name: 'Karma', image: '/advent_expedition/ae_karma.png' },
-    { key: 'ae_god_of_destruction', name: 'God Of Destruction', image: '/advent_expedition/ae_god_of_destruction.png' },
+    { key: 'ae_teo', name: 'Teo', image: '/advent_expedition/ae_teo.webp' },
+    { key: 'ae_kyle', name: 'Kyle', image: '/advent_expedition/ae_kyle.webp' },
+    { key: 'ae_yeonhee', name: 'Yeonhee', image: '/advent_expedition/ae_yeonhee.webp' },
+    { key: 'ae_karma', name: 'Karma', image: '/advent_expedition/ae_karma.webp' },
+    { key: 'ae_god_of_destruction', name: 'God Of Destruction', image: '/advent_expedition/ae_god_of_destruction.webp' },
 ]
 
 export async function getBosses() {
@@ -65,7 +65,7 @@ export async function createSet(data) {
         )
         const nextIndex = countResult[0].next_index
 
-        const slugifyTeam = (heroes) => (heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+        const slugifyTeam = (heroes) => (heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
         const team1Slugs = slugifyTeam(data.team1_heroes)
         const team2Slugs = slugifyTeam(data.team2_heroes)
 
@@ -97,7 +97,7 @@ export async function createSet(data) {
 
 export async function updateSet(id, data) {
     try {
-        const slugifyTeam = (heroes) => (heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+        const slugifyTeam = (heroes) => (heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
         const team1Slugs = slugifyTeam(data.team1_heroes)
         const team2Slugs = slugifyTeam(data.team2_heroes)
 

@@ -6,13 +6,13 @@ import { logSiteUpdate } from './log-actions'
 
 // Fixed boss order
 const BOSS_ORDER = [
-    { key: 'cr_rudy', name: 'Rudy', image: '/castle_rush/cr_rudy.png' },
-    { key: 'cr_eileene', name: 'Eileene', image: '/castle_rush/cr_eileene.png' },
-    { key: 'cr_rachel', name: 'Rachel', image: '/castle_rush/cr_rachel.png' },
-    { key: 'cr_dellons', name: 'Dellons', image: '/castle_rush/cr_dellons.png' },
-    { key: 'cr_jave', name: 'Jave', image: '/castle_rush/cr_jave.png' },
-    { key: 'cr_spike', name: 'Spike', image: '/castle_rush/cr_spike.png' },
-    { key: 'cr_kris', name: 'Kris', image: '/castle_rush/cr_kris.png' },
+    { key: 'cr_rudy', name: 'Rudy', image: '/castle_rush/cr_rudy.webp' },
+    { key: 'cr_eileene', name: 'Eileene', image: '/castle_rush/cr_eileene.webp' },
+    { key: 'cr_rachel', name: 'Rachel', image: '/castle_rush/cr_rachel.webp' },
+    { key: 'cr_dellons', name: 'Dellons', image: '/castle_rush/cr_dellons.webp' },
+    { key: 'cr_jave', name: 'Jave', image: '/castle_rush/cr_jave.webp' },
+    { key: 'cr_spike', name: 'Spike', image: '/castle_rush/cr_spike.webp' },
+    { key: 'cr_kris', name: 'Kris', image: '/castle_rush/cr_kris.webp' },
 ]
 
 export async function getBosses() {
@@ -64,12 +64,13 @@ export async function createSet(data) {
         )
         const nextIndex = countResult[0].next_index
 
-        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
+        const petSlug = data.pet_file ? data.pet_file.replace(/\.[^/.]+$/, "") : null
 
         const [result] = await pool.query(
             `INSERT INTO castle_rush_sets (boss_key, set_index, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [data.boss_key, nextIndex, data.team_name || null, data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
+            [data.boss_key, nextIndex, data.team_name || null, data.formation, petSlug, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
         )
 
         const bossName = BOSS_ORDER.find(b => b.key === data.boss_key)?.name || data.boss_key
@@ -89,13 +90,14 @@ export async function createSet(data) {
 
 export async function updateSet(id, data) {
     try {
-        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
+        const petSlug = data.pet_file ? data.pet_file.replace(/\.[^/.]+$/, "") : null
 
         await pool.query(
             `UPDATE castle_rush_sets 
              SET team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
              WHERE id = ?`,
-            [data.team_name || null, data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
+            [data.team_name || null, data.formation, petSlug, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
         )
 
         const bossName = data.boss_name || 'Castle Rush'

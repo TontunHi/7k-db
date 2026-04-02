@@ -34,7 +34,7 @@ export async function createGuildWarTeam(data) {
         )
         const nextIndex = countResult[0].next_index
 
-        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
         const [result] = await pool.query(
             `INSERT INTO guild_war_teams (team_index, type, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note)
@@ -58,7 +58,7 @@ export async function createGuildWarTeam(data) {
 
 export async function updateGuildWarTeam(id, data) {
     try {
-        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
         await pool.query(
             `UPDATE guild_war_teams 

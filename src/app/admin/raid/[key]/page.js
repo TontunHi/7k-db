@@ -19,9 +19,8 @@ import TeamBuilder from '@/components/admin/TeamBuilder'
 // Helper to get hero skill image path
 function getSkillImagePath(heroFilename, skillNumber) {
     if (!heroFilename) return null
-    // Remove .png extension to get folder name
-    const folderName = heroFilename.replace('.png', '')
-    return `/skills/${folderName}/${skillNumber}.png`
+    const folderName = heroFilename.replace(/\.[^/.]+$/, '')
+    return `/skills/${folderName}/${skillNumber}.webp`
 }
 
 export default function RaidDetailPage({ params }) {

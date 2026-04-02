@@ -32,7 +32,7 @@ export async function createArenaTeam(data) {
         )
         const nextIndex = countResult[0].next_index
 
-        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
         const [result] = await pool.query(
             `INSERT INTO arena_teams (team_index, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note)
@@ -54,7 +54,7 @@ export async function createArenaTeam(data) {
 
 export async function updateArenaTeam(id, data) {
     try {
-        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
         await pool.query(
             `UPDATE arena_teams 

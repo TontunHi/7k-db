@@ -6,9 +6,9 @@ import { logSiteUpdate } from './log-actions'
 
 // Raids with actual images - names derived from filenames
 const RAID_ORDER = [
-    { key: 'destroyer_gaze', name: 'Destroyer Gaze', image: '/raid/1_Destroyer_Gaze.png' },
-    { key: 'ox_king', name: 'Ox King', image: '/raid/2_Ox_King.png' },
-    { key: 'iron_devourer', name: 'Iron Devourer', image: '/raid/3_Iron_Devourer.png' },
+    { key: 'destroyer_gaze', name: 'Destroyer Gaze', image: '/raid/1_Destroyer_Gaze.webp' },
+    { key: 'ox_king', name: 'Ox King', image: '/raid/2_Ox_King.webp' },
+    { key: 'iron_devourer', name: 'Iron Devourer', image: '/raid/3_Iron_Devourer.webp' },
 ]
 
 export async function getRaids() {
@@ -60,7 +60,7 @@ export async function createSet(data) {
         )
         const nextIndex = countResult[0].next_index
 
-        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
         const [result] = await pool.query(
             `INSERT INTO raid_sets (raid_key, set_index, formation, pet_file, heroes_json, skill_rotation, video_url, note)
@@ -84,7 +84,7 @@ export async function createSet(data) {
 
 export async function updateSet(id, data) {
     try {
-        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
         await pool.query(
             `UPDATE raid_sets 
