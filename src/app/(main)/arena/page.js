@@ -2,6 +2,7 @@ import Image from 'next/image'
 import { getArenaTeams } from '@/lib/arena-actions'
 import { Swords, Video, ExternalLink, Users, Zap, Hash, ArrowRight, Shield } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { getHeroImageMap } from '@/lib/hero-utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,6 +17,7 @@ import SkillSequence from '@/components/shared/SkillSequence'
 
 export default async function ArenaPage() {
     const sets = await getArenaTeams()
+    const heroImageMap = await getHeroImageMap()
     
     // Parse heroes JSON
     const parsedSets = sets.map(set => ({
@@ -110,7 +112,7 @@ export default async function ArenaPage() {
                                         <div className="flex items-center gap-4 bg-gray-950/40 p-4 rounded-xl border border-gray-800/40">
                                             
                                             {/* 5-Slot Formation Grid */}
-                                            <FormationGrid formation={set.formation} heroes={set.heroes} />
+                                            <FormationGrid formation={set.formation} heroes={set.heroes} heroImageMap={heroImageMap} />
 
                                             {/* Divider */}
                                             <div className="w-px h-12 bg-gray-800/50 mx-2" />
@@ -120,7 +122,7 @@ export default async function ArenaPage() {
                                         </div>
 
                                         {/* Skill Rotation - Extra Compact */}
-                                        <SkillSequence skillRotation={set.skill_rotation} heroes={set.heroes} />
+                                        <SkillSequence skillRotation={set.skill_rotation} heroes={set.heroes} heroImageMap={heroImageMap} />
 
                                         {/* Strategy Note - Extra Compact */}
                                         {set.note && (

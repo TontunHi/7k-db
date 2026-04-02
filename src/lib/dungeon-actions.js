@@ -60,10 +60,12 @@ export async function createSet(data) {
         )
         const nextIndex = countResult[0].next_index
 
+        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+
         const [result] = await pool.query(
             `INSERT INTO dungeon_sets (dungeon_key, set_index, formation, pet_file, heroes_json, video_url, note)
              VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [data.dungeon_key, nextIndex, data.formation, data.pet_file, JSON.stringify(data.heroes), data.video_url, data.note]
+            [data.dungeon_key, nextIndex, data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), data.video_url, data.note]
         )
 
         const dungeonName = DUNGEON_ORDER.find(d => d.key === data.dungeon_key)?.name || 'Dungeon';
@@ -82,11 +84,13 @@ export async function createSet(data) {
 
 export async function updateSet(id, data) {
     try {
+        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+
         await pool.query(
             `UPDATE dungeon_sets 
              SET formation = ?, pet_file = ?, heroes_json = ?, video_url = ?, note = ?
              WHERE id = ?`,
-            [data.formation, data.pet_file, JSON.stringify(data.heroes), data.video_url, data.note, id]
+            [data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), data.video_url, data.note, id]
         )
 
         const [rows] = await pool.query('SELECT dungeon_key FROM dungeon_sets WHERE id = ?', [id]);

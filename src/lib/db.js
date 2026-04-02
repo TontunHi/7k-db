@@ -269,34 +269,72 @@ export async function initDB() {
       )
     `);
 
-    // ─── One-time Migration: .png -> .webp ────────────────────────────────────
-    // If the user changed their image files to .webp, we must update the DB keys
+    // ─── One-time Migration: Filename -> Slug (Extension-Agnostic) ───────────
+    // If the user uses different extensions, we now link by "slug" (no extension)
     try {
         await connection.query("SET FOREIGN_KEY_CHECKS = 0");
         
-        // Update main hero table
+        // Update main hero table - Strip any extension (.png, .webp, .jpg, etc.)
         await connection.query(`
             UPDATE heroes 
-            SET filename = REPLACE(filename, '.png', '.webp') 
-            WHERE filename LIKE '%.png'
+            SET filename = LEFT(filename, LENGTH(filename) - LOCATE('.', REVERSE(filename))) 
+            WHERE filename LIKE '%.%'
         `);
         
         // Update dependent tables
         await connection.query(`
             UPDATE builds 
-            SET hero_filename = REPLACE(hero_filename, '.png', '.webp') 
-            WHERE hero_filename LIKE '%.png'
+            SET hero_filename = LEFT(hero_filename, LENGTH(hero_filename) - LOCATE('.', REVERSE(hero_filename))) 
+            WHERE hero_filename LIKE '%.%'
         `);
         
         await connection.query(`
             UPDATE tierlist 
-            SET hero_filename = REPLACE(hero_filename, '.png', '.webp') 
-            WHERE hero_filename LIKE '%.png'
+            SET hero_filename = LEFT(hero_filename, LENGTH(hero_filename) - LOCATE('.', REVERSE(hero_filename))) 
+            WHERE hero_filename LIKE '%.%'
         `);
+
+        // Update JSON columns in all other tables
+        const jsonTables = [
+            { table: 'raid_sets', cols: ['heroes_json'] },
+            { table: 'teams', cols: ['heroes_json'] },
+            { table: 'castle_rush_sets', cols: ['heroes_json'] },
+            { table: 'dungeon_sets', cols: ['heroes_json'] },
+            { table: 'advent_expedition_sets', cols: ['team1_heroes_json', 'team2_heroes_json'] },
+            { table: 'arena_teams', cols: ['heroes_json'] },
+            { table: 'guild_war_teams', cols: ['heroes_json'] },
+            { table: 'total_war_teams', cols: ['heroes_json'] }
+        ];
+
+        const stripExt = (arr) => {
+            if (!Array.isArray(arr)) return arr;
+            return arr.map(item => typeof item === 'string' ? item.replace(/\.[^/.]+$/, "") : item);
+        };
+
+        for (const target of jsonTables) {
+            const [rows] = await connection.query(`SELECT id, ${target.cols.join(', ')} FROM ${target.table}`);
+            for (const row of rows) {
+                let needsUpdate = false;
+                const updates = {};
+                for (const col of target.cols) {
+                    if (!row[col]) continue;
+                    const original = typeof row[col] === 'string' ? JSON.parse(row[col]) : row[col];
+                    const sanitized = stripExt(original);
+                    if (JSON.stringify(original) !== JSON.stringify(sanitized)) {
+                        updates[col] = JSON.stringify(sanitized);
+                        needsUpdate = true;
+                    }
+                }
+                if (needsUpdate) {
+                    const setClause = Object.keys(updates).map(col => `${col} = ?`).join(', ');
+                    await connection.query(`UPDATE ${target.table} SET ${setClause} WHERE id = ?`, [...Object.values(updates), row.id]);
+                }
+            }
+        }
 
         await connection.query("SET FOREIGN_KEY_CHECKS = 1");
     } catch (e) {
-        console.warn("[Migration] .webp migration skipped or already done:", e.message);
+        console.warn("[Migration] Slug migration error or already done:", e.message);
         await connection.query("SET FOREIGN_KEY_CHECKS = 1");
     }
 

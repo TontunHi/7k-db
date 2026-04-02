@@ -9,7 +9,7 @@ import FormationGrid from '@/components/shared/FormationGrid'
 import PetDisplay from '@/components/shared/PetDisplay'
 import SkillSequence from '@/components/shared/SkillSequence'
 
-export default function GuildWarView({ attackers, defenders }) {
+export default function GuildWarView({ attackers, defenders, heroImageMap }) {
     const [activeTab, setActiveTab] = useState('attacker')
     const currentTeams = activeTab === 'attacker' ? attackers : defenders
     
@@ -190,6 +190,7 @@ export default function GuildWarView({ attackers, defenders }) {
                                             <FormationGrid 
                                                 formation={set.formation} 
                                                 heroes={set.heroes} 
+                                                heroImageMap={heroImageMap}
                                                 staggerAmount="lg:translate-y-6"
                                             />
 
@@ -211,6 +212,7 @@ export default function GuildWarView({ attackers, defenders }) {
                                         <SkillSequence 
                                             skillRotation={set.skill_rotation} 
                                             heroes={set.heroes} 
+                                            heroImageMap={heroImageMap}
                                             customClasses={{
                                                 wrapper: "mt-0"
                                             }}

@@ -33,14 +33,16 @@ export default async function AdminBuildsPage() {
         heroes = files
             .filter((file) => /\.(png|jpg|jpeg|webp)$/i.test(file))
             .map((file) => {
+                const slug = file.replace(/\.[^/.]+$/, "")
                 const grade = getGradeFromFilename(file)
                 if (grade === "unknown") return null
 
                 return {
                     filename: file,
+                    slug: slug,
                     grade: grade,
                     name: file.replace(/^(l\+\+|l\+|l|r)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " "),
-                    is_new_hero: metadata[file]?.is_new_hero || false
+                    is_new_hero: metadata[slug]?.is_new_hero || false
                 }
             })
             .filter((h) => h !== null)

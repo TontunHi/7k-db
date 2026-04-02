@@ -4,6 +4,7 @@ import { getBossInfo, getSetsByBoss } from '@/lib/advent-actions'
 import { Compass, ArrowLeft, Video, ExternalLink, Users, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { notFound } from 'next/navigation'
+import { getHeroImageMap } from '@/lib/hero-utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,7 +24,7 @@ import PetDisplay from '@/components/shared/PetDisplay'
 import SkillSequence from '@/components/shared/SkillSequence'
 
 // Reusable team display component
-function TeamDisplay({ heroes, formation, petFile, skillRotation, teamLabel, teamColor }) {
+function TeamDisplay({ heroes, formation, petFile, skillRotation, teamLabel, teamColor, heroImageMap }) {
     return (
         <div className="space-y-4">
             {/* Team label */}
@@ -48,6 +49,7 @@ function TeamDisplay({ heroes, formation, petFile, skillRotation, teamLabel, tea
                 <FormationGrid 
                     formation={formation} 
                     heroes={heroes} 
+                    heroImageMap={heroImageMap}
                     customClasses={{
                         container: "grid grid-cols-5 gap-3 pb-6 max-w-full",
                         emptyRender: ({isFront}) => (
@@ -87,6 +89,7 @@ export default async function AdventBossPage({ params }) {
     }
     
     const sets = await getSetsByBoss(bossKey)
+    const heroImageMap = await getHeroImageMap()
 
     return (
         <div className="relative min-h-screen w-full bg-[#050505] overflow-hidden pb-20">
@@ -182,6 +185,7 @@ export default async function AdventBossPage({ params }) {
                                         skillRotation={set.team1_skill_rotation}
                                         teamLabel={1}
                                         teamColor="sky"
+                                        heroImageMap={heroImageMap}
                                     />
 
                                     <div className="border-t border-gray-800" />
@@ -194,6 +198,7 @@ export default async function AdventBossPage({ params }) {
                                         skillRotation={set.team2_skill_rotation}
                                         teamLabel={2}
                                         teamColor="rose"
+                                        heroImageMap={heroImageMap}
                                     />
 
                                     {/* Note */}

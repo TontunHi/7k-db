@@ -17,7 +17,8 @@ async function ensureDB() {
 
 export async function getHeroData(filename) {
     await ensureDB()
-    const [rows] = await pool.query("SELECT * FROM heroes WHERE filename = ?", [filename])
+    const slug = filename.replace(/\.[^/.]+$/, "")
+    const [rows] = await pool.query("SELECT * FROM heroes WHERE filename = ?", [slug])
     const data = rows[0]
 
     if (!data) return null
@@ -54,18 +55,20 @@ export async function getHeroes() {
 
 export async function saveHeroData(hero) {
     await ensureDB()
+    const slug = hero.filename.replace(/\.[^/.]+$/, "")
     // upsert
     await pool.query(`
     INSERT INTO heroes (filename, name, grade, skill_priority, is_new_hero)
     VALUES (?, ?, ?, ?, ?)
     ON DUPLICATE KEY UPDATE 
     name = VALUES(name), grade = VALUES(grade), skill_priority = VALUES(skill_priority), is_new_hero = VALUES(is_new_hero)
-  `, [hero.filename, hero.name, hero.grade, JSON.stringify(hero.skillPriority || []), hero.is_new_hero ? 1 : 0])
+  `, [slug, hero.name, hero.grade, JSON.stringify(hero.skillPriority || []), hero.is_new_hero ? 1 : 0])
 }
 
 export async function getHeroBuilds(heroFilename) {
     await ensureDB()
-    const [rows] = await pool.query("SELECT * FROM builds WHERE hero_filename = ?", [heroFilename])
+    const slug = heroFilename.replace(/\.[^/.]+$/, "")
+    const [rows] = await pool.query("SELECT * FROM builds WHERE hero_filename = ?", [slug])
     return rows.map(row => ({
         ...row,
         id: row.id,
@@ -80,19 +83,20 @@ export async function getHeroBuilds(heroFilename) {
 
 export async function saveHeroBuilds(heroFilename, builds) {
     await ensureDB()
+    const slug = heroFilename.replace(/\.[^/.]+$/, "")
     const connection = await pool.getConnection()
     try {
         await connection.beginTransaction()
 
         // Replace all builds strategy
-        await connection.query("DELETE FROM builds WHERE hero_filename = ?", [heroFilename])
+        await connection.query("DELETE FROM builds WHERE hero_filename = ?", [slug])
 
         for (const build of builds) {
             await connection.query(`
         INSERT INTO builds (hero_filename, c_level, modes, note, weapons, armors, accessories, substats)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `, [
-                heroFilename,
+                slug,
                 build.cLevel,
                 JSON.stringify(build.mode),
                 build.note,

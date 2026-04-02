@@ -34,10 +34,12 @@ export async function createGuildWarTeam(data) {
         )
         const nextIndex = countResult[0].next_index
 
+        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+
         const [result] = await pool.query(
             `INSERT INTO guild_war_teams (team_index, type, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [nextIndex, data.type, data.team_name || null, data.formation, data.pet_file, JSON.stringify(data.heroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
+            [nextIndex, data.type, data.team_name || null, data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
         )
 
         const typeLabel = data.type === 'attacker' ? 'Attacker' : 'Defender'
@@ -56,11 +58,13 @@ export async function createGuildWarTeam(data) {
 
 export async function updateGuildWarTeam(id, data) {
     try {
+        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+
         await pool.query(
             `UPDATE guild_war_teams 
              SET type = ?, team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
              WHERE id = ?`,
-            [data.type, data.team_name || null, data.formation, data.pet_file, JSON.stringify(data.heroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
+            [data.type, data.team_name || null, data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
         )
 
         const typeLabel = data.type === 'attacker' ? 'Attacker' : 'Defender'

@@ -45,8 +45,10 @@ export function getStaggerClass(formation, index) {
     return ''
 }
 
-export function getSkillImagePath(heroFilename, skillNumber) {
-    if (!heroFilename) return null
-    const folderName = heroFilename.replace('.png', '')
+export function getSkillImagePath(heroIdentifier, skillNumber) {
+    if (!heroIdentifier) return null
+    // Remove any extension to get the folder name (slug)
+    const folderName = heroIdentifier.replace(/\.[^/.]+$/, "")
+    // Default to .png for skills for now, but folder is now slug-based
     return `/skills/${folderName}/${skillNumber}.png`
 }

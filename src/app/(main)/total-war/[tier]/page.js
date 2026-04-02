@@ -7,6 +7,7 @@ import FormationGrid from '@/components/shared/FormationGrid'
 import PetDisplay from '@/components/shared/PetDisplay'
 import SkillSequence from '@/components/shared/SkillSequence'
 import { ArrowLeft, Users, Swords, Layers } from 'lucide-react'
+import { getHeroImageMap } from '@/lib/hero-utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,6 +28,7 @@ export default async function TotalWarTierPage({ params }) {
     if (!tierCfg) notFound()
 
     const sets = await getSetsByTier(tierKey)
+    const heroImageMap = await getHeroImageMap()
 
     return (
         <div className="relative min-h-screen w-full bg-[#050505] overflow-hidden pb-20">
@@ -181,6 +183,7 @@ export default async function TotalWarTierPage({ params }) {
                                                             <FormationGrid
                                                                 formation={team.formation}
                                                                 heroes={team.heroes}
+                                                                heroImageMap={heroImageMap}
                                                                 customClasses={{
                                                                     container: "grid grid-cols-5 gap-2 md:gap-3 pb-6 max-w-full",
                                                                     emptyRender: () => (
@@ -202,6 +205,7 @@ export default async function TotalWarTierPage({ params }) {
                                                     <SkillSequence
                                                         skillRotation={team.skill_rotation}
                                                         heroes={team.heroes}
+                                                        heroImageMap={heroImageMap}
                                                         customClasses={{ container: "mt-4 space-y-3" }}
                                                     />
 

@@ -4,6 +4,7 @@ import { getRaidInfo, getSetsByRaid } from '@/lib/raid-actions'
 import { Skull, ArrowLeft, Video, ExternalLink, Users, Star, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { notFound } from 'next/navigation'
+import { getHeroImageMap } from '@/lib/hero-utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,6 +32,7 @@ export default async function RaidDetailPage({ params }) {
     }
     
     const sets = await getSetsByRaid(raidKey)
+    const heroImageMap = await getHeroImageMap()
     
     // Parse heroes JSON
     const parsedSets = sets.map(set => ({
@@ -136,6 +138,7 @@ export default async function RaidDetailPage({ params }) {
                                         <FormationGrid 
                                             formation={set.formation} 
                                             heroes={set.heroes} 
+                                            heroImageMap={heroImageMap}
                                             customClasses={{
                                                 container: "grid grid-cols-5 gap-3 pb-6 max-w-full",
                                                 emptyRender: ({isFront}) => (

@@ -17,7 +17,7 @@ export async function getTierlistData(category) {
     await ensureDB()
     const [rows] = await pool.query("SELECT * FROM tierlist WHERE category = ?", [category])
     return rows.map(r => ({
-        heroFilename: r.hero_filename,
+        heroFilename: r.hero_filename, // Keep the DB value (which is a slug)
         category: r.category,
         rank: r.rank_tier,
         type: r.hero_type
@@ -27,15 +27,7 @@ export async function getTierlistData(category) {
 export async function saveTierlistEntry(data) {
     await ensureDB()
     const { heroFilename, category, rank, type } = data
-
-    // We should probably ensure the hero exists in 'heroes' table first if we have FK constraints?
-    // If we simply read from files, they might not be in DB. 
-    // The previous 'build-db' logic tried to save hero data on upload.
-    // If we have files manually added, they won't be in DB.
-    // So we might need to INSERT IGNORE into heroes table strictly for FK satisfaction?
-    // OR we remove the FK constraint? 
-    // The `initDB` has `FOREIGN KEY (hero_filename) REFERENCES heroes(filename) ON DELETE CASCADE`.
-    // So we MUST insert into heroes table first if it's missing.
+    const slug = heroFilename.replace(/\.[^/.]+$/, "")
 
     // 1. Ensure Hero Exists in DB (Minimal)
     const grade = getGradeFromFilename(heroFilename)
@@ -44,7 +36,7 @@ export async function saveTierlistEntry(data) {
     await pool.query(`
         INSERT IGNORE INTO heroes (filename, name, grade, skill_priority)
         VALUES (?, ?, ?, ?)
-    `, [heroFilename, name, grade, '[]'])
+    `, [slug, name, grade, '[]'])
 
     // 2. Save Tier Entry
     await pool.query(`
@@ -53,15 +45,16 @@ export async function saveTierlistEntry(data) {
         ON DUPLICATE KEY UPDATE
         rank_tier = VALUES(rank_tier),
         hero_type = VALUES(hero_type)
-    `, [heroFilename, category, rank, type])
+    `, [slug, category, rank, type])
 
     await logSiteUpdate('TIERLIST', name, 'UPDATE', `Updated Tier List: ${name} [${category.toUpperCase()}] to Rank ${rank}`)
 }
 
 export async function removeTierlistEntry(heroFilename, category) {
     await ensureDB()
+    const slug = heroFilename.replace(/\.[^/.]+$/, "")
     const name = getNameFromFilename(heroFilename)
-    await pool.query("DELETE FROM tierlist WHERE hero_filename = ? AND category = ?", [heroFilename, category])
+    await pool.query("DELETE FROM tierlist WHERE hero_filename = ? AND category = ?", [slug, category])
     await logSiteUpdate('TIERLIST', name, 'DELETE', `Removed from Tier List: ${name} [${category.toUpperCase()}]`)
 }
 

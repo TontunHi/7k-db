@@ -60,10 +60,12 @@ export async function createSet(data) {
         )
         const nextIndex = countResult[0].next_index
 
+        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+
         const [result] = await pool.query(
             `INSERT INTO raid_sets (raid_key, set_index, formation, pet_file, heroes_json, skill_rotation, video_url, note)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [data.raid_key, nextIndex, data.formation, data.pet_file, JSON.stringify(data.heroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
+            [data.raid_key, nextIndex, data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
         )
 
         const raidName = RAID_ORDER.find(r => r.key === data.raid_key)?.name || 'Raid';
@@ -82,11 +84,13 @@ export async function createSet(data) {
 
 export async function updateSet(id, data) {
     try {
+        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+
         await pool.query(
             `UPDATE raid_sets 
              SET formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
              WHERE id = ?`,
-            [data.formation, data.pet_file, JSON.stringify(data.heroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
+            [data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
         )
 
         const [rows] = await pool.query('SELECT raid_key FROM raid_sets WHERE id = ?', [id]);

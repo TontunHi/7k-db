@@ -1,5 +1,6 @@
 import { getStages, getStageById } from '@/lib/stage-actions'
 import PublicStageView from '@/components/stages/PublicStageView'
+import { getHeroImageMap } from '@/lib/hero-utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,11 +16,13 @@ export default async function StagesPage() {
     // We need full details for all stages to render them directly
     const initialStages = await Promise.all(stages.map(s => getStageById(s.id)))
     const initialNightmares = await Promise.all(nightmares.map(s => getStageById(s.id)))
+    const heroImageMap = await getHeroImageMap()
 
     return (
         <PublicStageView 
             initialStages={initialStages} 
             initialNightmares={initialNightmares} 
+            heroImageMap={heroImageMap}
         />
     )
 }

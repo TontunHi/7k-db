@@ -50,10 +50,11 @@ export async function createStage(data) {
         const setupId = res.insertId
 
         for (const team of data.teams) {
+            const slugifiedHeroes = (team.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
             await connection.query(
                 `INSERT INTO teams (setup_id, team_index, formation, pet_file, heroes_json)
                  VALUES (?, ?, ?, ?, ?)`,
-                [setupId, team.index, team.formation, team.pet_file, JSON.stringify(team.heroes)]
+                [setupId, team.index, team.formation, team.pet_file, JSON.stringify(slugifiedHeroes)]
             )
         }
 
@@ -87,10 +88,11 @@ export async function updateStage(id, data) {
         await connection.query('DELETE FROM teams WHERE setup_id = ?', [id])
 
         for (const team of data.teams) {
+            const slugifiedHeroes = (team.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
             await connection.query(
                 `INSERT INTO teams (setup_id, team_index, formation, pet_file, heroes_json)
                  VALUES (?, ?, ?, ?, ?)`,
-                [id, team.index, team.formation, team.pet_file, JSON.stringify(team.heroes)]
+                [id, team.index, team.formation, team.pet_file, JSON.stringify(slugifiedHeroes)]
             )
         }
 
@@ -180,14 +182,15 @@ export async function getAllHeroes() {
         const heroFiles = files.filter(f => /\.(png|jpg|jpeg|webp)$/i.test(f))
 
         // 2. Get DB data for Grades
-        const [dbHeroes] = await pool.query("SELECT filename, name, grade FROM heroes")
-        const dbMap = new Map(dbHeroes.map(h => [h.filename, h]))
+        const [dbHeroes] = await pool.query("SELECT filename as slug, name, grade FROM heroes")
+        const dbMap = new Map(dbHeroes.map(h => [h.slug, h]))
 
         // 3. Merge
         const combined = heroFiles.map(filename => {
-            const dbData = dbMap.get(filename)
+            const slug = filename.replace(/\.[^/.]+$/, "")
+            const dbData = dbMap.get(slug)
             // Use DB data if valid, else derive from filename
-            const displayName = dbData?.name || filename.replace(/\.[^/.]+$/, "").replace(/_/g, " ")
+            const displayName = dbData?.name || slug.replace(/_/g, " ")
             let grade = dbData?.grade
             if (!grade) {
                 const match = filename.match(/^(l\+\+|l\+|l|r|uc|c)_/i)
@@ -266,14 +269,14 @@ export async function getAllSkills() {
 
 export async function getHeroProfile(id) {
     await initDB()
-    const filename = id.includes('.') ? id : `${id}.png`
+    const slug = id.replace(/\.[^/.]+$/, "")
     
     // 1. Basic Data
-    const [heroRows] = await pool.query('SELECT * FROM heroes WHERE filename = ?', [filename])
-    const hero = heroRows[0] || { filename, name: id.replace(/_/g, ' '), grade: 'N/A' }
+    const [heroRows] = await pool.query('SELECT * FROM heroes WHERE filename = ?', [slug])
+    const hero = heroRows[0] || { filename: slug, name: slug.replace(/_/g, ' '), grade: 'N/A' }
     
     // 2. Builds
-    const [buildRows] = await pool.query('SELECT * FROM builds WHERE hero_filename = ?', [filename])
+    const [buildRows] = await pool.query('SELECT * FROM builds WHERE hero_filename = ?', [slug])
     const builds = buildRows.map(b => ({
         ...b,
         modes: typeof b.modes === 'string' ? JSON.parse(b.modes) : (b.modes || []),
@@ -295,14 +298,14 @@ export async function getHeroProfile(id) {
     // 4. Cross References (Where is this hero used?)
     const usedIn = []
 
-    // Helper to check JSON column for filename
-    const checkTeam = (teamJson, filename) => {
+    // Helper to check JSON column for slug
+    const checkTeam = (teamJson, targetSlug) => {
         const heroes = typeof teamJson === 'string' ? JSON.parse(teamJson) : (teamJson || [])
-        return heroes.includes(filename)
+        return heroes.includes(targetSlug)
     }
 
     // Simple LIKE search is easier for cross-reference at this scale
-    const pattern = `%${filename}%`
+    const pattern = `%${slug}%`
 
     // Castle Rush
     const [cr] = await pool.query('SELECT boss_key, team_name FROM castle_rush_sets WHERE heroes_json LIKE ?', [pattern])

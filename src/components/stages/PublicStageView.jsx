@@ -13,7 +13,7 @@ const MODES = [
     { id: "nightmare", label: "Nightmare Stage", icon: Skull }
 ]
 
-export default function PublicStageView({ initialStages, initialNightmares }) {
+export default function PublicStageView({ initialStages, initialNightmares, heroImageMap }) {
     const [mode, setMode] = useState("stage") // "stage" or "nightmare"
 
     const [searchQuery, setSearchQuery] = useState("")
@@ -131,7 +131,7 @@ export default function PublicStageView({ initialStages, initialNightmares }) {
                 {/* Content Grid */}
                 <div className="grid grid-cols-1 gap-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
                     {currentData.map(stage => (
-                        <PublicStageCard key={stage.id} stage={stage} isNightmare={mode === "nightmare"} />
+                        <PublicStageCard key={stage.id} stage={stage} isNightmare={mode === "nightmare"} heroImageMap={heroImageMap} />
                     ))}
                     {currentData.length === 0 && (
                         <div className="text-center py-20 border border-dashed border-gray-800 rounded-3xl bg-white/[0.02]">
@@ -153,7 +153,7 @@ export default function PublicStageView({ initialStages, initialNightmares }) {
     )
 }
 
-function PublicStageCard({ stage, isNightmare }) {
+function PublicStageCard({ stage, isNightmare, heroImageMap }) {
     if (!stage) return null;
 
     return (
@@ -209,6 +209,7 @@ function PublicStageCard({ stage, isNightmare }) {
                             <FormationGrid 
                                 formation={team.formation} 
                                 heroes={team.heroes} 
+                                heroImageMap={heroImageMap}
                                 staggerAmount="translate-y-8"
                                 customClasses={{
                                     container: "grid grid-cols-5 gap-3 pb-8 max-w-full",

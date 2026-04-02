@@ -125,6 +125,8 @@ export async function createTeam(data) {
         )
         const nextIndex = countResult[0].next_index
 
+        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+
         const [result] = await pool.query(
             `INSERT INTO total_war_teams (set_id, team_index, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -134,7 +136,7 @@ export async function createTeam(data) {
                 data.team_name || null,
                 data.formation,
                 data.pet_file,
-                JSON.stringify(data.heroes),
+                JSON.stringify(slugifiedHeroes),
                 JSON.stringify(data.skill_rotation || []),
                 data.video_url,
                 data.note,
@@ -156,6 +158,8 @@ export async function createTeam(data) {
 
 export async function updateTeam(id, data) {
     try {
+        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+
         await pool.query(
             `UPDATE total_war_teams
              SET team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
@@ -164,7 +168,7 @@ export async function updateTeam(id, data) {
                 data.team_name || null,
                 data.formation,
                 data.pet_file,
-                JSON.stringify(data.heroes),
+                JSON.stringify(slugifiedHeroes),
                 JSON.stringify(data.skill_rotation || []),
                 data.video_url,
                 data.note,

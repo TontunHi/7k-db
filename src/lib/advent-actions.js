@@ -65,14 +65,18 @@ export async function createSet(data) {
         )
         const nextIndex = countResult[0].next_index
 
+        const slugifyTeam = (heroes) => (heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+        const team1Slugs = slugifyTeam(data.team1_heroes)
+        const team2Slugs = slugifyTeam(data.team2_heroes)
+
         const [result] = await pool.query(
             `INSERT INTO advent_expedition_sets 
              (boss_key, set_index, team_name, team1_formation, team1_pet_file, team1_heroes_json, team1_skill_rotation, team2_formation, team2_pet_file, team2_heroes_json, team2_skill_rotation, video_url, note)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 data.boss_key, nextIndex, data.team_name,
-                data.team1_formation, data.team1_pet_file, JSON.stringify(data.team1_heroes || []), JSON.stringify(data.team1_skill_rotation || []),
-                data.team2_formation, data.team2_pet_file, JSON.stringify(data.team2_heroes || []), JSON.stringify(data.team2_skill_rotation || []),
+                data.team1_formation, data.team1_pet_file, JSON.stringify(team1Slugs), JSON.stringify(data.team1_skill_rotation || []),
+                data.team2_formation, data.team2_pet_file, JSON.stringify(team2Slugs), JSON.stringify(data.team2_skill_rotation || []),
                 data.video_url, data.note
             ]
         )
@@ -93,6 +97,10 @@ export async function createSet(data) {
 
 export async function updateSet(id, data) {
     try {
+        const slugifyTeam = (heroes) => (heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+        const team1Slugs = slugifyTeam(data.team1_heroes)
+        const team2Slugs = slugifyTeam(data.team2_heroes)
+
         await pool.query(
             `UPDATE advent_expedition_sets 
              SET team_name = ?, team1_formation = ?, team1_pet_file = ?, team1_heroes_json = ?, team1_skill_rotation = ?,
@@ -101,8 +109,8 @@ export async function updateSet(id, data) {
              WHERE id = ?`,
             [
                 data.team_name,
-                data.team1_formation, data.team1_pet_file, JSON.stringify(data.team1_heroes || []), JSON.stringify(data.team1_skill_rotation || []),
-                data.team2_formation, data.team2_pet_file, JSON.stringify(data.team2_heroes || []), JSON.stringify(data.team2_skill_rotation || []),
+                data.team1_formation, data.team1_pet_file, JSON.stringify(team1Slugs), JSON.stringify(data.team1_skill_rotation || []),
+                data.team2_formation, data.team2_pet_file, JSON.stringify(team2Slugs), JSON.stringify(data.team2_skill_rotation || []),
                 data.video_url, data.note, id
             ]
         )

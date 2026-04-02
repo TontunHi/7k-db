@@ -32,10 +32,12 @@ export async function createArenaTeam(data) {
         )
         const nextIndex = countResult[0].next_index
 
+        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+
         const [result] = await pool.query(
             `INSERT INTO arena_teams (team_index, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [nextIndex, data.team_name || null, data.formation, data.pet_file, JSON.stringify(data.heroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
+            [nextIndex, data.team_name || null, data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
         )
 
         await logSiteUpdate('ARENA', data.team_name || 'Arena Team', 'CREATE', `Added new Arena Team${data.team_name ? `: ${data.team_name}` : ''}`)
@@ -52,11 +54,13 @@ export async function createArenaTeam(data) {
 
 export async function updateArenaTeam(id, data) {
     try {
+        const slugifiedHeroes = (data.heroes || []).map(h => h.replace(/\.[^/.]+$/, ""))
+
         await pool.query(
             `UPDATE arena_teams 
              SET team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
              WHERE id = ?`,
-            [data.team_name || null, data.formation, data.pet_file, JSON.stringify(data.heroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
+            [data.team_name || null, data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
         )
 
         await logSiteUpdate('ARENA', data.team_name || 'Arena Team', 'UPDATE', `Updated Arena Team${data.team_name ? `: ${data.team_name}` : ''}`)

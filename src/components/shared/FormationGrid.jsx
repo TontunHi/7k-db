@@ -1,13 +1,14 @@
 import Image from 'next/image'
-import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { getSlotType, getStaggerClass } from '@/lib/formation-utils'
+import { resolveHeroImage } from '@/lib/hero-utils'
 
 export default function FormationGrid({ 
     formation, 
     heroes = [], 
     staggerAmount = 'translate-y-6', // Allow customizing the translate amount
-    customClasses = {} // Override default class sets
+    customClasses = {}, // Override default class sets
+    heroImageMap = {} // Mapping slug -> actual_filename
 }) {
     return (
         <div className={cn("flex-1 grid grid-cols-5 gap-1.5 max-w-[280px]", customClasses.container)}>
@@ -19,11 +20,10 @@ export default function FormationGrid({
                 // Get base stagger, then replace the default value if staggerAmount is provided
                 let stagger = getStaggerClass(formation, i)
                 if (stagger && staggerAmount !== 'translate-y-6') {
-                    stagger = staggerAmount;
+                    stagger = staggerAmount
                 }
 
-                // Default styles based on arena/page.js
-                // Allow `customClasses.card` to be a function taking `({isFront, heroFile, type})` or a static string
+                // Default styles
                 const cardClasses = typeof customClasses.card === 'function' 
                     ? customClasses.card({ isFront, heroFile, type })
                     : cn(
@@ -33,7 +33,7 @@ export default function FormationGrid({
                             ? (isFront ? "border-sky-500/70 bg-sky-950/20" : "border-rose-600/70 bg-rose-950/20")
                             : "border-gray-800/40 border-dashed bg-black/20",
                         customClasses.cardString
-                    );
+                    )
 
                 return (
                     <div key={i} className={cardClasses}>
@@ -43,7 +43,7 @@ export default function FormationGrid({
                                     className="relative flex-1 w-full h-full block group/link"
                                 >
                                     <Image 
-                                        src={`/heroes/${heroFile}`} 
+                                        src={`/heroes/${resolveHeroImage(heroFile, heroImageMap) || heroFile}`} 
                                         alt="Hero" 
                                         fill 
                                         sizes="(max-width: 768px) 20vw, 10vw"

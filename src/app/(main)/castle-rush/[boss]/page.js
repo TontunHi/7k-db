@@ -4,6 +4,7 @@ import { getBossInfo, getSetsByBoss } from '@/lib/castle-rush-actions'
 import { Crown, ArrowLeft, Video, ExternalLink, Users, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { notFound } from 'next/navigation'
+import { getHeroImageMap } from '@/lib/hero-utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,6 +32,7 @@ export default async function CastleRushBossPage({ params }) {
     }
     
     const sets = await getSetsByBoss(bossKey)
+    const heroImageMap = await getHeroImageMap()
     
     // Parse heroes JSON
     const parsedSets = sets.map(set => ({
@@ -140,6 +142,7 @@ export default async function CastleRushBossPage({ params }) {
                                             <FormationGrid 
                                                 formation={set.formation} 
                                                 heroes={set.heroes}
+                                                heroImageMap={heroImageMap}
                                                 customClasses={{
                                                     container: "grid grid-cols-5 gap-2 md:gap-3 pb-6 max-w-full",
                                                     emptyRender: ({isFront}) => (
@@ -164,6 +167,7 @@ export default async function CastleRushBossPage({ params }) {
                                     <SkillSequence 
                                         skillRotation={set.skill_rotation} 
                                         heroes={set.heroes} 
+                                        heroImageMap={heroImageMap}
                                         customClasses={{
                                             container: "mt-6 space-y-3",
                                         }}
