@@ -1,6 +1,7 @@
 "use server"
 
 import { getHeroBuilds, saveHeroBuilds, getItemImages, getHeroSkills, getHeroData, saveHeroData } from "@/lib/build-db"
+import { logSiteUpdate } from "@/lib/log-actions"
 
 export async function openEditor(filename) {
     const [builds, heroDataRaw] = await Promise.all([
@@ -36,6 +37,10 @@ export async function saveEditor(filename, builds, skillPriority, heroName, grad
         grade: grade,
         skillPriority
     })
+
+    // Log the update
+    const displayName = heroName || filename.replace(/\.[^/.]+$/, '').replace(/_/g, ' ')
+    await logSiteUpdate('HERO', displayName, 'UPDATE', `Updated build for ${displayName}`)
 
     // Save Builds
     return await saveHeroBuilds(filename, builds)

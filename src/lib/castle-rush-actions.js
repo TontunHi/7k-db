@@ -2,6 +2,7 @@
 
 import pool, { initDB } from './db'
 import { revalidatePath } from 'next/cache'
+import { logSiteUpdate } from './log-actions'
 
 // Fixed boss order
 const BOSS_ORDER = [
@@ -69,6 +70,10 @@ export async function createSet(data) {
             [data.boss_key, nextIndex, data.team_name || null, data.formation, data.pet_file, JSON.stringify(data.heroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
         )
 
+        const bossName = BOSS_ORDER.find(b => b.key === data.boss_key)?.name || data.boss_key
+        const teamLabel = data.team_name ? ` "${data.team_name}"` : ''
+        await logSiteUpdate('CASTLE_RUSH', bossName, 'CREATE', `Added Castle Rush team${teamLabel} for ${bossName}`)
+
         revalidatePath('/admin/castle-rush')
         revalidatePath(`/admin/castle-rush/${data.boss_key}`)
         revalidatePath('/castle-rush')
@@ -88,6 +93,10 @@ export async function updateSet(id, data) {
              WHERE id = ?`,
             [data.team_name || null, data.formation, data.pet_file, JSON.stringify(data.heroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
         )
+
+        const bossName = data.boss_name || 'Castle Rush'
+        const teamLabel = data.team_name ? ` "${data.team_name}"` : ''
+        await logSiteUpdate('CASTLE_RUSH', bossName, 'UPDATE', `Updated Castle Rush team${teamLabel} for ${bossName}`)
 
         revalidatePath('/admin/castle-rush')
         revalidatePath('/castle-rush')

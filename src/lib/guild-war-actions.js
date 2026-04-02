@@ -2,6 +2,7 @@
 
 import pool, { initDB } from './db'
 import { revalidatePath } from 'next/cache'
+import { logSiteUpdate } from './log-actions'
 
 export async function getGuildWarTeams(type = 'attacker') {
     await initDB()
@@ -39,6 +40,10 @@ export async function createGuildWarTeam(data) {
             [nextIndex, data.type, data.team_name || null, data.formation, data.pet_file, JSON.stringify(data.heroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
         )
 
+        const typeLabel = data.type === 'attacker' ? 'Attacker' : 'Defender'
+        const teamLabel = data.team_name ? ` "${data.team_name}"` : ''
+        await logSiteUpdate('GUILD_WAR', typeLabel, 'CREATE', `Added Guild War ${typeLabel} team${teamLabel}`)
+
         revalidatePath('/admin/guild-war')
         revalidatePath('/guild-war')
         
@@ -57,6 +62,10 @@ export async function updateGuildWarTeam(id, data) {
              WHERE id = ?`,
             [data.type, data.team_name || null, data.formation, data.pet_file, JSON.stringify(data.heroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
         )
+
+        const typeLabel = data.type === 'attacker' ? 'Attacker' : 'Defender'
+        const teamLabel = data.team_name ? ` "${data.team_name}"` : ''
+        await logSiteUpdate('GUILD_WAR', typeLabel, 'UPDATE', `Updated Guild War ${typeLabel} team${teamLabel}`)
 
         revalidatePath('/admin/guild-war')
         revalidatePath('/guild-war')

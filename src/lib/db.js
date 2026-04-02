@@ -204,10 +204,67 @@ export async function initDB() {
       )
     `);
 
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS total_war_sets (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        tier ENUM('legendary','superb','elite','normal') NOT NULL,
+        set_index INT NOT NULL DEFAULT 1,
+        set_name VARCHAR(100),
+        note TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS total_war_teams (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        set_id INT NOT NULL,
+        team_index INT NOT NULL DEFAULT 1,
+        team_name VARCHAR(100),
+        formation VARCHAR(50) NOT NULL DEFAULT '2-3',
+        pet_file VARCHAR(255),
+        heroes_json JSON,
+        skill_rotation JSON,
+        video_url VARCHAR(500),
+        note TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (set_id) REFERENCES total_war_sets(id) ON DELETE CASCADE
+      )
+    `);
+
+    // ─── Migrate total_war_teams: old schema had 'tier' column, new schema uses 'set_id' ───
+    // Add set_id column if missing
+    try {
+      await connection.query(`ALTER TABLE total_war_teams ADD COLUMN set_id INT NOT NULL DEFAULT 0 AFTER id`);
+    } catch (e) { /* Already exists */ }
+
+    // Drop old 'tier' column if still present
+    try {
+      await connection.query(`ALTER TABLE total_war_teams DROP COLUMN tier`);
+    } catch (e) { /* Already dropped */ }
+
+    // Add foreign key if missing (may fail if FK already exists — that's fine)
+    try {
+      await connection.query(`ALTER TABLE total_war_teams ADD CONSTRAINT fk_tw_team_set FOREIGN KEY (set_id) REFERENCES total_war_sets(id) ON DELETE CASCADE`);
+    } catch (e) { /* Already exists */ }
+
+    // ─── Site Updates Log ─────────────────────────────────────────────────────
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS site_updates (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        content_type VARCHAR(50) NOT NULL,
+        target_name VARCHAR(200) NOT NULL,
+        action_type ENUM('CREATE','UPDATE','DELETE') NOT NULL DEFAULT 'UPDATE',
+        message VARCHAR(500) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     console.log("Database tables initialized successfully via secure connection.");
   } catch (err) {
     console.error("Error initializing DB:", err);
   } finally {
     connection.release();
   }
-}
+}
