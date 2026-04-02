@@ -57,7 +57,7 @@ export default function Navbar() {
                     <Link href="/" className="group flex items-center gap-1">
                         <div className="relative h-8 w-28 md:w-36 transition-transform group-hover:scale-105">
                             <Image
-                                src="/about_website/logo_website.png"
+                                src="/about_website/logo_website.webp"
                                 alt="7K DB Logo"
                                 fill
                                 className="object-contain"

@@ -269,6 +269,37 @@ export async function initDB() {
       )
     `);
 
+    // ─── One-time Migration: .png -> .webp ────────────────────────────────────
+    // If the user changed their image files to .webp, we must update the DB keys
+    try {
+        await connection.query("SET FOREIGN_KEY_CHECKS = 0");
+        
+        // Update main hero table
+        await connection.query(`
+            UPDATE heroes 
+            SET filename = REPLACE(filename, '.png', '.webp') 
+            WHERE filename LIKE '%.png'
+        `);
+        
+        // Update dependent tables
+        await connection.query(`
+            UPDATE builds 
+            SET hero_filename = REPLACE(hero_filename, '.png', '.webp') 
+            WHERE hero_filename LIKE '%.png'
+        `);
+        
+        await connection.query(`
+            UPDATE tierlist 
+            SET hero_filename = REPLACE(hero_filename, '.png', '.webp') 
+            WHERE hero_filename LIKE '%.png'
+        `);
+
+        await connection.query("SET FOREIGN_KEY_CHECKS = 1");
+    } catch (e) {
+        console.warn("[Migration] .webp migration skipped or already done:", e.message);
+        await connection.query("SET FOREIGN_KEY_CHECKS = 1");
+    }
+
     console.log("Database tables initialized successfully via secure connection.");
   } catch (err) {
     console.error("Error initializing DB:", err);
