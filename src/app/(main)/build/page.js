@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react"
 
 export async function generateMetadata({ searchParams: searchParamsPromise }) {
     const searchParams = await searchParamsPromise
-    const heroSlug = searchParams.hero
+    let heroSlug = (searchParams.hero || "").replace(/ /g, "+")
     const bid = searchParams.bid || 0
 
     if (heroSlug) {
