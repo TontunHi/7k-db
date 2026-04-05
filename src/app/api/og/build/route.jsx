@@ -2,8 +2,13 @@ import { ImageResponse } from 'next/og'
 import { getHeroBuilds, getHeroData } from '@/lib/build-db'
 
 export const runtime = 'nodejs'
+// Prevent caching to help debugging
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export async function GET(request) {
+    const origin = new URL(request.url).origin
+    
     try {
         const { searchParams } = new URL(request.url)
         let hero = searchParams.get('hero') || ""
@@ -16,27 +21,31 @@ export async function GET(request) {
         // Handle cases where '+' might be converted to a space ' '
         hero = hero.replace(/ /g, "+")
 
-        // Try to fetch data, but don't crash if it fails
+        // Try to fetch data
         let builds = []
         let heroData = null
-        let dbError = null
+        let dbStatus = "OK"
 
         try {
+            // Check if DB credentials are even there
+            if (!process.env.DB_HOST) {
+                throw new Error("DB_HOST environment variable is missing on Vercel")
+            }
+
             const [b, h] = await Promise.all([
-                getHeroBuilds(hero),
-                getHeroData(hero)
+                getHeroBuilds(hero).catch(e => { throw e }),
+                getHeroData(hero).catch(e => { throw e })
             ])
             builds = b || []
             heroData = h
         } catch (e) {
             console.error("OG DB Error:", e)
-            dbError = e.message
+            dbStatus = `ERROR: ${e.message}`
         }
 
         const build = builds[bid] || builds[0]
-        const origin = new URL(request.url).origin
         const heroImageUrl = `${origin}/heroes/${hero}.webp`
-        const heroName = heroData?.name || hero.replace(/^(l\+\+|l\+|l|r)_/, "").replace(/_/g, " ").toUpperCase()
+        const heroName = (heroData?.name || hero.replace(/^(l\+\+|l\+|l|r)_/, "").replace(/_/g, " ")).toUpperCase()
 
         return new ImageResponse(
             (
@@ -90,29 +99,28 @@ export async function GET(request) {
                                     }}
                                 />
                             </div>
-                            <h1 style={{ 
+                            <div style={{ 
                                 marginTop: '24px', 
-                                fontSize: '42px', 
-                                fontWeight: '900', 
-                                textTransform: 'uppercase',
-                                color: '#FFD700',
+                                display: 'flex',
+                                flexDirection: 'column'
                             }}>
-                                {heroName}
-                            </h1>
+                                <span style={{ fontSize: '42px', fontWeight: 'bold', color: '#FFD700' }}>{heroName}</span>
+                                <span style={{ fontSize: '18px', color: '#888', marginTop: '5px' }}>7K DB HERO BUILD</span>
+                            </div>
                         </div>
 
                         {/* Build Details Section */}
                         <div style={{ display: 'flex', flexDirection: 'column', width: '60%', justifyContent: 'center' }}>
-                            {dbError ? (
-                                <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(255, 0, 0, 0.1)', padding: '20px', borderRadius: '12px', border: '1px solid rgba(255, 0, 0, 0.3)' }}>
-                                    <span style={{ color: '#ff4444', fontSize: '24px', fontWeight: 'bold' }}>Database Connection Error</span>
-                                    <span style={{ color: '#888', fontSize: '16px', marginTop: '10px' }}>{dbError}</span>
-                                    <span style={{ color: '#aaa', fontSize: '18px', marginTop: '20px' }}>Please visit the site to view build details.</span>
+                            {dbStatus !== "OK" ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(255, 0, 0, 0.1)', padding: '20px', borderRadius: '12px', border: '1px solid rgba(255, 0, 0, 0.2)' }}>
+                                    <span style={{ color: '#ff4444', fontSize: '24px', fontWeight: 'bold' }}>Database Error</span>
+                                    <span style={{ color: '#888', fontSize: '14px', marginTop: '10px' }}>{dbStatus}</span>
+                                    <span style={{ color: '#aaa', fontSize: '16px', marginTop: '20px' }}>Please ensure DB environment variables are set on Vercel.</span>
                                 </div>
                             ) : !build ? (
-                                <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(255, 215, 0, 0.05)', padding: '20px', borderRadius: '12px', border: '1px solid rgba(255, 215, 0, 0.2)' }}>
-                                    <span style={{ color: '#FFD700', fontSize: '24px', fontWeight: 'bold' }}>No builds found for this hero</span>
-                                    <span style={{ color: '#888', fontSize: '18px', marginTop: '10px' }}>Create one at 7K DB!</span>
+                                <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(255, 215, 0, 0.05)', padding: '20px', borderRadius: '12px', border: '1px solid rgba(255, 215, 0, 0.1)' }}>
+                                    <span style={{ color: '#FFD700', fontSize: '24px', fontWeight: 'bold' }}>No Builds Available</span>
+                                    <span style={{ color: '#888', fontSize: '18px', marginTop: '10px' }}>Create build for {heroName} now!</span>
                                 </div>
                             ) : (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
@@ -202,13 +210,25 @@ export async function GET(request) {
                         display: 'flex',
                         alignItems: 'center',
                     }}>
-                        <span style={{ fontSize: '24px', fontWeight: '900', fontStyle: 'italic', color: 'white' }}>7K <span style={{ color: '#FFD700' }}>DB</span></span>
+                        <span style={{ fontSize: '24px', fontWeight: 'bold', fontStyle: 'italic', color: 'white' }}>7K <span style={{ color: '#FFD700' }}>DB</span></span>
                     </div>
                 </div>
-            )
+            ),
+            {
+                width: 1200,
+                height: 630,
+            }
         )
     } catch (e) {
-        console.error("OG Root Critical Error:", e)
-        return new Response(`OG Generator Error: ${e.message}`, { status: 500 })
+        console.error("CRITICAL OG ERROR:", e)
+        return new ImageResponse(
+            (
+                <div style={{ height: '100%', width: '100%', display: 'flex', backgroundColor: '#050505', color: 'white', padding: '40px', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                    <h1 style={{ fontSize: '40px', color: '#ff4444' }}>7K DB System Error</h1>
+                    <p style={{ fontSize: '20px', color: '#888' }}>{e.message}</p>
+                </div>
+            ),
+            { width: 1200, height: 630 }
+        )
     }
 }
