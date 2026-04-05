@@ -12,7 +12,6 @@ const pool =
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
-    connectTimeout: 10000, // 10 seconds timeout for Vercel
     // เพิ่มการตั้งค่า SSL เพื่อให้ผ่าน Policy ของ TiDB Serverless
     ssl: {
       minVersion: 'TLSv1.2',
