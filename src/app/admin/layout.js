@@ -4,7 +4,6 @@ import {
     Landmark, Skull, Compass, Swords, Shield, Crosshair, TrendingUp, Settings
 } from "lucide-react"
 import { logout } from "@/lib/actions"
-import { Toaster } from 'sonner'
 
 export const metadata = {
     title: {
@@ -16,7 +15,6 @@ export const metadata = {
 export default function AdminLayout({ children }) {
     return (
         <div className="min-h-screen bg-black flex">
-            <Toaster theme="dark" position="top-center" richColors />
             {/* Sidebar */}
             <aside className="w-64 border-r border-[#FFD700]/10 bg-[#0a0a0a] hidden md:flex flex-col relative overflow-hidden">
                 {/* Subtle background glow */}

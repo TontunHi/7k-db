@@ -7,7 +7,7 @@ import { clsx } from "clsx"
 import { toast } from "sonner"
 
 // Predefined Options
-const MAIN_STATS = [
+const WEAPON_MAIN_STATS = [
     "Weakness Hit Chance",
     "Crit Rate",
     "Crit Damage",
@@ -18,6 +18,18 @@ const MAIN_STATS = [
     "HP (%)",
     "HP",
     "Effect Hit Rate"
+]
+
+const ARMOR_MAIN_STATS = [
+    "Damage Taken Reduction",
+    "Block Rate",
+    "All Attack (%)",
+    "All Attack",
+    "Defense (%)",
+    "Defense",
+    "HP (%)",
+    "HP",
+    "Effect Resistance"
 ]
 
 const AVAILABLE_SUBSTATS = [
@@ -54,8 +66,8 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
         cLevel: "C0",
         mode: ["PVE", "PVP"],
         note: "",
-        weapons: [{ image: "", stat: MAIN_STATS[0] }, { image: "", stat: MAIN_STATS[0] }],
-        armors: [{ image: "", stat: MAIN_STATS[0] }, { image: "", stat: MAIN_STATS[0] }],
+        weapons: [{ image: "", stat: WEAPON_MAIN_STATS[0] }, { image: "", stat: WEAPON_MAIN_STATS[0] }],
+        armors: [{ image: "", stat: ARMOR_MAIN_STATS[0] }, { image: "", stat: ARMOR_MAIN_STATS[0] }],
         accessories: [],
         substats: [],
     }
@@ -326,14 +338,14 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                         <ItemCard
                                             item={build.weapons[0]}
                                             type="Weapon"
-                                            stats={MAIN_STATS}
+                                            stats={WEAPON_MAIN_STATS}
                                             onClick={() => openItemSelector(weapons, bIndex, "weapons", 0)}
                                             onStatChange={(val) => updateItem(bIndex, "weapons", 0, "stat", val)}
                                         />
                                         <ItemCard
                                             item={build.armors[0]}
                                             type="Armor"
-                                            stats={MAIN_STATS}
+                                            stats={ARMOR_MAIN_STATS}
                                             onClick={() => openItemSelector(armors, bIndex, "armors", 0)}
                                             onStatChange={(val) => updateItem(bIndex, "armors", 0, "stat", val)}
                                         />
@@ -343,14 +355,14 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                         <ItemCard
                                             item={build.weapons[1]}
                                             type="Weapon"
-                                            stats={MAIN_STATS}
+                                            stats={WEAPON_MAIN_STATS}
                                             onClick={() => openItemSelector(weapons, bIndex, "weapons", 1)}
                                             onStatChange={(val) => updateItem(bIndex, "weapons", 1, "stat", val)}
                                         />
                                         <ItemCard
                                             item={build.armors[1]}
                                             type="Armor"
-                                            stats={MAIN_STATS}
+                                            stats={ARMOR_MAIN_STATS}
                                             onClick={() => openItemSelector(armors, bIndex, "armors", 1)}
                                             onStatChange={(val) => updateItem(bIndex, "armors", 1, "stat", val)}
                                         />
