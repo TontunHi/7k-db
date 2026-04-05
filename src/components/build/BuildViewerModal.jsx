@@ -1,13 +1,25 @@
 "use client"
 
 import Image from "next/image"
-import { X } from "lucide-react"
+import { X, Share2, Check } from "lucide-react"
+import { toast } from "sonner"
+import { useState, useEffect, useRef } from "react"
 import { clsx } from "clsx"
 
-export default function BuildViewerModal({ hero, data, onClose }) {
+export default function BuildViewerModal({ hero, data, onClose, initialBid }) {
     if (!data) return null
+    const buildRefs = useRef([])
 
     const { builds, heroData, skills: allSkills } = data
+    const [copiedIndex, setCopiedIndex] = useState(null)
+
+    const copyShareLink = (index) => {
+        const url = `${window.location.origin}/build?hero=${encodeURIComponent(hero.slug)}&bid=${index}`
+        navigator.clipboard.writeText(url)
+        setCopiedIndex(index)
+        toast.success("Build link copied to clipboard!")
+        setTimeout(() => setCopiedIndex(null), 2000)
+    }
     const { skillPriority } = heroData
 
     // Sort All Skills: 4 -> 3 -> 2 -> 1 based on filename
@@ -22,6 +34,15 @@ export default function BuildViewerModal({ hero, data, onClose }) {
         const index = skillPriority.indexOf(skillPath)
         return index !== -1 ? index + 1 : null
     }
+
+    // Scroll to build if initialBid is provided
+    useEffect(() => {
+        if (initialBid !== null && buildRefs.current[initialBid]) {
+            setTimeout(() => {
+                buildRefs.current[initialBid].scrollIntoView({ behavior: 'smooth', block: 'center' })
+            }, 500)
+        }
+    }, [initialBid])
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm animate-in fade-in duration-300">
@@ -109,8 +130,28 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                 <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 bg-background custom-scrollbar">
 
                     {builds.length > 0 ? builds.map((build, i) => (
-                        <div key={i} className="group bg-card border border-border rounded-2xl p-6 relative hover:border-primary/50 transition-all shadow-sm hover:shadow-lg">
-                            {/* Build Tags */}
+                        <div 
+                            key={i} 
+                            ref={el => buildRefs.current[i] = el}
+                            className={clsx(
+                                "group bg-card border border-border rounded-2xl p-6 relative hover:border-primary/50 transition-all shadow-sm hover:shadow-lg",
+                                initialBid === i && "ring-2 ring-primary ring-offset-4 ring-offset-background border-primary/50"
+                            )}
+                        >
+                            {/* Share Button */}
+                            <button 
+                                onClick={() => copyShareLink(i)}
+                                className="absolute top-4 right-4 p-2 bg-secondary/50 hover:bg-primary/20 text-muted-foreground hover:text-primary rounded-lg border border-border transition-all flex items-center gap-2 group/share"
+                                title="Copy share link"
+                            >
+                                {copiedIndex === i ? (
+                                    <Check className="w-4 h-4 text-emerald-500" />
+                                ) : (
+                                    <Share2 className="w-4 h-4 group-hover/share:scale-110 transition-transform" />
+                                )}
+                                <span className="text-[10px] font-bold uppercase tracking-widest hidden md:inline-block">Share Build</span>
+                            </button>
+
                             {/* Build Tags */}
                             <div className="flex items-center gap-4 mb-8">
                                 <span className="bg-primary/20 text-primary px-4 py-1.5 rounded-lg text-sm font-black uppercase tracking-wider border border-primary/20">

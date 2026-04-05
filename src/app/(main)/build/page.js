@@ -1,11 +1,48 @@
 import fs from "fs"
 import path from "path"
+import { Suspense } from "react"
 import BuildView from "@/components/build/BuildView"
 import { getHeroesMetadata } from "@/lib/build-db"
+import { Loader2 } from "lucide-react"
 
-export const metadata = {
-    title: "Hero Builds",
-    description: "Recommended builds for Legendary and Rare heroes.",
+export async function generateMetadata({ searchParams: searchParamsPromise }) {
+    const searchParams = await searchParamsPromise
+    const heroSlug = searchParams.hero
+    const bid = searchParams.bid || 0
+
+    if (heroSlug) {
+        // Simple name cleanup for title
+        const name = heroSlug.replace(/^(l\+\+|l\+|l|r)_/, "").replace(/_/g, " ")
+        const capitalizedName = name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+        
+        return {
+            title: `${capitalizedName} Best Build`,
+            description: `Optimal equipment, accessories, and stats for ${capitalizedName}. Shared build from 7K DB community.`,
+            openGraph: {
+                title: `${capitalizedName} | 7K DB Build`,
+                description: `Check out the best equipment and stats for ${capitalizedName} in Seven Knights Rebirth.`,
+                images: [
+                    {
+                        url: `/api/og/build?hero=${heroSlug}&bid=${bid}`,
+                        width: 1200,
+                        height: 630,
+                        alt: `${capitalizedName} Build Preview`,
+                    }
+                ],
+            },
+            twitter: {
+                card: "summary_large_image",
+                title: `${capitalizedName} Build Guide`,
+                description: `Best build for ${capitalizedName} in 7K Rebirth.`,
+                images: [`/api/og/build?hero=${heroSlug}&bid=${bid}`],
+            }
+        }
+    }
+
+    return {
+        title: "Hero Builds",
+        description: "Explore the best-recommended equipment and accessory builds for every legendary and rare hero in Seven Knights Rebirth.",
+    }
 }
 
 // Logic to parse filename to grade
@@ -18,9 +55,10 @@ function getGradeFromFilename(filename) {
     return "unknown"
 }
 
-export const dynamic = 'force-dynamic' // Ensure list updates if files change (in regular node env usually need rebuild, but good practice here)
+export const dynamic = 'force-dynamic' 
 
-export default async function BuildPage() {
+export default async function BuildPage({ searchParams: searchParamsPromise }) {
+    const searchParams = await searchParamsPromise
     const heroesDir = path.join(process.cwd(), "public", "heroes")
     let heroes = []
 
@@ -62,12 +100,17 @@ export default async function BuildPage() {
 
     } catch (error) {
         console.error("Error reading hero files:", error)
-        // If folder doesn't exist, we just return empty array
     }
 
     return (
         <div className="container mx-auto">
-            <BuildView heroes={heroes} />
+            <Suspense fallback={
+                <div className="flex items-center justify-center py-24 text-[#FFD700]">
+                    <Loader2 className="w-12 h-12 animate-spin" />
+                </div>
+            }>
+                <BuildView heroes={heroes} />
+            </Suspense>
         </div>
     )
 }

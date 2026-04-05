@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import Image from "next/image"
 import { clsx } from "clsx"
 import { Loader2 } from "lucide-react"
@@ -11,11 +12,13 @@ import { fetchHeroBuildData } from "@/lib/viewer-actions"
 export default function BuildView({ heroes }) {
     const [activeTab, setActiveTab] = useState("legendary") // 'legendary' | 'rare'
     const [searchQuery, setSearchQuery] = useState("")
+    const searchParams = useSearchParams()
 
     // Popup State
     const [selectedHero, setSelectedHero] = useState(null)
     const [viewerData, setViewerData] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
+    const [initialBid, setInitialBid] = useState(null)
 
     // Filter heroes based on active tab and search query
     const filteredHeroes = heroes.filter((hero) => {
@@ -43,7 +46,31 @@ export default function BuildView({ heroes }) {
     const closeViewer = () => {
         setSelectedHero(null)
         setViewerData(null)
+        setInitialBid(null)
     }
+
+    // Handle deep-linking on mount
+    useEffect(() => {
+        const heroParam = searchParams.get("hero")
+        if (heroParam) {
+            // Handle cases where '+' might be converted to a space ' '
+            const slug = heroParam.replace(/ /g, "+")
+            const hero = heroes.find(h => h.slug.toLowerCase() === slug.toLowerCase())
+            
+            if (hero) {
+                // Adjust tab to match hero grade
+                const gradeTab = hero.grade.startsWith("l") ? "legendary" : "rare"
+                setActiveTab(gradeTab)
+                
+                const bid = searchParams.get("bid")
+                if (bid !== null) {
+                    setInitialBid(parseInt(bid, 10))
+                }
+                
+                handleHeroClick(hero)
+            }
+        }
+    }, [searchParams, heroes])
 
     return (
         <div className="relative min-h-[calc(100vh-64px)] w-full bg-[#050505] overflow-hidden font-sans">
@@ -173,6 +200,7 @@ export default function BuildView({ heroes }) {
                         hero={selectedHero}
                         data={viewerData}
                         onClose={closeViewer}
+                        initialBid={initialBid}
                     />
                 )}
             </div>
