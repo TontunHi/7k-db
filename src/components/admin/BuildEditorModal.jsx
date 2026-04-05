@@ -115,6 +115,11 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
             setMultiSelection(currentAccs)
         }
 
+        if (type === "refining") {
+            // No multi-selection for refining, it's a single selection per slot
+            setMultiSelection([])
+        }
+
         setSelectorOpen(true)
     }
 
@@ -126,9 +131,14 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
             if (multiSelection.includes(image)) {
                 setMultiSelection(multiSelection.filter(i => i !== image))
             } else {
-                if (multiSelection.length >= 5) return toast.error("Max 5 Accessories")
+                if (multiSelection.length >= 5) return toast.error("Max 5 Accessory")
                 setMultiSelection([...multiSelection, image])
             }
+        } else if (type === "refining") {
+            const newBuilds = [...builds]
+            newBuilds[buildIndex].accessories[itemIndex].refined = image
+            setBuilds(newBuilds)
+            setSelectorOpen(false)
         } else {
             const newBuilds = [...builds]
             newBuilds[buildIndex][type][itemIndex].image = image
@@ -347,12 +357,12 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                     </div>
                                 </div>
 
-                                {/* Accessories */}
+                                {/* Accessory */}
                                 <div className="space-y-5">
                                     <h4 className="flex justify-between items-end border-b border-gray-800 pb-3 mb-2">
                                         <span className="text-[#FFD700] text-xs font-black uppercase tracking-widest flex items-center gap-2">
                                             <div className="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
-                                            Accessories
+                                            Accessory
                                         </span>
                                         <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-gray-900 text-gray-400 border border-gray-800">{build.accessories?.length || 0}/5</span>
                                     </h4>
@@ -385,7 +395,60 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                             )
                                         })}
                                     </div>
-                                    <p className="text-xs text-gray-600 mt-4 text-center group-hover:text-[#FFD700] transition-colors uppercase tracking-widest font-bold font-mono">Click to Select Accessories</p>
+                                    <p className="text-xs text-gray-600 mt-4 text-center group-hover:text-[#FFD700] transition-colors uppercase tracking-widest font-bold font-mono">Click to Select Accessory</p>
+                                </div>
+
+                                {/* Refining Row */}
+                                <div className="space-y-5">
+                                    <h4 className="flex justify-between items-end border-b border-gray-800 pb-3 mb-2">
+                                        <span className="text-[#FFD700] text-xs font-black uppercase tracking-widest flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-cyan-400"></div>
+                                            Refining
+                                        </span>
+                                    </h4>
+
+                                    <div className="grid grid-cols-5 gap-3">
+                                        {Array.from({ length: 5 }).map((_, i) => {
+                                            const acc = build.accessories?.[i]
+                                            const refinedImg = acc?.refined
+                                            
+                                            // Refining is only possible if a main accessory exists for this slot
+                                            if (!acc) return (
+                                                <div key={i} className="aspect-square rounded-xl border-2 border-gray-900/30 bg-black/20 flex items-center justify-center opacity-20">
+                                                    <div className="w-1 h-1 bg-gray-800 rounded-full"></div>
+                                                </div>
+                                            )
+
+                                            return (
+                                                <div 
+                                                    key={i} 
+                                                    onClick={() => openItemSelector(accessories, bIndex, "refining", i)}
+                                                    className={clsx(
+                                                        "aspect-square rounded-xl border-2 flex items-center justify-center relative overflow-hidden transition-all duration-300 shadow-inner cursor-pointer group/ref",
+                                                        refinedImg
+                                                            ? "bg-gray-900 border-gray-700 hover:border-cyan-400"
+                                                            : "bg-black border-gray-800 border-dashed hover:border-cyan-400/50 hover:bg-cyan-400/5"
+                                                    )}
+                                                >
+                                                    {refinedImg ? (
+                                                        <Image 
+                                                            src={`/items/accessory/${refinedImg}`} 
+                                                            fill 
+                                                            className="object-cover hover:scale-110 transition-transform duration-500" 
+                                                            alt="refined" 
+                                                            sizes="64px"
+                                                        />
+                                                    ) : (
+                                                        <Plus className="w-4 h-4 text-gray-800 group-hover/ref:text-cyan-400 transition-colors" />
+                                                    )}
+                                                    
+                                                    {/* Small Indicator of which accessory this refines */}
+                                                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-cyan-400/30"></div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                    <p className="text-xs text-gray-600 mt-4 text-center uppercase tracking-widest font-bold font-mono">Select Refining for each Slot</p>
                                 </div>
                             </div>
 
@@ -449,7 +512,11 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                             <div className="flex justify-between items-center p-6 border-b border-gray-800 bg-gradient-to-b from-gray-900 to-[#0a0a0a]">
                                 <h3 className="text-[#FFD700] font-black uppercase tracking-widest flex items-center gap-3 text-sm">
                                     <Grid className="w-5 h-5" />
-                                    {selectorTarget.type === "accessories" ? "Select Accessories (Max 5)" : "Select Equipment"}
+                                    {selectorTarget.type === "accessories" 
+                                        ? "Select Accessory (Max 5)" 
+                                        : selectorTarget.type === "refining" 
+                                            ? "Select Refining Accessory" 
+                                            : "Select Equipment"}
                                 </h3>
                                 <div className="flex gap-3 items-center">
                                     {selectorTarget.type === "accessories" && (
@@ -465,8 +532,17 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
 
                             <div className="flex-1 overflow-y-auto p-6 bg-[#050505] custom-scrollbar">
                                 <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 gap-3">
-                                    {selectorItems.map((img) => {
-                                        const isSelected = selectorTarget.type === "accessories" ? multiSelection.includes(img) : false
+                                    {selectorItems
+                                        .filter(img => {
+                                            // If refining, cannot select the same image as the main accessory for this slot
+                                            if (selectorTarget.type === "refining") {
+                                                const mainAcc = builds[selectorTarget.buildIndex].accessories[selectorTarget.itemIndex].image
+                                                return img !== mainAcc
+                                            }
+                                            return true
+                                        })
+                                        .map((img) => {
+                                            const isSelected = selectorTarget.type === "accessories" ? multiSelection.includes(img) : false
                                         return (
                                             <button
                                                 key={img}

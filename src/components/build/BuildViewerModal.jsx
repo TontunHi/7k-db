@@ -110,9 +110,6 @@ export default function BuildViewerModal({ hero, data, onClose }) {
 
                     {builds.length > 0 ? builds.map((build, i) => (
                         <div key={i} className="group bg-card border border-border rounded-2xl p-6 relative hover:border-primary/50 transition-all shadow-sm hover:shadow-lg">
-                            {/* Decorative Corner */}
-                            <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-primary/10 to-transparent rounded-tr-2xl pointer-events-none"></div>
-
                             {/* Build Tags */}
                             {/* Build Tags */}
                             <div className="flex items-center gap-4 mb-8">
@@ -129,15 +126,15 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 w-full">
 
-                                {/* Left Column: Equipment */}
-                                <div className="space-y-5">
+                                {/* Left Side: Equipment */}
+                                <div className="lg:col-span-6 space-y-5">
                                     <h4 className="flex items-center gap-3 text-foreground/80 text-xs font-bold uppercase tracking-[0.25em]">
                                         <span className="w-1.5 h-1.5 bg-primary rotate-45"></span> Equipment
                                     </h4>
 
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-2 gap-3 md:gap-4">
                                         <ViewerItemCard item={build.weapons[0]} type="Weapon" />
                                         <ViewerItemCard item={build.armors[0]} type="Armor" />
                                         <ViewerItemCard item={build.weapons[1]} type="Weapon" />
@@ -145,48 +142,65 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                     </div>
                                 </div>
 
-                                {/* Right Column: Accessories & Substats */}
-                                <div className="flex flex-col gap-8">
-
-                                    {/* Accessories */}
-                                    <div>
-                                        <h4 className="flex items-center gap-3 text-foreground/80 text-xs font-bold uppercase tracking-[0.25em] mb-4">
-                                            <span className="w-1.5 h-1.5 bg-primary rotate-45"></span> Accessories
-                                        </h4>
-                                        <div className="flex flex-wrap gap-3">
-                                            {build.accessories && build.accessories.length > 0 ? build.accessories.map((acc, idx) => (
-                                                <div key={idx} className="relative w-14 h-14 bg-background border border-border rounded-xl overflow-hidden group-hover:border-primary/50 transition-colors shadow-sm">
+                                {/* Right Side: Accessory Section */}
+                                <div className="lg:col-span-6 space-y-5">
+                                    <h4 className="flex items-center gap-3 text-foreground/80 text-xs font-bold uppercase tracking-[0.25em]">
+                                        <span className="w-1.5 h-1.5 bg-primary rotate-45"></span> Accessory & Refining
+                                    </h4>
+                                    <div className="flex flex-wrap gap-3 md:gap-4 items-start">
+                                        {build.accessories && build.accessories.length > 0 ? build.accessories.map((acc, idx) => (
+                                            <div key={idx} className="flex flex-col gap-2.5 items-center">
+                                                {/* Main Accessory */}
+                                                <div className="relative w-12 h-12 md:w-14 md:h-14 bg-background border border-border rounded-xl overflow-hidden shadow-sm group-hover:border-primary/50 transition-colors">
                                                     <Image 
                                                         src={`/items/accessory/${acc.image}`} 
                                                         fill 
                                                         className="object-cover" 
                                                         alt="acc" 
-                                                        sizes="56px"
+                                                        sizes="64px"
                                                     />
                                                 </div>
-                                            )) : (
-                                                <span className="text-gray-600 text-xs italic">None selected</span>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Substats */}
-                                    <div>
-                                        <h4 className="flex items-center gap-3 text-foreground/80 text-xs font-bold uppercase tracking-[0.25em] mb-4">
-                                            <span className="w-1.5 h-1.5 bg-primary rotate-45"></span> Substats Priority
-                                        </h4>
-                                        <div className="flex flex-wrap gap-2">
-                                            {build.substats && build.substats.length > 0 ? build.substats.map((sub, idx) => (
-                                                <span key={idx} className="group/sub relative bg-secondary/30 text-foreground border border-border hover:border-primary px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-3 shadow-sm transition-colors cursor-default">
-                                                    <span className="w-5 h-5 rounded bg-background text-primary flex items-center justify-center text-[10px] shadow-sm font-black">{idx + 1}</span>
-                                                    {sub}
-                                                </span>
-                                            )) : (
-                                                <span className="text-gray-600 text-xs italic">None</span>
-                                            )}
-                                        </div>
+                                                {/* Refining Icon */}
+                                                {acc.refined ? (
+                                                    <div className="relative w-8 h-8 md:w-10 md:h-10 bg-background/50 border border-cyan-500/30 rounded-lg overflow-hidden shadow-inner flex-shrink-0 animate-in fade-in zoom-in duration-300">
+                                                        <Image 
+                                                            src={`/items/accessory/${acc.refined}`} 
+                                                            fill 
+                                                            className="object-cover" 
+                                                            alt="refined" 
+                                                            sizes="40px"
+                                                        />
+                                                        <div className="absolute inset-0 ring-1 ring-inset ring-cyan-400/20 rounded-lg"></div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="w-8 h-8 md:w-10 md:h-10 border border-dashed border-border/20 rounded-lg flex items-center justify-center opacity-10">
+                                                        <div className="w-0.5 h-0.5 bg-border rounded-full"></div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )) : (
+                                            <span className="text-gray-600 text-xs italic">None selected</span>
+                                        )}
                                     </div>
                                 </div>
+
+                                {/* Bottom Row: Substats */}
+                                <div className="col-span-full pt-6 border-t border-border/30">
+                                    <h4 className="flex items-center gap-3 text-foreground/80 text-xs font-bold uppercase tracking-[0.25em] mb-4">
+                                        <span className="w-1.5 h-1.5 bg-primary rotate-45"></span> Substats Priority
+                                    </h4>
+                                    <div className="flex flex-wrap gap-2">
+                                        {build.substats && build.substats.length > 0 ? build.substats.map((sub, idx) => (
+                                            <span key={idx} className="group/sub relative bg-secondary/30 text-foreground border border-border hover:border-primary px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-2.5 shadow-sm transition-colors cursor-default">
+                                                <span className="w-4 h-4 rounded bg-background text-primary flex items-center justify-center text-[9px] shadow-sm font-black">{idx + 1}</span>
+                                                {sub}
+                                            </span>
+                                        )) : (
+                                            <span className="text-gray-600 text-xs italic">None</span>
+                                        )}
+                                    </div>
+                                </div>
+
                             </div>
 
                             {/* Note */}
@@ -219,8 +233,8 @@ function ViewerItemCard({ item, type }) {
     )
 
     return (
-        <div className="bg-card border border-border rounded-xl p-3 flex gap-4 items-center shadow-sm hover:border-primary/50 transition-colors group/card">
-            <div className="relative w-14 h-14 bg-background rounded-lg flex-shrink-0 overflow-hidden border border-border shadow-sm group-hover/card:border-primary/30 transition-colors">
+        <div className="bg-card border border-border rounded-xl p-2.5 md:p-3 flex gap-3 md:gap-4 items-center shadow-sm hover:border-primary/50 transition-colors group/card min-h-[72px]">
+            <div className="relative w-11 h-11 md:w-12 md:h-12 bg-background rounded-lg flex-shrink-0 overflow-hidden border border-border shadow-sm group-hover/card:border-primary/30 transition-colors">
                 <Image 
                     src={`/items/${type.toLowerCase()}/${item.image}`} 
                     fill 
