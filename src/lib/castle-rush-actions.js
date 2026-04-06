@@ -3,6 +3,7 @@
 import pool, { initDB } from './db'
 import { revalidatePath } from 'next/cache'
 import { logSiteUpdate } from './log-actions'
+import { requireAdmin } from './auth-guard'
 
 // Fixed boss order
 const BOSS_ORDER = [
@@ -53,6 +54,7 @@ export async function getSetsByBoss(bossKey) {
 }
 
 export async function createSet(data) {
+    await requireAdmin()
     // data: { boss_key, team_name, formation, pet_file, heroes: [], skill_rotation: [], video_url, note }
     await initDB()
     
@@ -65,12 +67,11 @@ export async function createSet(data) {
         const nextIndex = countResult[0].next_index
 
         const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
-        const petSlug = data.pet_file ? data.pet_file.replace(/\.[^/.]+$/, "") : null
 
         const [result] = await pool.query(
             `INSERT INTO castle_rush_sets (boss_key, set_index, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [data.boss_key, nextIndex, data.team_name || null, data.formation, petSlug, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
+            [data.boss_key, nextIndex, data.team_name || null, data.formation, data.pet_file || null, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
         )
 
         const bossName = BOSS_ORDER.find(b => b.key === data.boss_key)?.name || data.boss_key
@@ -89,15 +90,15 @@ export async function createSet(data) {
 }
 
 export async function updateSet(id, data) {
+    await requireAdmin()
     try {
         const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
-        const petSlug = data.pet_file ? data.pet_file.replace(/\.[^/.]+$/, "") : null
 
         await pool.query(
             `UPDATE castle_rush_sets 
              SET team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
              WHERE id = ?`,
-            [data.team_name || null, data.formation, petSlug, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
+            [data.team_name || null, data.formation, data.pet_file || null, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
         )
 
         const bossName = data.boss_name || 'Castle Rush'
@@ -115,6 +116,7 @@ export async function updateSet(id, data) {
 }
 
 export async function deleteSet(id) {
+    await requireAdmin()
     try {
         await pool.query('DELETE FROM castle_rush_sets WHERE id = ?', [id])
         

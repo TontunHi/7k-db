@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import SafeImage from './SafeImage'
 import { cn } from '@/lib/utils'
 import { getSlotType, getStaggerClass } from '@/lib/formation-utils'
 import { resolveHeroImage } from '@/lib/hero-utils'
@@ -42,8 +42,8 @@ export default function FormationGrid({
                                 <div 
                                     className="relative flex-1 w-full h-full block group/link"
                                 >
-                                    <Image 
-                                        src={`/heroes/${resolveHeroImage(heroFile, heroImageMap) || heroFile}`} 
+                                    <SafeImage 
+                                        src={`/heroes/${resolveHeroImage(heroFile, heroImageMap) || heroFile + '.webp'}`} 
                                         alt="Hero" 
                                         fill 
                                         sizes="(max-width: 768px) 20vw, 10vw"

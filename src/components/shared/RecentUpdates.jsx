@@ -23,11 +23,11 @@ function parseDbDate(dateStr) {
 
 function formatDate(dateStr) {
     const d = parseDbDate(dateStr)
-    return d.toLocaleDateString('th-TH', {
+    return d.toLocaleDateString('en-US', {
         timeZone: 'Asia/Bangkok',
         day: '2-digit',
-        month: '2-digit',
-        year: '2-digit'
+        month: 'short',
+        year: 'numeric'
     })
 }
 

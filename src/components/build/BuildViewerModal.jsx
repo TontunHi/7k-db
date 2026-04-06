@@ -1,8 +1,22 @@
 "use client"
 
-import Image from "next/image"
-import { X } from "lucide-react"
+import SafeImage from "../shared/SafeImage"
+import { X, Sword, Shield, Heart, Zap, Sparkles, Sparkle, Target, ShieldCheck, ShieldAlert, Wand2, ShieldX } from "lucide-react"
 import { clsx } from "clsx"
+
+const MIN_STATS_KEYS = [
+    { key: "physAtk", label: "Physical Attack", icon: Sword },
+    { key: "defense", label: "Defense", icon: Shield },
+    { key: "hp", label: "HP", icon: Heart },
+    { key: "speed", label: "Speed", icon: Zap },
+    { key: "critRate", label: "Crit Rate", icon: Sparkles, unit: "%" },
+    { key: "critDamage", label: "Crit Damage", icon: Sparkle, unit: "%" },
+    { key: "weaknessHit", label: "Weakness Hit Chance", icon: Target, unit: "%" },
+    { key: "blockRate", label: "Block Rate", icon: ShieldCheck, unit: "%" },
+    { key: "damageReduction", label: "Damage Taken Reduction", icon: ShieldAlert, unit: "%" },
+    { key: "effectHit", label: "Effect Hit Rate", icon: Wand2, unit: "%" },
+    { key: "effectResist", label: "Effect Resistance", icon: ShieldX, unit: "%" }
+]
 
 export default function BuildViewerModal({ hero, data, onClose }) {
     if (!data) return null
@@ -36,13 +50,13 @@ export default function BuildViewerModal({ hero, data, onClose }) {
 
                     {/* Hero Image */}
                     <div className="relative w-auto h-auto min-w-[5rem] min-h-[6rem] md:min-w-[7rem] md:min-h-[8rem] rounded-xl overflow-hidden border border-border shadow-2xl flex-shrink-0 group bg-black/20">
-                        <Image 
+                        <SafeImage 
                             src={`/heroes/${hero.filename}`} 
                             width={120} 
                             height={144} 
                             className="object-contain w-auto h-full max-h-32 md:max-h-40" 
                             alt={hero.name} 
-                            style={{ width: 'auto', height: 'auto' }}
+                            fallback="/heroes/placeholder.webp"
                         />
                         <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-xl"></div>
                         {/* Shine */}
@@ -67,7 +81,7 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                         rank ? "border-primary shadow-lg scale-105" : "border-border opacity-60 grayscale hover:grayscale-0 hover:opacity-100"
                                     )}>
                                         <div className="relative w-full h-full overflow-hidden rounded-lg">
-                                            <Image 
+                                            <SafeImage 
                                                 src={`/skills/${s}`} 
                                                 fill 
                                                 className="object-cover" 
@@ -152,7 +166,7 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                             <div key={idx} className="flex flex-col gap-2.5 items-center">
                                                 {/* Main Accessory */}
                                                 <div className="relative w-12 h-12 md:w-14 md:h-14 bg-background border border-border rounded-xl overflow-hidden shadow-sm group-hover:border-primary/50 transition-colors">
-                                                    <Image 
+                                                    <SafeImage 
                                                         src={`/items/accessory/${acc.image}`} 
                                                         fill 
                                                         className="object-cover" 
@@ -163,7 +177,7 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                                 {/* Refining Icon */}
                                                 {acc.refined ? (
                                                     <div className="relative w-8 h-8 md:w-10 md:h-10 bg-background/50 border border-cyan-500/30 rounded-lg overflow-hidden shadow-inner flex-shrink-0 animate-in fade-in zoom-in duration-300">
-                                                        <Image 
+                                                        <SafeImage 
                                                             src={`/items/accessory/${acc.refined}`} 
                                                             fill 
                                                             className="object-cover" 
@@ -183,6 +197,38 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                         )}
                                     </div>
                                 </div>
+
+                                {/* Minimum Stats - Compact Rows */}
+                                {build.minStats && Object.keys(build.minStats).length > 0 && (
+                                    <div className="col-span-full pt-6 border-t border-border/30 mb-8">
+                                        <h4 className="flex items-center gap-3 text-foreground/80 text-xs font-bold uppercase tracking-[0.25em] mb-4">
+                                            <span className="w-1.5 h-1.5 bg-orange-500 rotate-45"></span> Minimum Stats
+                                        </h4>
+                                        <div className="flex flex-col rounded-2xl overflow-hidden border border-border/40 bg-black/40 max-w-sm">
+                                            {MIN_STATS_KEYS.filter(s => build.minStats[s.key]).map((s, idx, arr) => {
+                                                return (
+                                                    <div 
+                                                        key={s.key} 
+                                                        className={clsx(
+                                                            "flex items-center justify-between px-5 py-2.5 transition-colors hover:bg-white/5",
+                                                            idx !== arr.length - 1 && "border-b border-border/10"
+                                                        )}
+                                                    >
+                                                        <span className="text-xs font-bold text-foreground/70 tracking-tight">{s.label}</span>
+                                                        <div className="flex items-baseline gap-0.5">
+                                                            <span className="text-sm font-black text-foreground">
+                                                                {build.minStats[s.key]}
+                                                            </span>
+                                                            {s.unit && (
+                                                                <span className="text-[10px] font-bold text-primary/80">{s.unit}</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Bottom Row: Substats */}
                                 <div className="col-span-full pt-6 border-t border-border/30">
@@ -235,7 +281,7 @@ function ViewerItemCard({ item, type }) {
     return (
         <div className="bg-card border border-border rounded-xl p-2.5 md:p-3 flex gap-3 md:gap-4 items-center shadow-sm hover:border-primary/50 transition-colors group/card min-h-[72px]">
             <div className="relative w-11 h-11 md:w-12 md:h-12 bg-background rounded-lg flex-shrink-0 overflow-hidden border border-border shadow-sm group-hover/card:border-primary/30 transition-colors">
-                <Image 
+                <SafeImage 
                     src={`/items/${type.toLowerCase()}/${item.image}`} 
                     fill 
                     className="object-cover" 

@@ -3,6 +3,7 @@
 import pool, { initDB } from './db'
 import { revalidatePath } from 'next/cache'
 import { logSiteUpdate } from './log-actions'
+import { requireAdmin } from './auth-guard'
 
 // Raids with actual images - names derived from filenames
 const RAID_ORDER = [
@@ -49,6 +50,7 @@ export async function getSetsByRaid(raidKey) {
 }
 
 export async function createSet(data) {
+    await requireAdmin()
     // data: { raid_key, formation, pet_file, heroes: [], skill_rotation: [], video_url, note }
     await initDB()
     
@@ -83,6 +85,7 @@ export async function createSet(data) {
 }
 
 export async function updateSet(id, data) {
+    await requireAdmin()
     try {
         const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
@@ -110,6 +113,7 @@ export async function updateSet(id, data) {
 }
 
 export async function deleteSet(id) {
+    await requireAdmin()
     try {
         await pool.query('DELETE FROM raid_sets WHERE id = ?', [id])
         

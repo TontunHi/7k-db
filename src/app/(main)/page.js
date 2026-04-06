@@ -2,8 +2,9 @@ import Link from 'next/link'
 import { Suspense } from 'react'
 import { Sword, Map, Skull, Landmark, Trophy, ArrowRight, Crown, Compass, Swords } from 'lucide-react'
 import RecentUpdates from '@/components/shared/RecentUpdates'
+import SponsorBanner from '@/components/ads/SponsorBanner'
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60; // Revalidate every minute
 
 export const metadata = {
     title: 'Home',
@@ -22,6 +23,14 @@ export default async function HomePage() {
             glow: "group-hover:shadow-[0_0_30px_rgba(59,130,246,0.3)]"
         },
         {
+            title: "Tier List",
+            desc: "Meta rankings",
+            icon: Trophy,
+            href: "/tierlist",
+            color: "from-purple-500 to-indigo-500",
+            glow: "group-hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]"
+        },
+        {
             title: "Stage Guide",
             desc: "Clear main story",
             icon: Map,
@@ -30,20 +39,20 @@ export default async function HomePage() {
             glow: "group-hover:shadow-[0_0_30px_rgba(255,215,0,0.3)]"
         },
         {
-            title: "Raid Strategy",
-            desc: "Boss mechanics",
-            icon: Skull,
-            href: "/raid",
-            color: "from-red-500 to-rose-600",
-            glow: "group-hover:shadow-[0_0_30px_rgba(239,68,68,0.3)]"
-        },
-        {
             title: "Dungeons",
             desc: "Resource farming",
             icon: Landmark,
             href: "/dungeon",
             color: "from-emerald-500 to-green-600",
             glow: "group-hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]"
+        },
+        {
+            title: "Raid Strategy",
+            desc: "Boss mechanics",
+            icon: Skull,
+            href: "/raid",
+            color: "from-red-500 to-rose-600",
+            glow: "group-hover:shadow-[0_0_30px_rgba(239,68,68,0.3)]"
         },
         {
             title: "Castle Rush",
@@ -62,20 +71,28 @@ export default async function HomePage() {
             glow: "group-hover:shadow-[0_0_30px_rgba(139,92,246,0.3)]"
         },
         {
-            title: "Total War",
-            desc: "Tier team compositions",
+            title: "Arena PVP",
+            desc: "Team compositions",
             icon: Swords,
-            href: "/total-war",
-            color: "from-red-500 to-orange-500",
-            glow: "group-hover:shadow-[0_0_30px_rgba(239,68,68,0.3)]"
+            href: "/arena",
+            color: "from-rose-500 to-red-600",
+            glow: "group-hover:shadow-[0_0_30px_rgba(225,29,72,0.3)]"
         },
         {
-            title: "Tier List",
-            desc: "Meta rankings",
+            title: "Total War",
+            desc: "Weekly boss teams",
             icon: Trophy,
-            href: "/tierlist",
-            color: "from-purple-500 to-indigo-500",
-            glow: "group-hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]"
+            href: "/total-war",
+            color: "from-orange-500 to-pink-500",
+            glow: "group-hover:shadow-[0_0_30px_rgba(249,115,22,0.3)]"
+        },
+        {
+            title: "Guild War",
+            desc: "GvG battle guides",
+            icon: Skull,
+            href: "/guild-war",
+            color: "from-blue-600 to-indigo-700",
+            glow: "group-hover:shadow-[0_0_30px_rgba(37,99,235,0.3)]"
         },
     ]
 
@@ -106,6 +123,11 @@ export default async function HomePage() {
                         <br />
                         <span className="text-white font-medium">Built by fans, for fans.</span>
                     </p>
+                </div>
+
+                {/* Wide Sponsor Banner */}
+                <div className="max-w-7xl mx-auto mb-16 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
+                    <SponsorBanner variant="wide" />
                 </div>
 
                 {/* Main content — Features grid + Recent Updates sidebar */}

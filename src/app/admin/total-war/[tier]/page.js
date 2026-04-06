@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, use } from 'react'
-import Image from 'next/image'
+import SafeImage from '@/components/shared/SafeImage'
 import Link from 'next/link'
 import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Swords, Zap, X, Pencil, Layers, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -24,15 +24,15 @@ function getSkillImagePath(heroFilename, skillNumber) {
 }
 
 // ─── Skill Picker Modal ────────────────────────────────────────────────────────
-function SkillPickerModal({ open, teamHeroes, skillErrors, onError, onSelect, onClose }) {
+function SkillPickerModal({ open, teamHeroes, heroes, skillErrors, onError, onSelect, onClose }) {
     if (!open) return null
     return (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-md">
             <div className="bg-gray-900 w-full max-w-2xl rounded-2xl border border-gray-700 shadow-2xl overflow-hidden">
                 <div className="p-5 border-b border-gray-800 flex justify-between items-center bg-black/50">
                     <div>
-                        <h3 className="text-xl font-black text-white">เลือกสกิล</h3>
-                        <p className="text-sm text-gray-400 mt-1">เลือกสกิลจาก Hero ในทีม</p>
+                        <h3 className="text-xl font-black text-white">Select Skill</h3>
+                        <p className="text-sm text-gray-400 mt-1">Choose a skill from the team heroes</p>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400">
                         <X size={22} />
@@ -46,12 +46,19 @@ function SkillPickerModal({ open, teamHeroes, skillErrors, onError, onSelect, on
                             <div key={heroIdx} className="space-y-2">
                                 <div className="flex items-center gap-2">
                                     <div className="relative w-8 h-8 rounded-md overflow-hidden border border-gray-700">
-                                        <Image src={`/heroes/${heroFile}`} alt={heroName} fill className="object-cover" />
+                                        {(() => {
+                                            const heroData = heroes?.find(h => 
+                                                h.filename === heroFile || 
+                                                h.filename.replace(/\.[^/.]+$/, "") === heroFile
+                                            )
+                                            const actualFile = heroData?.filename || heroFile
+                                            return <SafeImage src={`/heroes/${actualFile}`} alt={heroName} fill className="object-cover" />
+                                        })()}
                                     </div>
                                     <span className="text-sm font-bold text-gray-300 capitalize">{heroName}</span>
                                 </div>
                                 <div className="flex gap-2 ml-10">
-                                    {[1, 2, 3, 4].map(skillNum => {
+                                    {[4, 3, 2, 1].map(skillNum => {
                                         const skillKey = `${heroIdx}-${skillNum}`
                                         const skillPath = getSkillImagePath(heroFile, skillNum)
                                         const hasError = skillErrors[`pick-${heroIdx}-${skillNum}`]
@@ -63,7 +70,7 @@ function SkillPickerModal({ open, teamHeroes, skillErrors, onError, onSelect, on
                                                 className="relative w-14 h-14 rounded-lg overflow-hidden border-2 border-gray-700 hover:border-[#FFD700] hover:shadow-[0_0_15px_rgba(255,215,0,0.3)] transition-all bg-gray-900"
                                             >
                                                 {skillPath && !hasError ? (
-                                                    <Image src={skillPath} alt={`Skill ${skillNum}`} fill className="object-cover"
+                                                    <SafeImage src={skillPath} alt={`Skill ${skillNum}`} fill className="object-cover"
                                                         onError={() => onError(`pick-${heroIdx}-${skillNum}`)} />
                                                 ) : (
                                                     <span className="text-gray-600 text-xs flex items-center justify-center w-full h-full">S{skillNum}</span>
@@ -75,8 +82,8 @@ function SkillPickerModal({ open, teamHeroes, skillErrors, onError, onSelect, on
                             </div>
                         )
                     })}
-                    {!teamHeroes.some(h => h) && (
-                        <p className="text-center text-gray-500 py-8">ยังไม่มี Hero ในทีม</p>
+                    {!teamHeroes.length > 0 && (
+                        <p className="text-center text-gray-500 py-8">No heroes in team yet</p>
                     )}
                 </div>
             </div>
@@ -164,7 +171,7 @@ function TeamCard({ team, teamIdx, tierCfg, heroes, pets, formations, skillError
                                                 )}
                                             >
                                                 {slot.skill && heroFile && skillPath && !hasError ? (
-                                                    <Image src={skillPath} alt="" fill className="object-cover"
+                                                    <SafeImage src={skillPath} alt="" fill className="object-cover"
                                                         onError={() => onSkillError(errKey)} />
                                                 ) : (
                                                     <Plus className="w-3.5 h-3.5 text-gray-600" />
@@ -191,7 +198,7 @@ function TeamCard({ team, teamIdx, tierCfg, heroes, pets, formations, skillError
                                 </button>
                             </div>
                         </div>
-                        {!hasHeroes && <p className="text-gray-700 text-xs mt-2">ใส่ Heroes ก่อนเพื่อเลือก Skills</p>}
+                        {!hasHeroes && <p className="text-gray-700 text-xs mt-2">Add heroes to the team first to select skills</p>}
                     </div>
                 </div>
 
@@ -584,6 +591,7 @@ export default function AdminTotalWarTierPage({ params }) {
             <SkillPickerModal
                 open={skillPicker !== null}
                 teamHeroes={pickerHeroes}
+                heroes={heroes}
                 skillErrors={skillErrors}
                 onError={handleSkillError}
                 onSelect={handleSkillSelect}

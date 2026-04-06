@@ -1,11 +1,18 @@
 import { NextResponse } from "next/server"
+import { validateSession } from "./lib/session"
 
-export function middleware(request) {
-    // Check if accessing admin routes
-    if (request.nextUrl.pathname.startsWith("/admin")) {
-        const session = request.cookies.get("admin_session")
+export async function middleware(request) {
+    const { pathname } = request.nextUrl
+    
+    // Check if accessing admin or api/assets routes
+    if (pathname.startsWith("/admin") || pathname.startsWith("/api/assets")) {
+        const sessionToken = request.cookies.get("admin_session")?.value
 
-        if (!session || session.value !== "true") {
+        if (!(await validateSession(sessionToken))) {
+            // Check if it's an API request
+            if (pathname.startsWith("/api/")) {
+                return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+            }
             return NextResponse.redirect(new URL("/login", request.url))
         }
     }
@@ -14,5 +21,5 @@ export function middleware(request) {
 }
 
 export const config = {
-    matcher: "/admin/:path*",
+    matcher: ["/admin/:path*", "/api/assets/:path*"],
 }

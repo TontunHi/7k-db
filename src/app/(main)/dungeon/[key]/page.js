@@ -1,10 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { getDungeonInfo, getSetsByDungeon } from '@/lib/dungeon-actions'
-import { Landmark, ArrowLeft, Video, ExternalLink, Users, Star } from 'lucide-react'
+import { Landmark, ArrowLeft, Video, ExternalLink, Users, Star, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 import { getHeroImageMap } from '@/lib/hero-utils-server'
+import SkillSequence from '@/components/shared/SkillSequence'
 
 export const dynamic = 'force-dynamic'
 
@@ -131,27 +132,48 @@ export default async function DungeonDetailPage({ params }) {
                                 <div className="p-6">
                                     <div className="flex flex-col md:flex-row gap-8">
                                         {/* Heroes Grid */}
-                                        <FormationGrid 
-                                            formation={set.formation} 
-                                            heroes={set.heroes} 
-                                            heroImageMap={heroImageMap}
-                                            customClasses={{
-                                                container: "grid grid-cols-5 gap-3 pb-6 max-w-full",
-                                                emptyRender: ({isFront}) => (
-                                                    <div className="absolute inset-0 flex items-center justify-center text-gray-700 text-xs">Empty</div>
-                                                ),
-                                                cardString: "bg-black border-2 aspect-[3/4] rounded-lg overflow-hidden transition-all duration-300"
-                                            }}
-                                        />
+                                        <div className="flex-1">
+                                            <FormationGrid 
+                                                formation={set.formation} 
+                                                heroes={set.heroes} 
+                                                heroImageMap={heroImageMap}
+                                                customClasses={{
+                                                    container: "grid grid-cols-5 gap-3 pb-6 max-w-full",
+                                                    emptyRender: ({isFront}) => (
+                                                        <div className="absolute inset-0 flex items-center justify-center text-gray-700 text-xs text-center p-1">Empty</div>
+                                                    ),
+                                                    cardString: "bg-black border-2 border-gray-800 aspect-[3/4] rounded-lg overflow-hidden transition-all duration-300"
+                                                }}
+                                            />
+
+                                            {/* Skill Rotation */}
+                                            {set.skill_rotation?.length > 0 && (
+                                                <div className="mt-8 pt-6 border-t border-gray-800/50">
+                                                    <div className="flex items-center gap-2 mb-4">
+                                                        <Zap className="w-4 h-4 text-[#FFD700]" />
+                                                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Skill Sequence</span>
+                                                    </div>
+                                                    <SkillSequence 
+                                                        rotation={set.skill_rotation} 
+                                                        heroes={set.heroes} 
+                                                        heroImageMap={heroImageMap}
+                                                        accentColor="#FFD700"
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
 
                                         {/* Pet */}
-                                        <PetDisplay 
-                                            petFile={set.pet_file} 
-                                            hideLabel={true}
-                                            customClasses={{
-                                                wrapper: "w-20 h-20 border-none bg-transparent shadow-none"
-                                            }}
-                                        />
+                                        <div className="flex flex-col items-center gap-4">
+                                            <PetDisplay 
+                                                petFile={set.pet_file} 
+                                                hideLabel={true}
+                                                customClasses={{
+                                                    wrapper: "w-24 h-24 border-2 border-[#FFD700]/20 bg-gray-900/50 shadow-xl shadow-[#FFD700]/5 hover:scale-105 transition-transform"
+                                                }}
+                                            />
+                                            <div className="text-[10px] font-black text-[#FFD700]/50 uppercase tracking-widest">Team Pet</div>
+                                        </div>
                                     </div>
                                     
                                     {/* Mobile Video Button */}

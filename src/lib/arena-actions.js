@@ -3,6 +3,7 @@
 import pool, { initDB } from './db'
 import { revalidatePath } from 'next/cache'
 import { logSiteUpdate } from './log-actions'
+import { requireAdmin } from './auth-guard'
 
 export async function getArenaTeams() {
     await initDB()
@@ -22,6 +23,7 @@ export async function getArenaTeams() {
 }
 
 export async function createArenaTeam(data) {
+    await requireAdmin()
     // data: { team_name, formation, pet_file, heroes: [], skill_rotation: [], video_url, note }
     await initDB()
     
@@ -53,6 +55,7 @@ export async function createArenaTeam(data) {
 }
 
 export async function updateArenaTeam(id, data) {
+    await requireAdmin()
     try {
         const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
@@ -76,6 +79,7 @@ export async function updateArenaTeam(id, data) {
 }
 
 export async function deleteArenaTeam(id) {
+    await requireAdmin()
     try {
         await pool.query('DELETE FROM arena_teams WHERE id = ?', [id])
         
@@ -90,6 +94,7 @@ export async function deleteArenaTeam(id) {
 }
 
 export async function reorderArenaTeams(orderedIds) {
+    await requireAdmin()
     try {
         // Update batch in a transaction or individual queries (individual for simplicity since it's a small list)
         for (let i = 0; i < orderedIds.length; i++) {

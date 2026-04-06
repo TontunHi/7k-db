@@ -5,6 +5,7 @@ import Image from "next/image"
 import { Loader2, Plus, Trash, X, Save, Check, Grid } from "lucide-react"
 import { clsx } from "clsx"
 import { toast } from "sonner"
+import SafeImage from "@/components/shared/SafeImage"
 
 // Predefined Options
 const WEAPON_MAIN_STATS = [
@@ -48,6 +49,19 @@ const AVAILABLE_SUBSTATS = [
     "Effect Resistance"
 ]
 
+const MIN_STATS_KEYS = [
+    { key: "physAtk", label: "Physical Attack" },
+    { key: "defense", label: "Defense" },
+    { key: "hp", label: "HP" },
+    { key: "speed", label: "Speed" },
+    { key: "critRate", label: "Crit Rate" },
+    { key: "critDamage", label: "Crit Damage" },
+    { key: "weaknessHit", label: "Weakness Hit Chance" },
+    { key: "blockRate", label: "Block Rate" },
+    { key: "damageReduction", label: "Damage Taken Reduction" },
+    { key: "effectHit", label: "Effect Hit Rate" },
+    { key: "effectResist", label: "Effect Resistance" }
+]
 
 export default function BuildEditorModal({ hero, skills, weapons, armors, accessories, initialBuilds, initialSkillPriority, onSave, onClose }) {
     const [builds, setBuilds] = useState(initialBuilds || [])
@@ -70,6 +84,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
         armors: [{ image: "", stat: ARMOR_MAIN_STATS[0] }, { image: "", stat: ARMOR_MAIN_STATS[0] }],
         accessories: [],
         substats: [],
+        minStats: {}
     }
 
     const handleAddBuild = () => {
@@ -93,6 +108,18 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
     const updateItem = (buildIndex, type, itemIndex, field, value) => {
         const newBuilds = [...builds]
         newBuilds[buildIndex][type][itemIndex][field] = value
+        setBuilds(newBuilds)
+    }
+
+    const updateMinStat = (buildIndex, key, value) => {
+        const newBuilds = [...builds]
+        const currentStats = { ...(newBuilds[buildIndex].minStats || {}) }
+        if (value === "") {
+            delete currentStats[key]
+        } else {
+            currentStats[key] = value
+        }
+        newBuilds[buildIndex].minStats = currentStats
         setBuilds(newBuilds)
     }
 
@@ -164,10 +191,8 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
         const { buildIndex } = selectorTarget
         const newBuilds = [...builds]
 
-        // Sort selection based on the order in selectorItems (l > r > un > c)
-        const sortedSelection = selectorItems.filter(item => multiSelection.includes(item));
-
-        newBuilds[buildIndex].accessories = sortedSelection.map(img => ({ image: img }))
+        // Keep the order of selection (multiSelection) instead of auto-sorting
+        newBuilds[buildIndex].accessories = multiSelection.map(img => ({ image: img }))
         setBuilds(newBuilds)
         setSelectorOpen(false)
     }
@@ -239,33 +264,39 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                         <div className="flex-1">
                             <p className="text-[#FFD700] font-bold uppercase tracking-widest text-xs mb-4">Global Skill Priority</p>
                             <div className="flex flex-wrap gap-4">
-                                {skills.length > 0 ? skills.map((s, i) => {
-                                    const isSelected = skillPriority.includes(s)
-                                    const order = isSelected ? skillPriority.indexOf(s) + 1 : null
-                                    return (
-                                        <div
-                                            key={i}
-                                            onClick={() => toggleSkillPriority(s)}
-                                            className={clsx(
-                                                "relative w-16 h-16 bg-black rounded-xl cursor-pointer transition-all border-2 group shadow-md",
-                                                isSelected ? "border-[#FFD700] ring-4 ring-[#FFD700]/20 scale-105" : "border-gray-800 hover:border-gray-500 hover:scale-105"
-                                            )}
-                                        >
-                                            <Image 
-                                                src={`/skills/${s}`} 
-                                                fill 
-                                                className="object-cover rounded-lg" 
-                                                alt="skill" 
-                                                sizes="64px"
-                                            />
-                                            {isSelected && (
-                                                <div className="absolute -top-2 -right-2 bg-gradient-to-br from-[#FFD700] to-yellow-600 text-black w-6 h-6 rounded-full flex items-center justify-center text-xs font-black shadow-lg shadow-[#FFD700]/50 border-2 border-black z-10 transform scale-110">
-                                                    {order}
-                                                </div>
-                                            )}
-                                        </div>
-                                    )
-                                }) : (
+                                {skills.length > 0 ? [...skills]
+                                    .sort((a, b) => {
+                                        const numA = parseInt(a.replace(/\.[^/.]+$/, '')) || 0
+                                        const numB = parseInt(b.replace(/\.[^/.]+$/, '')) || 0
+                                        return numB - numA
+                                    })
+                                    .map((s, i) => {
+                                        const isSelected = skillPriority.includes(s)
+                                        const order = isSelected ? skillPriority.indexOf(s) + 1 : null
+                                        return (
+                                            <div
+                                                key={i}
+                                                onClick={() => toggleSkillPriority(s)}
+                                                className={clsx(
+                                                    "relative w-16 h-16 bg-black rounded-xl cursor-pointer transition-all border-2 group shadow-md",
+                                                    isSelected ? "border-[#FFD700] ring-4 ring-[#FFD700]/20 scale-105" : "border-gray-800 hover:border-gray-500 hover:scale-105"
+                                                )}
+                                            >
+                                                <SafeImage 
+                                                    src={`/skills/${s}`} 
+                                                    fill 
+                                                    className="object-cover rounded-lg" 
+                                                    alt="skill" 
+                                                    sizes="64px"
+                                                />
+                                                {isSelected && (
+                                                    <div className="absolute -top-2 -right-2 bg-gradient-to-br from-[#FFD700] to-yellow-600 text-black w-6 h-6 rounded-full flex items-center justify-center text-xs font-black shadow-lg shadow-[#FFD700]/50 border-2 border-black z-10 transform scale-110">
+                                                        {order}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )
+                                    }) : (
                                     <div className="text-sm text-gray-500 bg-black/50 px-4 py-2 rounded-lg border border-gray-800">No skills found. Check public/skills/[hero_name]</div>
                                 )}
                             </div>
@@ -461,6 +492,26 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                         })}
                                     </div>
                                     <p className="text-xs text-gray-600 mt-4 text-center uppercase tracking-widest font-bold font-mono">Select Refining for each Slot</p>
+                                </div>
+                            </div>
+
+                            <div className="mt-8 pt-6 border-t border-gray-800 relative z-10">
+                                <label className="text-xs text-gray-400 font-bold uppercase tracking-widest block mb-4 ml-1 flex items-center gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-orange-400"></div>
+                                    Minimum Stats
+                                </label>
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                    {MIN_STATS_KEYS.map(({ key, label }) => (
+                                        <div key={key} className="space-y-1.5">
+                                            <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider ml-1">{label}</label>
+                                            <input
+                                                type="text"
+                                                value={build.minStats?.[key] || ""}
+                                                onChange={(e) => updateMinStat(bIndex, key, e.target.value)}
+                                                className="w-full bg-gray-900/50 border border-gray-800 rounded-lg px-3 py-2 text-xs text-white focus:border-[#FFD700] outline-none transition-colors"
+                                            />
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
 

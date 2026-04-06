@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import SafeImage from './SafeImage'
 import { cn } from '@/lib/utils'
 
 export default function PetDisplay({ petFile, customClasses = {}, hideLabel = false }) {
@@ -9,7 +9,7 @@ export default function PetDisplay({ petFile, customClasses = {}, hideLabel = fa
                 customClasses.wrapper
             )}>
                 {petFile ? (
-                    <Image 
+                    <SafeImage 
                         src={petFile} 
                         alt="Pet" 
                         fill 

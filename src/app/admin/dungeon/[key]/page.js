@@ -3,8 +3,9 @@
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import SafeImage from '@/components/shared/SafeImage'
 import Link from 'next/link'
-import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Landmark } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Landmark, Zap, X, Pencil } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { 
     getDungeonInfo, 
@@ -15,6 +16,13 @@ import {
 } from '@/lib/dungeon-actions'
 import { getAllHeroes, getPets, getFormations } from '@/lib/stage-actions'
 import TeamBuilder from '@/components/admin/TeamBuilder'
+
+// Helper to get hero skill image path
+function getSkillImagePath(heroFilename, skillNumber) {
+    if (!heroFilename) return null
+    const folderName = heroFilename.replace(/\.[^/.]+$/, '')
+    return `/skills/${folderName}/${skillNumber}.webp`
+}
 
 export default function DungeonDetailPage({ params }) {
     const router = useRouter()
@@ -27,6 +35,9 @@ export default function DungeonDetailPage({ params }) {
     const [formations, setFormations] = useState([])
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
+    const [skillErrors, setSkillErrors] = useState({})
+    // Skill picker state: { setIdx, slotIdx } or null
+    const [skillPicker, setSkillPicker] = useState(null)
 
     useEffect(() => {
         async function loadData() {
@@ -56,6 +67,7 @@ export default function DungeonDetailPage({ params }) {
             formation: formations[0]?.value || '2-3',
             pet_file: '',
             heroes: [null, null, null, null, null],
+            skill_rotation: [],
             video_url: '',
             note: '',
             _isNew: true,
@@ -100,6 +112,7 @@ export default function DungeonDetailPage({ params }) {
                 formation: set.formation,
                 pet_file: set.pet_file,
                 heroes: set.heroes,
+                skill_rotation: set.skill_rotation,
                 video_url: set.video_url,
                 note: set.note
             }
@@ -115,6 +128,44 @@ export default function DungeonDetailPage({ params }) {
         const setsData = await getSetsByDungeon(dungeonKey)
         setSets(setsData.map(s => ({ ...s, _dirty: false })))
         setSaving(false)
+    }
+
+    // --- Skill Slot Handlers ---
+    const handleAddSlot = (setIdx) => {
+        const updated = [...sets]
+        const rotation = [...(updated[setIdx].skill_rotation || [])]
+        rotation.push({ label: '', skill: null })
+        updated[setIdx] = { ...updated[setIdx], skill_rotation: rotation, _dirty: true }
+        setSets(updated)
+    }
+
+    const handleUpdateSlotLabel = (setIdx, slotIdx, label) => {
+        const updated = [...sets]
+        const rotation = [...(updated[setIdx].skill_rotation || [])]
+        rotation[slotIdx] = { ...rotation[slotIdx], label }
+        updated[setIdx] = { ...updated[setIdx], skill_rotation: rotation, _dirty: true }
+        setSets(updated)
+    }
+
+    const handleSelectSkillForSlot = (setIdx, slotIdx, skillKey) => {
+        const updated = [...sets]
+        const rotation = [...(updated[setIdx].skill_rotation || [])]
+        rotation[slotIdx] = { ...rotation[slotIdx], skill: skillKey }
+        updated[setIdx] = { ...updated[setIdx], skill_rotation: rotation, _dirty: true }
+        setSets(updated)
+        setSkillPicker(null)
+    }
+
+    const handleDeleteSlot = (setIdx, slotIdx) => {
+        const updated = [...sets]
+        const rotation = [...(updated[setIdx].skill_rotation || [])]
+        rotation.splice(slotIdx, 1)
+        updated[setIdx] = { ...updated[setIdx], skill_rotation: rotation, _dirty: true }
+        setSets(updated)
+    }
+
+    const handleSkillError = (key) => {
+        setSkillErrors(prev => ({ ...prev, [key]: true }))
     }
 
     if (loading) {
@@ -243,6 +294,86 @@ export default function DungeonDetailPage({ params }) {
                                 onRemove={null}
                             />
 
+                            {/* Skill Rotation */}
+                            <div className="space-y-3">
+                                <label className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                    <Zap className="w-4 h-4 text-[#FFD700]" />
+                                    Skill Rotation
+                                </label>
+
+                                <div className="bg-black/40 rounded-xl border border-gray-800 p-4">
+                                    <div className="flex flex-wrap items-end gap-1.5">
+                                        {(set.skill_rotation || []).map((slot, slotIdx) => {
+                                            const [hIdx, sNum] = (slot.skill || '').split('-').map(Number)
+                                            const heroFile = set.heroes?.[hIdx]
+                                            const skillPath = slot.skill ? getSkillImagePath(heroFile, sNum) : null
+                                            const errKey = `slot-${set.id}-${slotIdx}`
+                                            const hasError = skillErrors[errKey]
+                                            const hasHeroes = set.heroes?.some(h => h !== null)
+
+                                            return (
+                                                <div key={slotIdx} className="flex flex-col items-center group">
+                                                    <input
+                                                        type="text"
+                                                        value={slot.label || ''}
+                                                        onChange={(e) => handleUpdateSlotLabel(idx, slotIdx, e.target.value)}
+                                                        placeholder="..."
+                                                        className="w-14 text-center text-[10px] font-bold text-[#FFD700]/80 bg-transparent border-none outline-none placeholder-gray-600 mb-0.5 truncate"
+                                                    />
+                                                    <div className="relative">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setSkillPicker({ setIdx: idx, slotIdx })}
+                                                            disabled={!hasHeroes}
+                                                            className={cn(
+                                                                "w-12 h-12 rounded-md overflow-hidden border-2 flex items-center justify-center transition-all",
+                                                                slot.skill 
+                                                                    ? "border-[#FFD700]/50 bg-gray-900 hover:border-[#FFD700]" 
+                                                                    : "border-gray-700 border-dashed bg-gray-900/30 hover:border-gray-500",
+                                                                !hasHeroes && "cursor-not-allowed opacity-40"
+                                                            )}
+                                                        >
+                                                            {slot.skill && heroFile && skillPath && !hasError ? (
+                                                                <SafeImage
+                                                                    src={skillPath}
+                                                                    alt=""
+                                                                    fill
+                                                                    className="object-cover"
+                                                                    onError={() => handleSkillError(errKey)}
+                                                                />
+                                                            ) : (
+                                                                <Plus className="w-4 h-4 text-gray-600" />
+                                                            )}
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => { e.stopPropagation(); handleDeleteSlot(idx, slotIdx) }}
+                                                            className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full items-center justify-center text-[8px] hidden group-hover:flex shadow"
+                                                        >
+                                                            ✕
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+
+                                        <button
+                                            type="button"
+                                            onClick={() => handleAddSlot(idx)}
+                                            disabled={!set.heroes?.some(h => h !== null)}
+                                            className={cn(
+                                                "w-12 h-12 rounded-md border-2 border-dashed flex items-center justify-center transition-all",
+                                                set.heroes?.some(h => h !== null)
+                                                    ? "border-[#FFD700]/30 text-[#FFD700]/50 hover:border-[#FFD700] hover:text-[#FFD700] hover:bg-[#FFD700]/5"
+                                                    : "border-gray-700 text-gray-700 cursor-not-allowed"
+                                            )}
+                                        >
+                                            <Plus className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* Video URL */}
                             <div className="space-y-2">
                                 <label className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
@@ -275,6 +406,78 @@ export default function DungeonDetailPage({ params }) {
                     </div>
                 ))}
             </div>
+            {/* Skill Picker Modal */}
+            {skillPicker && (
+                <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-md">
+                    <div className="bg-gray-900 w-full max-w-2xl rounded-2xl border border-gray-700 shadow-2xl overflow-hidden">
+                        <div className="p-5 border-b border-gray-800 flex justify-between items-center bg-black/50">
+                            <div>
+                                <h3 className="text-xl font-black text-white">Select Skill</h3>
+                                <p className="text-sm text-gray-400 mt-1">Choose a skill from the team heroes</p>
+                            </div>
+                            <button onClick={() => setSkillPicker(null)} className="p-2 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400">
+                                <X size={22} />
+                            </button>
+                        </div>
+                        <div className="p-5 space-y-4 max-h-[60vh] overflow-y-auto">
+                            {(sets[skillPicker.setIdx]?.heroes || []).map((heroFile, heroIdx) => {
+                                if (!heroFile) return null
+                                const heroName = heroFile.replace(/^(l\+\+|l\+|l|r|uc|c)_/i, '').replace(/\.[^/.]+$/, '').replace(/_/g, ' ')
+
+                                return (
+                                    <div key={heroIdx} className="space-y-2">
+                                        <div className="flex items-center gap-2">
+                                            <div className="relative w-8 h-8 rounded-md overflow-hidden border border-gray-700">
+                                                {(() => {
+                                                    const heroData = heroes?.find(h => 
+                                                        h.filename === heroFile || 
+                                                        h.filename.replace(/\.[^/.]+$/, "") === heroFile
+                                                    )
+                                                    const actualFile = heroData?.filename || heroFile
+                                                    return <SafeImage src={`/heroes/${actualFile}`} alt={heroName} fill className="object-cover" />
+                                                })()}
+                                            </div>
+                                            <span className="text-sm font-bold text-gray-300 capitalize">{heroName}</span>
+                                        </div>
+                                        <div className="flex gap-2 ml-10">
+                                            {[4, 3, 2, 1].map(skillNum => {
+                                                const skillKey = `${heroIdx}-${skillNum}`
+                                                const skillPath = getSkillImagePath(heroFile, skillNum)
+                                                const errKey = `pick-${heroIdx}-${skillNum}`
+                                                const hasError = skillErrors[errKey]
+
+                                                return (
+                                                    <button
+                                                        key={skillNum}
+                                                        type="button"
+                                                        onClick={() => handleSelectSkillForSlot(skillPicker.setIdx, skillPicker.slotIdx, skillKey)}
+                                                        className="relative w-14 h-14 rounded-lg overflow-hidden border-2 border-gray-700 hover:border-[#FFD700] hover:shadow-[0_0_15px_rgba(255,215,0,0.3)] transition-all bg-gray-900"
+                                                    >
+                                                        {skillPath && !hasError ? (
+                                                            <SafeImage
+                                                                src={skillPath}
+                                                                alt={`Skill ${skillNum}`}
+                                                                fill
+                                                                className="object-cover"
+                                                                onError={() => handleSkillError(errKey)}
+                                                            />
+                                                        ) : (
+                                                            <span className="text-gray-600 text-xs flex items-center justify-center w-full h-full">S{skillNum}</span>
+                                                        )}
+                                                    </button>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                            {!(sets[skillPicker.setIdx]?.heroes?.some(h => h)) && (
+                                <p className="text-center text-gray-500 py-8">No heroes in team yet</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

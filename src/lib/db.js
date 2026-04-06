@@ -27,6 +27,8 @@ export default pool;
 
 // Helper to init DB
 export async function initDB() {
+  if (global.dbInitialized) return;
+
   const connection = await pool.getConnection();
   try {
     await connection.query(`
@@ -50,9 +52,17 @@ export async function initDB() {
         armors JSON,
         accessories JSON,
         substats JSON,
+        min_stats JSON,
         FOREIGN KEY (hero_filename) REFERENCES heroes(filename) ON DELETE CASCADE
       )
     `);
+
+    // Add min_stats column to builds if missing
+    try {
+      await connection.query(`ALTER TABLE builds ADD COLUMN min_stats JSON AFTER substats`);
+    } catch (e) {
+      // Column already exists, ignore
+    }
 
     await connection.query(`
       CREATE TABLE IF NOT EXISTS tierlist (
@@ -126,11 +136,19 @@ export async function initDB() {
         formation VARCHAR(50) NOT NULL,
         pet_file VARCHAR(255),
         heroes_json JSON,
+        skill_rotation JSON,
         video_url VARCHAR(500),
         note TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Add skill_rotation column if missing (for existing databases)
+    try {
+      await connection.query(`ALTER TABLE dungeon_sets ADD COLUMN skill_rotation JSON AFTER heroes_json`);
+    } catch (e) {
+      // Column already exists, ignore
+    }
 
     await connection.query(`
       CREATE TABLE IF NOT EXISTS raid_sets (
@@ -339,6 +357,7 @@ export async function initDB() {
     }
 
     console.log("Database tables initialized successfully via secure connection.");
+    global.dbInitialized = true;
   } catch (err) {
     console.error("Error initializing DB:", err);
   } finally {

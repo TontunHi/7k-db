@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import Image from 'next/image'
+import SafeImage from '@/components/shared/SafeImage'
 import { Plus, X, Shield, Swords, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import FormationSelector from './FormationSelector'
@@ -101,7 +101,7 @@ export default function TeamBuilder({
                             onClick={() => handleHeroSelect(h.filename)}
                             className="group relative aspect-[3/4] rounded-xl overflow-hidden border-2 border-gray-700 hover:border-[#FFD700] hover:shadow-[0_0_20px_rgba(255,215,0,0.3)] transition-all bg-black"
                         >
-                            <Image
+                            <SafeImage
                                 src={`/heroes/${h.filename}`}
                                 alt={h.name}
                                 fill
@@ -134,7 +134,7 @@ export default function TeamBuilder({
                             onClick={() => handlePetSelect(p)}
                             className="group flex items-center justify-center aspect-square rounded-xl border-2 border-gray-700 hover:border-[#FFD700] hover:shadow-[0_0_20px_rgba(255,215,0,0.3)] transition-all bg-gradient-to-b from-gray-800 to-black"
                         >
-                            <Image 
+                            <SafeImage 
                                 src={p} 
                                 alt="Pet" 
                                 width={80}
@@ -172,7 +172,12 @@ export default function TeamBuilder({
                     <div className="grid grid-cols-5 gap-2 sm:gap-3 pb-8 max-w-[380px] md:max-w-[500px]"> {/* pb-8 for stagger space */}
                         {[0, 1, 2, 3, 4].map((i) => {
                             const type = getSlotType(team.formation, i)
-                            const heroFile = team.heroes?.[i]
+                            const heroFileOrSlug = team.heroes?.[i]
+                            const heroData = heroesList?.find(h => 
+                                h.filename === heroFileOrSlug || 
+                                h.filename.replace(/\.[^/.]+$/, "") === heroFileOrSlug
+                            )
+                            const heroFile = heroData?.filename || heroFileOrSlug
                             const stagger = getStaggerClass(team.formation, i)
                             const currentCount = team.heroes?.filter(h => h !== null).length || 0
                             const isDisabled = !heroFile && currentCount >= maxHeroes
@@ -197,7 +202,7 @@ export default function TeamBuilder({
                                 >
                                     {heroFile ? (
                                         <>
-                                            <Image
+                                            <SafeImage
                                                 src={`/heroes/${heroFile}`}
                                                 alt="Hero"
                                                 fill
@@ -242,7 +247,7 @@ export default function TeamBuilder({
                     >
                         {team.pet_file ? (
                             <>
-                                <Image 
+                                <SafeImage 
                                     src={team.pet_file} 
                                     alt="Pet" 
                                     fill 

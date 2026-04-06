@@ -39,7 +39,7 @@ export default async function TotalWarPage() {
                             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-red-500 to-yellow-400 transform -skew-x-12 shadow-[0_0_15px_rgba(239,68,68,0.8)] transition-all group-hover:w-64" />
                         </div>
                         <p className="text-slate-400 text-lg font-light tracking-wide max-w-xl mx-auto mt-6">
-                            เลือกระดับเพื่อดูทีมแนะนำและ Skill Rotation
+                            Select a tier to view recommended teams and skill rotations
                         </p>
                     </div>
                 </div>

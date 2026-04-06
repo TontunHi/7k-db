@@ -3,6 +3,7 @@
 import pool, { initDB } from './db'
 import { revalidatePath } from 'next/cache'
 import { logSiteUpdate } from './log-actions'
+import { requireAdmin } from './auth-guard'
 
 // ─── Sets ────────────────────────────────────────────────────────────────────
 
@@ -48,6 +49,7 @@ export async function getAllSetCounts() {
 }
 
 export async function createSet(data) {
+    await requireAdmin()
     // data: { tier, set_name, note }
     await initDB()
     try {
@@ -79,6 +81,7 @@ export async function createSet(data) {
 }
 
 export async function updateSet(id, data) {
+    await requireAdmin()
     try {
         await pool.query(
             `UPDATE total_war_sets SET set_name = ?, note = ? WHERE id = ?`,
@@ -102,6 +105,7 @@ export async function updateSet(id, data) {
 }
 
 export async function deleteSet(id) {
+    await requireAdmin()
     try {
         // teams are deleted via CASCADE
         await pool.query('DELETE FROM total_war_sets WHERE id = ?', [id])
@@ -117,6 +121,7 @@ export async function deleteSet(id) {
 // ─── Teams ────────────────────────────────────────────────────────────────────
 
 export async function createTeam(data) {
+    await requireAdmin()
     // data: { set_id, team_name, formation, pet_file, heroes, skill_rotation, video_url, note }
     try {
         const [countResult] = await pool.query(
@@ -157,6 +162,7 @@ export async function createTeam(data) {
 }
 
 export async function updateTeam(id, data) {
+    await requireAdmin()
     try {
         const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
@@ -188,6 +194,7 @@ export async function updateTeam(id, data) {
 }
 
 export async function deleteTeam(id) {
+    await requireAdmin()
     try {
         await pool.query('DELETE FROM total_war_teams WHERE id = ?', [id])
         revalidatePath('/admin/total-war')

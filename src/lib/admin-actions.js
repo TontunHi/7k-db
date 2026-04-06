@@ -4,11 +4,13 @@ import fs from "fs"
 import path from "path"
 import { revalidatePath } from "next/cache"
 import { saveHeroData } from "@/lib/build-db"
+import { requireAdmin } from "./auth-guard"
 
 const HEROES_DIR = path.join(process.cwd(), "public", "heroes")
 const SKILLS_DIR = path.join(process.cwd(), "public", "skills")
 
 export async function uploadHeroImage(formData) {
+    await requireAdmin()
     const heroFile = formData.get("heroFile")
     const skillFiles = formData.getAll("skillFiles")
     const manualFolderName = formData.get("folderName") // New input
@@ -66,6 +68,7 @@ export async function uploadHeroImage(formData) {
 }
 
 export async function deleteHeroImage(filename) {
+    await requireAdmin()
     try {
         const filepath = path.join(HEROES_DIR, filename)
         if (fs.existsSync(filepath)) {

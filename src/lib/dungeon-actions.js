@@ -3,6 +3,7 @@
 import pool, { initDB } from './db'
 import { revalidatePath } from 'next/cache'
 import { logSiteUpdate } from './log-actions'
+import { requireAdmin } from './auth-guard'
 
 // Fixed dungeon order
 const DUNGEON_ORDER = [
@@ -44,11 +45,15 @@ export async function getSetsByDungeon(dungeonKey) {
         ...row,
         heroes: typeof row.heroes_json === 'string' 
             ? JSON.parse(row.heroes_json) 
-            : (row.heroes_json || [])
+            : (row.heroes_json || []),
+        skill_rotation: typeof row.skill_rotation === 'string'
+            ? JSON.parse(row.skill_rotation)
+            : (row.skill_rotation || [])
     }))
 }
 
 export async function createSet(data) {
+    await requireAdmin()
     // data: { dungeon_key, formation, pet_file, heroes: [], video_url, note }
     await initDB()
     
@@ -63,9 +68,9 @@ export async function createSet(data) {
         const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
         const [result] = await pool.query(
-            `INSERT INTO dungeon_sets (dungeon_key, set_index, formation, pet_file, heroes_json, video_url, note)
-             VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [data.dungeon_key, nextIndex, data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), data.video_url, data.note]
+            `INSERT INTO dungeon_sets (dungeon_key, set_index, formation, pet_file, heroes_json, skill_rotation, video_url, note)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [data.dungeon_key, nextIndex, data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
         )
 
         const dungeonName = DUNGEON_ORDER.find(d => d.key === data.dungeon_key)?.name || 'Dungeon';
@@ -83,14 +88,15 @@ export async function createSet(data) {
 }
 
 export async function updateSet(id, data) {
+    await requireAdmin()
     try {
         const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
         await pool.query(
             `UPDATE dungeon_sets 
-             SET formation = ?, pet_file = ?, heroes_json = ?, video_url = ?, note = ?
+             SET formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
              WHERE id = ?`,
-            [data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), data.video_url, data.note, id]
+            [data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
         )
 
         const [rows] = await pool.query('SELECT dungeon_key FROM dungeon_sets WHERE id = ?', [id]);
@@ -110,6 +116,7 @@ export async function updateSet(id, data) {
 }
 
 export async function deleteSet(id) {
+    await requireAdmin()
     try {
         await pool.query('DELETE FROM dungeon_sets WHERE id = ?', [id])
         

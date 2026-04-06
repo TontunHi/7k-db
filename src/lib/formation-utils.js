@@ -49,7 +49,6 @@ export function getSkillImagePath(heroIdentifier, skillNumber) {
     if (!heroIdentifier) return null
     // Remove any extension to get the folder name (slug)
     const folderName = heroIdentifier.replace(/\.[^/.]+$/, "")
-    // Skills may be .png or .webp — try .webp first, fallback to .png
-    // The actual resolution happens via Next.js Image which handles 404 gracefully
+    // Try .webp first — Next.js Image will 404 gracefully if file doesn't exist
     return `/skills/${folderName}/${skillNumber}.webp`
 }

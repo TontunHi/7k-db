@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 import fs from 'fs'
 import path from 'path'
 import { logSiteUpdate } from './log-actions'
+import { requireAdmin } from './auth-guard'
 
 // === DATABASE ACTIONS ===
 
@@ -38,6 +39,7 @@ export async function getStageById(id) {
 }
 
 export async function createStage(data) {
+    await requireAdmin()
     // data: { type, name, note, teams: [{ index, formation, pet_file, heroes: [] }] }
     const connection = await pool.getConnection()
     try {
@@ -75,6 +77,7 @@ export async function createStage(data) {
 }
 
 export async function updateStage(id, data) {
+    await requireAdmin()
     const connection = await pool.getConnection()
     try {
         await connection.beginTransaction()
@@ -114,6 +117,7 @@ export async function updateStage(id, data) {
 }
 
 export async function deleteStage(id) {
+    await requireAdmin()
     try {
         await pool.query('DELETE FROM stage_setups WHERE id = ?', [id])
         revalidatePath('/admin/stages')

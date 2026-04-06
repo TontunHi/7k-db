@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import SafeImage from './SafeImage'
 import { Zap, ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getSkillImagePath } from '@/lib/formation-utils'
@@ -29,7 +29,7 @@ export default function SkillSequence({ skillRotation = [], heroes = [], customC
                                 </div>
                                 <div className="relative w-9 h-9 rounded-md overflow-hidden border border-gray-800 bg-gray-950">
                                     {hFile && sPath ? (
-                                        <Image src={sPath} alt="" fill sizes="36px" className="object-cover" />
+                                        <SafeImage src={sPath} alt="" fill sizes="36px" className="object-cover" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-gray-800 text-[10px] font-bold">-</div>
                                     )}

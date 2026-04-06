@@ -2,6 +2,7 @@
 
 import { getHeroBuilds, saveHeroBuilds, getItemImages, getHeroSkills, getHeroData, saveHeroData } from "@/lib/build-db"
 import { logSiteUpdate } from "@/lib/log-actions"
+import { requireAdmin } from "./auth-guard"
 
 export async function openEditor(filename) {
     const [builds, heroDataRaw] = await Promise.all([
@@ -30,6 +31,7 @@ export async function openEditor(filename) {
 }
 
 export async function saveEditor(filename, builds, skillPriority, heroName, grade, isNewHero) {
+    await requireAdmin()
     // Save Hero Data first (Global Skill Priority)
     await saveHeroData({
         filename,

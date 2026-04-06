@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import SafeImage from '@/components/shared/SafeImage'
 import Link from 'next/link'
 import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Crown, Zap, X, Pencil } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -206,8 +207,8 @@ export default function BossDetailPage({ params }) {
                 <div className="bg-gray-900 w-full max-w-2xl rounded-2xl border border-gray-700 shadow-2xl overflow-hidden">
                     <div className="p-5 border-b border-gray-800 flex justify-between items-center bg-black/50">
                         <div>
-                            <h3 className="text-xl font-black text-white">เลือกสกิล</h3>
-                            <p className="text-sm text-gray-400 mt-1">เลือกสกิลจาก Hero ในทีม</p>
+                            <h3 className="text-xl font-black text-white">Select Skill</h3>
+                            <p className="text-sm text-gray-400 mt-1">Choose a skill from the team heroes</p>
                         </div>
                         <button onClick={() => setSkillPicker(null)} className="p-2 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400">
                             <X size={22} />
@@ -222,12 +223,19 @@ export default function BossDetailPage({ params }) {
                                 <div key={heroIdx} className="space-y-2">
                                     <div className="flex items-center gap-2">
                                         <div className="relative w-8 h-8 rounded-md overflow-hidden border border-gray-700">
-                                            <Image src={`/heroes/${heroFile}`} alt={heroName} fill className="object-cover" />
+                                            {(() => {
+                                                const heroData = heroes?.find(h => 
+                                                    h.filename === heroFile || 
+                                                    h.filename.replace(/\.[^/.]+$/, "") === heroFile
+                                                )
+                                                const actualFile = heroData?.filename || heroFile
+                                                return <SafeImage src={`/heroes/${actualFile}`} alt={heroName} fill className="object-cover" />
+                                            })()}
                                         </div>
                                         <span className="text-sm font-bold text-gray-300 capitalize">{heroName}</span>
                                     </div>
                                     <div className="flex gap-2 ml-10">
-                                        {[1, 2, 3, 4].map(skillNum => {
+                                        {[4, 3, 2, 1].map(skillNum => {
                                             const skillKey = `${heroIdx}-${skillNum}`
                                             const skillPath = getSkillImagePath(heroFile, skillNum)
                                             const errKey = `pick-${heroIdx}-${skillNum}`
@@ -241,7 +249,7 @@ export default function BossDetailPage({ params }) {
                                                     className="relative w-14 h-14 rounded-lg overflow-hidden border-2 border-gray-700 hover:border-[#FFD700] hover:shadow-[0_0_15px_rgba(255,215,0,0.3)] transition-all bg-gray-900"
                                                 >
                                                     {skillPath && !hasError ? (
-                                                        <Image
+                                                        <SafeImage
                                                             src={skillPath}
                                                             alt={`Skill ${skillNum}`}
                                                             fill
@@ -259,7 +267,7 @@ export default function BossDetailPage({ params }) {
                             )
                         })}
                         {!teamHeroes.some(h => h) && (
-                            <p className="text-center text-gray-500 py-8">ยังไม่มี Hero ในทีม</p>
+                            <p className="text-center text-gray-500 py-8">No heroes in team yet</p>
                         )}
                     </div>
                 </div>
@@ -281,7 +289,7 @@ export default function BossDetailPage({ params }) {
                     </Link>
 
                     <div className="relative aspect-[3168/514] rounded-xl overflow-hidden border border-gray-800 bg-gradient-to-b from-gray-900 to-black">
-                        <Image src={boss.image} alt={boss.name} fill className="object-cover" priority />
+                        <SafeImage src={boss.image} alt={boss.name} fill className="object-cover" priority />
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                         <div className="absolute bottom-0 left-0 right-0 p-4">
                             <div className="flex items-center gap-2 mb-1">
@@ -307,7 +315,7 @@ export default function BossDetailPage({ params }) {
                                             : "border-gray-800/80 hover:border-gray-500"
                                     )}
                                 >
-                                    <Image src={b.image} alt={b.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    <SafeImage src={b.image} alt={b.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                                     <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors" />
                                     <div className="absolute inset-0 flex items-center justify-center p-2">
                                         <h4 className={cn(
@@ -475,7 +483,7 @@ export default function BossDetailPage({ params }) {
                                                                     )}
                                                                 >
                                                                     {slot.skill && heroFile && skillPath && !hasError ? (
-                                                                        <Image
+                                                                        <SafeImage
                                                                             src={skillPath}
                                                                             alt=""
                                                                             fill

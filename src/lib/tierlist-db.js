@@ -4,6 +4,7 @@ import pool, { initDB } from "@/lib/db"
 import fs from "fs"
 import path from "path"
 import { logSiteUpdate } from "@/lib/log-actions"
+import { requireAdmin } from "./auth-guard"
 
 let dbInitialized = false
 async function ensureDB() {
@@ -15,9 +16,22 @@ async function ensureDB() {
 
 export async function getTierlistData(category) {
     await ensureDB()
+    
+    // Create a mapping from slug -> actual filename (with extension)
+    const heroesDir = path.join(process.cwd(), "public", "heroes")
+    let fileMap = {}
+    if (fs.existsSync(heroesDir)) {
+        const files = await fs.promises.readdir(heroesDir)
+        files.forEach(f => {
+            if (/\.(png|jpg|jpeg|webp)$/i.test(f)) {
+                fileMap[f.replace(/\.[^/.]+$/, "")] = f
+            }
+        })
+    }
+
     const [rows] = await pool.query("SELECT * FROM tierlist WHERE category = ?", [category])
     return rows.map(r => ({
-        heroFilename: r.hero_filename, // Keep the DB value (which is a slug)
+        heroFilename: fileMap[r.hero_filename] || `${r.hero_filename}.webp`, // Return full filename
         category: r.category,
         rank: r.rank_tier,
         type: r.hero_type
@@ -25,6 +39,7 @@ export async function getTierlistData(category) {
 }
 
 export async function saveTierlistEntry(data) {
+    await requireAdmin()
     await ensureDB()
     const { heroFilename, category, rank, type } = data
     const slug = heroFilename.replace(/\.[^/.]+$/, "")
@@ -51,6 +66,7 @@ export async function saveTierlistEntry(data) {
 }
 
 export async function removeTierlistEntry(heroFilename, category) {
+    await requireAdmin()
     await ensureDB()
     const slug = heroFilename.replace(/\.[^/.]+$/, "")
     const name = getNameFromFilename(heroFilename)

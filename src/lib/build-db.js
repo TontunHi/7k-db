@@ -3,6 +3,7 @@
 import pool, { initDB } from "@/lib/db"
 import fs from "fs"
 import path from "path"
+import { requireAdmin } from "./auth-guard"
 
 // Ensure DB is ready
 let dbInitialized = false
@@ -54,6 +55,7 @@ export async function getHeroes() {
 }
 
 export async function saveHeroData(hero) {
+    await requireAdmin()
     await ensureDB()
     const slug = hero.filename.replace(/\.[^/.]+$/, "")
     // upsert
@@ -78,10 +80,12 @@ export async function getHeroBuilds(heroFilename) {
         armors: typeof row.armors === 'string' ? JSON.parse(row.armors) : row.armors,
         accessories: typeof row.accessories === 'string' ? JSON.parse(row.accessories) : row.accessories,
         substats: typeof row.substats === 'string' ? JSON.parse(row.substats) : row.substats,
+        minStats: typeof row.min_stats === 'string' ? JSON.parse(row.min_stats) : (row.min_stats || {}),
     }))
 }
 
 export async function saveHeroBuilds(heroFilename, builds) {
+    await requireAdmin()
     await ensureDB()
     const slug = heroFilename.replace(/\.[^/.]+$/, "")
     const connection = await pool.getConnection()
@@ -93,8 +97,8 @@ export async function saveHeroBuilds(heroFilename, builds) {
 
         for (const build of builds) {
             await connection.query(`
-        INSERT INTO builds (hero_filename, c_level, modes, note, weapons, armors, accessories, substats)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO builds (hero_filename, c_level, modes, note, weapons, armors, accessories, substats, min_stats)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `, [
                 slug,
                 build.cLevel,
@@ -103,7 +107,8 @@ export async function saveHeroBuilds(heroFilename, builds) {
                 JSON.stringify(build.weapons),
                 JSON.stringify(build.armors),
                 JSON.stringify(build.accessories),
-                JSON.stringify(build.substats)
+                JSON.stringify(build.substats),
+                JSON.stringify(build.minStats || {})
             ])
         }
 

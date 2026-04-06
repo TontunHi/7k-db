@@ -3,6 +3,7 @@
 import pool, { initDB } from './db'
 import { revalidatePath } from 'next/cache'
 import { logSiteUpdate } from './log-actions'
+import { requireAdmin } from './auth-guard'
 
 // Fixed boss order
 const BOSS_ORDER = [
@@ -56,6 +57,7 @@ export async function getSetsByBoss(bossKey) {
 }
 
 export async function createSet(data) {
+    await requireAdmin()
     await initDB()
     
     try {
@@ -96,6 +98,7 @@ export async function createSet(data) {
 }
 
 export async function updateSet(id, data) {
+    await requireAdmin()
     try {
         const slugifyTeam = (heroes) => (heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
         const team1Slugs = slugifyTeam(data.team1_heroes)
@@ -132,6 +135,7 @@ export async function updateSet(id, data) {
 }
 
 export async function deleteSet(id) {
+    await requireAdmin()
     try {
         await pool.query('DELETE FROM advent_expedition_sets WHERE id = ?', [id])
         

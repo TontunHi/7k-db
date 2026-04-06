@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
+import SafeImage from '@/components/shared/SafeImage'
 import Link from 'next/link'
 import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Skull, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -162,7 +162,7 @@ export default function RaidDetailPage({ params }) {
                 </Link>
 
                 <div className="relative w-full max-w-2xl h-48 md:h-64 rounded-2xl overflow-hidden border border-red-900/30 bg-gray-900 group">
-                    <Image 
+                    <SafeImage 
                         src={raid.image} 
                         alt={raid.name} 
                         fill
@@ -303,7 +303,7 @@ export default function RaidDetailPage({ params }) {
                                                                 )}
                                                             >
                                                                 {heroFile && skillPath && !hasError ? (
-                                                                    <Image
+                                                                    <SafeImage
                                                                         src={skillPath}
                                                                         alt="Skill 2"
                                                                         fill
@@ -350,7 +350,7 @@ export default function RaidDetailPage({ params }) {
                                                                 )}
                                                             >
                                                                 {heroFile && skillPath && !hasError ? (
-                                                                    <Image
+                                                                    <SafeImage
                                                                         src={skillPath}
                                                                         alt="Skill 3"
                                                                         fill

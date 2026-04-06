@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
+import SafeImage from "../shared/SafeImage"
 import { clsx } from "clsx"
 import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -124,7 +124,7 @@ export default function BuildView({ heroes }) {
                                 <div className="relative w-full aspect-[4/5] bg-gradient-to-br from-[#1a1a1a] to-black rounded-lg border border-gray-800 overflow-hidden shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:border-[#FFD700] group-hover:shadow-[0_0_20px_rgba(255,215,0,0.3)] group-hover:-translate-y-1">
 
                                     {/* Image */}
-                                    <Image
+                                    <SafeImage
                                         src={`/heroes/${hero.filename}`}
                                         alt={hero.name}
                                         fill

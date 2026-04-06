@@ -3,6 +3,7 @@
 import pool, { initDB } from './db'
 import { revalidatePath } from 'next/cache'
 import { logSiteUpdate } from './log-actions'
+import { requireAdmin } from './auth-guard'
 
 export async function getGuildWarTeams(type = 'attacker') {
     await initDB()
@@ -23,6 +24,7 @@ export async function getGuildWarTeams(type = 'attacker') {
 }
 
 export async function createGuildWarTeam(data) {
+    await requireAdmin()
     // data: { type, team_name, formation, pet_file, heroes: [], skill_rotation: [], video_url, note }
     await initDB()
     
@@ -57,6 +59,7 @@ export async function createGuildWarTeam(data) {
 }
 
 export async function updateGuildWarTeam(id, data) {
+    await requireAdmin()
     try {
         const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
@@ -82,6 +85,7 @@ export async function updateGuildWarTeam(id, data) {
 }
 
 export async function deleteGuildWarTeam(id) {
+    await requireAdmin()
     try {
         await pool.query('DELETE FROM guild_war_teams WHERE id = ?', [id])
         
@@ -96,6 +100,7 @@ export async function deleteGuildWarTeam(id) {
 }
 
 export async function reorderGuildWarTeams(orderedIds) {
+    await requireAdmin()
     try {
         for (let i = 0; i < orderedIds.length; i++) {
             await pool.query(
