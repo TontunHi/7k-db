@@ -27,7 +27,7 @@ export default pool;
 
 // Helper to init DB
 export async function initDB() {
-  if (global.dbInitialized) return;
+  // if (global.dbInitialized) return;
 
   const connection = await pool.getConnection();
   try {
@@ -283,6 +283,17 @@ export async function initDB() {
         target_name VARCHAR(200) NOT NULL,
         action_type ENUM('CREATE','UPDATE','DELETE') NOT NULL DEFAULT 'UPDATE',
         message VARCHAR(500) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // ─── Global Credits ──────────────────────────────────────────────────────
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS global_credits (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        platform ENUM('youtube', 'tiktok', 'facebook', 'discord', 'other') NOT NULL DEFAULT 'other',
+        name VARCHAR(200) NOT NULL,
+        link VARCHAR(500) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);

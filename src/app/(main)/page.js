@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 import { Sword, Map, Skull, Landmark, Trophy, ArrowRight, Crown, Compass, Swords } from 'lucide-react'
 import RecentUpdates from '@/components/shared/RecentUpdates'
 import SponsorBanner from '@/components/ads/SponsorBanner'
+import GlobalCredits from '@/components/shared/GlobalCredits'
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -192,7 +193,11 @@ export default async function HomePage() {
                             </Suspense>
                         </div>
                     </div>
+                </div>
 
+                {/* Global Credits Section */}
+                <div className="max-w-7xl mx-auto w-full">
+                    <GlobalCredits />
                 </div>
             </div>
         </div>

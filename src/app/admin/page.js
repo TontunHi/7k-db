@@ -1,7 +1,7 @@
 import Link from "next/link"
 import {
     FileImage, ArrowRight, LayoutGrid, Skull, Crown, Landmark,
-    Compass, Zap, TrendingUp, Swords, Shield, Crosshair
+    Compass, Zap, TrendingUp, Swords, Shield, Crosshair, Heart
 } from "lucide-react"
 
 export const metadata = {
@@ -31,6 +31,15 @@ export default function AdminDashboard() {
                     gradient: "from-pink-500 to-fuchsia-600",
                     shadow: "hover:shadow-pink-500/20",
                     iconBg: "bg-pink-500/15"
+                },
+                {
+                    title: "Manage Credits",
+                    desc: "Global attribution/thank you for data sources.",
+                    icon: Heart,
+                    href: "/admin/credits",
+                    gradient: "from-red-500 to-pink-500",
+                    shadow: "hover:shadow-red-500/20",
+                    iconBg: "bg-red-500/15"
                 }
             ]
         },
