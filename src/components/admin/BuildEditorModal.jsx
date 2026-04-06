@@ -50,17 +50,17 @@ const AVAILABLE_SUBSTATS = [
 ]
 
 const MIN_STATS_KEYS = [
-    { key: "physAtk", label: "Physical Attack" },
-    { key: "defense", label: "Defense" },
-    { key: "hp", label: "HP" },
-    { key: "speed", label: "Speed" },
-    { key: "critRate", label: "Crit Rate" },
-    { key: "critDamage", label: "Crit Damage" },
-    { key: "weaknessHit", label: "Weakness Hit Chance" },
-    { key: "blockRate", label: "Block Rate" },
-    { key: "damageReduction", label: "Damage Taken Reduction" },
-    { key: "effectHit", label: "Effect Hit Rate" },
-    { key: "effectResist", label: "Effect Resistance" }
+    { key: "physAtk", label: "Physical Attack", icon: "/about_website/icon_physical_attack.webp" },
+    { key: "defense", label: "Defense", icon: "/about_website/icon_defense.webp" },
+    { key: "hp", label: "HP", icon: "/about_website/icon_hp.webp" },
+    { key: "speed", label: "Speed", icon: "/about_website/icon_speed.webp" },
+    { key: "critRate", label: "Crit Rate", icon: "/about_website/icon_crit_rate.webp" },
+    { key: "critDamage", label: "Crit Damage", icon: "/about_website/icon_crit_damage.webp" },
+    { key: "weaknessHit", label: "Weakness Hit Chance", icon: "/about_website/icon_weakness_hit_chance.webp" },
+    { key: "blockRate", label: "Block Rate", icon: "/about_website/icon_block_rate.webp" },
+    { key: "damageReduction", label: "Damage Taken Reduction", icon: "/about_website/icon_damage_taken_reduction.webp" },
+    { key: "effectHit", label: "Effect Hit Rate", icon: "/about_website/icon_effect_hit_rate.webp" },
+    { key: "effectResist", label: "Effect Resistance", icon: "/about_website/icon_effect_resistance.webp" }
 ]
 
 export default function BuildEditorModal({ hero, skills, weapons, armors, accessories, initialBuilds, initialSkillPriority, onSave, onClose }) {
@@ -501,9 +501,14 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                     Minimum Stats
                                 </label>
                                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                    {MIN_STATS_KEYS.map(({ key, label }) => (
+                                    {MIN_STATS_KEYS.map(({ key, label, icon }) => (
                                         <div key={key} className="space-y-1.5">
-                                            <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider ml-1">{label}</label>
+                                            <div className="flex items-center gap-1.5 ml-1">
+                                                <div className="w-3.5 h-3.5 relative flex-shrink-0 opacity-60">
+                                                    <SafeImage src={icon} fill alt="" className="object-contain" />
+                                                </div>
+                                                <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{label}</label>
+                                            </div>
                                             <input
                                                 type="text"
                                                 value={build.minStats?.[key] || ""}
@@ -549,7 +554,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                     Build Note
                                 </label>
                                 <textarea
-                                    value={build.note}
+                                    value={build.note || ""}
                                     onChange={(e) => updateBuild(bIndex, "note", e.target.value)}
                                     placeholder="Add specific instructions, synergy strategies, or alternative options here..."
                                     className="w-full bg-gray-900/50 border-2 border-gray-800 rounded-xl p-4 text-sm text-gray-200 min-h-[100px] focus:border-[#FFD700] focus:ring-1 focus:ring-[#FFD700] outline-none resize-y transition-all placeholder-gray-700"

@@ -44,7 +44,7 @@ export default function BuildManager({ heroes }) {
     async function handleSaveBuilds(newBuilds, newSkillPriority, isNewHero) {
         if (!currentHero) return
         try {
-            await saveEditor(
+            const result = await saveEditor(
                 currentHero.filename,
                 newBuilds,
                 newSkillPriority,
@@ -52,10 +52,17 @@ export default function BuildManager({ heroes }) {
                 currentHero.grade,
                 isNewHero
             )
-            toast.success("Builds saved successfully!")
-            router.refresh()
+            
+            if (result.success) {
+                toast.success("Builds saved successfully!")
+                router.refresh()
+                setEditorOpen(false) // Close modal on success
+            } else {
+                toast.error(result.error || "Failed to save builds.")
+            }
         } catch (error) {
-            toast.error("Failed to save builds.")
+            console.error("Save error:", error)
+            toast.error("An unexpected error occurred.")
         }
     }
 

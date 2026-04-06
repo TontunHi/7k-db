@@ -7,7 +7,6 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { clsx } from "clsx"
 import { ChevronDown, Menu, X } from "lucide-react"
-import SponsorBanner from "@/components/ads/SponsorBanner"
 
 export default function Navbar() {
     const pathname = usePathname()
@@ -126,14 +125,10 @@ export default function Navbar() {
                         </div>
                     ))}
 
-                    <div className="pl-4 ml-2 border-l border-white/10">
-                        <SponsorBanner variant="navbar" />
-                    </div>
                 </div>
 
                 {/* Mobile Menu Button & Search */}
                 <div className="flex items-center gap-2 md:hidden">
-                    <SponsorBanner variant="navbar" className="mr-1" />
                     <button
                         className="p-2 text-gray-400 hover:text-white transition-colors"
                         onClick={() => {

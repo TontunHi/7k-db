@@ -53,33 +53,48 @@ export async function getSetsByBoss(bossKey) {
     }))
 }
 
+import { validateData, CastleRushSetSchema } from './validation'
+
 export async function createSet(data) {
     await requireAdmin()
-    // data: { boss_key, team_name, formation, pet_file, heroes: [], skill_rotation: [], video_url, note }
+    
+    // Validate data
+    const validation = validateData(CastleRushSetSchema, data)
+    if (!validation.success) return validation
+    const validatedData = validation.data
+    
     await initDB()
     
     try {
         // Get next set_index for this boss
         const [countResult] = await pool.query(
             'SELECT COALESCE(MAX(set_index), 0) + 1 as next_index FROM castle_rush_sets WHERE boss_key = ?',
-            [data.boss_key]
+            [validatedData.boss_key]
         )
         const nextIndex = countResult[0].next_index
-
-        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
         const [result] = await pool.query(
             `INSERT INTO castle_rush_sets (boss_key, set_index, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [data.boss_key, nextIndex, data.team_name || null, data.formation, data.pet_file || null, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
+            [
+                validatedData.boss_key, 
+                nextIndex, 
+                validatedData.team_name || null, 
+                validatedData.formation, 
+                validatedData.pet_file || null, 
+                JSON.stringify(validatedData.heroes), 
+                JSON.stringify(validatedData.skill_rotation), 
+                validatedData.video_url, 
+                validatedData.note
+            ]
         )
 
-        const bossName = BOSS_ORDER.find(b => b.key === data.boss_key)?.name || data.boss_key
-        const teamLabel = data.team_name ? ` "${data.team_name}"` : ''
+        const bossName = BOSS_ORDER.find(b => b.key === validatedData.boss_key)?.name || validatedData.boss_key
+        const teamLabel = validatedData.team_name ? ` "${validatedData.team_name}"` : ''
         await logSiteUpdate('CASTLE_RUSH', bossName, 'CREATE', `Added Castle Rush team${teamLabel} for ${bossName}`)
 
         revalidatePath('/admin/castle-rush')
-        revalidatePath(`/admin/castle-rush/${data.boss_key}`)
+        revalidatePath(`/admin/castle-rush/${validatedData.boss_key}`)
         revalidatePath('/castle-rush')
         
         return { success: true, id: result.insertId }
@@ -91,18 +106,31 @@ export async function createSet(data) {
 
 export async function updateSet(id, data) {
     await requireAdmin()
-    try {
-        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
+    
+    // Validate data
+    const validation = validateData(CastleRushSetSchema, data)
+    if (!validation.success) return validation
+    const validatedData = validation.data
 
+    try {
         await pool.query(
             `UPDATE castle_rush_sets 
              SET team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
              WHERE id = ?`,
-            [data.team_name || null, data.formation, data.pet_file || null, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
+            [
+                validatedData.team_name || null, 
+                validatedData.formation, 
+                validatedData.pet_file || null, 
+                JSON.stringify(validatedData.heroes), 
+                JSON.stringify(validatedData.skill_rotation), 
+                validatedData.video_url, 
+                validatedData.note, 
+                id
+            ]
         )
 
-        const bossName = data.boss_name || 'Castle Rush'
-        const teamLabel = data.team_name ? ` "${data.team_name}"` : ''
+        const bossName = validatedData.boss_name || 'Castle Rush'
+        const teamLabel = validatedData.team_name ? ` "${validatedData.team_name}"` : ''
         await logSiteUpdate('CASTLE_RUSH', bossName, 'UPDATE', `Updated Castle Rush team${teamLabel} for ${bossName}`)
 
         revalidatePath('/admin/castle-rush')

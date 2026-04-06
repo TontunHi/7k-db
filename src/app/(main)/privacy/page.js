@@ -17,30 +17,30 @@ export default function PrivacyPage() {
                 <section>
                     <h2 className="text-xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
                         <span className="w-4 h-px bg-[#FFD700]"></span>
-                        Data Collection
+                        Data Transparency
                     </h2>
                     <p className="mb-4">
-                        7K DB is designed to be a transparent resource. We do not require account registration for general use, and we do not collect personal identifying information (PII) from our users.
+                        7K DB is built for the player experience. We do not require account registration, and we do not collect personal identifying information (PII) from our users. Your privacy is paramount.
                     </p>
                 </section>
 
                 <section>
                     <h2 className="text-xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
                         <span className="w-4 h-px bg-amber-500"></span>
-                        Cookies & Analytics
+                        Site Analytics
                     </h2>
                     <p className="mb-4">
-                        We use minimal cookies for site functionality and to understand general traffic patterns. These help us improve our content and performance for all users.
+                        We use minimal, anonymous analytics to understand site traffic and usage patterns. This data helps us optimize the user experience and ensures the site remains fast and accessible for everyone.
                     </p>
                 </section>
 
                 <section>
                     <h2 className="text-xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
                         <span className="w-4 h-px bg-orange-600"></span>
-                        Third-Party Links
+                        External Platforms
                     </h2>
                     <p className="mb-4">
-                        Our site may contain links to external platforms (YouTube, social media). We are not responsible for the privacy practices or the content of these external sites.
+                        Our site may contain links to external platforms such as YouTube, Discord, or official game communities. We recommend reviewing their respective privacy policies as they are separate from 7K DB.
                     </p>
                 </section>
 

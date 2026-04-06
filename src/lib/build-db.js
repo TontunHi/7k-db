@@ -14,6 +14,8 @@ async function ensureDB() {
     }
 }
 
+import { validateData, HeroSchema, BuildSchema } from './validation'
+
 // === DB Operations ===
 
 export async function getHeroData(filename) {
@@ -56,15 +58,30 @@ export async function getHeroes() {
 
 export async function saveHeroData(hero) {
     await requireAdmin()
+    
+    // Validate data
+    const validation = validateData(HeroSchema, hero)
+    if (!validation.success) return validation
+    const validatedHero = validation.data
+    
     await ensureDB()
-    const slug = hero.filename.replace(/\.[^/.]+$/, "")
+    const slug = validatedHero.filename.replace(/\.[^/.]+$/, "")
+    
     // upsert
     await pool.query(`
     INSERT INTO heroes (filename, name, grade, skill_priority, is_new_hero)
     VALUES (?, ?, ?, ?, ?)
     ON DUPLICATE KEY UPDATE 
     name = VALUES(name), grade = VALUES(grade), skill_priority = VALUES(skill_priority), is_new_hero = VALUES(is_new_hero)
-  `, [slug, hero.name, hero.grade, JSON.stringify(hero.skillPriority || []), hero.is_new_hero ? 1 : 0])
+  `, [
+        slug, 
+        validatedHero.name, 
+        validatedHero.grade, 
+        JSON.stringify(validatedHero.skillPriority || []), 
+        validatedHero.is_new_hero ? 1 : 0
+    ])
+    
+    return { success: true }
 }
 
 export async function getHeroBuilds(heroFilename) {
@@ -75,17 +92,26 @@ export async function getHeroBuilds(heroFilename) {
         ...row,
         id: row.id,
         cLevel: row.c_level,
-        mode: row.modes,
-        weapons: typeof row.weapons === 'string' ? JSON.parse(row.weapons) : row.weapons,
-        armors: typeof row.armors === 'string' ? JSON.parse(row.armors) : row.armors,
-        accessories: typeof row.accessories === 'string' ? JSON.parse(row.accessories) : row.accessories,
-        substats: typeof row.substats === 'string' ? JSON.parse(row.substats) : row.substats,
+        mode: typeof row.modes === 'string' ? JSON.parse(row.modes) : (row.modes || []),
+        weapons: typeof row.weapons === 'string' ? JSON.parse(row.weapons) : (row.weapons || []),
+        armors: typeof row.armors === 'string' ? JSON.parse(row.armors) : (row.armors || []),
+        accessories: typeof row.accessories === 'string' ? JSON.parse(row.accessories) : (row.accessories || []),
+        substats: typeof row.substats === 'string' ? JSON.parse(row.substats) : (row.substats || []),
         minStats: typeof row.min_stats === 'string' ? JSON.parse(row.min_stats) : (row.min_stats || {}),
     }))
 }
 
 export async function saveHeroBuilds(heroFilename, builds) {
     await requireAdmin()
+    
+    // Validate all builds
+    const validatedBuilds = []
+    for (const build of builds) {
+        const validation = validateData(BuildSchema, build)
+        if (!validation.success) return validation
+        validatedBuilds.push(validation.data)
+    }
+
     await ensureDB()
     const slug = heroFilename.replace(/\.[^/.]+$/, "")
     const connection = await pool.getConnection()
@@ -95,7 +121,7 @@ export async function saveHeroBuilds(heroFilename, builds) {
         // Replace all builds strategy
         await connection.query("DELETE FROM builds WHERE hero_filename = ?", [slug])
 
-        for (const build of builds) {
+        for (const build of validatedBuilds) {
             await connection.query(`
         INSERT INTO builds (hero_filename, c_level, modes, note, weapons, armors, accessories, substats, min_stats)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -103,7 +129,7 @@ export async function saveHeroBuilds(heroFilename, builds) {
                 slug,
                 build.cLevel,
                 JSON.stringify(build.mode),
-                build.note,
+                build.note || null,
                 JSON.stringify(build.weapons),
                 JSON.stringify(build.armors),
                 JSON.stringify(build.accessories),
@@ -113,11 +139,11 @@ export async function saveHeroBuilds(heroFilename, builds) {
         }
 
         await connection.commit()
-        return true
+        return { success: true }
     } catch (error) {
         await connection.rollback()
         console.error("Save error:", error)
-        throw new Error("Failed to save builds")
+        return { success: false, error: error.message }
     } finally {
         connection.release()
     }

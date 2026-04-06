@@ -232,45 +232,88 @@ export default function TeamBuilder({
                     </div>
                 </div>
 
-                {/* Pet (Right - smaller) */}
-                <div className="space-y-3 w-32 shrink-0">
-                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                        <Star className="w-3 h-3" /> Pet
-                    </label>
-                    <button
-                        type="button"
-                        onClick={() => setIsPetOpen(true)}
-                        className={cn(
-                            "relative w-24 h-24 rounded-xl border-2 border-dashed border-primary/30 flex items-center justify-center transition-all overflow-hidden group hover:border-primary hover:bg-primary/5 mx-auto",
-                            team.pet_file ? "border-solid border-primary" : ""
-                        )}
-                    >
-                        {team.pet_file ? (
-                            <>
-                                <SafeImage 
-                                    src={team.pet_file} 
-                                    alt="Pet" 
-                                    fill 
-                                    className="object-contain p-2 group-hover:scale-110 transition-transform" 
-                                    sizes="96px"
-                                />
-                                <div
-                                    className="absolute top-1 right-1 p-1 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 hover:bg-destructive transition-all z-10"
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        onUpdate({ ...team, pet_file: null })
-                                    }}
-                                >
-                                    <X size={12} />
+                {/* Pet & Aura (Right - smaller) */}
+                <div className="space-y-6 w-32 shrink-0 self-start">
+                    <div className="space-y-3">
+                        <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                            <Star className="w-3 h-3" /> Pet
+                        </label>
+                        <button
+                            type="button"
+                            onClick={() => setIsPetOpen(true)}
+                            className={cn(
+                                "relative w-24 h-24 rounded-xl border-2 border-dashed border-primary/30 flex items-center justify-center transition-all overflow-hidden group hover:border-primary hover:bg-primary/5 mx-auto",
+                                team.pet_file ? "border-solid border-primary" : ""
+                            )}
+                        >
+                            {team.pet_file ? (
+                                <>
+                                    <SafeImage 
+                                        src={team.pet_file} 
+                                        alt="Pet" 
+                                        fill 
+                                        className="object-contain p-2 group-hover:scale-110 transition-transform" 
+                                        sizes="96px"
+                                    />
+                                    <div
+                                        className="absolute top-1 right-1 p-1 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 hover:bg-destructive transition-all z-10"
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            onUpdate({ ...team, pet_file: null })
+                                        }}
+                                    >
+                                        <X size={12} />
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="flex flex-col items-center gap-1 text-primary/50 group-hover:text-primary">
+                                    <Plus className="w-6 h-6" />
+                                    <span className="text-[10px] font-bold uppercase tracking-widest">Pet</span>
                                 </div>
-                            </>
-                        ) : (
-                            <div className="flex flex-col items-center gap-1 text-primary/50 group-hover:text-primary">
-                                <Plus className="w-6 h-6" />
-                                <span className="text-[10px] font-bold uppercase tracking-widest">Pet</span>
-                            </div>
-                        )}
-                    </button>
+                            )}
+                        </button>
+                    </div>
+
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] block text-center">
+                            Aura
+                        </label>
+                        <div className="flex justify-center gap-1.5">
+                            <button
+                                type="button"
+                                onClick={() => onUpdate({ ...team, aura: 'blue' })}
+                                className={cn(
+                                    "w-7 h-7 rounded-full border-2 transition-all shadow-lg",
+                                    team.aura === 'blue' 
+                                        ? "bg-blue-600 border-white ring-4 ring-blue-500/30 scale-110" 
+                                        : "bg-blue-900 border-blue-800 opacity-40 hover:opacity-100"
+                                )}
+                                title="Blue Aura"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => onUpdate({ ...team, aura: 'red' })}
+                                className={cn(
+                                    "w-7 h-7 rounded-full border-2 transition-all shadow-lg",
+                                    team.aura === 'red' 
+                                        ? "bg-red-600 border-white ring-4 ring-red-500/30 scale-110" 
+                                        : "bg-red-900 border-red-800 opacity-40 hover:opacity-100"
+                                )}
+                                title="Red Aura"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => onUpdate({ ...team, aura: null })}
+                                className={cn(
+                                    "w-7 h-7 rounded-full border-2 border-gray-800 bg-gray-900 flex items-center justify-center transition-all",
+                                    !team.aura ? "opacity-100 border-gray-400" : "opacity-20"
+                                )}
+                                title="No Aura"
+                            >
+                                <X size={10} className="text-gray-500" />
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 

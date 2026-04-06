@@ -149,12 +149,8 @@ export default async function DungeonDetailPage({ params }) {
                                             {/* Skill Rotation */}
                                             {set.skill_rotation?.length > 0 && (
                                                 <div className="mt-8 pt-6 border-t border-gray-800/50">
-                                                    <div className="flex items-center gap-2 mb-4">
-                                                        <Zap className="w-4 h-4 text-[#FFD700]" />
-                                                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Skill Sequence</span>
-                                                    </div>
                                                     <SkillSequence 
-                                                        rotation={set.skill_rotation} 
+                                                        skillRotation={set.skill_rotation} 
                                                         heroes={set.heroes} 
                                                         heroImageMap={heroImageMap}
                                                         accentColor="#FFD700"
@@ -163,16 +159,42 @@ export default async function DungeonDetailPage({ params }) {
                                             )}
                                         </div>
 
-                                        {/* Pet */}
+                                        {/* Pet & Aura */}
                                         <div className="flex flex-col items-center gap-4">
-                                            <PetDisplay 
-                                                petFile={set.pet_file} 
-                                                hideLabel={true}
-                                                customClasses={{
-                                                    wrapper: "w-24 h-24 border-2 border-[#FFD700]/20 bg-gray-900/50 shadow-xl shadow-[#FFD700]/5 hover:scale-105 transition-transform"
-                                                }}
-                                            />
-                                            <div className="text-[10px] font-black text-[#FFD700]/50 uppercase tracking-widest">Team Pet</div>
+                                            <div className="relative group/pet-container">
+                                                {/* Aura Glow Effect */}
+                                                {set.aura === 'blue' && (
+                                                    <div className="absolute inset-x-[-12px] inset-y-[-12px] bg-blue-500/20 rounded-full blur-xl animate-pulse group-hover/pet-container:bg-blue-500/30 transition-colors" />
+                                                )}
+                                                {set.aura === 'red' && (
+                                                    <div className="absolute inset-x-[-12px] inset-y-[-12px] bg-red-500/20 rounded-full blur-xl animate-pulse group-hover/pet-container:bg-red-500/30 transition-colors" />
+                                                )}
+
+                                                <PetDisplay 
+                                                    petFile={set.pet_file} 
+                                                    hideLabel={true}
+                                                    customClasses={{
+                                                        wrapper: cn(
+                                                            "w-24 h-24 border-2 bg-gray-900/50 shadow-xl hover:scale-105 transition-transform relative z-10",
+                                                            set.aura === 'blue' ? "border-blue-500 shadow-blue-500/10" : 
+                                                            set.aura === 'red' ? "border-red-500 shadow-red-500/10" : 
+                                                            "border-[#FFD700]/20 shadow-[#FFD700]/5"
+                                                        )
+                                                    }}
+                                                />
+
+                                                {/* Aura Badge */}
+                                                {set.aura && (
+                                                    <div className={cn(
+                                                        "absolute -top-2 -right-2 px-2 py-0.5 rounded flex items-center gap-1 border shadow-lg z-20 animate-in zoom-in-50 duration-300",
+                                                        set.aura === 'blue' ? "bg-blue-600 border-blue-400 text-white" : "bg-red-600 border-red-400 text-white"
+                                                    )}>
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                                                        <span className="text-[8px] font-black uppercase tracking-widest">{set.aura} Aura</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="text-[10px] font-black text-[#FFD700]/50 uppercase tracking-widest">Pet</div>
                                         </div>
                                     </div>
                                     

@@ -38,31 +38,37 @@ export async function getStageById(id) {
     }
 }
 
+import { validateData, StageSetupSchema } from './validation'
+
 export async function createStage(data) {
     await requireAdmin()
-    // data: { type, name, note, teams: [{ index, formation, pet_file, heroes: [] }] }
+    
+    // Validate data
+    const validation = validateData(StageSetupSchema, data)
+    if (!validation.success) return validation
+    const validatedData = validation.data
+    
     const connection = await pool.getConnection()
     try {
         await connection.beginTransaction()
 
         const [res] = await connection.query(
             'INSERT INTO stage_setups (type, name, note) VALUES (?, ?, ?)',
-            [data.type, data.name, data.note]
+            [validatedData.type, validatedData.name, validatedData.note]
         )
         const setupId = res.insertId
 
-        for (const team of data.teams) {
-            const slugifiedHeroes = (team.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
+        for (const team of validatedData.teams) {
             await connection.query(
                 `INSERT INTO teams (setup_id, team_index, formation, pet_file, heroes_json)
                  VALUES (?, ?, ?, ?, ?)`,
-                [setupId, team.index, team.formation, team.pet_file, JSON.stringify(slugifiedHeroes)]
+                [setupId, team.index, team.formation, team.pet_file || null, JSON.stringify(team.heroes)]
             )
         }
 
         await connection.commit()
         
-        await logSiteUpdate('STAGE', data.name || 'Stage', 'CREATE', `Added stage guide: ${data.name || 'Stage'}`)
+        await logSiteUpdate('STAGE', validatedData.name, 'CREATE', `Added stage guide: ${validatedData.name}`)
         
         revalidatePath('/admin/stages')
         revalidatePath('/stages')
@@ -78,30 +84,35 @@ export async function createStage(data) {
 
 export async function updateStage(id, data) {
     await requireAdmin()
+    
+    // Validate data
+    const validation = validateData(StageSetupSchema, data)
+    if (!validation.success) return validation
+    const validatedData = validation.data
+
     const connection = await pool.getConnection()
     try {
         await connection.beginTransaction()
 
         await connection.query(
             'UPDATE stage_setups SET type = ?, name = ?, note = ? WHERE id = ?',
-            [data.type, data.name, data.note, id]
+            [validatedData.type, validatedData.name, validatedData.note, id]
         )
 
         // Replace teams logic
         await connection.query('DELETE FROM teams WHERE setup_id = ?', [id])
 
-        for (const team of data.teams) {
-            const slugifiedHeroes = (team.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
+        for (const team of validatedData.teams) {
             await connection.query(
                 `INSERT INTO teams (setup_id, team_index, formation, pet_file, heroes_json)
                  VALUES (?, ?, ?, ?, ?)`,
-                [id, team.index, team.formation, team.pet_file, JSON.stringify(slugifiedHeroes)]
+                [id, team.index, team.formation, team.pet_file || null, JSON.stringify(team.heroes)]
             )
         }
 
         await connection.commit()
         
-        await logSiteUpdate('STAGE', data.name || 'Stage', 'UPDATE', `Updated stage guide: ${data.name || 'Stage'}`)
+        await logSiteUpdate('STAGE', validatedData.name, 'UPDATE', `Updated stage guide: ${validatedData.name}`)
         
         revalidatePath('/admin/stages')
         revalidatePath('/stages')

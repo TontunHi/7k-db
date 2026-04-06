@@ -5,17 +5,17 @@ import { X, Sword, Shield, Heart, Zap, Sparkles, Sparkle, Target, ShieldCheck, S
 import { clsx } from "clsx"
 
 const MIN_STATS_KEYS = [
-    { key: "physAtk", label: "Physical Attack", icon: Sword },
-    { key: "defense", label: "Defense", icon: Shield },
-    { key: "hp", label: "HP", icon: Heart },
-    { key: "speed", label: "Speed", icon: Zap },
-    { key: "critRate", label: "Crit Rate", icon: Sparkles, unit: "%" },
-    { key: "critDamage", label: "Crit Damage", icon: Sparkle, unit: "%" },
-    { key: "weaknessHit", label: "Weakness Hit Chance", icon: Target, unit: "%" },
-    { key: "blockRate", label: "Block Rate", icon: ShieldCheck, unit: "%" },
-    { key: "damageReduction", label: "Damage Taken Reduction", icon: ShieldAlert, unit: "%" },
-    { key: "effectHit", label: "Effect Hit Rate", icon: Wand2, unit: "%" },
-    { key: "effectResist", label: "Effect Resistance", icon: ShieldX, unit: "%" }
+    { key: "physAtk", label: "Physical Attack", icon: "/about_website/icon_physical_attack.webp" },
+    { key: "defense", label: "Defense", icon: "/about_website/icon_defense.webp" },
+    { key: "hp", label: "HP", icon: "/about_website/icon_hp.webp" },
+    { key: "speed", label: "Speed", icon: "/about_website/icon_speed.webp" },
+    { key: "critRate", label: "Crit Rate", icon: "/about_website/icon_crit_rate.webp", unit: "%" },
+    { key: "critDamage", label: "Crit Damage", icon: "/about_website/icon_crit_damage.webp", unit: "%" },
+    { key: "weaknessHit", label: "Weakness Hit Chance", icon: "/about_website/icon_weakness_hit_chance.webp", unit: "%" },
+    { key: "blockRate", label: "Block Rate", icon: "/about_website/icon_block_rate.webp", unit: "%" },
+    { key: "damageReduction", label: "Damage Taken Reduction", icon: "/about_website/icon_damage_taken_reduction.webp", unit: "%" },
+    { key: "effectHit", label: "Effect Hit Rate", icon: "/about_website/icon_effect_hit_rate.webp", unit: "%" },
+    { key: "effectResist", label: "Effect Resistance", icon: "/about_website/icon_effect_resistance.webp", unit: "%" }
 ]
 
 export default function BuildViewerModal({ hero, data, onClose }) {
@@ -214,7 +214,17 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                                             idx !== arr.length - 1 && "border-b border-border/10"
                                                         )}
                                                     >
-                                                        <span className="text-xs font-bold text-foreground/70 tracking-tight">{s.label}</span>
+                                                        <div className="flex items-center gap-2.5">
+                                                            <div className="w-4 h-4 relative flex-shrink-0 opacity-80 group-hover:opacity-100 transition-opacity">
+                                                                <SafeImage 
+                                                                    src={s.icon} 
+                                                                    fill 
+                                                                    alt="" 
+                                                                    className="object-contain"
+                                                                />
+                                                            </div>
+                                                            <span className="text-xs font-bold text-foreground/70 tracking-tight">{s.label}</span>
+                                                        </div>
                                                         <div className="flex items-baseline gap-0.5">
                                                             <span className="text-sm font-black text-foreground">
                                                                 {build.minStats[s.key]}

@@ -15,43 +15,13 @@ const CONTENT_CONFIG = {
     ADVENT:      { icon: Compass,   color: '#8b5cf6', label: 'Advent',        href: '/advent' },
 }
 
-function parseDbDate(dateStr) {
-    // created_at is now an ISO string (e.g. '2026-04-02T12:40:00.000Z')
-    // new Date() handles this correctly in all environments
-    return new Date(dateStr)
-}
-
-function formatDate(dateStr) {
-    const d = parseDbDate(dateStr)
-    return d.toLocaleDateString('en-US', {
-        timeZone: 'Asia/Bangkok',
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-    })
-}
-
-function timeAgo(dateStr) {
-    const now = new Date()
-    const then = parseDbDate(dateStr)
-    const diffMs = now.getTime() - then.getTime()
-    const diffMins = Math.floor(diffMs / 60000)
-    const diffHrs = Math.floor(diffMs / 3600000)
-    const diffDays = Math.floor(diffMs / 86400000)
-
-    if (diffMins < 1) return 'Just now'
-    if (diffMins < 60) return `${diffMins}m ago`
-    if (diffHrs < 24) return `${diffHrs}h ago`
-    if (diffDays < 7) return `${diffDays}d ago`
-    return formatDate(dateStr)
-}
 
 export default async function RecentUpdates() {
     const updates = await getRecentUpdates(10)
 
     return (
         <div className="w-full">
-            {/* Header */}
+            {/* Header omitted for brevity in targetContent, but I'll replace the loop below */}
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                     <div className="w-1 h-5 bg-gradient-to-b from-[#FFD700] to-orange-500 rounded-full" />
@@ -108,14 +78,14 @@ export default async function RecentUpdates() {
                                             {cfg.label}
                                         </span>
                                         <span className="text-[9px] text-gray-700 font-mono">
-                                            {timeAgo(update.created_at)}
+                                            {update.display_time}
                                         </span>
                                     </div>
                                 </div>
 
                                 {/* Date badge */}
                                 <span className="shrink-0 text-[9px] font-mono text-gray-700 mt-1 group-hover:text-gray-500 transition-colors">
-                                    {formatDate(update.created_at)}
+                                    {update.display_date}
                                 </span>
                             </Link>
                         )

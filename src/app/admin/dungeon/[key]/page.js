@@ -68,6 +68,7 @@ export default function DungeonDetailPage({ params }) {
             pet_file: '',
             heroes: [null, null, null, null, null],
             skill_rotation: [],
+            aura: null,
             video_url: '',
             note: '',
             _isNew: true,
@@ -111,6 +112,7 @@ export default function DungeonDetailPage({ params }) {
                 dungeon_key: dungeonKey,
                 formation: set.formation,
                 pet_file: set.pet_file,
+                aura: set.aura,
                 heroes: set.heroes,
                 skill_rotation: set.skill_rotation,
                 video_url: set.video_url,
@@ -284,6 +286,7 @@ export default function DungeonDetailPage({ params }) {
                                     index: idx + 1,
                                     formation: set.formation,
                                     pet_file: set.pet_file,
+                                    aura: set.aura,
                                     heroes: set.heroes
                                 }}
                                 index={idx}

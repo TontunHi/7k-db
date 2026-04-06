@@ -24,33 +24,19 @@ export default function AboutPage() {
                             The Vision
                         </h2>
                         <p className="text-lg text-gray-400 font-light leading-relaxed">
-                            7K DB is a comprehensive, fan-made resource dedicated to the world of Seven Knights Rebirth. Our mission is to provide players with accurate, up-to-date information on heroes, builds, and strategies to conquer the game's toughest challenges.
+                            7K DB is the most comprehensive and up-to-date resource dedicated to Seven Knights Rebirth. Our vision is to provide players with the ultimate tools, precise hero builds, and expert strategies to master every aspect of the game.
                         </p>
                     </div>
                 </section>
 
-                <section className="grid md:grid-cols-2 gap-12 items-center">
-                    <div>
-                        <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-6 flex items-center gap-4">
-                            <span className="w-8 h-px bg-amber-500"></span>
-                            Community Made
-                        </h2>
-                        <p className="text-gray-400 font-light mb-6">
-                            This project is built for the community, by the community. We are passionate about the Seven Knights franchise and want to ensure every player has the tools they need to succeed in PVP and PVE modes.
-                        </p>
-                    </div>
-                    <div className="relative group">
-                        <div className="absolute inset-0 bg-[#FFD700] blur-[100px] opacity-10 group-hover:opacity-20 transition-opacity"></div>
-                        <div className="relative p-8 rounded-3xl bg-black/40 border border-gray-800 shadow-2xl backdrop-blur-sm overflow-hidden">
-                            <div className="absolute top-0 right-0 p-4 opacity-5">
-                                <SafeImage src="/about_website/logo_website.webp" alt="Logo" width={100} height={40} />
-                            </div>
-                            <h3 className="text-xl font-black text-[#FFD700] italic transform -skew-x-6 uppercase mb-4">Un-Official Resource</h3>
-                            <p className="text-sm text-gray-500 font-light leading-relaxed">
-                                Please note that 7K DB is not affiliated with, endorsed by, or associated with the official developers or publishers of Seven Knights. All game-related assets are trademarks of their respective owners.
-                            </p>
-                        </div>
-                    </div>
+                <section className="text-center max-w-2xl mx-auto">
+                    <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-6 flex items-center justify-center gap-4">
+                        <span className="w-8 h-px bg-amber-500"></span>
+                        Community Made
+                    </h2>
+                    <p className="text-gray-400 font-light mb-6 leading-relaxed">
+                        This project is built for the community, by the community. We are passionate about the Seven Knights franchise and want to ensure every player has the tools they need to succeed in PVP and PVE modes.
+                    </p>
                 </section>
 
                 <section className="pt-10 border-t border-gray-800/50 text-center">

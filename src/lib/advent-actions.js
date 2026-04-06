@@ -56,38 +56,42 @@ export async function getSetsByBoss(bossKey) {
     })
 }
 
+import { validateData, AdventSetSchema } from './validation'
+
 export async function createSet(data) {
     await requireAdmin()
+    
+    // Validate data
+    const validation = validateData(AdventSetSchema, data)
+    if (!validation.success) return validation
+    const validatedData = validation.data
+    
     await initDB()
     
     try {
         const [countResult] = await pool.query(
             'SELECT COALESCE(MAX(set_index), 0) + 1 as next_index FROM advent_expedition_sets WHERE boss_key = ?',
-            [data.boss_key]
+            [validatedData.boss_key]
         )
         const nextIndex = countResult[0].next_index
-
-        const slugifyTeam = (heroes) => (heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
-        const team1Slugs = slugifyTeam(data.team1_heroes)
-        const team2Slugs = slugifyTeam(data.team2_heroes)
 
         const [result] = await pool.query(
             `INSERT INTO advent_expedition_sets 
              (boss_key, set_index, team_name, team1_formation, team1_pet_file, team1_heroes_json, team1_skill_rotation, team2_formation, team2_pet_file, team2_heroes_json, team2_skill_rotation, video_url, note)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
-                data.boss_key, nextIndex, data.team_name,
-                data.team1_formation, data.team1_pet_file, JSON.stringify(team1Slugs), JSON.stringify(data.team1_skill_rotation || []),
-                data.team2_formation, data.team2_pet_file, JSON.stringify(team2Slugs), JSON.stringify(data.team2_skill_rotation || []),
-                data.video_url, data.note
+                validatedData.boss_key, nextIndex, validatedData.team_name || null,
+                validatedData.team1_formation, validatedData.team1_pet_file || null, JSON.stringify(validatedData.team1_heroes), JSON.stringify(validatedData.team1_skill_rotation),
+                validatedData.team2_formation, validatedData.team2_pet_file || null, JSON.stringify(validatedData.team2_heroes), JSON.stringify(validatedData.team2_skill_rotation),
+                validatedData.video_url, validatedData.note
             ]
         )
 
-        const bossName = BOSS_ORDER.find(b => b.key === data.boss_key)?.name || 'Advent Boss';
-        await logSiteUpdate('ADVENT', data.team_name || bossName, 'CREATE', `Added strategy for ${bossName}${data.team_name ? ` (${data.team_name})` : ''}`);
+        const bossName = BOSS_ORDER.find(b => b.key === validatedData.boss_key)?.name || validatedData.boss_key;
+        await logSiteUpdate('ADVENT', validatedData.team_name || bossName, 'CREATE', `Added strategy for ${bossName}${validatedData.team_name ? ` (${validatedData.team_name})` : ''}`);
 
         revalidatePath('/admin/advent')
-        revalidatePath(`/admin/advent/${data.boss_key}`)
+        revalidatePath(`/admin/advent/${validatedData.boss_key}`)
         revalidatePath('/advent')
         
         return { success: true, id: result.insertId }
@@ -99,11 +103,13 @@ export async function createSet(data) {
 
 export async function updateSet(id, data) {
     await requireAdmin()
-    try {
-        const slugifyTeam = (heroes) => (heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
-        const team1Slugs = slugifyTeam(data.team1_heroes)
-        const team2Slugs = slugifyTeam(data.team2_heroes)
+    
+    // Validate data
+    const validation = validateData(AdventSetSchema, data)
+    if (!validation.success) return validation
+    const validatedData = validation.data
 
+    try {
         await pool.query(
             `UPDATE advent_expedition_sets 
              SET team_name = ?, team1_formation = ?, team1_pet_file = ?, team1_heroes_json = ?, team1_skill_rotation = ?,
@@ -111,17 +117,17 @@ export async function updateSet(id, data) {
                  video_url = ?, note = ?
              WHERE id = ?`,
             [
-                data.team_name,
-                data.team1_formation, data.team1_pet_file, JSON.stringify(team1Slugs), JSON.stringify(data.team1_skill_rotation || []),
-                data.team2_formation, data.team2_pet_file, JSON.stringify(team2Slugs), JSON.stringify(data.team2_skill_rotation || []),
-                data.video_url, data.note, id
+                validatedData.team_name || null,
+                validatedData.team1_formation, validatedData.team1_pet_file || null, JSON.stringify(validatedData.team1_heroes), JSON.stringify(validatedData.team1_skill_rotation),
+                validatedData.team2_formation, validatedData.team2_pet_file || null, JSON.stringify(validatedData.team2_heroes), JSON.stringify(validatedData.team2_skill_rotation),
+                validatedData.video_url, validatedData.note, id
             ]
         )
 
         const [rows] = await pool.query('SELECT boss_key FROM advent_expedition_sets WHERE id = ?', [id]);
         if (rows.length > 0) {
             const bossName = BOSS_ORDER.find(b => b.key === rows[0].boss_key)?.name || 'Advent Boss';
-            await logSiteUpdate('ADVENT', data.team_name || bossName, 'UPDATE', `Updated strategy for ${bossName}${data.team_name ? ` (${data.team_name})` : ''}`);
+            await logSiteUpdate('ADVENT', validatedData.team_name || bossName, 'UPDATE', `Updated strategy for ${bossName}${validatedData.team_name ? ` (${validatedData.team_name})` : ''}`);
         }
 
         revalidatePath('/admin/advent')

@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { Suspense } from 'react'
 import { Sword, Map, Skull, Landmark, Trophy, ArrowRight, Crown, Compass, Swords } from 'lucide-react'
 import RecentUpdates from '@/components/shared/RecentUpdates'
-import SponsorBanner from '@/components/ads/SponsorBanner'
 import GlobalCredits from '@/components/shared/GlobalCredits'
 
 export const revalidate = 60; // Revalidate every minute
@@ -17,7 +16,6 @@ export default async function HomePage() {
     const FEATURES = [
         {
             title: "Hero Builds",
-            desc: "Optimal gear & stats",
             icon: Sword,
             href: "/build",
             color: "from-blue-500 to-cyan-500",
@@ -25,7 +23,6 @@ export default async function HomePage() {
         },
         {
             title: "Tier List",
-            desc: "Meta rankings",
             icon: Trophy,
             href: "/tierlist",
             color: "from-purple-500 to-indigo-500",
@@ -33,7 +30,6 @@ export default async function HomePage() {
         },
         {
             title: "Stage Guide",
-            desc: "Clear main story",
             icon: Map,
             href: "/stages",
             color: "from-[#FFD700] to-orange-500",
@@ -41,7 +37,6 @@ export default async function HomePage() {
         },
         {
             title: "Dungeons",
-            desc: "Resource farming",
             icon: Landmark,
             href: "/dungeon",
             color: "from-emerald-500 to-green-600",
@@ -49,7 +44,6 @@ export default async function HomePage() {
         },
         {
             title: "Raid Strategy",
-            desc: "Boss mechanics",
             icon: Skull,
             href: "/raid",
             color: "from-red-500 to-rose-600",
@@ -57,7 +51,6 @@ export default async function HomePage() {
         },
         {
             title: "Castle Rush",
-            desc: "Daily boss guide",
             icon: Crown,
             href: "/castle-rush",
             color: "from-amber-500 to-yellow-600",
@@ -65,7 +58,6 @@ export default async function HomePage() {
         },
         {
             title: "Advent Expedition",
-            desc: "Expedition bosses",
             icon: Compass,
             href: "/advent",
             color: "from-violet-500 to-purple-600",
@@ -73,7 +65,6 @@ export default async function HomePage() {
         },
         {
             title: "Arena PVP",
-            desc: "Team compositions",
             icon: Swords,
             href: "/arena",
             color: "from-rose-500 to-red-600",
@@ -81,7 +72,6 @@ export default async function HomePage() {
         },
         {
             title: "Total War",
-            desc: "Weekly boss teams",
             icon: Trophy,
             href: "/total-war",
             color: "from-orange-500 to-pink-500",
@@ -89,7 +79,6 @@ export default async function HomePage() {
         },
         {
             title: "Guild War",
-            desc: "GvG battle guides",
             icon: Skull,
             href: "/guild-war",
             color: "from-blue-600 to-indigo-700",
@@ -126,9 +115,24 @@ export default async function HomePage() {
                     </p>
                 </div>
 
-                {/* Wide Sponsor Banner */}
+                {/* Partner Section */}
                 <div className="max-w-7xl mx-auto mb-16 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
-                    <SponsorBanner variant="wide" />
+                    <div className="relative group p-8 rounded-3xl bg-gradient-to-br from-gray-900/50 to-black border border-gray-800 overflow-hidden text-center shadow-2xl">
+                        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="relative z-10 flex flex-col items-center gap-4">
+                            <h3 className="text-2xl font-black italic uppercase tracking-widest text-[#FFD700]">Partner with us</h3>
+                            <p className="text-gray-400 text-sm max-w-xl">
+                                Interested in reaching thousands of Seven Knights Rebirth players? 
+                                We're looking for high-quality partners to grow with our community.
+                            </p>
+                            <Link 
+                                href="/contact" 
+                                className="mt-2 px-8 py-3 rounded-xl bg-gray-900 border border-gray-700 text-xs font-black uppercase tracking-[0.2em] text-white hover:bg-[#FFD700] hover:text-black hover:border-[#FFD700] transition-all shadow-lg active:scale-95"
+                            >
+                                Contact for Partnership
+                            </Link>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Main content — Features grid + Recent Updates sidebar */}
@@ -150,9 +154,8 @@ export default async function HomePage() {
                                         <div className={`p-4 rounded-full bg-black/50 border border-gray-800 ${feature.glow}`}>
                                             <feature.icon className="w-8 h-8 text-white" />
                                         </div>
-                                        <div>
+                                        <div className="pt-2">
                                             <h3 className="text-xl font-black italic uppercase text-white tracking-wide">{feature.title}</h3>
-                                            <p className="text-sm text-gray-500 font-mono mt-1">{feature.desc}</p>
                                         </div>
                                         <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute right-2 top-2">
                                             <ArrowRight className="w-4 h-4 text-gray-400" />

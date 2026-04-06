@@ -4,6 +4,7 @@ import pool, { initDB } from './db'
 import { revalidatePath } from 'next/cache'
 import { logSiteUpdate } from './log-actions'
 import { requireAdmin } from './auth-guard'
+import { validateData, TotalWarSetSchema, TotalWarTeamSchema } from './validation'
 
 // ─── Sets ────────────────────────────────────────────────────────────────────
 
@@ -50,28 +51,33 @@ export async function getAllSetCounts() {
 
 export async function createSet(data) {
     await requireAdmin()
-    // data: { tier, set_name, note }
+    
+    // Validate data
+    const validation = validateData(TotalWarSetSchema, data)
+    if (!validation.success) return validation
+    const validatedData = validation.data
+    
     await initDB()
     try {
         const [countResult] = await pool.query(
             'SELECT COALESCE(MAX(set_index), 0) + 1 as next_index FROM total_war_sets WHERE tier = ?',
-            [data.tier]
+            [validatedData.tier]
         )
         const nextIndex = countResult[0].next_index
 
         const [result] = await pool.query(
             `INSERT INTO total_war_sets (tier, set_index, set_name, note) VALUES (?, ?, ?, ?)`,
-            [data.tier, nextIndex, data.set_name || null, data.note || null]
+            [validatedData.tier, nextIndex, validatedData.set_name || null, validatedData.note || null]
         )
 
-        const tierLabel = data.tier.charAt(0).toUpperCase() + data.tier.slice(1)
-        const setLabel = data.set_name ? ` "${data.set_name}"` : ` Set`
+        const tierLabel = validatedData.tier.charAt(0).toUpperCase() + validatedData.tier.slice(1)
+        const setLabel = validatedData.set_name ? ` "${validatedData.set_name}"` : ` Set`
         await logSiteUpdate('TOTAL_WAR', tierLabel, 'CREATE', `Added Total War ${tierLabel}${setLabel}`)
 
         revalidatePath('/admin/total-war')
-        revalidatePath(`/admin/total-war/${data.tier}`)
+        revalidatePath(`/admin/total-war/${validatedData.tier}`)
         revalidatePath('/total-war')
-        revalidatePath(`/total-war/${data.tier}`)
+        revalidatePath(`/total-war/${validatedData.tier}`)
 
         return { success: true, id: result.insertId }
     } catch (error) {
@@ -82,17 +88,23 @@ export async function createSet(data) {
 
 export async function updateSet(id, data) {
     await requireAdmin()
+    
+    // Validate data (partial because update might not include all fields)
+    const validation = validateData(TotalWarSetSchema.omit({ tier: true }).partial(), data)
+    if (!validation.success) return validation
+    const validatedData = validation.data
+
     try {
         await pool.query(
             `UPDATE total_war_sets SET set_name = ?, note = ? WHERE id = ?`,
-            [data.set_name || null, data.note || null, id]
+            [validatedData.set_name || null, validatedData.note || null, id]
         )
 
         // Query tier from DB since it's not in the update payload
         const [rows] = await pool.query('SELECT tier FROM total_war_sets WHERE id = ?', [id])
         const tier = rows[0]?.tier || 'total war'
         const tierLabel = tier.charAt(0).toUpperCase() + tier.slice(1)
-        const setLabel = data.set_name ? ` "${data.set_name}"` : ' Set'
+        const setLabel = validatedData.set_name ? ` "${validatedData.set_name}"` : ' Set'
         await logSiteUpdate('TOTAL_WAR', tierLabel, 'UPDATE', `Updated Total War ${tierLabel}${setLabel}`)
 
         revalidatePath('/admin/total-war')
@@ -122,33 +134,36 @@ export async function deleteSet(id) {
 
 export async function createTeam(data) {
     await requireAdmin()
-    // data: { set_id, team_name, formation, pet_file, heroes, skill_rotation, video_url, note }
+    
+    // Validate data
+    const validation = validateData(TotalWarTeamSchema, data)
+    if (!validation.success) return validation
+    const validatedData = validation.data
+
     try {
         const [countResult] = await pool.query(
             'SELECT COALESCE(MAX(team_index), 0) + 1 as next_index FROM total_war_teams WHERE set_id = ?',
-            [data.set_id]
+            [validatedData.set_id]
         )
         const nextIndex = countResult[0].next_index
-
-        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
         const [result] = await pool.query(
             `INSERT INTO total_war_teams (set_id, team_index, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
-                data.set_id,
+                validatedData.set_id,
                 nextIndex,
-                data.team_name || null,
-                data.formation,
-                data.pet_file,
-                JSON.stringify(slugifiedHeroes),
-                JSON.stringify(data.skill_rotation || []),
-                data.video_url,
-                data.note,
+                validatedData.team_name || null,
+                validatedData.formation,
+                validatedData.pet_file || null,
+                JSON.stringify(validatedData.heroes),
+                JSON.stringify(validatedData.skill_rotation),
+                validatedData.video_url,
+                validatedData.note,
             ]
         )
 
-        const teamLabel = data.team_name ? ` "${data.team_name}"` : ' Team'
+        const teamLabel = validatedData.team_name ? ` "${validatedData.team_name}"` : ' Team'
         await logSiteUpdate('TOTAL_WAR', 'Team', 'CREATE', `Added Total War${teamLabel}`)
 
         revalidatePath('/admin/total-war')
@@ -163,25 +178,29 @@ export async function createTeam(data) {
 
 export async function updateTeam(id, data) {
     await requireAdmin()
-    try {
-        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
+    
+    // Validate data (set_id is not changed during update)
+    const validation = validateData(TotalWarTeamSchema.omit({ set_id: true }), data)
+    if (!validation.success) return validation
+    const validatedData = validation.data
 
+    try {
         await pool.query(
             `UPDATE total_war_teams
              SET team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
              WHERE id = ?`,
             [
-                data.team_name || null,
-                data.formation,
-                data.pet_file,
-                JSON.stringify(slugifiedHeroes),
-                JSON.stringify(data.skill_rotation || []),
-                data.video_url,
-                data.note,
+                validatedData.team_name || null,
+                validatedData.formation,
+                validatedData.pet_file || null,
+                JSON.stringify(validatedData.heroes),
+                JSON.stringify(validatedData.skill_rotation),
+                validatedData.video_url,
+                validatedData.note,
                 id,
             ]
         )
-        const teamLabel = data.team_name ? ` "${data.team_name}"` : ' Team'
+        const teamLabel = validatedData.team_name ? ` "${validatedData.team_name}"` : ' Team'
         await logSiteUpdate('TOTAL_WAR', 'Team', 'UPDATE', `Updated Total War${teamLabel}`)
 
         revalidatePath('/admin/total-war')

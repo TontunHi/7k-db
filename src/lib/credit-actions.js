@@ -4,6 +4,7 @@ import pool, { initDB } from './db'
 import { revalidatePath } from 'next/cache'
 import { logSiteUpdate } from './log-actions'
 import { requireAdmin } from './auth-guard'
+import { validateData, GlobalCreditSchema } from './validation'
 
 /** Get all global credits */
 export async function getGlobalCredits() {
@@ -15,15 +16,20 @@ export async function getGlobalCredits() {
 /** Create a new global credit entry */
 export async function createGlobalCredit(data) {
     await requireAdmin()
-    // data: { platform, name, link }
+    
+    // Validate data
+    const validation = validateData(GlobalCreditSchema, data)
+    if (!validation.success) return validation
+    const validatedData = validation.data
+    
     await initDB()
     try {
         const [result] = await pool.query(
             'INSERT INTO global_credits (platform, name, link) VALUES (?, ?, ?)',
-            [data.platform || 'other', data.name, data.link]
+            [validatedData.platform, validatedData.name, validatedData.link]
         )
 
-        await logSiteUpdate('CREDIT', data.name, 'CREATE', `Added attribution for ${data.name} (${data.platform})`)
+        await logSiteUpdate('CREDIT', validatedData.name, 'CREATE', `Added attribution for ${validatedData.name} (${validatedData.platform})`)
 
         revalidatePath('/')
         revalidatePath('/admin/credits')
@@ -38,13 +44,19 @@ export async function createGlobalCredit(data) {
 /** Update an existing global credit entry */
 export async function updateGlobalCredit(id, data) {
     await requireAdmin()
+    
+    // Validate data
+    const validation = validateData(GlobalCreditSchema, data)
+    if (!validation.success) return validation
+    const validatedData = validation.data
+
     try {
         await pool.query(
             'UPDATE global_credits SET platform = ?, name = ?, link = ? WHERE id = ?',
-            [data.platform, data.name, data.link, id]
+            [validatedData.platform, validatedData.name, validatedData.link, id]
         )
 
-        await logSiteUpdate('CREDIT', data.name, 'UPDATE', `Updated attribution for ${data.name}`)
+        await logSiteUpdate('CREDIT', validatedData.name, 'UPDATE', `Updated attribution for ${validatedData.name}`)
 
         revalidatePath('/')
         revalidatePath('/admin/credits')

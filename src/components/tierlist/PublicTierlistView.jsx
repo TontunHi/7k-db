@@ -50,10 +50,7 @@ export default function PublicTierlistView() {
                         <div className="absolute -bottom-2 w-full h-1 bg-gradient-to-r from-[#FFD700] to-[#FFA500] transform -skew-x-12 shadow-[0_0_15px_#FFD700] transition-all group-hover:w-[120%] group-hover:-left-[10%]"></div>
                     </div>
 
-                    <p className="text-slate-400 max-w-2xl mx-auto text-lg md:text-xl font-light tracking-wide leading-relaxed mt-6">
-                        The definitive <strong className="text-white">Seven Knights Rebirth</strong> strategy guide.
-                        Dominate <span className="text-[#FFD700]">PVE</span>, <span className="text-[#FFD700]">PVP</span>, and <span className="text-[#FFD700]">Raids</span> with our daily updated meta rankings.
-                    </p>
+                    <div className="h-12"></div>
                 </div>
 
                 {/* Category Buttons - RECTANGULAR & TECH STYLE */}

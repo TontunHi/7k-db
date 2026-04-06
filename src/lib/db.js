@@ -12,7 +12,7 @@ const pool =
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
-    // เพิ่มการตั้งค่า SSL เพื่อให้ผ่าน Policy ของ TiDB Serverless
+    timezone: 'Z', 
     ssl: {
       minVersion: 'TLSv1.2',
       rejectUnauthorized: true
@@ -27,19 +27,43 @@ export default pool;
 
 // Helper to init DB
 export async function initDB() {
-  // if (global.dbInitialized) return;
+  if (global.dbInitialized) return;
 
   const connection = await pool.getConnection();
   try {
     await connection.query(`
       CREATE TABLE IF NOT EXISTS heroes (
         filename VARCHAR(255) PRIMARY KEY,
+        slug VARCHAR(255) UNIQUE,
         name VARCHAR(255),
         grade VARCHAR(50),
         skill_priority JSON,
         is_new_hero TINYINT(1) DEFAULT 0
       )
     `);
+
+    // Ensure slug column exists (for existing tables)
+    const [columns] = await connection.query('SHOW COLUMNS FROM heroes LIKE "slug"');
+    if (columns.length === 0) {
+      try {
+        await connection.query(`ALTER TABLE heroes ADD COLUMN slug VARCHAR(255) UNIQUE AFTER filename`);
+      } catch (e) { 
+        console.warn("Could not add slug column, it might already exist or there is a permission issue:", e.message); 
+      }
+    }
+
+    // Populate slug if null
+    try {
+      const [heroes] = await connection.query(`SELECT filename, slug FROM heroes WHERE slug IS NULL`);
+      if (heroes.length > 0) {
+        for (const h of heroes) {
+          const slug = h.filename.replace(/\.[^/.]+$/, "");
+          await connection.query(`UPDATE heroes SET slug = ? WHERE filename = ?`, [slug, h.filename]);
+        }
+      }
+    } catch (e) {
+      console.warn("Could not migrate slugs:", e.message);
+    }
 
     await connection.query(`
       CREATE TABLE IF NOT EXISTS builds (
@@ -135,6 +159,7 @@ export async function initDB() {
         set_index INT NOT NULL DEFAULT 1,
         formation VARCHAR(50) NOT NULL,
         pet_file VARCHAR(255),
+        aura VARCHAR(20),
         heroes_json JSON,
         skill_rotation JSON,
         video_url VARCHAR(500),
@@ -142,6 +167,11 @@ export async function initDB() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Add aura column if missing
+    try {
+      await connection.query(`ALTER TABLE dungeon_sets ADD COLUMN aura VARCHAR(20) AFTER pet_file`);
+    } catch (e) { /* Column already exists */ }
 
     // Add skill_rotation column if missing (for existing databases)
     try {

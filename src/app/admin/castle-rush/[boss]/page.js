@@ -123,10 +123,17 @@ export default function BossDetailPage({ params }) {
                 note: set.note
             }
 
+            let result
             if (set._isNew) {
-                await createSet(data)
+                result = await createSet(data)
             } else {
-                await updateSet(set.id, data)
+                result = await updateSet(set.id, data)
+            }
+
+            if (result && !result.success) {
+                alert(`Error saving team ${set.team_name || idx + 1}: ${result.error}`)
+                setSaving(false)
+                return
             }
         }
         

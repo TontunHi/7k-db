@@ -52,32 +52,47 @@ export async function getSetsByDungeon(dungeonKey) {
     }))
 }
 
+import { validateData, DungeonSetSchema } from './validation'
+
 export async function createSet(data) {
     await requireAdmin()
-    // data: { dungeon_key, formation, pet_file, heroes: [], video_url, note }
+    
+    // Validate data
+    const validation = validateData(DungeonSetSchema, data)
+    if (!validation.success) return validation
+    const validatedData = validation.data
+    
     await initDB()
     
     try {
         // Get next set_index for this dungeon
         const [countResult] = await pool.query(
             'SELECT COALESCE(MAX(set_index), 0) + 1 as next_index FROM dungeon_sets WHERE dungeon_key = ?',
-            [data.dungeon_key]
+            [validatedData.dungeon_key]
         )
         const nextIndex = countResult[0].next_index
 
-        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
-
         const [result] = await pool.query(
-            `INSERT INTO dungeon_sets (dungeon_key, set_index, formation, pet_file, heroes_json, skill_rotation, video_url, note)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [data.dungeon_key, nextIndex, data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
+            `INSERT INTO dungeon_sets (dungeon_key, set_index, formation, pet_file, aura, heroes_json, skill_rotation, video_url, note)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                validatedData.dungeon_key, 
+                nextIndex, 
+                validatedData.formation, 
+                validatedData.pet_file || null, 
+                validatedData.aura || null,
+                JSON.stringify(validatedData.heroes), 
+                JSON.stringify(validatedData.skill_rotation), 
+                validatedData.video_url, 
+                validatedData.note
+            ]
         )
 
-        const dungeonName = DUNGEON_ORDER.find(d => d.key === data.dungeon_key)?.name || 'Dungeon';
+        const dungeonName = DUNGEON_ORDER.find(d => d.key === validatedData.dungeon_key)?.name || validatedData.dungeon_key;
         await logSiteUpdate('DUNGEON', dungeonName, 'CREATE', `Added new strategy for ${dungeonName}`);
 
         revalidatePath('/admin/dungeon')
-        revalidatePath(`/admin/dungeon/${data.dungeon_key}`)
+        revalidatePath(`/admin/dungeon/${validatedData.dungeon_key}`)
         revalidatePath('/dungeon')
         
         return { success: true, id: result.insertId }
@@ -89,14 +104,27 @@ export async function createSet(data) {
 
 export async function updateSet(id, data) {
     await requireAdmin()
-    try {
-        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
+    
+    // Validate data
+    const validation = validateData(DungeonSetSchema, data)
+    if (!validation.success) return validation
+    const validatedData = validation.data
 
+    try {
         await pool.query(
             `UPDATE dungeon_sets 
-             SET formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
+             SET formation = ?, pet_file = ?, aura = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
              WHERE id = ?`,
-            [data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
+            [
+                validatedData.formation, 
+                validatedData.pet_file || null, 
+                validatedData.aura || null,
+                JSON.stringify(validatedData.heroes), 
+                JSON.stringify(validatedData.skill_rotation), 
+                validatedData.video_url, 
+                validatedData.note, 
+                id
+            ]
         )
 
         const [rows] = await pool.query('SELECT dungeon_key FROM dungeon_sets WHERE id = ?', [id]);

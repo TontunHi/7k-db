@@ -16,9 +16,6 @@ export default function Footer() {
                         <Link href="/" className="transition-transform hover:scale-105 active:scale-95">
                             <SafeImage src="/about_website/logo_website.webp" alt="7K DB" width={120} height={40} className="object-contain opacity-40 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all" />
                         </Link>
-                        <p className="text-[10px] font-black tracking-widest text-gray-600 uppercase italic">
-                            Fan-made database for Seven Knights Rebirth
-                        </p>
                     </div>
 
                     {/* Navigation Section */}
@@ -44,9 +41,6 @@ export default function Footer() {
                         <div className="text-[10px] uppercase font-bold tracking-widest text-gray-700">
                             © {new Date().getFullYear()} 7K DB
                         </div>
-                        <p className="text-[8px] text-gray-800 font-bold uppercase tracking-tighter leading-none max-w-[200px]">
-                            All assets and game content are trademarks and property of their respective owners.
-                        </p>
                     </div>
                 </div>
             </div>

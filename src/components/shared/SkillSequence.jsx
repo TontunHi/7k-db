@@ -10,7 +10,7 @@ export default function SkillSequence({ skillRotation = [], heroes = [], customC
         <div className={cn("space-y-2", customClasses.container)}>
             <div className="flex items-center gap-2 px-1">
                 <Zap className="w-3 h-3 text-indigo-400" />
-                <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">Skill Sequence</span>
+                <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest text-[#FFD700]">Skill Rotation</span>
             </div>
             
             <div className={cn("flex flex-wrap items-center gap-1.5 w-full bg-black/40 rounded-xl border border-gray-800/30 p-3", customClasses.wrapper)}>

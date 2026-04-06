@@ -49,32 +49,46 @@ export async function getSetsByRaid(raidKey) {
     }))
 }
 
+import { validateData, RaidSetSchema } from './validation'
+
 export async function createSet(data) {
     await requireAdmin()
-    // data: { raid_key, formation, pet_file, heroes: [], skill_rotation: [], video_url, note }
+    
+    // Validate data
+    const validation = validateData(RaidSetSchema, data)
+    if (!validation.success) return validation
+    const validatedData = validation.data
+    
     await initDB()
     
     try {
         // Get next set_index for this raid
         const [countResult] = await pool.query(
             'SELECT COALESCE(MAX(set_index), 0) + 1 as next_index FROM raid_sets WHERE raid_key = ?',
-            [data.raid_key]
+            [validatedData.raid_key]
         )
         const nextIndex = countResult[0].next_index
-
-        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
 
         const [result] = await pool.query(
             `INSERT INTO raid_sets (raid_key, set_index, formation, pet_file, heroes_json, skill_rotation, video_url, note)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [data.raid_key, nextIndex, data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note]
+            [
+                validatedData.raid_key, 
+                nextIndex, 
+                validatedData.formation, 
+                validatedData.pet_file || null, 
+                JSON.stringify(validatedData.heroes), 
+                JSON.stringify(validatedData.skill_rotation), 
+                validatedData.video_url, 
+                validatedData.note
+            ]
         )
 
-        const raidName = RAID_ORDER.find(r => r.key === data.raid_key)?.name || 'Raid';
+        const raidName = RAID_ORDER.find(r => r.key === validatedData.raid_key)?.name || validatedData.raid_key;
         await logSiteUpdate('RAID', raidName, 'CREATE', `Added new strategy for ${raidName}`);
 
         revalidatePath('/admin/raid')
-        revalidatePath(`/admin/raid/${data.raid_key}`)
+        revalidatePath(`/admin/raid/${validatedData.raid_key}`)
         revalidatePath('/raid')
         
         return { success: true, id: result.insertId }
@@ -86,14 +100,26 @@ export async function createSet(data) {
 
 export async function updateSet(id, data) {
     await requireAdmin()
-    try {
-        const slugifiedHeroes = (data.heroes || []).map(h => h ? h.replace(/\.[^/.]+$/, "") : null)
+    
+    // Validate data
+    const validation = validateData(RaidSetSchema, data)
+    if (!validation.success) return validation
+    const validatedData = validation.data
 
+    try {
         await pool.query(
             `UPDATE raid_sets 
              SET formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
              WHERE id = ?`,
-            [data.formation, data.pet_file, JSON.stringify(slugifiedHeroes), JSON.stringify(data.skill_rotation || []), data.video_url, data.note, id]
+            [
+                validatedData.formation, 
+                validatedData.pet_file || null, 
+                JSON.stringify(validatedData.heroes), 
+                JSON.stringify(validatedData.skill_rotation), 
+                validatedData.video_url, 
+                validatedData.note, 
+                id
+            ]
         )
 
         const [rows] = await pool.query('SELECT raid_key FROM raid_sets WHERE id = ?', [id]);

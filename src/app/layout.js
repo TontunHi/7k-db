@@ -2,7 +2,6 @@ import { Inter, Prompt } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "sonner"
-import SponsorBanner from "@/components/ads/SponsorBanner"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -51,7 +50,6 @@ export default function RootLayout({ children }) {
           disableTransitionOnChange
         >
           {children}
-          <SponsorBanner variant="floating" />
           <Toaster theme="dark" position="top-center" richColors />
         </ThemeProvider>
       </body>
