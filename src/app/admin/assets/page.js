@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
+import NextImage from 'next/image'
 import { UploadCloud, Trash2, LayoutDashboard, Search, Image as ImageIcon, Loader2, Folder, ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 import { getAllHeroes, getPets, getAllSkills } from '@/lib/stage-actions'
@@ -215,7 +215,7 @@ export default function AdminAssetsPage() {
                         .map(h => (
                         <div key={h.filename} className="group relative aspect-[3/4] bg-gray-900 border border-gray-800 rounded-lg overflow-hidden flex flex-col hover:border-[#FFD700] transition-colors">
                             <div className="relative flex-1 w-full h-full p-2">
-                                <Image src={`/heroes/${h.filename}`} alt="" fill className="object-cover" />
+                                <NextImage src={`/heroes/${h.filename}`} alt="" fill className="object-cover" />
                                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                     <button onClick={() => handleDelete(h.filename)} className="p-3 bg-red-600/90 text-white rounded-full hover:bg-red-500 hover:scale-110 transition-all shadow-lg">
                                         <Trash2 className="w-5 h-5" />
@@ -233,7 +233,7 @@ export default function AdminAssetsPage() {
                         .map(p => (
                         <div key={p} className="group relative aspect-square bg-gray-900 border border-gray-800 rounded-lg overflow-hidden flex flex-col hover:border-amber-500 transition-colors">
                             <div className="relative flex-1 w-full h-full p-4">
-                                <Image src={p} alt="" fill className="object-contain" />
+                                <NextImage src={p} alt="" fill className="object-contain" />
                                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                     <button onClick={() => handleDelete(p)} className="p-3 bg-red-600/90 text-white rounded-full hover:bg-red-500 hover:scale-110 transition-all shadow-lg">
                                         <Trash2 className="w-5 h-5" />
@@ -271,7 +271,7 @@ export default function AdminAssetsPage() {
                         .map(s => (
                         <div key={s.path} className="group relative aspect-square bg-gray-900 border border-gray-800 rounded-lg overflow-hidden flex flex-col hover:border-indigo-400 transition-colors">
                             <div className="relative flex-1 w-full h-full p-4 bg-gray-950">
-                                <Image src={s.path} alt="" fill className="object-contain" />
+                                <NextImage src={s.path} alt="" fill className="object-contain" />
                                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                     <button onClick={() => handleDelete(s.filename, s.folder)} className="p-3 bg-red-600/90 text-white rounded-full hover:bg-red-500 hover:scale-110 transition-all shadow-lg">
                                         <Trash2 className="w-5 h-5" />

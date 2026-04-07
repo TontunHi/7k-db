@@ -34,6 +34,7 @@ export default function RaidDetailPage({ params }) {
     const [formations, setFormations] = useState([])
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
+    const [saveError, setSaveError] = useState(null)
     const [skillErrors, setSkillErrors] = useState({}) // Track missing skill images
 
     useEffect(() => {
@@ -101,30 +102,42 @@ export default function RaidDetailPage({ params }) {
 
     const handleSaveAll = async () => {
         setSaving(true)
-        for (const set of sets) {
-            if (!set._dirty) continue
-            
-            const data = {
-                raid_key: raidKey,
-                formation: set.formation,
-                pet_file: set.pet_file,
-                heroes: set.heroes,
-                skill_rotation: set.skill_rotation,
-                video_url: set.video_url,
-                note: set.note
-            }
+        setSaveError(null)
+        try {
+            for (const set of sets) {
+                if (!set._dirty) continue
+                
+                const data = {
+                    raid_key: raidKey,
+                    formation: set.formation,
+                    pet_file: set.pet_file,
+                    heroes: set.heroes,
+                    skill_rotation: set.skill_rotation,
+                    video_url: set.video_url,
+                    note: set.note
+                }
 
-            if (set._isNew) {
-                await createSet(data)
-            } else {
-                await updateSet(set.id, data)
+                let result
+                if (set._isNew) {
+                    result = await createSet(data)
+                } else {
+                    result = await updateSet(set.id, data)
+                }
+
+                if (result && !result.success) {
+                    throw new Error(result.error || "Failed to save team")
+                }
             }
+            
+            // Reload data
+            const setsData = await getSetsByRaid(raidKey)
+            setSets(setsData.map(s => ({ ...s, _dirty: false })))
+        } catch (err) {
+            console.error("Save error:", err)
+            setSaveError(err.message)
+        } finally {
+            setSaving(false)
         }
-        
-        // Reload data
-        const setsData = await getSetsByRaid(raidKey)
-        setSets(setsData.map(s => ({ ...s, _dirty: false })))
-        setSaving(false)
     }
 
     // Handle skill image error
@@ -161,23 +174,39 @@ export default function RaidDetailPage({ params }) {
                     <span className="font-medium">Back to Raids</span>
                 </Link>
 
-                <div className="relative w-full max-w-2xl h-48 md:h-64 rounded-2xl overflow-hidden border border-red-900/30 bg-gray-900 group">
+                <div className="relative w-full aspect-[21/9] md:aspect-[3/1] rounded-2xl overflow-hidden border border-red-900/30 bg-gray-900 group shadow-2xl">
                     <SafeImage 
                         src={raid.image} 
                         alt={raid.name} 
                         fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-[1.02]" 
+                        className="object-cover transition-transform duration-700 group-hover:scale-[1.05]" 
                         priority
                     />
-                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent p-5 flex flex-col justify-end">
+                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent p-6 md:p-10 flex flex-col justify-end">
                         <div className="flex items-center gap-2 mb-1">
-                            <Skull className="w-4 h-4 text-red-500" />
-                            <span className="text-xs text-red-500 uppercase tracking-wider font-bold">Raid</span>
+                            <Skull className="w-5 h-5 text-red-500 fill-red-500/20" />
+                            <span className="text-sm text-red-500 uppercase tracking-[0.3em] font-black">Raid Boss</span>
                         </div>
-                        <h2 className="text-2xl md:text-3xl font-black text-white">{raid.name}</h2>
+                        <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter drop-shadow-2xl">{raid.name}</h2>
                     </div>
                 </div>
             </div>
+
+            {/* Save Error Alert */}
+            {saveError && (
+                <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-3 text-red-400">
+                    <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center shrink-0">
+                        <Skull className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1">
+                        <p className="font-bold">Save Failed</p>
+                        <p className="text-sm opacity-80">{saveError}</p>
+                    </div>
+                    <button onClick={() => setSaveError(null)} className="p-2 hover:bg-red-500/20 rounded-lg">
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+            )}
 
             {/* Action Buttons */}
             <div className="flex items-center justify-between gap-4 p-4 bg-gray-900/50 border border-gray-800 rounded-xl sticky top-4 z-10 backdrop-blur-md">
@@ -268,13 +297,13 @@ export default function RaidDetailPage({ params }) {
                                     Skill Rotation (Click to set order)
                                 </label>
                                 
-                                <div className="bg-black/50 rounded-xl p-4 border border-gray-800">
-                                    <div className="flex gap-4">
+                                <div className="bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-gray-800/50">
+                                    <div className="flex flex-wrap gap-6">
                                         {[0, 1, 2, 3, 4].map(heroIdx => {
                                             const heroFile = set.heroes?.[heroIdx]
                                             
                                             return (
-                                                <div key={heroIdx} className="space-y-2">
+                                                <div key={heroIdx} className="flex flex-col gap-2">
                                                     {/* Skill 2 */}
                                                     {(() => {
                                                         const skillKey = `${heroIdx}-2`
@@ -297,9 +326,11 @@ export default function RaidDetailPage({ params }) {
                                                                     handleUpdateSet(idx, 'skill_rotation', rotation)
                                                                 }}
                                                                 className={cn(
-                                                                    "relative w-20 h-20 rounded-lg overflow-hidden border-2 flex items-center justify-center transition-all",
-                                                                    order ? "border-yellow-500 ring-2 ring-yellow-500/50 shadow-lg shadow-yellow-500/20" : "border-gray-700 hover:border-gray-500",
-                                                                    heroFile && skillPath && !hasError ? "bg-gray-900" : "bg-gray-900/30"
+                                                                    "relative w-14 h-14 rounded-lg overflow-hidden border flex items-center justify-center transition-all",
+                                                                    order 
+                                                                        ? "border-yellow-500 ring-2 ring-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.3)]" 
+                                                                        : "border-gray-800 hover:border-gray-600 bg-gray-900/50",
+                                                                    !heroFile && "opacity-20"
                                                                 )}
                                                             >
                                                                 {heroFile && skillPath && !hasError ? (
@@ -311,10 +342,13 @@ export default function RaidDetailPage({ params }) {
                                                                         onError={() => handleSkillError(set.id, heroIdx, 2)}
                                                                     />
                                                                 ) : (
-                                                                    <span className="text-gray-700 text-sm">-</span>
+                                                                    <span className="text-gray-800 text-xs">S2</span>
                                                                 )}
                                                                 {order && (
-                                                                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-500 text-black text-sm font-black rounded-full flex items-center justify-center shadow-lg">
+                                                                    <div className="absolute inset-0 bg-yellow-500/10 pointer-events-none" />
+                                                                )}
+                                                                {order && (
+                                                                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 text-black text-[10px] font-black rounded-full flex items-center justify-center shadow-lg border border-black/20">
                                                                         {order}
                                                                     </div>
                                                                 )}
@@ -344,9 +378,11 @@ export default function RaidDetailPage({ params }) {
                                                                     handleUpdateSet(idx, 'skill_rotation', rotation)
                                                                 }}
                                                                 className={cn(
-                                                                    "relative w-20 h-20 rounded-lg overflow-hidden border-2 flex items-center justify-center transition-all",
-                                                                    order ? "border-yellow-500 ring-2 ring-yellow-500/50 shadow-lg shadow-yellow-500/20" : "border-gray-700 hover:border-gray-500",
-                                                                    heroFile && skillPath && !hasError ? "bg-gray-900" : "bg-gray-900/30"
+                                                                    "relative w-14 h-14 rounded-lg overflow-hidden border flex items-center justify-center transition-all",
+                                                                    order 
+                                                                        ? "border-yellow-500 ring-2 ring-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.3)]" 
+                                                                        : "border-gray-800 hover:border-gray-600 bg-gray-900/50",
+                                                                    !heroFile && "opacity-20"
                                                                 )}
                                                             >
                                                                 {heroFile && skillPath && !hasError ? (
@@ -358,10 +394,13 @@ export default function RaidDetailPage({ params }) {
                                                                         onError={() => handleSkillError(set.id, heroIdx, 3)}
                                                                     />
                                                                 ) : (
-                                                                    <span className="text-gray-700 text-sm">-</span>
+                                                                    <span className="text-gray-800 text-xs">S3</span>
                                                                 )}
                                                                 {order && (
-                                                                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-500 text-black text-sm font-black rounded-full flex items-center justify-center shadow-lg">
+                                                                    <div className="absolute inset-0 bg-yellow-500/10 pointer-events-none" />
+                                                                )}
+                                                                {order && (
+                                                                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 text-black text-[10px] font-black rounded-full flex items-center justify-center shadow-lg border border-black/20">
                                                                         {order}
                                                                     </div>
                                                                 )}

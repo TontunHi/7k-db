@@ -8,10 +8,13 @@ export const PlatformSchema = z.enum(['youtube', 'tiktok', 'facebook', 'discord'
 
 export const TeamHeroesSchema = z.array(z.string().nullable()).length(5, "Team must have exactly 5 slots")
 
-export const SkillRotationSchema = z.array(z.object({
-  label: z.string().max(50).optional(),
-  skill: z.string().nullable()
-}))
+export const SkillRotationSchema = z.union([
+  z.array(z.string()),
+  z.array(z.object({
+    label: z.string().max(50).optional(),
+    skill: z.string().nullable()
+  }))
+])
 
 // --- Feature Specific Schemas ---
 

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
+import NextImage from 'next/image'
 import SafeImage from '@/components/shared/SafeImage'
 import Link from 'next/link'
 import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Compass, Zap, X } from 'lucide-react'
@@ -359,7 +360,7 @@ export default function AdventBossDetailPage({ params }) {
 
                     <div className="relative aspect-[2/3] rounded-xl overflow-hidden border border-gray-800 bg-gradient-to-b from-gray-900 to-black">
                         {boss.image && !boss.image.includes('undefined') ? (
-                            <Image src={boss.image} alt={boss.name} fill className="object-contain object-center" priority />
+                            <NextImage src={boss.image} alt={boss.name} fill className="object-contain object-center" priority />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center">
                                 <Compass className="w-16 h-16 text-gray-700" />
@@ -386,7 +387,7 @@ export default function AdventBossDetailPage({ params }) {
                     <div className="flex items-center gap-3">
                         {boss.image && !boss.image.includes('undefined') && (
                             <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-gray-800">
-                                <Image src={boss.image} alt={boss.name} fill className="object-cover" />
+                                <NextImage src={boss.image} alt={boss.name} fill className="object-cover" />
                             </div>
                         )}
                         <h1 className="text-2xl font-black">{boss.name}</h1>

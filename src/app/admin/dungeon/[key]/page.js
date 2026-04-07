@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
+import NextImage from 'next/image'
 import SafeImage from '@/components/shared/SafeImage'
 import Link from 'next/link'
 import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Landmark, Zap, X, Pencil } from 'lucide-react'
@@ -197,7 +197,7 @@ export default function DungeonDetailPage({ params }) {
                 </Link>
 
                 <div className="relative w-full h-64 md:h-80 rounded-2xl overflow-hidden border border-gray-800 bg-gray-900 group">
-                    <Image 
+                    <NextImage 
                         src={dungeon.image} 
                         alt={dungeon.name} 
                         fill 

@@ -17,9 +17,9 @@ export function generateSessionId() {
 }
 
 /**
- * Sign a payload (e.g. sessionId) to create a stateless token
+ * Sign a payload (e.g. userId or sessionId) to create a stateless token
  */
-export async function createSignedToken(sessionId) {
+export async function createSignedToken(payload) {
     const encoder = new TextEncoder()
     const keyData = encoder.encode(SECRET)
     const key = await crypto.subtle.importKey(
@@ -30,28 +30,28 @@ export async function createSignedToken(sessionId) {
         ['sign']
     )
     
-    const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(sessionId))
+    const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(payload))
     const sigArray = Array.from(new Uint8Array(signature))
     const sigHex = sigArray.map(b => b.toString(16).padStart(2, '0')).join('')
     
-    return `${sessionId}.${sigHex}`
+    return `${payload}.${sigHex}`
 }
 
 /**
- * Verify a signed token and extract the sessionId
+ * Verify a signed token and extract the payload
  */
 export async function verifyToken(token) {
     if (!token || typeof token !== 'string') return null
     
-    const [sessionId, providedSig] = token.split('.')
-    if (!sessionId || !providedSig) return null
+    const [payload, providedSig] = token.split('.')
+    if (!payload || !providedSig) return null
 
-    // Re-sign the sessionId to verify
-    const expectedToken = await createSignedToken(sessionId)
+    // Re-sign the payload to verify
+    const expectedToken = await createSignedToken(payload)
     const [, expectedSig] = expectedToken.split('.')
     
     if (providedSig === expectedSig) {
-        return sessionId
+        return payload
     }
     
     return null

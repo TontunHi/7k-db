@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import NextImage from 'next/image'
 import { TIER_CONFIG } from '@/lib/total-war-config'
 import { getAllSetCounts } from '@/lib/total-war-actions'
 import { Swords } from 'lucide-react'
@@ -43,7 +43,7 @@ export default async function AdminTotalWarPage() {
 
                             {/* Logo */}
                             <div className="relative w-full aspect-square mb-4 group-hover:scale-105 transition-transform duration-500">
-                                <Image
+                                <NextImage
                                     src={tier.logo}
                                     alt={tier.label}
                                     fill

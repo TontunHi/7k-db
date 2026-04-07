@@ -6,12 +6,8 @@ import path from "path"
 import { requireAdmin } from "./auth-guard"
 
 // Ensure DB is ready
-let dbInitialized = false
 async function ensureDB() {
-    if (!dbInitialized) {
-        await initDB()
-        dbInitialized = true
-    }
+    await initDB()
 }
 
 import { validateData, HeroSchema, BuildSchema } from './validation'

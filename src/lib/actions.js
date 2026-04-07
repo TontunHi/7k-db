@@ -3,31 +3,40 @@
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
-import { createSignedToken, generateSessionId, deleteSession } from "./session"
+import bcrypt from "bcryptjs"
+import pool, { initDB } from "./db"
+import { createSignedToken, deleteSession } from "./session"
 
 export async function login(formData) {
+    const username = formData.get("username") || "admin" // Fallback for transition
     const password = formData.get("password")
 
-    // Simple check against env
-    if (password === process.env.ADMIN_PASSWORD) {
-        // Generate secure signed session token
-        const sessionId = generateSessionId()
-        const token = await createSignedToken(sessionId)
+    await initDB()
+    const [users] = await pool.query("SELECT * FROM users WHERE username = ?", [username])
 
-        // Set cookie (Async in Next.js 15+)
-        const cookieStore = await cookies()
-        cookieStore.set("admin_session", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            maxAge: 60 * 60 * 24, // 1 day
-            path: "/",
-            sameSite: 'lax'
-        })
-        redirect("/admin")
-    } else {
-        // Return error
-        redirect("/login?error=Invalid Password")
+    if (users.length > 0) {
+        const user = users[0]
+        const isValid = await bcrypt.compare(password, user.password_hash)
+
+        if (isValid) {
+            // Sign token with user.id
+            const token = await createSignedToken(user.id.toString())
+
+            // Set cookie
+            const cookieStore = await cookies()
+            cookieStore.set("admin_session", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                maxAge: 60 * 60 * 24, // 1 day
+                path: "/",
+                sameSite: 'lax'
+            })
+            redirect("/admin")
+        }
     }
+
+    // Return error if user not found or password invalid
+    redirect(`/login?error=Invalid Credentials&u=${encodeURIComponent(username)}`)
 }
 
 export async function logout() {

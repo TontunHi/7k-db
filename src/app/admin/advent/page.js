@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import NextImage from 'next/image'
 import { getBosses } from '@/lib/advent-actions'
 import { Compass } from 'lucide-react'
 
@@ -38,7 +38,7 @@ export default async function AdminAdventPage() {
                         {/* Boss Image */}
                         <div className="relative aspect-[3/4] bg-gradient-to-b from-violet-900/10 to-transparent">
                             {boss.image && !boss.image.includes('undefined') ? (
-                                <Image
+                                <NextImage
                                     src={boss.image}
                                     alt={boss.name}
                                     fill

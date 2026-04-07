@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import NextImage from 'next/image'
 import { getBosses } from '@/lib/castle-rush-actions'
 import { Crown } from 'lucide-react'
 
@@ -37,7 +37,7 @@ export default async function AdminCastleRushPage() {
 
                         {/* Boss Image - Horizontal */}
                         <div className="relative aspect-[3168/514] bg-gradient-to-br from-amber-900/10 to-transparent overflow-hidden">
-                            <Image
+                            <NextImage
                                 src={boss.image}
                                 alt={boss.name}
                                 fill

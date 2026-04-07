@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import NextImage from 'next/image'
 import { getBosses } from '@/lib/advent-actions'
 import { Compass } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -73,7 +73,7 @@ export default async function AdventExpeditionPage() {
                                         {/* Image with Skewed Clip Path */}
                                         <div className="absolute inset-0 p-1">
                                             <div className="relative w-full h-full clip-path-skew overflow-hidden bg-gray-900 border border-white/5">
-                                                <Image
+                                                <NextImage
                                                     src={boss.image}
                                                     alt={boss.name}
                                                     fill

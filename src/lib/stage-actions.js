@@ -26,9 +26,10 @@ export async function getStageById(id) {
 
     const [teams] = await pool.query('SELECT * FROM teams WHERE setup_id = ? ORDER BY team_index ASC', [id])
 
-    // Parse JSON fields
+    // Parse JSON fields and map database names to frontend property names
     const parsedTeams = teams.map(t => ({
         ...t,
+        index: t.team_index, // Ensure frontend 'index' property is set from DB 'team_index'
         heroes: typeof t.heroes_json === 'string' ? JSON.parse(t.heroes_json) : (t.heroes_json || [])
     }))
 

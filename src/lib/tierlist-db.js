@@ -6,12 +6,8 @@ import path from "path"
 import { logSiteUpdate } from "@/lib/log-actions"
 import { requireAdmin } from "./auth-guard"
 
-let dbInitialized = false
 async function ensureDB() {
-    if (!dbInitialized) {
-        await initDB()
-        dbInitialized = true
-    }
+    await initDB()
 }
 
 export async function getTierlistData(category) {

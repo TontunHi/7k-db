@@ -1,15 +1,24 @@
 import Link from "next/link"
 import {
     FileImage, ArrowRight, LayoutGrid, Skull, Crown, Landmark,
-    Compass, Zap, TrendingUp, Swords, Shield, Crosshair, Heart, MessageSquare
+    Compass, Zap, TrendingUp, Swords, Shield, Crosshair, Heart, MessageSquare, Users
 } from "lucide-react"
+import { getAdminUser, requireAdmin } from "@/lib/auth-guard"
 
 export const metadata = {
     title: "Admin Dashboard | 7K Database",
     description: "Manage all aspects of the 7K Database."
 }
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+    await requireAdmin()
+    const user = await getAdminUser()
+
+    const hasPermission = (perm) => {
+        if (user?.role === 'super_admin') return true
+        return user?.permissions?.includes(perm) || user?.permissions?.includes('*')
+    }
+
     const categories = [
         {
             title: "General Management",
@@ -21,7 +30,8 @@ export default function AdminDashboard() {
                     href: "/admin/builds",
                     gradient: "from-blue-600 to-cyan-500",
                     shadow: "hover:shadow-blue-500/20",
-                    iconBg: "bg-blue-500/15"
+                    iconBg: "bg-blue-500/15",
+                    perm: "MANAGE_BUILDS"
                 },
                 {
                     title: "Tier List",
@@ -30,7 +40,8 @@ export default function AdminDashboard() {
                     href: "/admin/tierlist",
                     gradient: "from-pink-500 to-fuchsia-600",
                     shadow: "hover:shadow-pink-500/20",
-                    iconBg: "bg-pink-500/15"
+                    iconBg: "bg-pink-500/15",
+                    perm: "MANAGE_TIERLIST"
                 },
                 {
                     title: "Manage Credits",
@@ -39,7 +50,8 @@ export default function AdminDashboard() {
                     href: "/admin/credits",
                     gradient: "from-red-500 to-pink-500",
                     shadow: "hover:shadow-red-500/20",
-                    iconBg: "bg-red-500/15"
+                    iconBg: "bg-red-500/15",
+                    perm: "MANAGE_CREDITS"
                 },
                 {
                     title: "User Messages",
@@ -48,7 +60,8 @@ export default function AdminDashboard() {
                     href: "/admin/messages",
                     gradient: "from-amber-400 to-orange-500",
                     shadow: "hover:shadow-amber-500/20",
-                    iconBg: "bg-amber-500/15"
+                    iconBg: "bg-amber-500/15",
+                    perm: "MANAGE_MESSAGES"
                 }
             ]
         },
@@ -62,7 +75,8 @@ export default function AdminDashboard() {
                     href: "/admin/stages",
                     gradient: "from-[#FFD700] to-amber-600",
                     shadow: "hover:shadow-amber-500/20",
-                    iconBg: "bg-amber-500/15"
+                    iconBg: "bg-amber-500/15",
+                    perm: "MANAGE_STAGES"
                 },
                 {
                     title: "Dungeons",
@@ -71,7 +85,8 @@ export default function AdminDashboard() {
                     href: "/admin/dungeon",
                     gradient: "from-emerald-500 to-teal-600",
                     shadow: "hover:shadow-emerald-500/20",
-                    iconBg: "bg-emerald-500/15"
+                    iconBg: "bg-emerald-500/15",
+                    perm: "MANAGE_DUNGEONS"
                 },
                 {
                     title: "Raids",
@@ -80,7 +95,8 @@ export default function AdminDashboard() {
                     href: "/admin/raid",
                     gradient: "from-red-500 to-rose-600",
                     shadow: "hover:shadow-red-500/20",
-                    iconBg: "bg-red-500/15"
+                    iconBg: "bg-red-500/15",
+                    perm: "MANAGE_RAIDS"
                 },
                 {
                     title: "Castle Rush",
@@ -89,7 +105,8 @@ export default function AdminDashboard() {
                     href: "/admin/castle-rush",
                     gradient: "from-amber-500 to-yellow-600",
                     shadow: "hover:shadow-yellow-500/20",
-                    iconBg: "bg-yellow-500/15"
+                    iconBg: "bg-yellow-500/15",
+                    perm: "MANAGE_CASTLE_RUSH"
                 },
                 {
                     title: "Advent Expedition",
@@ -98,7 +115,8 @@ export default function AdminDashboard() {
                     href: "/admin/advent",
                     gradient: "from-violet-500 to-purple-600",
                     shadow: "hover:shadow-violet-500/20",
-                    iconBg: "bg-violet-500/15"
+                    iconBg: "bg-violet-500/15",
+                    perm: "MANAGE_ADVENT"
                 }
             ]
         },
@@ -112,7 +130,8 @@ export default function AdminDashboard() {
                     href: "/admin/arena",
                     gradient: "from-orange-500 to-red-600",
                     shadow: "hover:shadow-orange-500/20",
-                    iconBg: "bg-orange-500/15"
+                    iconBg: "bg-orange-500/15",
+                    perm: "MANAGE_ARENA"
                 },
                 {
                     title: "Total War",
@@ -121,7 +140,8 @@ export default function AdminDashboard() {
                     href: "/admin/total-war",
                     gradient: "from-rose-500 to-pink-600",
                     shadow: "hover:shadow-rose-500/20",
-                    iconBg: "bg-rose-500/15"
+                    iconBg: "bg-rose-500/15",
+                    perm: "MANAGE_TOTAL_WAR"
                 },
                 {
                     title: "Guild War",
@@ -130,19 +150,44 @@ export default function AdminDashboard() {
                     href: "/admin/guild-war",
                     gradient: "from-indigo-500 to-blue-600",
                     shadow: "hover:shadow-indigo-500/20",
-                    iconBg: "bg-indigo-500/15"
+                    iconBg: "bg-indigo-500/15",
+                    perm: "MANAGE_GUILD_WAR"
+                }
+            ]
+        },
+        {
+            title: "System",
+            items: [
+                {
+                    title: "User Management",
+                    desc: "Create and manage sub-admin accounts.",
+                    icon: Users,
+                    href: "/admin/users",
+                    gradient: "from-cyan-500 to-blue-600",
+                    shadow: "hover:shadow-cyan-500/20",
+                    iconBg: "bg-cyan-500/15",
+                    perm: "MANAGE_USERS",
+                    superOnly: true
                 }
             ]
         }
     ]
 
+    // Filter categories and items
+    const filteredCategories = categories.map(cat => ({
+        ...cat,
+        items: cat.items.filter(item => {
+            if (item.superOnly && user?.role !== 'super_admin') return false
+            return hasPermission(item.perm)
+        })
+    })).filter(cat => cat.items.length > 0)
+
     return (
         <div className="space-y-12 max-w-7xl mx-auto pb-12">
-            {/* Header */}
+            {/* Header omitted for brevity, same as original but with dynamic user name if needed */}
             <div className="relative overflow-hidden rounded-2xl border border-[#FFD700]/20 bg-gradient-to-br from-gray-900 via-[#0a0a0a] to-black p-8 md:p-12 shadow-[0_0_30px_rgba(255,215,0,0.05)]">
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#FFD70008_1px,transparent_1px),linear-gradient(to_bottom,#FFD70008_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
                 <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-[#FFD700] opacity-[0.05] rounded-full blur-[120px]" />
-                <div className="absolute bottom-[-20%] left-[-10%] w-[400px] h-[400px] bg-amber-600 opacity-[0.05] rounded-full blur-[100px]" />
                 
                 <div className="relative space-y-4">
                     <div className="flex items-center gap-4">
@@ -151,19 +196,19 @@ export default function AdminDashboard() {
                         </div>
                         <div>
                             <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight italic uppercase transform -skew-x-6">
-                                Admin <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-amber-500">Dashboard</span>
+                                Hello, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-amber-500">{user?.username}</span>
                             </h1>
+                            <p className="text-[10px] uppercase font-black text-gray-500 tracking-[0.3em] mt-1 ml-1 leading-none">
+                                {user?.role?.replace('_', ' ')} Dashboard
+                            </p>
                         </div>
                     </div>
-                    <p className="text-gray-400 text-base md:text-lg max-w-2xl leading-relaxed pl-1 font-light">
-                        Select a module below to manage content across the database. Categories are structured to mirror the public site's navigation.
-                    </p>
                 </div>
             </div>
 
             {/* Tools Sections */}
             <div className="space-y-12">
-                {categories.map((category, idx) => (
+                {filteredCategories.map((category, idx) => (
                     <div key={idx} className="space-y-6">
                         <div className="flex items-center gap-3">
                             <div className="w-1.5 h-6 bg-gradient-to-b from-[#FFD700] to-amber-600 rounded-full shadow-[0_0_10px_rgba(255,215,0,0.5)]"></div>
@@ -177,15 +222,9 @@ export default function AdminDashboard() {
                                     href={tool.href}
                                     className={`group relative p-6 rounded-2xl bg-[#0a0a0a] border border-gray-800 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:border-gray-600 ${tool.shadow} overflow-hidden flex flex-col h-full`}
                                 >
-                                    {/* Top gradient line */}
                                     <div className={`absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r ${tool.gradient} opacity-50 group-hover:opacity-100 transition-opacity duration-300`} />
-                                    
-                                    {/* Hover gradient overlay */}
                                     <div className={`absolute inset-0 bg-gradient-to-br ${tool.gradient} opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300`} />
                                     
-                                    {/* Background glow top right */}
-                                    <div className={`absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br ${tool.gradient} opacity-0 group-hover:opacity-10 rounded-full blur-3xl transition-opacity duration-500 pointer-events-none`} />
-
                                     <div className="relative flex flex-col h-full z-10">
                                         <div className="flex items-start justify-between mb-5">
                                             <div className={`${tool.iconBg} p-3.5 rounded-xl transition-transform duration-300 group-hover:scale-110 border border-white/5`}>

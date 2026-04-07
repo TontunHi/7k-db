@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, use } from 'react'
+import NextImage from 'next/image'
 import SafeImage from '@/components/shared/SafeImage'
 import Link from 'next/link'
 import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Swords, Zap, X, Pencil, Layers, ChevronDown, ChevronUp } from 'lucide-react'
@@ -509,7 +510,7 @@ export default function AdminTotalWarTierPage({ params }) {
                     {/* Logo */}
                     <div className="relative w-full aspect-square rounded-xl border-2 p-3 bg-gray-900/40"
                         style={{ borderColor: tierCfg.accent + '60' }}>
-                        <Image src={tierCfg.logo} alt={tierCfg.label} fill className="object-contain p-3" priority />
+                        <NextImage src={tierCfg.logo} alt={tierCfg.label} fill className="object-contain p-3" priority />
                     </div>
 
                     {/* Tier Switcher */}
@@ -521,7 +522,7 @@ export default function AdminTotalWarTierPage({ params }) {
                                     t.key === tierKey ? "border-gray-600 bg-gray-800/80" : "border-transparent hover:bg-gray-800/40 hover:border-gray-700"
                                 )}>
                                 <div className="relative w-7 h-7 shrink-0">
-                                    <Image src={t.logo} alt={t.label} fill className="object-contain" sizes="28px" />
+                                    <NextImage src={t.logo} alt={t.label} fill className="object-contain" sizes="28px" />
                                 </div>
                                 <span className="text-xs font-bold" style={{ color: t.key === tierKey ? t.accent : '#6b7280' }}>
                                     {t.label}
@@ -539,7 +540,7 @@ export default function AdminTotalWarTierPage({ params }) {
                 <div className="flex items-center justify-between gap-4 p-4 bg-gray-900/50 border border-gray-800 rounded-xl">
                     <div className="flex items-center gap-3">
                         <div className="relative w-9 h-9 shrink-0">
-                            <Image src={tierCfg.logo} alt={tierCfg.label} fill className="object-contain" sizes="36px" />
+                            <NextImage src={tierCfg.logo} alt={tierCfg.label} fill className="object-contain" sizes="36px" />
                         </div>
                         <div>
                             <h1 className="text-xl font-black" style={{ color: tierCfg.accent }}>{tierCfg.label}</h1>

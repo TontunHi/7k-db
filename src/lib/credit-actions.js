@@ -50,6 +50,7 @@ export async function updateGlobalCredit(id, data) {
     if (!validation.success) return validation
     const validatedData = validation.data
 
+    await initDB()
     try {
         await pool.query(
             'UPDATE global_credits SET platform = ?, name = ?, link = ? WHERE id = ?',
@@ -71,6 +72,7 @@ export async function updateGlobalCredit(id, data) {
 /** Delete a global credit entry */
 export async function deleteGlobalCredit(id) {
     await requireAdmin()
+    await initDB()
     try {
         const [rows] = await pool.query('SELECT name FROM global_credits WHERE id = ?', [id])
         const name = rows[0]?.name || 'Credit'

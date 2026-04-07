@@ -106,6 +106,7 @@ export async function updateSet(id, data) {
     if (!validation.success) return validation
     const validatedData = validation.data
 
+    await initDB()
     try {
         await pool.query(
             `UPDATE raid_sets 
@@ -140,6 +141,7 @@ export async function updateSet(id, data) {
 
 export async function deleteSet(id) {
     await requireAdmin()
+    await initDB()
     try {
         await pool.query('DELETE FROM raid_sets WHERE id = ?', [id])
         

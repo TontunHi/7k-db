@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
+import NextImage from 'next/image'
 import SafeImage from '@/components/shared/SafeImage'
 import Link from 'next/link'
 import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Crown, Zap, X, Pencil } from 'lucide-react'
@@ -348,7 +348,7 @@ export default function BossDetailPage({ params }) {
                     </Link>
                     <div className="flex items-center gap-3">
                         <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-gray-800">
-                            <Image src={boss.image} alt={boss.name} fill className="object-cover" />
+                            <NextImage src={boss.image} alt={boss.name} fill className="object-cover" />
                         </div>
                         <h1 className="text-2xl font-black">{boss.name}</h1>
                     </div>

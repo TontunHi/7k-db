@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import NextImage from 'next/image'
 import SafeImage from '@/components/shared/SafeImage'
 import Link from 'next/link'
 import { Plus, Trash2, Video, Save, Loader2, Zap, X, Pencil, ShieldAlert } from 'lucide-react'
@@ -494,7 +495,7 @@ export default function AdminArenaPage() {
                                                                 )}
                                                             >
                                                                 {slot.skill && heroFile && skillPath && !hasError ? (
-                                                                    <Image
+                                                                    <NextImage
                                                                         src={skillPath}
                                                                         alt=""
                                                                         fill

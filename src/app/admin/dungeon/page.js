@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import NextImage from 'next/image'
 import { getDungeons } from '@/lib/dungeon-actions'
 import { Landmark } from 'lucide-react'
 
@@ -37,7 +37,7 @@ export default async function AdminDungeonPage() {
 
                         {/* Dungeon Image - Horizontal */}
                         <div className="absolute inset-0 w-full h-full">
-                            <Image
+                            <NextImage
                                 src={dungeon.image}
                                 alt={dungeon.name}
                                 fill
