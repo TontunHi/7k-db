@@ -4,7 +4,6 @@ const pool =
   global.mysqlPool ||
   mysql.createPool({
     host: process.env.DB_HOST || "localhost",
-    // เพิ่มการอ่าน Port จาก Environment (TiDB ใช้ 4000)
     port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306, 
     user: process.env.DB_USER || "root",
     password: process.env.DB_PASSWORD || "",
@@ -25,16 +24,35 @@ if (process.env.NODE_ENV !== "production") {
 
 export default pool;
 
-// Helper to init DB
 export async function initDB() {
   if (global.dbInitialized) return;
 
   const connection = await pool.getConnection();
   try {
+    // ─── 0. Create Core Settings ───────────────────────────────────────
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS site_settings (
+        setting_key VARCHAR(100) PRIMARY KEY,
+        setting_value TEXT NOT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )
+    `);
+
+    const getSettingInternal = async (key) => {
+        try {
+            const [rows] = await connection.query("SELECT setting_value FROM site_settings WHERE setting_key = ?", [key]);
+            return rows.length > 0 ? rows[0].setting_value : null;
+        } catch (e) { return null; }
+    };
+
+    const saveSettingInternal = async (key, value) => {
+        await connection.query("INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?", [key, String(value), String(value)]);
+    };
+
+    // ─── 1. Heroes Table & Slug Migration ────────────────────────────────
     await connection.query(`
       CREATE TABLE IF NOT EXISTS heroes (
         filename VARCHAR(255) PRIMARY KEY,
-        slug VARCHAR(255) UNIQUE,
         name VARCHAR(255),
         grade VARCHAR(50),
         skill_priority JSON,
@@ -42,29 +60,36 @@ export async function initDB() {
       )
     `);
 
-    // Ensure slug column exists (for existing tables)
-    const [columns] = await connection.query('SHOW COLUMNS FROM heroes LIKE "slug"');
-    if (columns.length === 0) {
+    // Split Alter for TiDB Compatibility
+    const [heroColumns] = await connection.query('SHOW COLUMNS FROM heroes LIKE "slug"');
+    if (heroColumns.length === 0) {
       try {
-        await connection.query(`ALTER TABLE heroes ADD COLUMN slug VARCHAR(255) UNIQUE AFTER filename`);
+        console.log("[DB] Adding 'slug' column to heroes...");
+        await connection.query(`ALTER TABLE heroes ADD COLUMN slug VARCHAR(255) AFTER filename`);
+        await connection.query(`CREATE UNIQUE INDEX idx_hero_slug ON heroes(slug)`);
       } catch (e) { 
-        console.warn("Could not add slug column, it might already exist or there is a permission issue:", e.message); 
+        console.warn("[DB] Could not add slug column/index:", e.message); 
       }
     }
 
     // Populate slug if null
-    try {
-      const [heroes] = await connection.query(`SELECT filename, slug FROM heroes WHERE slug IS NULL`);
-      if (heroes.length > 0) {
-        for (const h of heroes) {
-          const slug = h.filename.replace(/\.[^/.]+$/, "");
-          await connection.query(`UPDATE heroes SET slug = ? WHERE filename = ?`, [slug, h.filename]);
+    const [finalHeroCols] = await connection.query('SHOW COLUMNS FROM heroes LIKE "slug"');
+    if (finalHeroCols.length > 0) {
+        try {
+            const [heroes] = await connection.query(`SELECT filename, slug FROM heroes WHERE slug IS NULL`);
+            if (heroes.length > 0) {
+                console.log(`[DB] Migrating ${heroes.length} hero slugs...`);
+                for (const h of heroes) {
+                    const slug = h.filename.replace(/\.[^/.]+$/, "");
+                    await connection.query(`UPDATE heroes SET slug = ? WHERE filename = ?`, [slug, h.filename]);
+                }
+            }
+        } catch (e) {
+            console.warn("[DB] Could not migrate slugs:", e.message);
         }
-      }
-    } catch (e) {
-      console.warn("Could not migrate slugs:", e.message);
     }
 
+    // ─── 2. Content Tables ──────────────────────────────────────────────
     await connection.query(`
       CREATE TABLE IF NOT EXISTS builds (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -81,12 +106,10 @@ export async function initDB() {
       )
     `);
 
-    // Add min_stats column to builds if missing
     try {
-      await connection.query(`ALTER TABLE builds ADD COLUMN min_stats JSON AFTER substats`);
-    } catch (e) {
-      // Column already exists, ignore
-    }
+        const [check] = await connection.query(`SHOW COLUMNS FROM builds LIKE "min_stats"`);
+        if (check.length === 0) { await connection.query(`ALTER TABLE builds ADD COLUMN min_stats JSON AFTER substats`); }
+    } catch (e) {}
 
     await connection.query(`
       CREATE TABLE IF NOT EXISTS tierlist (
@@ -138,18 +161,15 @@ export async function initDB() {
       )
     `);
 
-    // Add skill_rotation column if missing (for existing databases)
-    try {
-      await connection.query(`ALTER TABLE castle_rush_sets ADD COLUMN skill_rotation JSON AFTER heroes_json`);
-    } catch (e) {
-      // Column already exists, ignore
-    }
-
-    // Add team_name column if missing (for existing databases)
-    try {
-      await connection.query(`ALTER TABLE castle_rush_sets ADD COLUMN team_name VARCHAR(100) AFTER set_index`);
-    } catch (e) {
-      // Column already exists, ignore
+    const castleCols = [
+        { name: 'skill_rotation', type: 'JSON', after: 'heroes_json' },
+        { name: 'team_name', type: 'VARCHAR(100)', after: 'set_index' }
+    ];
+    for (const c of castleCols) {
+        const [check] = await connection.query('SHOW COLUMNS FROM castle_rush_sets LIKE ?', [c.name]);
+        if (check.length === 0) {
+            try { await connection.query(`ALTER TABLE castle_rush_sets ADD COLUMN ${c.name} ${c.type} AFTER ${c.after}`); } catch (e) {}
+        }
     }
 
     await connection.query(`
@@ -168,16 +188,15 @@ export async function initDB() {
       )
     `);
 
-    // Add aura column if missing
-    try {
-      await connection.query(`ALTER TABLE dungeon_sets ADD COLUMN aura VARCHAR(20) AFTER pet_file`);
-    } catch (e) { /* Column already exists */ }
-
-    // Add skill_rotation column if missing (for existing databases)
-    try {
-      await connection.query(`ALTER TABLE dungeon_sets ADD COLUMN skill_rotation JSON AFTER heroes_json`);
-    } catch (e) {
-      // Column already exists, ignore
+    const dungeonCols = [
+        { name: 'aura', type: 'VARCHAR(20)', after: 'pet_file' },
+        { name: 'skill_rotation', type: 'JSON', after: 'heroes_json' }
+    ];
+    for (const c of dungeonCols) {
+        const [check] = await connection.query('SHOW COLUMNS FROM dungeon_sets LIKE ?', [c.name]);
+        if (check.length === 0) {
+            try { await connection.query(`ALTER TABLE dungeon_sets ADD COLUMN ${c.name} ${c.type} AFTER ${c.after}`); } catch (e) {}
+        }
     }
 
     await connection.query(`
@@ -215,12 +234,10 @@ export async function initDB() {
       )
     `);
 
-    // Add team_name column if missing (for existing databases)
     try {
-      await connection.query(`ALTER TABLE advent_expedition_sets ADD COLUMN team_name VARCHAR(100) AFTER set_index`);
-    } catch (e) {
-      // Column already exists, ignore
-    }
+        const [check] = await connection.query('SHOW COLUMNS FROM advent_expedition_sets LIKE "team_name"');
+        if (check.length === 0) { await connection.query(`ALTER TABLE advent_expedition_sets ADD COLUMN team_name VARCHAR(100) AFTER set_index`); }
+    } catch (e) {}
 
     await connection.query(`
       CREATE TABLE IF NOT EXISTS arena_teams (
@@ -241,7 +258,7 @@ export async function initDB() {
       CREATE TABLE IF NOT EXISTS guild_war_teams (
         id INT AUTO_INCREMENT PRIMARY KEY,
         team_index INT NOT NULL DEFAULT 1,
-        type VARCHAR(50) NOT NULL, /* attacker or defender */
+        type VARCHAR(50) NOT NULL,
         team_name VARCHAR(100),
         formation VARCHAR(50) NOT NULL,
         pet_file VARCHAR(255),
@@ -252,7 +269,6 @@ export async function initDB() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
-
 
     await connection.query(`
       CREATE TABLE IF NOT EXISTS total_war_sets (
@@ -282,30 +298,22 @@ export async function initDB() {
       )
     `);
 
-    // ─── Migrate total_war_teams: old schema had 'tier' column, new schema uses 'set_id' ───
-    // Add set_id column if missing
     try {
-      await connection.query(`ALTER TABLE total_war_teams ADD COLUMN set_id INT NOT NULL DEFAULT 0 AFTER id`);
-    } catch (e) { /* Already exists */ }
+        const [cols] = await connection.query('SHOW COLUMNS FROM total_war_teams LIKE "set_id"');
+        if (cols.length === 0) {
+            await connection.query(`ALTER TABLE total_war_teams ADD COLUMN set_id INT NOT NULL DEFAULT 0 AFTER id`);
+            try { await connection.query(`ALTER TABLE total_war_teams ADD CONSTRAINT fk_tw_team_set FOREIGN KEY (set_id) REFERENCES total_war_sets(id) ON DELETE CASCADE`); } catch (e) {}
+        }
+        const [tierCols] = await connection.query('SHOW COLUMNS FROM total_war_teams LIKE "tier"');
+        if (tierCols.length > 0) { await connection.query(`ALTER TABLE total_war_teams DROP COLUMN tier`); }
+    } catch (e) {}
 
-    // Drop old 'tier' column if still present
     try {
-      await connection.query(`ALTER TABLE total_war_teams DROP COLUMN tier`);
-    } catch (e) { /* Already dropped */ }
+        const [checkNewHero] = await connection.query('SHOW COLUMNS FROM heroes LIKE "is_new_hero"');
+        if (checkNewHero.length === 0) { await connection.query(`ALTER TABLE heroes ADD COLUMN is_new_hero TINYINT(1) DEFAULT 0`); }
+    } catch (e) {}
 
-    // Add foreign key if missing (may fail if FK already exists — that's fine)
-    try {
-      await connection.query(`ALTER TABLE total_war_teams ADD CONSTRAINT fk_tw_team_set FOREIGN KEY (set_id) REFERENCES total_war_sets(id) ON DELETE CASCADE`);
-    } catch (e) { /* Already exists */ }
-
-    // Add is_new_hero column to heroes table if missing
-    try {
-      await connection.query(`ALTER TABLE heroes ADD COLUMN is_new_hero TINYINT(1) DEFAULT 0 AFTER skill_priority`);
-    } catch (e) {
-      // Column already exists, ignore
-    }
-
-    // ─── Site Updates Log ─────────────────────────────────────────────────────
+    // ─── 3. System Tables ──────────────────────────────────────────────
     await connection.query(`
       CREATE TABLE IF NOT EXISTS site_updates (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -317,7 +325,6 @@ export async function initDB() {
       )
     `);
     
-    // ─── Global Credits ──────────────────────────────────────────────────────
     await connection.query(`
       CREATE TABLE IF NOT EXISTS global_credits (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -328,80 +335,89 @@ export async function initDB() {
       )
     `);
 
-    // ─── One-time Migration: Filename -> Slug (Extension-Agnostic) ───────────
-    // If the user uses different extensions, we now link by "slug" (no extension)
-    try {
-        await connection.query("SET FOREIGN_KEY_CHECKS = 0");
-        
-        // Update main hero table - Strip any extension (.png, .webp, .jpg, etc.)
-        await connection.query(`
-            UPDATE heroes 
-            SET filename = LEFT(filename, LENGTH(filename) - LOCATE('.', REVERSE(filename))) 
-            WHERE filename LIKE '%.%'
-        `);
-        
-        // Update dependent tables
-        await connection.query(`
-            UPDATE builds 
-            SET hero_filename = LEFT(hero_filename, LENGTH(hero_filename) - LOCATE('.', REVERSE(hero_filename))) 
-            WHERE hero_filename LIKE '%.%'
-        `);
-        
-        await connection.query(`
-            UPDATE tierlist 
-            SET hero_filename = LEFT(hero_filename, LENGTH(hero_filename) - LOCATE('.', REVERSE(hero_filename))) 
-            WHERE hero_filename LIKE '%.%'
-        `);
-
-        // Update JSON columns in all other tables
-        const jsonTables = [
-            { table: 'raid_sets', cols: ['heroes_json'] },
-            { table: 'teams', cols: ['heroes_json'] },
-            { table: 'castle_rush_sets', cols: ['heroes_json'] },
-            { table: 'dungeon_sets', cols: ['heroes_json'] },
-            { table: 'advent_expedition_sets', cols: ['team1_heroes_json', 'team2_heroes_json'] },
-            { table: 'arena_teams', cols: ['heroes_json'] },
-            { table: 'guild_war_teams', cols: ['heroes_json'] },
-            { table: 'total_war_teams', cols: ['heroes_json'] }
-        ];
-
-        const stripExt = (arr) => {
-            if (!Array.isArray(arr)) return arr;
-            return arr.map(item => typeof item === 'string' ? item.replace(/\.[^/.]+$/, "") : item);
-        };
-
-        for (const target of jsonTables) {
-            const [rows] = await connection.query(`SELECT id, ${target.cols.join(', ')} FROM ${target.table}`);
-            for (const row of rows) {
-                let needsUpdate = false;
-                const updates = {};
-                for (const col of target.cols) {
-                    if (!row[col]) continue;
-                    const original = typeof row[col] === 'string' ? JSON.parse(row[col]) : row[col];
-                    const sanitized = stripExt(original);
-                    if (JSON.stringify(original) !== JSON.stringify(sanitized)) {
-                        updates[col] = JSON.stringify(sanitized);
-                        needsUpdate = true;
-                    }
-                }
-                if (needsUpdate) {
-                    const setClause = Object.keys(updates).map(col => `${col} = ?`).join(', ');
-                    await connection.query(`UPDATE ${target.table} SET ${setClause} WHERE id = ?`, [...Object.values(updates), row.id]);
-                }
-            }
-        }
-
-        await connection.query("SET FOREIGN_KEY_CHECKS = 1");
-    } catch (e) {
-        console.warn("[Migration] Slug migration error or already done:", e.message);
-        await connection.query("SET FOREIGN_KEY_CHECKS = 1");
+    const defaults = { 'contact_form_enabled': 'true' };
+    for (const [key, val] of Object.entries(defaults)) {
+        await connection.query(`INSERT IGNORE INTO site_settings (setting_key, setting_value) VALUES (?, ?)`, [key, val]);
     }
 
-    console.log("Database tables initialized successfully via secure connection.");
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS contact_messages (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(200) NOT NULL,
+        email VARCHAR(200) NOT NULL,
+        subject VARCHAR(200),
+        message TEXT NOT NULL,
+        status ENUM('unread', 'read') NOT NULL DEFAULT 'unread',
+        ip_address VARCHAR(45),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // ─── 4. Extension Strip Migration (One-time) ────────────────────────
+    const migrationDone = await getSettingInternal('migration_v1_ext_strip');
+    if (!migrationDone) {
+        try {
+            console.log("[Migration] Starting filename-to-slug extension strip...");
+            await connection.query("SET FOREIGN_KEY_CHECKS = 0");
+            
+            await connection.query(`UPDATE heroes SET filename = LEFT(filename, LENGTH(filename) - LOCATE('.', REVERSE(filename))) WHERE filename LIKE '%.%'`);
+            
+            const tablesToUpdate = ['builds', 'tierlist'];
+            for (const t of tablesToUpdate) {
+                await connection.query(`UPDATE ${t} SET hero_filename = LEFT(hero_filename, LENGTH(hero_filename) - LOCATE('.', REVERSE(hero_filename))) WHERE hero_filename LIKE '%.%'`);
+            }
+
+            const jsonTables = [
+                { table: 'raid_sets', cols: ['heroes_json'] },
+                { table: 'teams', cols: ['heroes_json'] },
+                { table: 'castle_rush_sets', cols: ['heroes_json'] },
+                { table: 'dungeon_sets', cols: ['heroes_json'] },
+                { table: 'advent_expedition_sets', cols: ['team1_heroes_json', 'team2_heroes_json'] },
+                { table: 'arena_teams', cols: ['heroes_json'] },
+                { table: 'guild_war_teams', cols: ['heroes_json'] },
+                { table: 'total_war_teams', cols: ['heroes_json'] }
+            ];
+
+            const stripExt = (arr) => {
+                if (!Array.isArray(arr)) return arr;
+                return arr.map(item => typeof item === 'string' ? item.replace(/\.[^/.]+$/, "") : item);
+            };
+
+            for (const target of jsonTables) {
+                const [rows] = await connection.query(`SELECT id, ${target.cols.join(', ')} FROM ${target.table}`);
+                for (const row of rows) {
+                    let needsUpdate = false;
+                    const updates = {};
+                    for (const col of target.cols) {
+                        if (!row[col]) continue;
+                        const original = typeof row[col] === 'string' ? JSON.parse(row[col]) : row[col];
+                        const sanitized = stripExt(original);
+                        if (JSON.stringify(original) !== JSON.stringify(sanitized)) {
+                            updates[col] = JSON.stringify(sanitized);
+                            needsUpdate = true;
+                        }
+                    }
+                    if (needsUpdate) {
+                        const setClause = Object.keys(updates).map(col => `${col} = ?`).join(', ');
+                        await connection.query(`UPDATE ${target.table} SET ${setClause} WHERE id = ?`, [...Object.values(updates), row.id]);
+                    }
+                }
+            }
+
+            await connection.query("SET FOREIGN_KEY_CHECKS = 1");
+            await saveSettingInternal('migration_v1_ext_strip', 'done');
+            console.log("[Migration] Successfully finished extension strip.");
+        } catch (e) {
+            console.warn("[Migration] Extension strip failed:", e.message);
+            await connection.query("SET FOREIGN_KEY_CHECKS = 1");
+        }
+    }
+
+    console.log("Database initialized successfully.");
     global.dbInitialized = true;
   } catch (err) {
     console.error("Error initializing DB:", err);
   } finally {
     connection.release();
   }
-}
+}

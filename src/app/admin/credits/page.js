@@ -12,14 +12,15 @@ import {
     Plus, Trash2, Save, Loader2, ArrowLeft, 
     Youtube, Share2, Facebook, MessageSquare, Link as LinkIcon, Edit2, X
 } from 'lucide-react'
+import { TiktokIcon, DiscordIcon } from '@/components/shared/BrandIcons'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
 const PLATFORMS = [
-    { id: 'youtube', name: 'YouTube', icon: Youtube, color: 'text-red-500' },
-    { id: 'tiktok', name: 'TikTok', icon: Share2, color: 'text-pink-500' },
-    { id: 'facebook', name: 'Facebook', icon: Facebook, color: 'text-blue-500' },
-    { id: 'discord', name: 'Discord', icon: MessageSquare, color: 'text-indigo-400' },
+    { id: 'youtube', name: 'YouTube', icon: Youtube, color: 'text-[#FF0000]' },
+    { id: 'tiktok', name: 'TikTok', icon: TiktokIcon, color: 'text-white' },
+    { id: 'facebook', name: 'Facebook', icon: Facebook, color: 'text-[#1877F2]' },
+    { id: 'discord', name: 'Discord', icon: DiscordIcon, color: 'text-[#5865F2]' },
     { id: 'other', name: 'Other', icon: LinkIcon, color: 'text-gray-400' },
 ]
 

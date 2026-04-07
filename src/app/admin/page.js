@@ -1,7 +1,7 @@
 import Link from "next/link"
 import {
     FileImage, ArrowRight, LayoutGrid, Skull, Crown, Landmark,
-    Compass, Zap, TrendingUp, Swords, Shield, Crosshair, Heart
+    Compass, Zap, TrendingUp, Swords, Shield, Crosshair, Heart, MessageSquare
 } from "lucide-react"
 
 export const metadata = {
@@ -40,6 +40,15 @@ export default function AdminDashboard() {
                     gradient: "from-red-500 to-pink-500",
                     shadow: "hover:shadow-red-500/20",
                     iconBg: "bg-red-500/15"
+                },
+                {
+                    title: "User Messages",
+                    desc: "View and manage user inquiries and site settings.",
+                    icon: MessageSquare,
+                    href: "/admin/messages",
+                    gradient: "from-amber-400 to-orange-500",
+                    shadow: "hover:shadow-amber-500/20",
+                    iconBg: "bg-amber-500/15"
                 }
             ]
         },

@@ -1,8 +1,10 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Suspense } from 'react'
 import { Sword, Map, Skull, Landmark, Trophy, ArrowRight, Crown, Compass, Swords } from 'lucide-react'
 import RecentUpdates from '@/components/shared/RecentUpdates'
 import GlobalCredits from '@/components/shared/GlobalCredits'
+import GuildCta from '@/components/home/GuildCta'
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -131,6 +133,32 @@ export default async function HomePage() {
                             >
                                 Contact for Partnership
                             </Link>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Promote Guild Section */}
+                <div className="max-w-7xl mx-auto mb-16 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-500">
+                    <div className="group relative rounded-3xl overflow-hidden border border-gray-800 bg-[#0a0a0a] shadow-2xl transition-all duration-500 hover:border-[#FFD700]/30">
+                        {/* Content Overlay for mobile/text if needed */}
+                        <div className="relative aspect-[21/9] md:aspect-[32/9] w-full h-full">
+                            <Image 
+                                src="/about_website/guild_banner.webp" 
+                                alt="Promote Guild"
+                                fill
+                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                priority
+                            />
+                            {/* Gradient Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 md:opacity-40" />
+                            
+                            {/* Client CTA Overlay */}
+                            <GuildCta />
+                        </div>
+
+                        {/* Top corner highlight */}
+                        <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="w-2 h-2 rounded-full bg-[#FFD700] shadow-[0_0_10px_#FFD700]" />
                         </div>
                     </div>
                 </div>

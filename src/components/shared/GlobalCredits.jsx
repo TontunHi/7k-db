@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react'
 import { getGlobalCredits } from '@/lib/credit-actions'
 import { Youtube, Share2, Facebook, MessageSquare, Link as LinkIcon, Heart, Loader2 } from 'lucide-react'
+import { TiktokIcon, DiscordIcon } from '@/components/shared/BrandIcons'
 import { cn } from '@/lib/utils'
 
 const PLATFORMS = {
-    youtube: { icon: Youtube, color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/20' },
-    tiktok: { icon: Share2, color: 'text-pink-500', bg: 'bg-pink-500/10', border: 'border-pink-500/20' },
-    facebook: { icon: Facebook, color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
-    discord: { icon: MessageSquare, color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20' },
+    youtube: { icon: Youtube, color: 'text-[#FF0000]', bg: 'bg-red-500/10', border: 'border-red-500/20' },
+    tiktok: { icon: TiktokIcon, color: 'text-white', bg: 'bg-white/5', border: 'border-white/10' },
+    facebook: { icon: Facebook, color: 'text-[#1877F2]', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
+    discord: { icon: DiscordIcon, color: 'text-[#5865F2]', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20' },
     other: { icon: LinkIcon, color: 'text-gray-400', bg: 'bg-gray-500/10', border: 'border-gray-500/20' },
 }
 
