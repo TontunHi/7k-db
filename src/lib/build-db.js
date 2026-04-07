@@ -15,6 +15,7 @@ async function ensureDB() {
 }
 
 import { validateData, HeroSchema, BuildSchema } from './validation'
+import { logSiteUpdate } from './log-actions'
 
 // === DB Operations ===
 
@@ -80,6 +81,9 @@ export async function saveHeroData(hero) {
         JSON.stringify(validatedHero.skillPriority || []), 
         validatedHero.is_new_hero ? 1 : 0
     ])
+
+    // Log update
+    await logSiteUpdate('HERO', validatedHero.name, 'UPDATE', `Updated data for hero: ${validatedHero.name}`)
     
     return { success: true }
 }
@@ -139,6 +143,16 @@ export async function saveHeroBuilds(heroFilename, builds) {
         }
 
         await connection.commit()
+        
+        // Log update
+        try {
+            const [heroRows] = await connection.query("SELECT name FROM heroes WHERE filename = ?", [slug])
+            const heroName = heroRows[0]?.name || slug
+            await logSiteUpdate('HERO', heroName, 'UPDATE', `Optimized builds for ${heroName}`)
+        } catch (logErr) {
+            console.error("Auto-logging failed:", logErr)
+        }
+
         return { success: true }
     } catch (error) {
         await connection.rollback()

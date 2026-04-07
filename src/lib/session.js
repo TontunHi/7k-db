@@ -3,7 +3,11 @@
  * This is 100% Edge and Node.js compatible (using Web Crypto API).
  */
 
-const SECRET = process.env.ADMIN_PASSWORD || 'default_session_secret'
+const SECRET = process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || 'default_session_secret'
+
+if (process.env.NODE_ENV === 'production' && SECRET === 'default_session_secret') {
+    console.warn("\x1b[33m[SECURITY WARNING] Using default session secret in production. Set SESSION_SECRET env variable!\x1b[0m")
+}
 
 /**
  * Generate a cryptographically secure random session ID

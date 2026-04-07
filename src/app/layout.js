@@ -17,6 +17,7 @@ const prompt = Prompt({
 })
 
 export const metadata = {
+  metadataBase: new URL('https://7k-db.com'),
   title: {
     default: "7K DB - Seven Knights Rebirth Database",
     template: "%s | 7K DB"

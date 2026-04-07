@@ -7,6 +7,6 @@ export default function robots() {
         disallow: ["/admin", "/api"],
       },
     ],
-    sitemap: "https://7k-rebirth.com/sitemap.xml",
+    sitemap: "https://7k-db.com/sitemap.xml",
   };
 }

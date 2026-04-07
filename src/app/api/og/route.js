@@ -122,7 +122,7 @@ export async function GET(request) {
           >
             <div style={{ width: '40px', height: '1px', background: 'rgba(255,255,255,0.2)' }} />
             <div style={{ fontSize: '20px', color: 'rgba(255,255,255,0.4)', fontWeight: 600, letterSpacing: '0.1em' }}>
-              7K-REBIRTH.COM
+              7K-DB.COM
             </div>
             <div style={{ width: '40px', height: '1px', background: 'rgba(255,255,255,0.2)' }} />
           </div>

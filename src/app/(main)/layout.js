@@ -19,7 +19,7 @@ export const metadata = {
     openGraph: {
         type: "website",
         locale: "en_US",
-        url: "https://7k-rebirth.com",
+        url: "https://7k-db.com",
         siteName: "Seven Knights Rebirth Database",
         title: "Seven Knights Rebirth Database — Builds, Guides, & Tools",
         description: "The ultimate resource for Seven Knights Rebirth. Find the best hero builds, stage guides, raid strategies, and tier lists.",

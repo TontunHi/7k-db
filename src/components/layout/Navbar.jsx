@@ -110,9 +110,10 @@ export default function Navbar() {
                                     "absolute top-full pt-2 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50",
                                     index > 2 ? "right-0" : "left-0"
                                 )}>
-                                    <div className="bg-[#0a0a0a] border border-gray-800 rounded-xl shadow-2xl overflow-hidden p-1.5">
-                                        <div className="absolute inset-0 bg-gradient-to-b from-[#FFD700]/5 to-transparent pointer-events-none"></div>
-                                        {item.children.map((child) => (
+                                    <div className="relative bg-[#0a0a0a] border border-gray-800 rounded-xl shadow-2xl overflow-hidden p-1.5">
+                                        <div className="absolute inset-0 bg-gradient-to-b from-[#FFD700]/5 to-transparent pointer-events-none z-0" />
+                                        <div className="relative z-10">
+                                            {item.children.map((child) => (
                                             <Link
                                                 key={child.href}
                                                 href={child.href}
@@ -126,6 +127,7 @@ export default function Navbar() {
                                                 {child.name}
                                             </Link>
                                         ))}
+                                        </div>
                                     </div>
                                 </div>
                             )}

@@ -1,7 +1,7 @@
 import { getAllHeroes } from '@/lib/stage-actions'
 
 export default async function sitemap() {
-  const baseUrl = 'https://7k-rebirth.com'
+  const baseUrl = 'https://7k-db.com'
 
   // 1. Static Routes
   const staticRoutes = [
