@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import SafeImage from "../shared/SafeImage"
 import { clsx } from "clsx"
 import { Loader2 } from "lucide-react"
@@ -9,6 +10,7 @@ import BuildViewerModal from "./BuildViewerModal"
 import { fetchHeroBuildData } from "@/lib/viewer-actions"
 
 export default function BuildView({ heroes }) {
+    const router = useRouter()
     const [activeTab, setActiveTab] = useState("legendary") // 'legendary' | 'rare'
     const [searchQuery, setSearchQuery] = useState("")
 

@@ -39,6 +39,13 @@ export default function Navbar() {
                 { name: "Guild War", href: "/guild-war" },
             ]
         },
+        {
+            name: "Tools",
+            href: "#",
+            children: [
+                { name: "Build Heroes", href: "/tools/build-simulator" },
+            ]
+        },
     ]
 
     const toggleDropdown = (name) => {

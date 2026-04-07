@@ -65,7 +65,7 @@ export default function BuildViewerModal({ hero, data, onClose }) {
 
                     {/* Hero Info & Skills */}
                     <div className="flex-1 flex flex-col justify-center space-y-4">
-                        <div>
+                        <div className="flex items-center gap-4">
                             <h2 className="text-3xl font-black text-foreground tracking-tight uppercase italic transform -skew-x-6 drop-shadow-md">
                                 {hero.name}
                             </h2>

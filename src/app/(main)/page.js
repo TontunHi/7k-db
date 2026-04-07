@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Suspense } from 'react'
-import { Sword, Map, Skull, Landmark, Trophy, ArrowRight, Crown, Compass, Swords } from 'lucide-react'
+import { Sword, Map, Skull, Landmark, Trophy, ArrowRight, Crown, Compass, Swords, Wand2 } from 'lucide-react'
 import RecentUpdates from '@/components/shared/RecentUpdates'
 import GlobalCredits from '@/components/shared/GlobalCredits'
 import GuildCta from '@/components/home/GuildCta'
@@ -85,6 +85,13 @@ export default async function HomePage() {
             href: "/guild-war",
             color: "from-blue-600 to-indigo-700",
             glow: "group-hover:shadow-[0_0_30px_rgba(37,99,235,0.3)]"
+        },
+        {
+            title: "Build Heroes",
+            icon: Wand2,
+            href: "/tools/build-simulator",
+            color: "from-[#FFD700] via-amber-500 to-orange-600",
+            glow: "group-hover:shadow-[0_0_40px_rgba(255,215,0,0.4)]"
         },
     ]
 
