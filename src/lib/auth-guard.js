@@ -16,7 +16,18 @@ export async function getAdminUser() {
     const [rows] = await pool.query("SELECT id, username, role, permissions FROM users WHERE id = ?", [userId])
     
     if (rows.length === 0) return null
-    return rows[0]
+    
+    const user = rows[0]
+    // Parse permissions if it's a string (JSON column might return as string)
+    if (typeof user.permissions === 'string') {
+        try {
+            user.permissions = JSON.parse(user.permissions)
+        } catch (e) {
+            user.permissions = []
+        }
+    }
+    
+    return user
 }
 
 /**
