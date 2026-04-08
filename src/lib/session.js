@@ -5,8 +5,16 @@
 
 const SECRET = process.env.SESSION_SECRET
 
-if (!SECRET) {
-    throw new Error("\x1b[31m[SECURITY FATAL] SESSION_SECRET is missing from environment variables!\x1b[0m")
+function getSecret() {
+    if (!SECRET) {
+        // Only throw if we are in production and NOT in a build phase
+        // During build, we allow a fallback to prevent Next.js from crashing
+        if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PHASE?.includes('build')) {
+            throw new Error("\x1b[31m[SECURITY FATAL] SESSION_SECRET is missing from environment variables!\x1b[0m")
+        }
+        return 'build-time-fallback-secret'
+    }
+    return SECRET
 }
 
 /**
@@ -21,7 +29,8 @@ export function generateSessionId() {
  */
 export async function createSignedToken(payload) {
     const encoder = new TextEncoder()
-    const keyData = encoder.encode(SECRET)
+    const currentSecret = getSecret()
+    const keyData = encoder.encode(currentSecret)
     const key = await crypto.subtle.importKey(
         'raw', 
         keyData, 
