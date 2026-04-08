@@ -8,6 +8,79 @@ import FormationSelector from './FormationSelector'
 
 import { getSlotType, getStaggerClass } from '@/lib/formation-utils'
 
+// Modal Components
+const HeroPicker = ({ isOpen, sortedHeroesList, onSelect, onClose }) => {
+    if (isOpen === null) return null
+    return (
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in">
+            <div className="bg-gray-900 w-full max-w-4xl h-[85vh] rounded-2xl border border-gray-700 flex flex-col shadow-2xl">
+                <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-black/50">
+                    <div>
+                        <h3 className="text-2xl font-black text-white tracking-tight">Select Hero</h3>
+                        <p className="text-sm text-gray-400 mt-1">Choose a hero for this slot</p>
+                    </div>
+                    <button onClick={onClose} className="p-3 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400">
+                        <X size={24} />
+                    </button>
+                </div>
+                <div className="flex-1 overflow-y-auto p-6 grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-3 auto-rows-max">
+                    {sortedHeroesList.map(h => (
+                        <button
+                            key={h.filename}
+                            onClick={() => onSelect(h.filename)}
+                            className="group relative aspect-[3/4] rounded-xl overflow-hidden border-2 border-gray-700 hover:border-[#FFD700] hover:shadow-[0_0_20px_rgba(255,215,0,0.3)] transition-all bg-black"
+                        >
+                            <SafeImage
+                                src={`/heroes/${h.filename}`}
+                                alt={h.name}
+                                fill
+                                className="object-cover group-hover:scale-110 transition-transform duration-300"
+                                sizes="(max-width: 768px) 25vw, 15vw"
+                            />
+                        </button>
+                    ))}
+                </div>
+            </div>
+        </div>
+    )
+}
+
+const PetPicker = ({ isOpen, petsList, onSelect, onClose }) => {
+    if (!isOpen) return null
+    return (
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in">
+            <div className="bg-gray-900 w-full max-w-3xl max-h-[80vh] rounded-2xl border border-gray-700 flex flex-col shadow-2xl">
+                <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-black/50">
+                    <div>
+                        <h3 className="text-2xl font-black text-white tracking-tight">Select Pet</h3>
+                        <p className="text-sm text-gray-400 mt-1">Choose a pet for this team</p>
+                    </div>
+                    <button onClick={onClose} className="p-3 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400">
+                        <X size={24} />
+                    </button>
+                </div>
+                <div className="flex-1 overflow-y-auto p-6 grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3">
+                    {petsList.map(p => (
+                        <button
+                            key={p}
+                            onClick={() => onSelect(p)}
+                            className="group flex items-center justify-center aspect-square rounded-xl border-2 border-gray-700 hover:border-[#FFD700] hover:shadow-[0_0_20px_rgba(255,215,0,0.3)] transition-all bg-gradient-to-b from-gray-800 to-black"
+                        >
+                            <SafeImage 
+                                src={p} 
+                                alt="Pet" 
+                                width={80}
+                                height={80}
+                                className="object-contain group-hover:scale-110 transition-transform duration-300" 
+                            />
+                        </button>
+                    ))}
+                </div>
+            </div>
+        </div>
+    )
+}
+
 export default function TeamBuilder({
     team,
     index,
@@ -81,72 +154,6 @@ export default function TeamBuilder({
         setIsPetOpen(false)
     }
 
-    // Modal Components
-    const HeroPicker = () => (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in">
-            <div className="bg-gray-900 w-full max-w-4xl h-[85vh] rounded-2xl border border-gray-700 flex flex-col shadow-2xl">
-                <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-black/50">
-                    <div>
-                        <h3 className="text-2xl font-black text-white tracking-tight">Select Hero</h3>
-                        <p className="text-sm text-gray-400 mt-1">Choose a hero for this slot</p>
-                    </div>
-                    <button onClick={() => setIsHeroOpen(null)} className="p-3 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400">
-                        <X size={24} />
-                    </button>
-                </div>
-                <div className="flex-1 overflow-y-auto p-6 grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-3 auto-rows-max">
-                    {sortedHeroesList.map(h => (
-                        <button
-                            key={h.filename}
-                            onClick={() => handleHeroSelect(h.filename)}
-                            className="group relative aspect-[3/4] rounded-xl overflow-hidden border-2 border-gray-700 hover:border-[#FFD700] hover:shadow-[0_0_20px_rgba(255,215,0,0.3)] transition-all bg-black"
-                        >
-                            <SafeImage
-                                src={`/heroes/${h.filename}`}
-                                alt={h.name}
-                                fill
-                                className="object-cover group-hover:scale-110 transition-transform duration-300"
-                                sizes="(max-width: 768px) 25vw, 15vw"
-                            />
-                        </button>
-                    ))}
-                </div>
-            </div>
-        </div>
-    )
-
-    const PetPicker = () => (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in">
-            <div className="bg-gray-900 w-full max-w-3xl max-h-[80vh] rounded-2xl border border-gray-700 flex flex-col shadow-2xl">
-                <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-black/50">
-                    <div>
-                        <h3 className="text-2xl font-black text-white tracking-tight">Select Pet</h3>
-                        <p className="text-sm text-gray-400 mt-1">Choose a pet for this team</p>
-                    </div>
-                    <button onClick={() => setIsPetOpen(false)} className="p-3 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400">
-                        <X size={24} />
-                    </button>
-                </div>
-                <div className="flex-1 overflow-y-auto p-6 grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3">
-                    {petsList.map(p => (
-                        <button
-                            key={p}
-                            onClick={() => handlePetSelect(p)}
-                            className="group flex items-center justify-center aspect-square rounded-xl border-2 border-gray-700 hover:border-[#FFD700] hover:shadow-[0_0_20px_rgba(255,215,0,0.3)] transition-all bg-gradient-to-b from-gray-800 to-black"
-                        >
-                            <SafeImage 
-                                src={p} 
-                                alt="Pet" 
-                                width={80}
-                                height={80}
-                                className="object-contain group-hover:scale-110 transition-transform duration-300" 
-                            />
-                        </button>
-                    ))}
-                </div>
-            </div>
-        </div>
-    )
 
     return (
         <div className={cn("space-y-8 bg-muted/5 rounded-3xl p-6 md:p-8 border border-border/50", className)}>
@@ -275,8 +282,20 @@ export default function TeamBuilder({
             </div>
 
             {/* Modals */}
-            {isHeroOpen !== null && <HeroPicker />}
-            {isPetOpen && <PetPicker />}
+            {/* Modals */}
+            <HeroPicker 
+                isOpen={isHeroOpen} 
+                sortedHeroesList={sortedHeroesList} 
+                onSelect={handleHeroSelect} 
+                onClose={() => setIsHeroOpen(null)} 
+            />
+            <PetPicker 
+                isOpen={isPetOpen} 
+                petsList={petsList} 
+                onSelect={handlePetSelect} 
+                onClose={() => setIsPetOpen(false)} 
+            />
+
         </div >
     )
 }

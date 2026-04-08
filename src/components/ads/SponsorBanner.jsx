@@ -19,6 +19,7 @@ export default function SponsorBanner({ variant = "sidebar", className = "" }) {
     const dropdownRef = useRef(null)
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true)
         
         // Handle click outside for navbar dropdown

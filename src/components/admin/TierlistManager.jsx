@@ -386,7 +386,7 @@ export default function TierlistManager({ heroes }) {
                                     <div className="flex items-center gap-2 ml-2">
                                         <span className="text-gray-400 text-sm">Target Rank:</span>
                                         <div className="relative w-8 h-8">
-                                            <Image src={`/logo_tiers/rank_tier/${tempRank}.webp`} fill className="object-contain" alt={tempRank} sizes="32px" />
+                                            <SafeImage src={`/logo_tiers/rank_tier/${tempRank}.webp`} fill className="object-contain" alt={tempRank} sizes="32px" />
                                         </div>
                                     </div>
                                 </div>

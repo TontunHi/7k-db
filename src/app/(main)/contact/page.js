@@ -18,7 +18,7 @@ export default async function ContactPage() {
                     GET IN <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-orange-500 to-amber-500">TOUCH</span>
                 </h1>
                 <p className="text-gray-500 text-lg font-light tracking-wide max-w-xl mx-auto animate-in fade-in duration-1000 delay-200">
-                    We're always looking for feedback, guide contributions, or bug reports. Choose a method below to reach us!
+                    We&apos;re always looking for feedback, guide contributions, or bug reports. Choose a method below to reach us!
                 </p>
             </div>
 
@@ -66,10 +66,10 @@ export default async function ContactPage() {
                 </h2>
                 <div className="space-y-6 text-gray-400 font-light leading-relaxed">
                     <p>
-                        We are a community-driven project. If you have an optimized build or a new stage strategy that isn't on the site yet, we’d love to hear it.
+                        We are a community-driven project. If you have an optimized build or a new stage strategy that isn&apos;t on the site yet, we&rsquo;d love to hear it.
                     </p>
                     <p className="text-sm">
-                        Contributors who provide accurate and useful guides may be featured in our "Contributors List" coming soon!
+                        Contributors who provide accurate and useful guides may be featured in our &quot;Contributors List&quot; coming soon!
                     </p>
                 </div>
             </div>

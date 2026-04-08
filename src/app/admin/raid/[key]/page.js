@@ -4,7 +4,7 @@ import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import SafeImage from '@/components/shared/SafeImage'
 import Link from 'next/link'
-import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Skull, Zap } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Skull, Zap, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { 
     getRaidInfo, 

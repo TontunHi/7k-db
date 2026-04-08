@@ -106,6 +106,76 @@ function SkillSlotRow({ heroes, rotation, onAddSlot, onUpdateLabel, onSelectSkil
     )
 }
 
+// Skill Picker Modal Component
+const SkillPickerModal = ({ skillPicker, sets, teamHeroes, heroes, onSelectSkill, onClose }) => {
+    if (!skillPicker) return null
+    const { setIdx, teamNum, slotIdx } = skillPicker
+
+    return (
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-md">
+            <div className="bg-gray-900 w-full max-w-2xl rounded-2xl border border-gray-700 shadow-2xl overflow-hidden">
+                <div className="p-5 border-b border-gray-800 flex justify-between items-center bg-black/50">
+                    <div>
+                        <h3 className="text-xl font-black text-white">Select Skill</h3>
+                        <p className="text-sm text-gray-400 mt-1">Choose a skill for Team {teamNum}</p>
+                    </div>
+                    <button onClick={onClose} className="p-2 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400">
+                        <X size={22} />
+                    </button>
+                </div>
+                <div className="p-5 space-y-4 max-h-[60vh] overflow-y-auto">
+                    {teamHeroes.map((heroFile, heroIdx) => {
+                        if (!heroFile) return null
+                        const heroName = heroFile.replace(/^(l\+\+|l\+|l|r|uc|c)_/i, '').replace(/\.[^/.]+$/, '').replace(/_/g, ' ')
+
+                        return (
+                            <div key={heroIdx} className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                    <div className="relative w-8 h-8 rounded-md overflow-hidden border border-gray-700">
+                                        {(() => {
+                                            const heroData = heroes?.find(h => 
+                                                h.filename === heroFile || 
+                                                h.filename.replace(/\.[^/.]+$/, "") === heroFile
+                                            )
+                                            const actualFile = heroData?.filename || heroFile
+                                            return <SafeImage src={`/heroes/${actualFile}`} alt={heroName} fill className="object-cover" />
+                                        })()}
+                                    </div>
+                                    <span className="text-sm font-bold text-gray-300 capitalize">{heroName}</span>
+                                </div>
+                                <div className="flex gap-2 ml-10">
+                                    {[4, 3, 2, 1].map(skillNum => {
+                                        const skillKey = `${heroIdx}-${skillNum}`
+                                        const skillPath = getSkillImagePath(heroFile, skillNum)
+
+                                        return (
+                                            <button
+                                                key={skillNum}
+                                                type="button"
+                                                onClick={() => onSelectSkill(setIdx, teamNum, slotIdx, skillKey)}
+                                                className="relative w-14 h-14 rounded-lg overflow-hidden border-2 border-gray-700 hover:border-violet-400 hover:shadow-[0_0_15px_rgba(139,92,246,0.3)] transition-all bg-gray-900"
+                                            >
+                                                {skillPath ? (
+                                                    <SafeImage src={skillPath} alt={`Skill ${skillNum}`} fill className="object-contain p-0.5" />
+                                                ) : (
+                                                    <span className="text-gray-600 text-xs flex items-center justify-center w-full h-full">S{skillNum}</span>
+                                                )}
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+                        )
+                    })}
+                    {!teamHeroes.some(h => h) && (
+                        <p className="text-center text-gray-500 py-8">No heroes in team yet</p>
+                    )}
+                </div>
+            </div>
+        </div>
+    )
+}
+
 export default function AdventBossDetailPage({ params }) {
     const router = useRouter()
     const { boss: bossKey } = use(params)
@@ -273,77 +343,6 @@ export default function AdventBossDetailPage({ params }) {
 
     const hasDirty = sets.some(s => s._dirty)
 
-    // Skill Picker Modal
-    const SkillPickerModal = () => {
-        if (!skillPicker) return null
-        const { setIdx, teamNum, slotIdx } = skillPicker
-        const set = sets[setIdx]
-        const teamHeroes = set[`team${teamNum}_heroes`] || []
-
-        return (
-            <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-md">
-                <div className="bg-gray-900 w-full max-w-2xl rounded-2xl border border-gray-700 shadow-2xl overflow-hidden">
-                    <div className="p-5 border-b border-gray-800 flex justify-between items-center bg-black/50">
-                        <div>
-                            <h3 className="text-xl font-black text-white">Select Skill</h3>
-                            <p className="text-sm text-gray-400 mt-1">Choose a skill for Team {teamNum}</p>
-                        </div>
-                        <button onClick={() => setSkillPicker(null)} className="p-2 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400">
-                            <X size={22} />
-                        </button>
-                    </div>
-                    <div className="p-5 space-y-4 max-h-[60vh] overflow-y-auto">
-                        {teamHeroes.map((heroFile, heroIdx) => {
-                            if (!heroFile) return null
-                            const heroName = heroFile.replace(/^(l\+\+|l\+|l|r|uc|c)_/i, '').replace(/\.[^/.]+$/, '').replace(/_/g, ' ')
-
-                            return (
-                                <div key={heroIdx} className="space-y-2">
-                                    <div className="flex items-center gap-2">
-                                        <div className="relative w-8 h-8 rounded-md overflow-hidden border border-gray-700">
-                                            {(() => {
-                                                const heroData = heroes?.find(h => 
-                                                    h.filename === heroFile || 
-                                                    h.filename.replace(/\.[^/.]+$/, "") === heroFile
-                                                )
-                                                const actualFile = heroData?.filename || heroFile
-                                                return <SafeImage src={`/heroes/${actualFile}`} alt={heroName} fill className="object-cover" />
-                                            })()}
-                                        </div>
-                                        <span className="text-sm font-bold text-gray-300 capitalize">{heroName}</span>
-                                    </div>
-                                    <div className="flex gap-2 ml-10">
-                                        {[4, 3, 2, 1].map(skillNum => {
-                                            const skillKey = `${heroIdx}-${skillNum}`
-                                            const skillPath = getSkillImagePath(heroFile, skillNum)
-
-                                            return (
-                                                <button
-                                                    key={skillNum}
-                                                    type="button"
-                                                    onClick={() => handleSelectSkillForSlot(setIdx, teamNum, slotIdx, skillKey)}
-                                                    className="relative w-14 h-14 rounded-lg overflow-hidden border-2 border-gray-700 hover:border-violet-400 hover:shadow-[0_0_15px_rgba(139,92,246,0.3)] transition-all bg-gray-900"
-                                                >
-                                                    {skillPath ? (
-                                                        <SafeImage src={skillPath} alt={`Skill ${skillNum}`} fill className="object-contain p-0.5" />
-                                                    ) : (
-                                                        <span className="text-gray-600 text-xs flex items-center justify-center w-full h-full">S{skillNum}</span>
-                                                    )}
-                                                </button>
-                                            )
-                                        })}
-                                    </div>
-                                </div>
-                            )
-                        })}
-                        {!teamHeroes.some(h => h) && (
-                            <p className="text-center text-gray-500 py-8">No heroes in team yet</p>
-                        )}
-                    </div>
-                </div>
-            </div>
-        )
-    }
 
     return (
         <div className="flex gap-6 pb-20">
@@ -548,7 +547,14 @@ export default function AdventBossDetailPage({ params }) {
                 </div>
             </div>
 
-            <SkillPickerModal />
+            <SkillPickerModal 
+                skillPicker={skillPicker}
+                sets={sets}
+                teamHeroes={skillPicker ? sets[skillPicker.setIdx][`team${skillPicker.teamNum}_heroes`] : []}
+                heroes={heroes}
+                onSelectSkill={handleSelectSkillForSlot}
+                onClose={() => setSkillPicker(null)}
+            />
         </div>
     )
 }

@@ -19,6 +19,8 @@ import {
 import { getAllHeroes, getPets, getFormations } from '@/lib/stage-actions'
 import TeamBuilder from '@/components/admin/TeamBuilder'
 
+const uid = () => `new-${Date.now()}-${Math.random()}`
+
 function getSkillImagePath(heroFilename, skillNumber) {
     if (!heroFilename) return null
     return `/skills/${heroFilename.replace(/\.[^/.]+$/, '')}/${skillNumber}.webp`
@@ -349,8 +351,6 @@ export default function AdminTotalWarTierPage({ params }) {
     const [skillErrors, setSkillErrors] = useState({})
     const [skillPicker, setSkillPicker] = useState(null) // { setIdx, teamIdx, slotIdx }
     const [savingSetId, setSavingSetId] = useState(null)
-
-    const uid = () => `new-${Date.now()}-${Math.random()}`
 
     useEffect(() => {
         if (!tierCfg) return

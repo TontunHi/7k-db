@@ -128,7 +128,7 @@ export default function GuildWarView({ attackers, defenders, heroImageMap }) {
                         <div className="text-center py-20 border border-dashed border-gray-800 rounded-3xl bg-gray-950/50 backdrop-blur-sm">
                             <Users className="w-16 h-16 text-gray-700 mx-auto mb-6" />
                             <h2 className="text-2xl font-black text-gray-400 mb-2">No Teams Available</h2>
-                            <p className="text-gray-600 max-w-md mx-auto">The administrator hasn't configured any {activeTab} teams for Guild War yet.</p>
+                            <p className="text-gray-600 max-w-md mx-auto">The administrator hasn&apos;t configured any {activeTab} teams for Guild War yet.</p>
                         </div>
                     ) : (
                         currentTeams.map((set, idx) => {

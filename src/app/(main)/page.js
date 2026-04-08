@@ -132,7 +132,7 @@ export default async function HomePage() {
                             <h3 className="text-2xl font-black italic uppercase tracking-widest text-[#FFD700]">Partner with us</h3>
                             <p className="text-gray-400 text-sm max-w-xl">
                                 Interested in reaching thousands of Seven Knights Rebirth players? 
-                                We're looking for high-quality partners to grow with our community.
+                                We&apos;re looking for high-quality partners to grow with our community.
                             </p>
                             <Link 
                                 href="/contact" 

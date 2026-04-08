@@ -73,7 +73,7 @@ export default async function ArenaPage() {
                     <div className="text-center py-20 border border-dashed border-gray-700/50 rounded-3xl bg-gray-900/20 backdrop-blur-sm">
                         <Users className="w-16 h-16 text-indigo-500/50 mx-auto mb-6" />
                         <h2 className="text-2xl font-black text-gray-300 mb-2">No Arena Teams Available</h2>
-                        <p className="text-gray-500 max-w-md mx-auto">The administrator hasn't configured any team recommendations yet. Check back soon for the latest meta setups.</p>
+                        <p className="text-gray-500 max-w-md mx-auto">The administrator hasn&apos;t configured any team recommendations yet. Check back soon for the latest meta setups.</p>
                     </div>
                 ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10">
