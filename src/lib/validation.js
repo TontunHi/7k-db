@@ -164,3 +164,10 @@ export function validateData(schema, data) {
   }
   return { success: true, data: result.data };
 }
+
+export const UserSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters").max(100),
+  password: z.string().min(8, "Password must be at least 8 characters").optional(), // Optional for updates
+  role: z.enum(['admin', 'super_admin']),
+  permissions: z.array(z.string()).optional()
+})

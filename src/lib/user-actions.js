@@ -4,6 +4,7 @@ import pool, { initDB } from "./db"
 import { revalidatePath } from "next/cache"
 import { requireAdmin, getAdminUser } from "./auth-guard"
 import bcrypt from "bcryptjs"
+import { validateData, UserSchema } from "./validation"
 
 /**
  * List all users (Super Admin only)
@@ -20,9 +21,11 @@ export async function getUsers() {
  */
 export async function createUser(userData) {
     await requireAdmin('MANAGE_USERS')
-    const { username, password, role, permissions } = userData
-
-    if (!username || !password) throw new Error("Username and password are required")
+    const validation = validateData(UserSchema, userData)
+    if (!validation.success) throw new Error(validation.error)
+    
+    const { username, password, role, permissions } = validation.data
+    if (!password) throw new Error("Password is required for new users")
 
     const hashedPassword = await bcrypt.hash(password, 10)
     await initDB()
@@ -45,7 +48,10 @@ export async function createUser(userData) {
  */
 export async function updateUser(id, userData) {
     await requireAdmin('MANAGE_USERS')
-    const { username, role, permissions, password } = userData
+    const validation = validateData(UserSchema, userData)
+    if (!validation.success) throw new Error(validation.error)
+    
+    const { username, role, permissions, password } = validation.data
 
     await initDB()
     
