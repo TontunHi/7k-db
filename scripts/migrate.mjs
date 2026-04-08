@@ -334,6 +334,13 @@ async function runMigrations() {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
           )
         `);
+
+        try {
+            const [checkLog] = await connection.query('SHOW COLUMNS FROM site_updates LIKE "admin_name"');
+            if (checkLog.length === 0) { 
+                await connection.query(`ALTER TABLE site_updates ADD COLUMN admin_name VARCHAR(100) AFTER message`); 
+            }
+        } catch (e) {}
         
         await connection.query(`
           CREATE TABLE IF NOT EXISTS global_credits (
