@@ -200,10 +200,10 @@ export default function GuildWarView({ attackers, defenders, heroImageMap }) {
                                             {/* Pet Badge - Moved to Right */}
                                             <PetDisplay 
                                                 petFile={set.pet_file} 
+                                                hideLabel={true}
                                                 customClasses={{
                                                     wrapper: cn("border rounded-lg bg-gradient-to-b from-gray-900 to-black shadow-lg", activeTab === 'attacker' ? "border-red-950/50" : "border-amber-950/50"),
-                                                    image: "drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]",
-                                                    label: cn("bg-black/60", activeTab === 'attacker' ? "text-red-400" : "text-amber-400")
+                                                    image: "drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]"
                                                 }}
                                             />
                                         </div>
@@ -219,7 +219,7 @@ export default function GuildWarView({ attackers, defenders, heroImageMap }) {
                                         />
 
                                         {/* Strategy Note - Extra Compact */}
-                                        {set.note && (
+                                        {set.note && set.note.trim() !== "" && (
                                             <div className="mt-auto p-3 bg-white/[0.02] border border-gray-800/30 rounded-lg relative">
                                                 <p className="text-gray-500 leading-snug text-[11px] italic line-clamp-3">
                                                     &quot;{set.note}&quot;

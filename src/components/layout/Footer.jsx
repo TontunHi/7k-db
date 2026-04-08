@@ -14,7 +14,7 @@ export default function Footer() {
                     {/* Brand Section */}
                     <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">
                         <Link href="/" className="transition-transform hover:scale-105 active:scale-95">
-                            <SafeImage src="/about_website/logo_website.webp" alt="7K DB" width={120} height={40} className="object-contain opacity-40 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all" />
+                            <SafeImage src="/about_website/logo_website.webp" alt="7K DB" width={120} height={40} style={{ height: 'auto' }} className="object-contain opacity-40 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all" />
                         </Link>
                     </div>
 

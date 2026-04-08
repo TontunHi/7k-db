@@ -202,7 +202,7 @@ export default async function AdventBossPage({ params }) {
                                     />
 
                                     {/* Note */}
-                                    {set.note && (
+                                    {set.note && set.note.trim() !== "" && (
                                         <div className="mt-6 p-4 bg-gray-900/50 border border-gray-800 rounded-xl">
                                             <p className="text-gray-400 text-sm italic">{set.note}</p>
                                         </div>

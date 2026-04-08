@@ -200,7 +200,7 @@ export default function BuildSimulator({ initialHero, onBack }) {
                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/20 blur-[150px] rounded-full"></div>
                 </div>
                 
-                <div className="relative z-10 w-full max-w-4xl px-6">
+                <div className="relative z-10 w-full max-w-6xl px-6">
                     <div className="text-center mb-12">
                         <h2 className="text-5xl font-black text-white italic tracking-tighter uppercase transform -skew-x-6">SELECT <span className="text-primary">HERO</span></h2>
                         <p className="text-gray-500 mt-2 font-bold tracking-[0.2em] uppercase">Choose a hero to start building</p>
@@ -216,7 +216,7 @@ export default function BuildSimulator({ initialHero, onBack }) {
                         />
                     </div>
 
-                    <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 max-h-[55vh] overflow-y-auto px-4 py-8 custom-scrollbar rounded-3xl bg-black/40 border border-white/5">
+                    <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-6 max-h-[55vh] overflow-y-auto px-4 py-8 custom-scrollbar rounded-3xl bg-black/40 border border-white/5">
                         {allHeroes.filter(h => h.name.toLowerCase().includes(searchHero.toLowerCase())).map(h => (
                             <div 
                                 key={h.filename} 

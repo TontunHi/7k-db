@@ -118,14 +118,14 @@ export default async function ArenaPage() {
                                             <div className="w-px h-12 bg-gray-800/50 mx-2" />
 
                                             {/* Pet Badge - Moved to Right */}
-                                            <PetDisplay petFile={set.pet_file} />
+                                            <PetDisplay petFile={set.pet_file} hideLabel={true} />
                                         </div>
 
                                         {/* Skill Rotation - Extra Compact */}
                                         <SkillSequence skillRotation={set.skill_rotation} heroes={set.heroes} heroImageMap={heroImageMap} />
 
                                         {/* Strategy Note - Extra Compact */}
-                                        {set.note && (
+                                        {set.note && set.note.trim() !== "" && (
                                             <div className="mt-auto p-3 bg-white/[0.02] border border-gray-800/30 rounded-lg relative">
                                                 <p className="text-gray-500 leading-snug text-[11px] italic line-clamp-3">
                                                     &quot;{set.note}&quot;

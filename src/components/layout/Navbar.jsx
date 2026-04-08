@@ -44,6 +44,7 @@ export default function Navbar() {
             href: "#",
             children: [
                 { name: "Build Heroes", href: "/tools/build-simulator" },
+                { name: "Tier List Maker", href: "/tools/tierlist-maker" },
             ]
         },
     ]

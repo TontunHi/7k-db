@@ -210,7 +210,7 @@ export default async function TotalWarTierPage({ params }) {
                                                     />
 
                                                     {/* Note */}
-                                                    {team.note && (
+                                                    {team.note && team.note.trim() !== "" && (
                                                         <div className="mt-4 p-3 bg-gray-900/50 border border-gray-800 rounded-xl">
                                                             <p className="text-gray-400 text-sm italic">{team.note}</p>
                                                         </div>
@@ -222,7 +222,7 @@ export default async function TotalWarTierPage({ params }) {
                                 )}
 
                                 {/* Set note */}
-                                {set.note && (
+                                {set.note && set.note.trim() !== "" && (
                                     <div className="mt-3 px-4 py-2.5 bg-gray-900/40 border border-gray-800/60 rounded-xl">
                                         <p className="text-gray-500 text-sm italic">{set.note}</p>
                                     </div>

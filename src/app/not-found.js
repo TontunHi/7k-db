@@ -35,6 +35,7 @@ export default function NotFound() {
                     alt="Logo" 
                     width={200} 
                     height={60} 
+                    style={{ height: 'auto' }}
                     className="object-contain"
                 />
             </div>

@@ -183,9 +183,11 @@ function PublicStageCard({ stage, isNightmare, heroImageMap }) {
                         Updated: {new Date(stage.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                     </p>
                 </div>
-                    <div className="bg-black/40 backdrop-blur-sm px-6 py-3 rounded-sm border-l-2 border-gray-700 max-w-xl text-sm italic text-gray-400">
-                        &quot;{stage.note}&quot;
-                    </div>
+                    {stage.note && stage.note.trim() !== "" && (
+                        <div className="bg-black/40 backdrop-blur-sm px-6 py-3 rounded-sm border-l-2 border-gray-700 max-w-xl text-sm italic text-gray-400">
+                            &quot;{stage.note}&quot;
+                        </div>
+                    )}
             </div>
 
             {/* Teams */}
@@ -236,9 +238,7 @@ function PublicStageCard({ stage, isNightmare, heroImageMap }) {
                                         emptyText: "text-2xl font-black text-gray-800"
                                     }}
                                 />
-                                <span className="absolute -top-2.5 ml-2 bg-[#080808] px-2 text-[10px] font-bold uppercase text-gray-500 tracking-[0.2em] flex items-center gap-1 z-10 block w-max">
-                                    <Star className="w-3 h-3 text-[#FFD700]" /> Pet
-                                </span>
+
                             </div>
                         </div>
                     </div>

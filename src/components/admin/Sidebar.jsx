@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation"
 import {
     LayoutDashboard, LogOut, FileImage, Map, Crown,
     Landmark, Skull, Compass, Swords, Shield, Crosshair, TrendingUp, Settings,
-    Menu, X, Users
+    Menu, X, Users, CreditCard, MessageSquare
 } from "lucide-react"
 import { logout } from "@/lib/actions"
 import { clsx } from "clsx"
@@ -50,6 +50,8 @@ export default function Sidebar({ user }) {
             title: "System",
             items: [
                 { name: "Asset Manager", href: "/admin/assets", icon: Settings, color: "text-gray-500", perm: "MANAGE_ASSETS" },
+                { name: "Manage Credit", href: "/admin/credits", icon: CreditCard, color: "text-green-500", perm: "MANAGE_CREDITS" },
+                { name: "User Messages", href: "/admin/messages", icon: MessageSquare, color: "text-blue-400", perm: "MANAGE_MESSAGES" },
                 { name: "User Management", href: "/admin/users", icon: Users, color: "text-cyan-500", perm: "MANAGE_USERS", superOnly: true },
             ]
         }

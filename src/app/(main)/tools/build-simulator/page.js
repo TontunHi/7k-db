@@ -3,11 +3,12 @@
 import BuildSimulator from "@/components/build/BuildSimulator"
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { Suspense } from "react"
 
 function SimulatorContent() {
     const searchParams = useSearchParams()
+    const router = useRouter()
     const heroFilename = searchParams.get('hero')
     
     // Create a minimal hero object if filename is provided
@@ -15,7 +16,10 @@ function SimulatorContent() {
 
     return (
         <div className="bg-[#050505]">
-            <BuildSimulator initialHero={initialHero} />
+            <BuildSimulator 
+                initialHero={initialHero} 
+                onBack={() => router.back()}
+            />
         </div>
     )
 }

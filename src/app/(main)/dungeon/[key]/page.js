@@ -194,7 +194,7 @@ export default async function DungeonDetailPage({ params }) {
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className="text-[10px] font-black text-[#FFD700]/50 uppercase tracking-widest">Pet</div>
+
                                         </div>
                                     </div>
                                     
@@ -212,7 +212,7 @@ export default async function DungeonDetailPage({ params }) {
                                     )}
 
                                     {/* Note */}
-                                    {set.note && (
+                                    {set.note && set.note.trim() !== "" && (
                                         <div className="mt-6 p-4 bg-gray-900/50 border border-gray-800 rounded-xl">
                                             <p className="text-gray-400 text-sm italic">&quot;{set.note}&quot;</p>
                                         </div>
