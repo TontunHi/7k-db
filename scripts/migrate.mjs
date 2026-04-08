@@ -1,5 +1,22 @@
 import mysql from "mysql2/promise";
 import bcrypt from "bcryptjs";
+import fs from "fs";
+import path from "path";
+
+// Auto-load .env file if it exists
+try {
+    const envPath = path.join(process.cwd(), '.env');
+    if (fs.existsSync(envPath)) {
+        const envContent = fs.readFileSync(envPath, 'utf8');
+        envContent.split('\n').forEach(line => {
+            const [key, ...valueParts] = line.split('=');
+            if (key && (valueParts.length > 0)) {
+                const value = valueParts.join('=').trim().replace(/^['"]|['"]$/g, '');
+                process.env[key.trim()] = value;
+            }
+        });
+    }
+} catch (e) {}
 
 const pool = mysql.createPool({
     host: process.env.DB_HOST || "localhost",
@@ -361,13 +378,22 @@ async function runMigrations() {
         // First-time Super Admin Initialization
         const [existingUsers] = await connection.query("SELECT id FROM users LIMIT 1");
         if (existingUsers.length === 0 && process.env.ADMIN_PASSWORD) {
-            console.log("[RBAC] Initializing first Super Admin from environment...");
-            const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
+            const adminUser = process.env.ADMIN_USER || 'admin';
+            console.log(`[RBAC] Initializing first Super Admin '${adminUser}' from environment...`);
+            
+            const rawPassword = process.env.ADMIN_PASSWORD;
+            // Check if it's already a bcrypt hash (starts with $2a$, $2b$, or $2y$)
+            const isHashed = /^\$2[aby]\$\d+\$.*/.test(rawPassword);
+            
+            const hashedPassword = isHashed 
+                ? rawPassword 
+                : await bcrypt.hash(rawPassword, 12);
+            
             await connection.query(
                 "INSERT INTO users (username, password_hash, role, permissions) VALUES (?, ?, ?, ?)",
-                ['admin', hashedPassword, 'super_admin', JSON.stringify(['*'])]
+                [adminUser, hashedPassword, 'super_admin', JSON.stringify(['*'])]
             );
-            console.log("[RBAC] Super Admin 'admin' created successfully.");
+            console.log(`[RBAC] Super Admin '${adminUser}' created successfully (${isHashed ? 'using pre-hashed secret' : 'hashed with 12 rounds'}).`);
         }
 
         // ─── 4. Extension Strip Migration (One-time) ────────────────────────

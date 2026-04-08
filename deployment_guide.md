@@ -30,6 +30,33 @@ npm start
 
 ---
 
+## 🔒 Security Best Practices
+
+### 1. Protect your Admin Credentials
+Instead of storing your plain-text password in `.env`, you can store its **Bcrypt Hash**. You can also customize your admin username.
+
+**Environment Configuration (.env):**
+```env
+ADMIN_USER=your_custom_admin_name
+ADMIN_PASSWORD=$2b$12$YourGeneratedHashPointsHere...
+```
+
+**How to generate a hash:**
+```bash
+node scripts/hash.mjs your_password_here
+```
+
+**How to update your database with new credentials:**
+If you change your `ADMIN_USER` or `ADMIN_PASSWORD` in `.env` after the initial setup, run this script to sync them to the database:
+```bash
+node scripts/sync-admin.mjs
+```
+
+### 2. Session Security
+Always ensure your `SESSION_SECRET` is a long, random string (e.g., 32+ characters).
+
+---
+
 ## Tips for Simple Hosting
 - **If using a VPS (Ubuntu/Debian)**: Use `pm2` to keep the app running in the background.
   ```bash

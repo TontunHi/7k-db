@@ -25,7 +25,7 @@ export default function GuildCta() {
                 <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
                     <span className="text-[10px] md:text-xs font-black text-white/90 tracking-widest uppercase">
-                        Members : <span className="text-[#FFD700]">6 / 30</span>
+                        Members : <span className="text-[#FFD700]">7 / 30</span>
                     </span>
                 </div>
             </div>

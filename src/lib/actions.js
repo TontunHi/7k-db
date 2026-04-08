@@ -8,8 +8,12 @@ import pool, { initDB } from "./db"
 import { createSignedToken, deleteSession } from "./session"
 
 export async function login(formData) {
-    const username = formData.get("username") || "admin" // Fallback for transition
+    const username = formData.get("username")
     const password = formData.get("password")
+
+    if (!username || !password) {
+        redirect(`/login?error=Invalid Credentials`)
+    }
 
     await initDB()
     const [users] = await pool.query("SELECT * FROM users WHERE username = ?", [username])

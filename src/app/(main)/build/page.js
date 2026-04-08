@@ -1,6 +1,7 @@
 import fs from "fs"
 import path from "path"
 import BuildView from "@/components/build/BuildView"
+import ContributorPopup from "@/components/builds/ContributorPopup"
 import { getHeroesMetadata } from "@/lib/build-db"
 
 export const metadata = {
@@ -66,8 +67,9 @@ export default async function BuildPage() {
     }
 
     return (
-        <div className="container mx-auto">
+        <div className="container mx-auto relative">
             <BuildView heroes={heroes} />
+            <ContributorPopup />
         </div>
     )
 }
