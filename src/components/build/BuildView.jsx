@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import BuildViewerModal from "./BuildViewerModal"
 import { fetchHeroBuildData } from "@/lib/viewer-actions"
+import { trackCustomPageView } from "../analytics/AnalyticsTracker"
 
 export default function BuildView({ heroes }) {
     const router = useRouter()
@@ -35,6 +36,8 @@ export default function BuildView({ heroes }) {
             const data = await fetchHeroBuildData(hero.filename)
             setViewerData(data)
             setSelectedHero(hero)
+            // Track the overlay opening as a pageview for this build
+            trackCustomPageView(`/build/${hero.slug}`)
         } catch (err) {
             console.error("Failed to fetch build data", err)
         } finally {

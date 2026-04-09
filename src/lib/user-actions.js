@@ -13,16 +13,15 @@ export async function getUsers() {
     await requireAdmin('MANAGE_USERS')
     await initDB()
     const [rows] = await pool.query("SELECT id, username, role, permissions, created_at FROM users ORDER BY created_at DESC")
-    
-    return rows.map(user => {
-        if (typeof user.permissions === 'string') {
-            try {
-                user.permissions = JSON.parse(user.permissions)
-            } catch (e) {
-                user.permissions = []
-            }
+    return rows.map(row => {
+        let parsedPerms = row.permissions;
+        if (typeof parsedPerms === 'string') {
+            try { parsedPerms = JSON.parse(parsedPerms); } catch (e) { parsedPerms = []; }
         }
-        return user
+        return {
+            ...row,
+            permissions: Array.isArray(parsedPerms) ? parsedPerms : []
+        };
     })
 }
 

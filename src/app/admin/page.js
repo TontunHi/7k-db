@@ -156,6 +156,21 @@ export default async function AdminDashboard() {
             ]
         },
         {
+            title: "Analytics & Growth",
+            items: [
+                {
+                    title: "Internal Analytics",
+                    desc: "View page views, unique visitors, and click conversions privately.",
+                    icon: TrendingUp,
+                    href: "/admin/analytics",
+                    gradient: "from-blue-600 to-cyan-500",
+                    shadow: "hover:shadow-blue-500/20",
+                    iconBg: "bg-blue-500/15",
+                    perm: "*"  /* Super admin or anyone with all perms. Can adjust later */
+                }
+            ]
+        },
+        {
             title: "System",
             items: [
                 {

@@ -2,6 +2,8 @@ import { Inter, Prompt } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "sonner"
+import { Suspense } from "react"
+import AnalyticsTracker from "@/components/analytics/AnalyticsTracker"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -50,6 +52,9 @@ export default function RootLayout({ children }) {
           forcedTheme="dark"
           disableTransitionOnChange
         >
+          <Suspense fallback={null}>
+            <AnalyticsTracker />
+          </Suspense>
           {children}
           <Toaster theme="dark" position="top-center" richColors />
         </ThemeProvider>

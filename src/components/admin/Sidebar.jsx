@@ -120,6 +120,12 @@ export default function Sidebar({ user }) {
             ]
         },
         {
+            title: "Analytics",
+            items: [
+                { name: "Internal Analytics", href: "/admin/analytics", icon: TrendingUp, color: "text-blue-400", perm: "*" },
+            ]
+        },
+        {
             title: "System",
             items: [
                 { name: "Asset Manager", href: "/admin/assets", icon: Settings, color: "text-gray-500", perm: "MANAGE_ASSETS" },

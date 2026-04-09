@@ -369,6 +369,30 @@ async function runMigrations() {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
           )
         `);
+
+        await connection.query(`
+          CREATE TABLE IF NOT EXISTS analytics_views (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            page_path VARCHAR(255) NOT NULL,
+            ip_hash VARCHAR(64) NOT NULL,
+            session_id VARCHAR(64) NOT NULL,
+            user_agent TEXT,
+            event_type ENUM('pageview', 'exit') DEFAULT 'pageview',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          )
+        `);
+
+        await connection.query(`
+          CREATE TABLE IF NOT EXISTS analytics_clicks (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            link_url VARCHAR(500) NOT NULL,
+            link_id VARCHAR(100),
+            page_path VARCHAR(255) NOT NULL,
+            ip_hash VARCHAR(64) NOT NULL,
+            session_id VARCHAR(64) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          )
+        `);
         
         // ─── 4. RBAC: Users Table & Super Admin Init ────────────────────────
         await connection.query(`
