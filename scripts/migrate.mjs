@@ -276,9 +276,21 @@ async function runMigrations() {
             skill_rotation JSON,
             video_url VARCHAR(500),
             note TEXT,
+            counters_json JSON,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
           )
         `);
+
+        // Check and add counters_json if not exists
+        try {
+            const [columns] = await connection.query("SHOW COLUMNS FROM guild_war_teams LIKE 'counters_json'");
+            if (columns.length === 0) {
+                console.log("[Migration] Adding counters_json to guild_war_teams...");
+                await connection.query("ALTER TABLE guild_war_teams ADD COLUMN counters_json JSON");
+            }
+        } catch (colErr) {
+            console.warn("[Migration] Could not add counters_json column:", colErr.message);
+        }
 
         await connection.query(`
           CREATE TABLE IF NOT EXISTS total_war_sets (

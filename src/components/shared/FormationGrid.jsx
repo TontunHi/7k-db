@@ -8,11 +8,22 @@ export default function FormationGrid({
     heroes = [], 
     staggerAmount = 'translate-y-6', // Allow customizing the translate amount
     customClasses = {}, // Override default class sets
-    heroImageMap = {} // Mapping slug -> actual_filename
+    heroImageMap = {}, // Mapping slug -> actual_filename
+    hideEmpty = false // Option to skip rendering of empty slots
 }) {
+    const allIndices = [0, 1, 2, 3, 4]
+    const indices = hideEmpty ? allIndices.filter(i => heroes?.[i]) : allIndices
+
+    if (indices.length === 0 && hideEmpty) return null
+
     return (
-        <div className={cn("flex-1 grid grid-cols-5 gap-1.5 max-w-[280px]", customClasses.container)}>
-            {[0, 1, 2, 3, 4].map(i => {
+        <div className={cn(
+            "flex-1 grid gap-1.5", 
+            hideEmpty ? "grid-cols-3" : "grid-cols-5",
+            hideEmpty ? "max-w-[180px]" : "max-w-[280px]",
+            customClasses.container
+        )}>
+            {indices.map(i => {
                 const heroFile = heroes?.[i]
                 const type = getSlotType(formation, i)
                 const isFront = type === 'front'

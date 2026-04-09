@@ -19,7 +19,10 @@ export async function getGuildWarTeams(type = 'attacker') {
             : (row.heroes_json || []),
         skill_rotation: typeof row.skill_rotation === 'string'
             ? JSON.parse(row.skill_rotation)
-            : (row.skill_rotation || [])
+            : (row.skill_rotation || []),
+        counters: typeof row.counters_json === 'string'
+            ? JSON.parse(row.counters_json)
+            : (row.counters_json || [])
     }))
 }
 
@@ -44,8 +47,8 @@ export async function createGuildWarTeam(data) {
         const nextIndex = countResult[0].next_index
 
         const [result] = await pool.query(
-            `INSERT INTO guild_war_teams (team_index, type, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO guild_war_teams (team_index, type, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note, counters_json)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 nextIndex, 
                 validatedData.type, 
@@ -55,7 +58,8 @@ export async function createGuildWarTeam(data) {
                 JSON.stringify(validatedData.heroes), 
                 JSON.stringify(validatedData.skill_rotation), 
                 validatedData.video_url, 
-                validatedData.note
+                validatedData.note,
+                JSON.stringify(validatedData.counters || [])
             ]
         )
 
@@ -84,7 +88,7 @@ export async function updateGuildWarTeam(id, data) {
     try {
         await pool.query(
             `UPDATE guild_war_teams 
-             SET type = ?, team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
+             SET type = ?, team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?, counters_json = ?
              WHERE id = ?`,
             [
                 validatedData.type, 
@@ -95,6 +99,7 @@ export async function updateGuildWarTeam(id, data) {
                 JSON.stringify(validatedData.skill_rotation), 
                 validatedData.video_url, 
                 validatedData.note, 
+                JSON.stringify(validatedData.counters || []),
                 id
             ]
         )

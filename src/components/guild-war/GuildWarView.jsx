@@ -2,12 +2,14 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { Swords, Shield, Video, ExternalLink, Users, Zap, Hash, ArrowRight, ChevronRight } from 'lucide-react'
+import { Swords, Shield, Video, ExternalLink, Users, Zap, Hash, ArrowRight, ChevronRight, ShieldAlert } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import SafeImage from '@/components/shared/SafeImage'
 
 import FormationGrid from '@/components/shared/FormationGrid'
 import PetDisplay from '@/components/shared/PetDisplay'
 import SkillSequence from '@/components/shared/SkillSequence'
+import { resolveHeroImage } from '@/lib/hero-utils'
 
 export default function GuildWarView({ attackers, defenders, heroImageMap, lastUpdated }) {
     const [activeTab, setActiveTab] = useState('attacker')
@@ -202,17 +204,18 @@ export default function GuildWarView({ attackers, defenders, heroImageMap, lastU
 
                                     <div className="p-6 flex-1 flex flex-col gap-6">
                                         {/* Core Setup Row: Formation Grid + Pet */}
-                                        <div className="flex items-center gap-6 bg-black/40 p-5 rounded-2xl border border-white/5 shadow-inner relative overflow-hidden group/setup">
+                                        <div className="flex items-center gap-6 bg-black/40 p-7 rounded-2xl border border-white/5 shadow-inner relative overflow-hidden group/setup">
                                             {/* Subtle internal glow */}
                                             <div className={cn("absolute inset-0 opacity-0 group-hover/setup:opacity-100 transition-opacity duration-700", activeTab === 'attacker' ? "bg-red-500/5" : "bg-amber-500/5")} />
                                             
                                             {/* 3-Hero Formation Grid Display */}
-                                            <div className="flex-1 max-w-[200px]">
+                                            <div className="flex-1 max-w-[200px] px-6">
                                                 <FormationGrid 
                                                     formation={set.formation} 
                                                     heroes={set.heroes} 
                                                     heroImageMap={heroImageMap}
                                                     staggerAmount="lg:translate-y-6"
+                                                    hideEmpty={true}
                                                 />
                                             </div>
 
@@ -239,6 +242,41 @@ export default function GuildWarView({ attackers, defenders, heroImageMap, lastU
                                                 wrapper: "mt-0"
                                             }}
                                         />
+
+                                        {/* Countered By Overlay (Defenders only - Hover) */}
+                                        {activeTab === 'defender' && set.counters && set.counters.length > 0 && (
+                                            <div className="absolute inset-0 bg-black/80 backdrop-blur-md z-20 flex flex-col items-center justify-center p-6 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
+                                                <div className="flex items-center gap-2 mb-4">
+                                                    <ShieldAlert className="w-5 h-5 text-red-500 animate-pulse" />
+                                                    <span className="text-sm font-black uppercase tracking-widest text-red-400">Counter Stratagems</span>
+                                                </div>
+                                                <div className="flex flex-wrap justify-center gap-3">
+                                                    {set.counters.map(attackerId => {
+                                                        const attacker = attackers.find(a => a.id === attackerId)
+                                                        if (!attacker) return null
+                                                        return (
+                                                            <div key={attackerId} className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-red-500/10 border border-red-500/20 group/counter hover:bg-red-500/20 transition-all border-dashed shadow-[0_0_20px_rgba(239,68,68,0.1)]">
+                                                                <span className="text-[10px] font-black text-red-200 uppercase tracking-tighter">
+                                                                    {attacker.team_name || `#${attacker.team_index} Attack`}
+                                                                </span>
+                                                                <div className="flex -space-x-1.5">
+                                                                    {(attacker.heroes || []).filter(h => h).map((heroSlug, i) => (
+                                                                        <div key={i} className="relative w-8 h-8 rounded-lg border border-black overflow-hidden bg-gray-950 shadow-2xl">
+                                                                            <SafeImage 
+                                                                                src={`/heroes/${resolveHeroImage(heroSlug, heroImageMap) || heroSlug + '.webp'}`} 
+                                                                                alt="" 
+                                                                                fill 
+                                                                                className="object-cover" 
+                                                                            />
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
 
                                         {/* Strategy Note */}
                                         {set.note && set.note.trim() !== "" && (

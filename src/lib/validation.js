@@ -91,7 +91,8 @@ export const GuildWarTeamSchema = z.object({
   heroes: TeamHeroesSchema,
   skill_rotation: SkillRotationSchema,
   video_url: z.string().url().or(z.string().length(0)).nullable(),
-  note: z.string().max(1000).optional().nullable()
+  note: z.string().max(1000).optional().nullable(),
+  counters: z.array(z.number()).optional().nullable()
 })
 
 export const TotalWarSetSchema = z.object({

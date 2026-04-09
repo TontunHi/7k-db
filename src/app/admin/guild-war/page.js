@@ -146,6 +146,7 @@ export default function AdminGuildWarPage() {
             skill_rotation: [],
             video_url: '',
             note: '',
+            counters: [],
             _isNew: true,
             _dirty: true,
             _isMinimized: false
@@ -161,6 +162,16 @@ export default function AdminGuildWarPage() {
 
     const handleUpdateTeam = (id, field, value) => {
         updateTeamState(id, team => ({ ...team, [field]: value }))
+    }
+
+    const toggleCounter = (id, attackerId) => {
+        updateTeamState(id, team => {
+            const currentCounters = team.counters || []
+            const newCounters = currentCounters.includes(attackerId)
+                ? currentCounters.filter(cid => cid !== attackerId)
+                : [...currentCounters, attackerId]
+            return { ...team, counters: newCounters }
+        })
     }
 
     const handleTeamBuilderUpdate = (id, teamData) => {
@@ -193,7 +204,8 @@ export default function AdminGuildWarPage() {
                 heroes: team.heroes,
                 skill_rotation: team.skill_rotation,
                 video_url: team.video_url,
-                note: team.note
+                note: team.note,
+                counters: team.counters || []
             }
 
             if (team._isNew) {
@@ -576,6 +588,51 @@ export default function AdminGuildWarPage() {
                                         />
                                     </div>
                                 </div>
+
+                                {/* ===== Counter Section (Defenders only) ===== */}
+                                {activeTab === 'defender' && (
+                                    <div className="space-y-4 pt-4 border-t border-gray-800">
+                                        <div className="flex items-center gap-2">
+                                            <ShieldAlert className="w-5 h-5 text-red-500" />
+                                            <h3 className="text-sm font-bold text-gray-300 uppercase tracking-widest text-red-500">Beaten By (Attacker Teams)</h3>
+                                        </div>
+                                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 bg-black/30 p-4 rounded-xl border border-gray-800/80">
+                                            {teams.filter(t => t.type === 'attacker').map(attacker => {
+                                                const isSelected = (team.counters || []).includes(attacker.id)
+                                                return (
+                                                    <button
+                                                        key={attacker.id}
+                                                        type="button"
+                                                        onClick={() => toggleCounter(team.id, attacker.id)}
+                                                        className={cn(
+                                                            "flex flex-col gap-2 p-2 rounded-lg border transition-all text-left group",
+                                                            isSelected 
+                                                                ? "bg-red-500/10 border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.2)]" 
+                                                                : "bg-gray-900/50 border-gray-800 hover:border-gray-600"
+                                                        )}
+                                                    >
+                                                        <span className={cn(
+                                                            "text-[10px] font-black uppercase truncate",
+                                                            isSelected ? "text-red-400" : "text-gray-500"
+                                                        )}>
+                                                            {attacker.team_name || `#${attacker.team_index} Attacker`}
+                                                        </span>
+                                                        <div className="flex -space-x-1.5">
+                                                            {(attacker.heroes || []).filter(h => h).map((h, i) => (
+                                                                <div key={i} className="relative w-6 h-6 rounded border border-black overflow-hidden bg-gray-950">
+                                                                    <SafeImage src={`/heroes/${h}`} alt="" fill className="object-cover" />
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </button>
+                                                )
+                                            })}
+                                            {teams.filter(t => t.type === 'attacker').length === 0 && (
+                                                <p className="text-xs text-gray-600 italic py-2">No attacker teams available yet.</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                             )}
                         </div>
