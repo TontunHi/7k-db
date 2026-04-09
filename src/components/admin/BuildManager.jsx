@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation"
 import { uploadHeroImage, deleteHeroImage } from "@/lib/admin-actions"
 import { openEditor, saveEditor } from "@/lib/editor-actions"
 import Image from "next/image"
-import { Trash2, Loader2, Edit, X } from "lucide-react"
+import { Trash2, Loader2, Edit, X, Crown, Sparkles } from "lucide-react"
 import BuildEditorModal from "@/components/admin/BuildEditorModal"
 import { toast } from "sonner"
+import { clsx } from "clsx"
 
 export default function BuildManager({ heroes }) {
     const [editorOpen, setEditorOpen] = useState(false)
@@ -66,71 +67,107 @@ export default function BuildManager({ heroes }) {
         }
     }
 
+    const gradeColors = {
+        "l++": { bg: "from-amber-500/20 to-amber-600/5", border: "border-amber-500/40", text: "text-amber-400", label: "L++" },
+        "l+": { bg: "from-purple-500/20 to-purple-600/5", border: "border-purple-500/40", text: "text-purple-400", label: "L+" },
+        "l": { bg: "from-blue-500/20 to-blue-600/5", border: "border-blue-500/40", text: "text-blue-400", label: "L" },
+        "r": { bg: "from-green-500/20 to-green-600/5", border: "border-green-500/40", text: "text-green-400", label: "R" },
+    }
+
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Header */}
-            <div className="flex justify-between items-end border-b border-gray-800 pb-4">
+            <div className="relative flex justify-between items-end pb-6">
                 <div>
-                    <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-yellow-200 tracking-tight">
-                        Manage Builds
-                    </h1>
-                    <p className="text-sm text-gray-400 mt-1">Upload and manage hero builds and skills</p>
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="p-2.5 rounded-xl bg-[#FFD700]/10 border border-[#FFD700]/20">
+                            <Crown className="w-5 h-5 text-[#FFD700]" />
+                        </div>
+                        <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] via-yellow-200 to-[#FFD700] tracking-tight">
+                            Manage Builds
+                        </h1>
+                    </div>
+                    <p className="text-sm text-gray-500 ml-14">Upload and manage hero builds and skills</p>
                 </div>
-                <div className="bg-gray-900 border border-gray-800 px-4 py-2 rounded-xl flex items-center shadow-inner">
-                    <span className="text-lg font-bold text-[#FFD700]">{heroes.length}</span>
-                    <span className="text-sm text-gray-400 ml-2 uppercase tracking-wider font-semibold">Heroes Total</span>
+                <div className="flex items-center gap-3 bg-black/60 border border-gray-800/80 px-5 py-3 rounded-2xl backdrop-blur-sm"
+                    style={{ boxShadow: "0 0 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03)" }}
+                >
+                    <span className="text-2xl font-black text-[#FFD700] tabular-nums">{heroes.length}</span>
+                    <span className="text-xs text-gray-500 uppercase tracking-widest font-bold">Heroes</span>
                 </div>
+                {/* Bottom gradient line */}
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FFD700]/30 to-transparent" />
             </div>
 
-            {/* List */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-                {heroes.map((hero) => (
-                    <div
-                        key={hero.filename}
-                        className="group relative bg-black border border-gray-800 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:border-[#FFD700]/50 hover:shadow-[0_0_20px_rgba(255,215,0,0.15)] hover:-translate-y-1"
-                    >
-                        <div onClick={() => handleEdit(hero)} className="cursor-pointer h-full">
-                            <div className="aspect-[4/5] relative bg-gray-900 overflow-hidden">
-                                <Image
-                                    src={`/heroes/${hero.filename}`}
-                                    alt={hero.name}
-                                    fill
-                                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
-                                />
-                                {hero.is_new_hero && (
-                                    <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-[#FFD700] text-black text-[10px] font-black rounded-md shadow-[0_0_10px_rgba(255,215,0,0.5)] uppercase tracking-widest animate-pulse">
-                                        New
-                                    </div>
-                                )}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center backdrop-blur-[2px]">
-                                    <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                        <div className="bg-[#FFD700] text-black px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 shadow-lg shadow-[#FFD700]/30 hover:bg-yellow-300 transition-colors">
-                                            <Edit className="w-4 h-4" /> Edit Build
+            {/* Hero Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-5">
+                {heroes.map((hero) => {
+                    const grade = gradeColors[hero.grade] || gradeColors["r"]
+                    return (
+                        <div
+                            key={hero.filename}
+                            className={clsx(
+                                "group relative rounded-2xl overflow-hidden transition-all duration-300",
+                                "hover:-translate-y-1.5 hover:shadow-[0_8px_40px_rgba(255,215,0,0.15)]",
+                            )}
+                            style={{
+                                background: "linear-gradient(145deg, rgba(20,20,20,1) 0%, rgba(10,10,10,1) 100%)",
+                                border: "1px solid rgba(50,50,50,0.6)",
+                            }}
+                        >
+                            <div onClick={() => handleEdit(hero)} className="cursor-pointer h-full">
+                                <div className="aspect-[4/5] relative overflow-hidden bg-black">
+                                    <Image
+                                        src={`/heroes/${hero.filename}`}
+                                        alt={hero.name}
+                                        fill
+                                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
+                                    />
+
+                                    {/* New hero badge */}
+                                    {hero.is_new_hero && (
+                                        <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1 px-2 py-0.5 bg-[#FFD700] text-black text-[9px] font-black rounded-md shadow-[0_0_12px_rgba(255,215,0,0.6)] uppercase tracking-widest">
+                                            <Sparkles className="w-3 h-3" />
+                                            New
+                                        </div>
+                                    )}
+
+                                    {/* Hover overlay */}
+                                    <div className="absolute inset-0 bg-[#FFD700]/0 group-hover:bg-[#FFD700]/10 transition-colors duration-300 flex items-center justify-center">
+                                        <div className="transform translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                                            <div className="bg-[#FFD700] text-black px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 shadow-lg shadow-[#FFD700]/40 hover:bg-yellow-300 transition-colors uppercase tracking-wider">
+                                                <Edit className="w-3.5 h-3.5" /> Edit
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleDelete(hero.filename)
-                            }}
-                            className="absolute top-3 right-3 p-3 bg-red-500/80 backdrop-blur-md text-white rounded-xl hover:bg-red-600 transition-all duration-300 opacity-0 group-hover:opacity-100 z-20 border border-red-400 hover:border-red-300 transform scale-95 group-hover:scale-110 shadow-lg hover:shadow-red-500/50"
-                            title="Delete Hero"
-                        >
-                            <Trash2 className="w-5 h-5" />
-                        </button>
-                    </div>
-                ))}
+                            {/* Delete button */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDelete(hero.filename)
+                                }}
+                                className="absolute top-2.5 right-2.5 p-2 bg-red-500/80 backdrop-blur-md text-white rounded-lg hover:bg-red-500 transition-all duration-200 opacity-0 group-hover:opacity-100 z-20 border border-red-400/50 hover:border-red-300 hover:scale-110 active:scale-95 shadow-lg"
+                                title="Delete Hero"
+                            >
+                                <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                        </div>
+                    )
+                })}
             </div>
 
+            {/* Loading overlay */}
             {isLoadingEditor && (
-                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in">
-                    <Loader2 className="w-12 h-12 text-[#FFD700] animate-spin mb-4" />
-                    <p className="text-[#FFD700] font-bold tracking-widest animate-pulse uppercase">Loading Editor...</p>
+                <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in">
+                    <div className="relative">
+                        <Loader2 className="w-10 h-10 text-[#FFD700] animate-spin" />
+                        <div className="absolute inset-0 rounded-full blur-xl bg-[#FFD700]/20" />
+                    </div>
+                    <p className="text-[#FFD700]/80 font-bold tracking-[0.3em] text-xs mt-6 uppercase animate-pulse">Loading Editor</p>
                 </div>
             )}
 

@@ -1,6 +1,7 @@
 import { getGuildWarTeams } from '@/lib/guild-war-actions'
 import GuildWarView from '@/components/guild-war/GuildWarView'
 import { getHeroImageMap } from '@/lib/hero-utils-server'
+import { getLastUpdate } from '@/lib/log-actions'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,10 +12,11 @@ export const metadata = {
 
 export default async function GuildWarPage() {
     // Fetch both simultaneously
-    const [attackers, defenders, heroImageMap] = await Promise.all([
+    const [attackers, defenders, heroImageMap, lastUpdated] = await Promise.all([
         getGuildWarTeams('attacker'),
         getGuildWarTeams('defender'),
-        getHeroImageMap()
+        getHeroImageMap(),
+        getLastUpdate('GUILD_WAR')
     ])
     
     // Parse heroes JSON for both
@@ -32,6 +34,11 @@ export default async function GuildWarPage() {
     const parsedDefenders = defenders.map(parseSet)
 
     return (
-        <GuildWarView attackers={parsedAttackers} defenders={parsedDefenders} heroImageMap={heroImageMap} />
+        <GuildWarView 
+            attackers={parsedAttackers} 
+            defenders={parsedDefenders} 
+            heroImageMap={heroImageMap} 
+            lastUpdated={lastUpdated}
+        />
     )
 }

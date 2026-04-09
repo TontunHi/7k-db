@@ -42,6 +42,31 @@ export async function getRecentUpdates(limit = 10) {
     })
 }
 
+/** Get the single most recent update time for a content type */
+export async function getLastUpdate(contentType) {
+    await initDB()
+    const [rows] = await pool.query(
+        'SELECT UNIX_TIMESTAMP(max(created_at)) as ts FROM site_updates WHERE content_type = ?',
+        [contentType]
+    )
+    
+    const ts = rows[0]?.ts
+    if (!ts) return null
+
+    const nowTs = Math.floor(Date.now() / 1000)
+    const diffSecs = nowTs - ts
+    const diffMins = Math.floor(diffSecs / 60)
+    const diffHrs = Math.floor(diffSecs / 3600)
+    const diffDays = Math.floor(diffSecs / 86400)
+
+    if (diffSecs < 60) return 'Just now'
+    if (diffMins < 60) return `${diffMins}m ago`
+    if (diffHrs < 24) return `${diffHrs}h ago`
+    if (diffDays < 30) return `${diffDays}d ago`
+    
+    return new Date(ts * 1000).toLocaleDateString('en-US', { day: '2-digit', month: 'short' })
+}
+
 /** Log a site update */
 export async function logSiteUpdate(contentType, targetName, actionType, message) {
     // This is often called from other server actions which already check requireAdmin
