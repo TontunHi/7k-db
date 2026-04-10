@@ -26,25 +26,39 @@ const STAT_FIELDS = [
 
 
 
+const ITEM_MAIN_STATS = [
+    { label: "Weakness Hit Chance", value: 28, unit: "%", key: "weak_hit" },
+    { label: "Crit Rate", value: 24, unit: "%", key: "crit_rate" },
+    { label: "Crit Damage", value: 36, unit: "%", key: "crit_dmg" },
+    { label: "All Attack (%)", value: 28, unit: "%", key: "atk_all_perc" },
+    { label: "All Attack", value: 240, unit: "", key: "atk_all" },
+    { label: "Defense (%)", value: 28, unit: "%", key: "def_perc" },
+    { label: "Defense", value: 160, unit: "", key: "def" },
+    { label: "HP (%)", value: 28, unit: "%", key: "hp_perc" },
+    { label: "HP", value: 850, unit: "", key: "hp" },
+    { label: "Effect Hit Rate", value: 30, unit: "%", key: "eff_hit" },
+]
+
 const SUBSTAT_LIST = [
-    { label: "All Attack", key: "atk_all" },
-    { label: "All Attack (%)", key: "atk_all_perc" },
-    { label: "Defense", key: "def" },
-    { label: "Defense (%)", key: "def_perc" },
-    { label: "HP", key: "hp" },
-    { label: "HP (%)", key: "hp_perc" },
-    { label: "Speed", key: "speed" },
-    { label: "Crit Rate", key: "crit_rate" },
-    { label: "Crit Damage", key: "crit_dmg" },
-    { label: "Weakness Hit Chance", key: "weak_hit" },
-    { label: "Block Rate", key: "block_rate" },
-    { label: "Effect Hit Rate", key: "eff_hit" },
-    { label: "Effect Resistance", key: "eff_res" }
+    { label: "All Attack", key: "atk_all", values: [50, 100, 150, 200, 250, 300] },
+    { label: "All Attack (%)", key: "atk_all_perc", values: [5, 10, 15, 20, 25, 30] },
+    { label: "Defense", key: "def", values: [30, 60, 90, 120, 150, 180] },
+    { label: "Defense (%)", key: "def_perc", values: [5, 10, 15, 20, 25, 30] },
+    { label: "HP", key: "hp", values: [180, 360, 540, 720, 900, 1080] },
+    { label: "HP (%)", key: "hp_perc", values: [5, 10, 15, 20, 25, 30] },
+    { label: "Speed", key: "speed", values: [4, 8, 12, 16, 20, 24] },
+    { label: "Crit Rate", key: "crit_rate", values: [4, 8, 12, 16, 20, 24] },
+    { label: "Crit Damage", key: "crit_dmg", values: [6, 12, 18, 24, 30, 36] },
+    { label: "Weakness Hit Chance", key: "weak_hit", values: [4, 8, 12, 16, 20, 24] },
+    { label: "Block Rate", key: "block_rate", values: [4, 8, 12, 16, 20, 24] },
+    { label: "Effect Hit Rate", key: "eff_hit", values: [5, 10, 15, 20, 25, 30] },
+    { label: "Effect Resistance", key: "eff_res", values: [5, 10, 15, 20, 25, 30] }
 ]
 
 const getInitialItemState = () => ({
     item: null,
-    substats: Array(4).fill(null).map(() => ({ key: null, value: '' }))
+    mainStatKey: ITEM_MAIN_STATS[3].key, // Default to All Attack (%)
+    substats: Array(4).fill(null).map(() => ({ key: null, level: 0 }))
 })
 
 export default function HeroStatsBuilder({ heroes = [], items = [] }) {
@@ -161,23 +175,38 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
 
 
     const handleItemAction = (slotKey, action, payload) => {
-
         setEquippedItems(prev => {
             const newState = { ...prev }
+            const currentSlot = newState[slotKey]
+            
             if (action === 'EQUIP') {
                 newState[slotKey] = { ...newState[slotKey], item: payload }
+            } else if (action === 'SET_MAIN_STAT') {
+                newState[slotKey] = { ...newState[slotKey], mainStatKey: payload.key }
             } else if (action === 'CLEAR') {
                 newState[slotKey] = getInitialItemState()
             } else if (action === 'SUBSTAT_KEY') {
                 const { index, key } = payload
-                const newSubstats = [...newState[slotKey].substats]
-                newSubstats[index] = { ...newSubstats[index], key }
-                newState[slotKey] = { ...newState[slotKey], substats: newSubstats }
-            } else if (action === 'SUBSTAT_VALUE') {
-                const { index, value } = payload
-                const newSubstats = [...newState[slotKey].substats]
-                newSubstats[index] = { ...newSubstats[index], value }
-                newState[slotKey] = { ...newState[slotKey], substats: newSubstats }
+                const newSubstats = [...currentSlot.substats]
+                newSubstats[index] = { ...newSubstats[index], key, level: 0 }
+                newState[slotKey] = { ...currentSlot, substats: newSubstats }
+            } else if (action === 'LEVEL_UP') {
+                const { index } = payload
+                const totalLevels = currentSlot.substats.reduce((sum, s) => sum + (s.level || 0), 0)
+                const statInfo = SUBSTAT_LIST.find(s => s.key === currentSlot.substats[index].key)
+                
+                if (totalLevels < 5 && currentSlot.substats[index].level < (statInfo?.values.length - 1)) {
+                    const newSubstats = [...currentSlot.substats]
+                    newSubstats[index] = { ...newSubstats[index], level: (newSubstats[index].level || 0) + 1 }
+                    newState[slotKey] = { ...currentSlot, substats: newSubstats }
+                }
+            } else if (action === 'LEVEL_DOWN') {
+                const { index } = payload
+                if (currentSlot.substats[index].level > 0) {
+                    const newSubstats = [...currentSlot.substats]
+                    newSubstats[index] = { ...newSubstats[index], level: (newSubstats[index].level || 0) - 1 }
+                    newState[slotKey] = { ...currentSlot, substats: newSubstats }
+                }
             }
             return newState
         })
@@ -199,36 +228,91 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
     }
 
     const finalStats = useMemo(() => {
-        const totals = { ...heroStats }
-        Object.keys(totals).forEach(key => totals[key] = parseFloat(totals[key]) || 0)
+        const base = { ...heroStats }
+        Object.keys(base).forEach(key => base[key] = parseFloat(base[key]) || 0)
         
-        const atkKey = selectedHero?.hero_group === "Physical" ? "atk_phys" : "atk_mag"
+        const atkKey = (selectedHero?.hero_group === "Physical" || selectedHero?.hero_group === "Attack") ? "atk_phys" : "atk_mag"
+        
+        // Accumulators for bonuses
+        const extraFlat = { atk: 0, def: 0, hp: 0, speed: 0 }
+        const extraPerc = { atk: 0, def: 0, hp: 0 }
+        const otherStats = { 
+            crit_rate: 0, crit_dmg: 0, weak_hit: 0, 
+            block_rate: 0, eff_hit: 0, eff_res: 0 
+        }
         
         Object.values(equippedItems).forEach(slot => {
-            // Add Base Item Stats
+            // 1. Add Base Item Stats (Legacy Flat Stats)
             if (slot.item) {
-                if (slot.item.atk_all_perc) totals[atkKey] += parseFloat(slot.item.atk_all_perc)
-                if (slot.item.def_perc) totals.def += parseFloat(slot.item.def_perc)
-                if (slot.item.hp_perc) totals.hp += parseFloat(slot.item.hp_perc)
+                if (slot.item.atk_all_perc) extraFlat.atk += parseFloat(slot.item.atk_all_perc)
+                if (slot.item.def_perc) extraFlat.def += parseFloat(slot.item.def_perc)
+                if (slot.item.hp_perc) extraFlat.hp += parseFloat(slot.item.hp_perc)
             }
 
-            // Add Substats
+            // 2. Add Selected Main Stat
+            if (slot.item && slot.mainStatKey) {
+                const mainStat = ITEM_MAIN_STATS.find(s => s.key === slot.mainStatKey)
+                if (mainStat) {
+                    const val = mainStat.value
+                    if (mainStat.key === 'atk_all') extraFlat.atk += val
+                    else if (mainStat.key === 'atk_all_perc') extraPerc.atk += val
+                    else if (mainStat.key === 'def') extraFlat.def += val
+                    else if (mainStat.key === 'def_perc') extraPerc.def += val
+                    else if (mainStat.key === 'hp') extraFlat.hp += val
+                    else if (mainStat.key === 'hp_perc') extraPerc.hp += val
+                    else if (otherStats[mainStat.key] !== undefined) {
+                        otherStats[mainStat.key] += val
+                    }
+                }
+            }
+
+            // 3. Add Substats (Determine if Flat or Perc)
             slot.substats.forEach(sub => {
-                if (sub.key && sub.value) {
-                    const val = parseFloat(sub.value) || 0
-                    if (sub.key === 'atk_all' || sub.key === 'atk_all_perc') {
-                        totals[atkKey] += val
-                    } else if (sub.key === 'def_perc') {
-                        totals.def += val
-                    } else if (sub.key === 'hp_perc') {
-                        totals.hp += val
-                    } else {
-                        totals[sub.key] = (totals[sub.key] || 0) + val
+                if (sub.key) {
+                    const statInfo = SUBSTAT_LIST.find(s => s.key === sub.key)
+                    if (statInfo) {
+                        const val = parseFloat(statInfo.values[sub.level || 0]) || 0
+                        
+                        // Categorize based on key
+                        if (sub.key === 'atk_all') extraFlat.atk += val
+                        else if (sub.key === 'atk_all_perc') extraPerc.atk += val
+                        else if (sub.key === 'def') extraFlat.def += val
+                        else if (sub.key === 'def_perc') extraPerc.def += val
+                        else if (sub.key === 'hp') extraFlat.hp += val
+                        else if (sub.key === 'hp_perc') extraPerc.hp += val
+                        else if (sub.key === 'speed') extraFlat.speed += val
+                        else if (otherStats[sub.key] !== undefined) {
+                            otherStats[sub.key] += val
+                        }
                     }
                 }
             })
         })
-        return totals
+
+        // Final Calculation based on "Base Stat Only" principle
+        const res = { ...base }
+        
+        // Attack
+        const baseAtk = base[atkKey] || 0
+        res[atkKey] = baseAtk + (baseAtk * (extraPerc.atk / 100)) + extraFlat.atk
+        
+        // Defense
+        const baseDef = base.def || 0
+        res.def = baseDef + (baseDef * (extraPerc.def / 100)) + extraFlat.def
+        
+        // HP
+        const baseHp = base.hp || 0
+        res.hp = baseHp + (baseHp * (extraPerc.hp / 100)) + extraFlat.hp
+        
+        // Speed
+        res.speed = (base.speed || 0) + extraFlat.speed
+        
+        // Others (Additive Percentages)
+        Object.keys(otherStats).forEach(key => {
+            res[key] = (base[key] || 0) + otherStats[key]
+        })
+
+        return res
     }, [heroStats, equippedItems, selectedHero])
 
 
@@ -244,7 +328,7 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
                 <div className="max-w-6xl mx-auto space-y-12">
                     <div className="text-center space-y-6">
                         <h1 className="text-6xl font-black italic tracking-tighter uppercase text-white leading-none">
-                            Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] via-[#FDB931] to-[#FFD700]">Legend</span>
+                            Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] via-[#FDB931] to-[#FFD700]">Hero</span>
                         </h1>
                         <p className="text-gray-500 text-xs font-bold uppercase tracking-[0.4em] max-w-lg mx-auto leading-relaxed">Select a hero from the pool to initiate high-performance build analysis and simulation</p>
                     </div>
@@ -308,10 +392,6 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white/[0.02] border border-white/5 rounded-2xl text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-                            <Calculator className="w-4 h-4 text-[#FFD700]" />
-                            Real-time Calculation Active
-                        </div>
                         <button 
                             onClick={resetBuild}
                             className="flex items-center gap-2 px-6 py-3 bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-red-500 hover:text-white transition-all group"
@@ -354,30 +434,31 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-br from-[#0a0a0a] to-[#050505] border border-[#FFD700]/20 rounded-[2.5rem] p-10 shadow-[0_0_80px_rgba(255,215,0,0.05)] space-y-8">
-                            <div className="flex items-center justify-between">
+                        {/* Final Stats Analysis Grid */}
+                        <div className="bg-[#0a0a0a] border border-cyan-500/20 rounded-[2.5rem] p-8 shadow-2xl space-y-6 group">
+                            <div className="flex items-center justify-between border-b border-white/5 pb-4">
                                 <div className="space-y-1">
-                                    <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Simulation Summary</h3>
-                                    <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest leading-none">Final Attributes [Base + Gear]</p>
+                                    <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Final Stats <span className="text-cyan-400">Analysis</span></h3>
+                                    <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest leading-none">Total values after all modifiers applied</p>
                                 </div>
-                                <Sparkles className="w-6 h-6 text-[#FFD700] animate-pulse" />
+                                <Zap className="w-6 h-6 text-cyan-400 animate-pulse" />
                             </div>
 
-                            <div className="grid grid-cols-3 gap-4">
-                                <div className="p-6 bg-[#FFD700]/5 border border-[#FFD700]/10 rounded-3xl space-y-3">
-                                    <div className="text-[9px] font-black text-[#FFD700] uppercase tracking-widest opacity-60">Attack</div>
-                                    <div className="text-3xl font-black text-white italic tracking-tighter tabular-nums">
-                                        {selectedHero.hero_group === "Physical" ? formatValue(finalStats.atk_phys) : formatValue(finalStats.atk_mag)}
+                            <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+                                {visibleStatFields.map(field => (
+                                    <div key={field.key} className="flex items-center justify-between group/stat border-b border-white/[0.03] pb-2">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-4 h-4 relative opacity-40 group-hover/stat:opacity-100 transition-opacity">
+                                                <SafeImage src={field.icon} fill className="object-contain" />
+                                            </div>
+                                            <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{field.label.replace(' %', '')}</span>
+                                        </div>
+                                        <div className="text-xs font-black text-white tabular-nums tracking-tighter italic">
+                                            {formatValue(finalStats[field.key])}
+                                            {field.unit && <span className="ml-0.5 text-[8px] opacity-40">{field.unit}</span>}
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl space-y-3">
-                                    <div className="text-[9px] font-black text-gray-500 uppercase tracking-widest opacity-60">Defense</div>
-                                    <div className="text-3xl font-black text-white italic tracking-tighter tabular-nums">{formatValue(finalStats.def)}</div>
-                                </div>
-                                <div className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl space-y-3">
-                                    <div className="text-[9px] font-black text-gray-500 uppercase tracking-widest opacity-60">Health</div>
-                                    <div className="text-3xl font-black text-white italic tracking-tighter tabular-nums">{formatValue(finalStats.hp)}</div>
-                                </div>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -387,14 +468,8 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
                             <div key={slotKey} className="bg-[#0a0a0a] border border-white/5 rounded-[2.5rem] p-7 shadow-xl space-y-6 flex flex-col">
                                 <div className="flex items-center justify-between border-b border-white/5 pb-4">
                                     <div className="flex items-center gap-3">
-                                        <div className={clsx(
-                                            "w-8 h-8 rounded-lg flex items-center justify-center",
-                                            slotKey.startsWith('Weapon') ? "bg-orange-500/10 text-orange-500" : "bg-blue-500/10 text-blue-500"
-                                        )}>
-                                            {slotKey.startsWith('Weapon') ? <Swords size={16} /> : <Shield size={16} />}
-                                        </div>
                                         <span className="text-xs font-black uppercase tracking-widest text-[#FFD700] italic">
-                                            {slotKey.replace(/([A-Z])(\d)/, '$1')}
+                                            {slotKey.replace(/\d+$/, '')}
                                         </span>
                                     </div>
                                     {equippedItems[slotKey].item && (
@@ -415,50 +490,129 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
                                     )}
                                 >
                                     {equippedItems[slotKey].item ? (
-                                        <div className="flex items-center gap-5 px-6 w-full">
-                                            <div className="w-14 h-14 relative rounded-xl overflow-hidden border border-[#FFD700]/20 shadow-2xl">
-                                                <SafeImage src={equippedItems[slotKey].item.image} fill className="object-contain" />
+                                        <div className="flex items-start gap-4 px-5 w-full">
+                                            <div className="w-20 h-20 relative rounded-2xl overflow-hidden border-2 border-[#FFD700]/30 shadow-[0_0_20px_rgba(255,215,0,0.1)] flex-shrink-0 group-hover:scale-105 transition-transform duration-500">
+                                                <SafeImage src={equippedItems[slotKey].item.image} fill className="object-cover" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                                             </div>
-                                            <div className="flex-1">
-                                                <h4 className="text-[10px] font-black text-white uppercase tracking-tight leading-tight line-clamp-2">{equippedItems[slotKey].item.name}</h4>
+                                            
+                                            <div className="flex-1 min-w-0 py-1 space-y-2">
+                                                <div>
+                                                    <h4 className="text-[11px] font-black text-white uppercase tracking-tight leading-tight line-clamp-1 group-hover:text-[#FFD700] transition-colors">
+                                                        {equippedItems[slotKey].item.name}
+                                                    </h4>
+                                                    {(() => {
+                                                        const item = equippedItems[slotKey].item
+                                                        const statValue = item.atk_all_perc || item.def_perc || item.hp_perc
+                                                        const statName = item.atk_all_perc ? "ATTACK" : (item.def_perc ? "DEFENSE" : "HP")
+                                                        const statColor = item.atk_all_perc ? "text-orange-500" : (item.def_perc ? "text-blue-500" : "text-green-500")
+                                                        
+                                                        if (!statValue) return null
+                                                        return (
+                                                            <div className={clsx("text-[10px] font-black italic tracking-widest mt-0.5 uppercase", statColor)}>
+                                                                {statName} +{statValue}
+                                                            </div>
+                                                        )
+                                                    })()}
+                                                </div>
+
+                                                <div className="h-px bg-white/5 w-full"></div>
+
+                                                <div className="space-y-1.5">
+                                                    <p className="text-[8px] font-bold text-gray-500 uppercase tracking-[0.2em]">Item Main Stat</p>
+                                                    <div className="relative group/select">
+                                                        <select 
+                                                            value={equippedItems[slotKey].mainStatKey || ""}
+                                                            onChange={(e) => handleItemAction(slotKey, 'SET_MAIN_STAT', { key: e.target.value })}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className="w-full bg-white/[0.03] border border-white/10 rounded-xl pl-3 pr-8 py-2 text-[10px] font-black text-cyan-400 outline-none focus:border-cyan-500/50 transition-all appearance-none cursor-pointer hover:bg-white/[0.07] shadow-inner"
+                                                        >
+                                                            {ITEM_MAIN_STATS.map(s => (
+                                                                <option key={s.key} value={s.key} className="bg-[#0a0a0a] text-white">
+                                                                    {s.label} (+{formatValue(s.value)}{s.unit})
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-cyan-500/50 group-hover/select:text-cyan-400 transition-colors">
+                                                            <ChevronRight size={12} className="rotate-90" />
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     ) : (
-                                        <Plus className="w-4 h-4 text-gray-800 group-hover:text-gray-500 transition-colors" />
+                                        <div className="flex flex-col items-center gap-2 opacity-20 group-hover:opacity-100 transition-all duration-500">
+                                            <div className="w-12 h-12 rounded-full border-2 border-dashed border-white/20 flex items-center justify-center group-hover:scale-110 group-hover:border-[#FFD700]/50 transition-all">
+                                                <Plus className="w-6 h-6 text-white" />
+                                            </div>
+                                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Equip Item</span>
+                                        </div>
                                     )}
                                 </div>
 
                                 {equippedItems[slotKey].item && (
                                     <div className="space-y-3 pt-4 border-t border-white/5 flex-1">
                                         <div className="grid grid-cols-1 gap-2">
-                                            {equippedItems[slotKey].substats.map((sub, idx) => (
-                                                <div key={idx} className="flex items-center gap-2 group/sub">
-                                                    <div className="relative flex-1">
-                                                        <select
-                                                            value={sub.key || ''}
-                                                            onChange={(e) => handleItemAction(slotKey, 'SUBSTAT_KEY', { index: idx, key: e.target.value })}
-                                                            className="w-full bg-black border border-white/5 hover:border-white/20 rounded-xl px-4 py-2.5 text-[10px] font-black text-gray-500 focus:text-white outline-none focus:border-[#FFD700] appearance-none cursor-pointer transition-all shadow-inner"
-                                                        >
-                                                            <option value="">Choose Stat...</option>
-                                                            {availableSubstats.map(f => {
-                                                                const isUsed = equippedItems[slotKey].substats.some((s, sIdx) => sIdx !== idx && s.key === f.key)
-                                                                return <option key={f.key} value={f.key} disabled={isUsed}>{f.label}</option>
-                                                            })}
-
-                                                        </select>
-                                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-700">
-                                                            <ChevronRight size={10} className="rotate-90" />
+                                            {equippedItems[slotKey].substats.map((sub, idx) => {
+                                                const currentStat = SUBSTAT_LIST.find(s => s.key === sub.key)
+                                                const totalLevels = equippedItems[slotKey].substats.reduce((sum, s) => sum + (s.level || 0), 0)
+                                                const isAllSelected = equippedItems[slotKey].substats.every(s => s.key !== null)
+                                                
+                                                return (
+                                                    <div key={idx} className="flex items-center gap-2 group/sub">
+                                                        <div className="relative flex-1">
+                                                            <select
+                                                                value={sub.key || ''}
+                                                                onChange={(e) => handleItemAction(slotKey, 'SUBSTAT_KEY', { index: idx, key: e.target.value })}
+                                                                className="w-full bg-black border border-white/5 hover:border-white/20 rounded-xl px-4 py-2.5 text-[10px] font-black text-gray-400 focus:text-white outline-none focus:border-[#FFD700] appearance-none cursor-pointer transition-all shadow-inner"
+                                                            >
+                                                                <option value="">Choose Stat...</option>
+                                                                {SUBSTAT_LIST.map(f => {
+                                                                    const isUsed = equippedItems[slotKey].substats.some((s, sIdx) => sIdx !== idx && s.key === f.key)
+                                                                    return <option key={f.key} value={f.key} disabled={isUsed}>{f.label}</option>
+                                                                })}
+                                                            </select>
+                                                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-700">
+                                                                <ChevronRight size={10} className="rotate-90" />
+                                                            </div>
                                                         </div>
+                                                        
+                                                        {sub.key && (
+                                                            <div className="flex items-center gap-1.5 bg-black/50 border border-white/5 p-1 rounded-xl">
+                                                                <div className="w-12 text-center text-[10px] font-black text-white px-1">
+                                                                    {currentStat ? currentStat.values[sub.level || 0] : 0}
+                                                                    {sub.key.includes('_perc') || sub.key.includes('rate') || sub.key.includes('dmg') || sub.key.includes('hit') || sub.key.includes('res') ? '%' : ''}
+                                                                </div>
+                                                                
+                                                                <div className="flex items-center gap-1">
+                                                                    <button 
+                                                                        onClick={() => handleItemAction(slotKey, 'LEVEL_DOWN', { index: idx })}
+                                                                        disabled={!isAllSelected || sub.level <= 0}
+                                                                        className="w-6 h-6 flex items-center justify-center bg-white/5 border border-white/10 rounded-lg text-gray-500 hover:text-white hover:bg-white/10 disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+                                                                    >
+                                                                        -
+                                                                    </button>
+                                                                    <span className="w-4 text-center text-[9px] font-bold text-[#FFD700]">
+                                                                        {sub.level || 0}
+                                                                    </span>
+                                                                    <button 
+                                                                        onClick={() => handleItemAction(slotKey, 'LEVEL_UP', { index: idx })}
+                                                                        disabled={!isAllSelected || totalLevels >= 5 || sub.level >= (currentStat?.values.length - 1)}
+                                                                        className="w-6 h-6 flex items-center justify-center bg-white/5 border border-white/10 rounded-lg text-gray-500 hover:text-white hover:bg-white/10 disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+                                                                    >
+                                                                        +
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                    <input 
-                                                        type="number"
-                                                        value={sub.value}
-                                                        onChange={(e) => handleItemAction(slotKey, 'SUBSTAT_VALUE', { index: idx, value: e.target.value })}
-                                                        placeholder="0"
-                                                        className="w-16 bg-black border border-white/5 rounded-xl px-2 py-2.5 text-[10px] font-black text-[#FFD700] outline-none focus:border-[#FFD700] hover:border-white/20 transition-all text-center tabular-nums shadow-inner"
-                                                    />
+                                                )
+                                            })}
+                                            {!equippedItems[slotKey].substats.every(s => s.key !== null) && (
+                                                <div className="text-[8px] font-bold text-gray-600 uppercase tracking-widest text-center animate-pulse">
+                                                    Select all 4 stats to unlock levels
                                                 </div>
-                                            ))}
+                                            )}
                                         </div>
                                     </div>
                                 )}

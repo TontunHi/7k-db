@@ -6,7 +6,7 @@ import {
     X, Plus, Sword, Shield, Trash2, 
     Download, Copy, Check, Info, 
     ChevronRight, Sparkles, Wand2,
-    Eye, Edit3
+    Eye, Edit3, Search
 } from "lucide-react"
 import { clsx } from "clsx"
 import { toast } from "sonner"
@@ -194,45 +194,53 @@ export default function BuildSimulator({ initialHero, onBack }) {
     }
 
     if (!hero) {
+        const filteredHeroes = allHeroes.filter(h => 
+            h.name.toLowerCase().includes(searchHero.toLowerCase()) || 
+            h.filename.toLowerCase().includes(searchHero.toLowerCase())
+        )
+
         return (
-            <div className="fixed inset-0 z-[60] bg-[#050505] flex flex-col items-center justify-center animate-in fade-in duration-300">
-                <div className="absolute inset-0 z-0 opacity-20">
-                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/20 blur-[150px] rounded-full"></div>
-                </div>
-                
-                <div className="relative z-10 w-full max-w-6xl px-6">
-                    <div className="text-center mb-12">
-                        <h2 className="text-5xl font-black text-white italic tracking-tighter uppercase transform -skew-x-6">SELECT <span className="text-primary">HERO</span></h2>
-                        <p className="text-gray-500 mt-2 font-bold tracking-[0.2em] uppercase">Choose a hero to start building</p>
+            <div className="fixed inset-0 z-[60] bg-[#050505] text-white p-6 lg:p-12 font-inter animate-in fade-in duration-700 overflow-y-auto custom-scrollbar">
+                <div className="max-w-6xl mx-auto space-y-12">
+                    <div className="text-center space-y-6">
+                        <h1 className="text-6xl font-black italic tracking-tighter uppercase text-white leading-none">
+                            Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] via-[#FDB931] to-[#FFD700]">Hero</span>
+                        </h1>
+                        <p className="text-gray-500 text-xs font-bold uppercase tracking-[0.4em] max-w-lg mx-auto leading-relaxed">Select a hero from the pool to initiate high-performance build analysis and simulation</p>
                     </div>
 
-                    <div className="mb-8 max-w-sm mx-auto">
-                        <input 
-                            type="text" 
-                            placeholder="Filter heroes..." 
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-3 text-lg font-bold text-white outline-none focus:border-primary transition-all text-center placeholder:text-gray-700"
-                            value={searchHero}
-                            onChange={(e) => setSearchHero(e.target.value)}
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-6 max-h-[55vh] overflow-y-auto px-4 py-8 custom-scrollbar rounded-3xl bg-black/40 border border-white/5">
-                        {allHeroes.filter(h => h.name.toLowerCase().includes(searchHero.toLowerCase())).map(h => (
-                            <div 
-                                key={h.filename} 
-                                onClick={() => setHero(h)}
-                                className="group cursor-pointer flex flex-col items-center"
-                            >
-                                <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-white/5 group-hover:border-primary transition-all transform group-hover:scale-110 shadow-lg bg-black/40">
-                                    <SafeImage src={`/heroes/${h.filename}`} fill className="object-contain p-1" alt="" />
-                                    <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                </div>
+                    <div className="bg-[#0a0a0a] border border-white/5 rounded-[3rem] p-10 shadow-2xl space-y-10">
+                        <div className="flex flex-col md:flex-row items-center justify-center gap-8 border-b border-white/5 pb-8">
+                            <div className="relative w-full md:w-[600px]">
+                                <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-[#FFD700]/40 w-6 h-6" />
+                                <input 
+                                    type="text"
+                                    placeholder="Search legend pool..."
+                                    value={searchHero}
+                                    onChange={(e) => setSearchHero(e.target.value)}
+                                    className="w-full bg-black/50 border border-white/10 rounded-[2rem] pl-16 pr-8 py-6 text-lg font-bold text-white outline-none focus:border-[#FFD700]/50 transition-all placeholder:text-gray-800 shadow-inner"
+                                />
                             </div>
-                        ))}
+                        </div>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-8 animate-in slide-in-from-bottom-5 duration-700">
+                            {filteredHeroes.map(h => (
+                                <button
+                                    key={h.filename}
+                                    onClick={() => setHero(h)}
+                                    className="group relative flex flex-col items-center transition-all hover:scale-105 active:scale-95"
+                                >
+                                    <div className="relative aspect-[11/14] w-full rounded-[2.5rem] overflow-hidden border-2 border-white/5 group-hover:border-[#FFD700] transition-all shadow-2xl bg-black/40">
+                                        <SafeImage src={`/heroes/${h.filename}`} fill className="object-contain p-1 transition-transform duration-700 group-hover:scale-110" alt={h.name} />
+                                        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
-                    <div className="mt-12 text-center">
-                        <button onClick={onBack} className="text-gray-600 hover:text-white text-sm font-black uppercase tracking-widest transition-colors">Go Back</button>
+                    <div className="text-center">
+                        <button onClick={onBack} className="text-gray-600 hover:text-white text-xs font-black uppercase tracking-widest transition-colors">Go Back to Previous Page</button>
                     </div>
                 </div>
             </div>
@@ -249,7 +257,7 @@ export default function BuildSimulator({ initialHero, onBack }) {
                 <div className="flex items-center gap-4">
                     {onBack && (
                         <>
-                            <button onClick={onBack} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors">
+                            <button onClick={() => setHero(null)} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors">
                                 <X className="w-6 h-6" />
                             </button>
                             <div className="h-8 w-px bg-white/10 mx-2"></div>
