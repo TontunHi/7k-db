@@ -5,25 +5,27 @@ import { Plus, Edit3, Trash2, X, Save, Loader2, Sparkles } from "lucide-react"
 import { clsx } from "clsx"
 import { upsertPetRegistry, deletePetRegistry } from "@/lib/registry-actions"
 import { toast } from "sonner"
+import SafeImage from "../shared/SafeImage"
 
-const GRADES = ["r", "l"]
 
-export default function PetRegistry({ initialData }) {
+
+
+export default function PetRegistry({ initialData, assets = [] }) {
     const [pets, setPets] = useState(initialData)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingPet, setEditingPet] = useState(null)
     const [isSaving, setIsSaving] = useState(false)
 
     // Form State
-    const [formData, setFormData] = useState({ name: "", grade: "l", atk_all: 0, def: 0, hp: 0 })
+    const [formData, setFormData] = useState({ name: "", grade: "l", atk_all: 0, def: 0, hp: 0, image: "" })
 
     const openModal = (pet = null) => {
         if (pet) {
             setEditingPet(pet)
-            setFormData({ ...pet })
+            setFormData({ ...pet, image: pet.image || "" })
         } else {
             setEditingPet(null)
-            setFormData({ name: "", grade: "l", atk_all: 0, def: 0, hp: 0 })
+            setFormData({ name: "", grade: "l", atk_all: 0, def: 0, hp: 0, image: "" })
         }
         setIsModalOpen(true)
     }
@@ -35,7 +37,7 @@ export default function PetRegistry({ initialData }) {
             const result = await upsertPetRegistry(formData)
             if (result.success) {
                 toast.success(editingPet ? "Pet updated" : "Pet registered")
-                window.location.reload() // Simpler for multi-table refresh
+                window.location.reload() 
             }
         } catch (err) {
             console.error(err)
@@ -83,20 +85,27 @@ export default function PetRegistry({ initialData }) {
                                 <tr key={pet.id} className="group hover:bg-white/[0.02] transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-                                                <Sparkles className="w-5 h-5 text-amber-500" />
+                                            <div className="relative w-12 h-12 rounded-xl bg-black border border-white/5 overflow-hidden flex-shrink-0">
+                                                <SafeImage 
+                                                    src={pet.image ? `/pets/${pet.image}` : null} 
+                                                    fill 
+                                                    className="object-cover" 
+                                                    alt={pet.name} 
+                                                    sizes="48px"
+                                                />
                                             </div>
                                             <div>
                                                 <div className="text-sm font-black text-white">{pet.name}</div>
                                                 <div className="text-[9px] font-bold text-amber-500 uppercase tracking-widest">{pet.grade} GRADE</div>
+
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex gap-6 text-[10px] items-center italic tabular-nums">
-                                            <span className="text-gray-400"><span className="text-gray-600 uppercase font-black mr-2">ATK</span>{pet.atk_all}</span>
-                                            <span className="text-gray-400"><span className="text-gray-600 uppercase font-black mr-2">DEF</span>{pet.def}</span>
-                                            <span className="text-gray-400"><span className="text-gray-600 uppercase font-black mr-2">HP</span>{pet.hp}</span>
+                                            <span className="text-gray-400 group-hover:text-white transition-colors"><span className="text-gray-600 uppercase font-black mr-2">ATK</span>{pet.atk_all}</span>
+                                            <span className="text-gray-400 group-hover:text-white transition-colors"><span className="text-gray-600 uppercase font-black mr-2">DEF</span>{pet.def}</span>
+                                            <span className="text-gray-400 group-hover:text-white transition-colors"><span className="text-gray-600 uppercase font-black mr-2">HP</span>{pet.hp}</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
@@ -134,7 +143,7 @@ export default function PetRegistry({ initialData }) {
                                 <X size={20} />
                             </button>
                         </div>
-                        <form onSubmit={handleSave} className="p-6 space-y-6">
+                        <form onSubmit={handleSave} className="p-6 space-y-6 overflow-y-auto max-h-[80vh] custom-scrollbar">
                             <div className="space-y-4">
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Pet Name</label>
@@ -147,16 +156,38 @@ export default function PetRegistry({ initialData }) {
                                         placeholder="Enter pet name..."
                                     />
                                 </div>
-                                <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Grade</label>
-                                    <select 
-                                        value={formData.grade}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, grade: e.target.value }))}
-                                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-amber-500 appearance-none cursor-pointer transition-all"
-                                    >
-                                        {GRADES.map(g => <option key={g} value={g}>{g.toUpperCase()}</option>)}
-                                    </select>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Grade</label>
+                                        <select 
+                                            value={formData.grade}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, grade: e.target.value }))}
+                                            className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-amber-500 appearance-none cursor-pointer transition-all"
+                                        >
+                                            {GRADES.map(g => <option key={g} value={g}>{g.toUpperCase()}</option>)}
+                                        </select>
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Asset Image</label>
+                                        <select 
+                                            value={formData.image}
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                let grade = formData.grade;
+                                                if (val.startsWith('l_')) grade = 'l';
+                                                else if (val.startsWith('r_')) grade = 'r';
+                                                setFormData(prev => ({ ...prev, image: val, grade }));
+                                            }}
+                                            className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-[11px] font-bold text-white outline-none focus:border-amber-500 appearance-none cursor-pointer transition-all"
+                                        >
+                                            <option value="">Select Image</option>
+                                            {assets.map(img => (
+                                                <option key={img} value={img}>{img}</option>
+                                            ))}
+                                        </select>
+                                    </div>
                                 </div>
+
                             </div>
 
                             <div className="grid grid-cols-3 gap-4">
@@ -166,7 +197,7 @@ export default function PetRegistry({ initialData }) {
                                         type="number"
                                         value={formData.atk_all}
                                         onChange={(e) => setFormData(prev => ({ ...prev, atk_all: parseInt(e.target.value) || 0 }))}
-                                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-amber-500 transition-all"
+                                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-amber-500 transition-all text-center"
                                     />
                                 </div>
                                 <div className="space-y-1.5">
@@ -175,7 +206,7 @@ export default function PetRegistry({ initialData }) {
                                         type="number"
                                         value={formData.def}
                                         onChange={(e) => setFormData(prev => ({ ...prev, def: parseInt(e.target.value) || 0 }))}
-                                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-amber-500 transition-all"
+                                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-amber-500 transition-all text-center"
                                     />
                                 </div>
                                 <div className="space-y-1.5">
@@ -184,10 +215,20 @@ export default function PetRegistry({ initialData }) {
                                         type="number"
                                         value={formData.hp}
                                         onChange={(e) => setFormData(prev => ({ ...prev, hp: parseInt(e.target.value) || 0 }))}
-                                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-amber-500 transition-all"
+                                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-amber-500 transition-all text-center"
                                     />
                                 </div>
                             </div>
+
+                            {/* Preview */}
+                            {formData.image && (
+                                <div className="p-4 bg-white/5 rounded-2xl border border-white/5 flex flex-col items-center gap-2">
+                                    <div className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Asset Preview</div>
+                                    <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-[#FFD700]/20 shadow-lg shadow-amber-500/10">
+                                        <SafeImage src={`/pets/${formData.image}`} fill className="object-cover" alt="preview" />
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="pt-4 flex gap-3">
                                 <button 

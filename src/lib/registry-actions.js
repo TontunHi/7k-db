@@ -61,17 +61,17 @@ export async function getPetsRegistry() {
 
 export async function upsertPetRegistry(data) {
     await ensureDB()
-    const { id, name, grade, atk_all, def, hp } = data
+    const { id, name, grade, atk_all, def, hp, image } = data
     
     if (id) {
         await pool.query(
-            "UPDATE pets SET name = ?, grade = ?, atk_all = ?, def = ?, hp = ? WHERE id = ?",
-            [name, grade, atk_all, def, hp, id]
+            "UPDATE pets SET name = ?, grade = ?, atk_all = ?, def = ?, hp = ?, image = ? WHERE id = ?",
+            [name, grade, atk_all, def, hp, image, id]
         )
     } else {
         await pool.query(
-            "INSERT INTO pets (name, grade, atk_all, def, hp) VALUES (?, ?, ?, ?, ?)",
-            [name, grade, atk_all, def, hp]
+            "INSERT INTO pets (name, grade, atk_all, def, hp, image) VALUES (?, ?, ?, ?, ?, ?)",
+            [name, grade, atk_all, def, hp, image]
         )
     }
     
@@ -102,17 +102,17 @@ export async function getItemsRegistry() {
 
 export async function upsertItemRegistry(data) {
     await ensureDB()
-    const { id, name, grade, item_type, atk_all_perc, def_perc, hp_perc } = data
+    const { id, name, grade, item_type, atk_all_perc, def_perc, hp_perc, image } = data
     
     if (id) {
         await pool.query(
-            "UPDATE items SET name = ?, grade = ?, item_type = ?, atk_all_perc = ?, def_perc = ?, hp_perc = ? WHERE id = ?",
-            [name, grade, item_type, atk_all_perc, def_perc, hp_perc, id]
+            "UPDATE items SET name = ?, grade = ?, item_type = ?, atk_all_perc = ?, def_perc = ?, hp_perc = ?, image = ? WHERE id = ?",
+            [name, grade, item_type, atk_all_perc, def_perc, hp_perc, image, id]
         )
     } else {
         await pool.query(
-            "INSERT INTO items (name, grade, item_type, atk_all_perc, def_perc, hp_perc) VALUES (?, ?, ?, ?, ?, ?)",
-            [name, grade, item_type, atk_all_perc, def_perc, hp_perc]
+            "INSERT INTO items (name, grade, item_type, atk_all_perc, def_perc, hp_perc, image) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [name, grade, item_type, atk_all_perc, def_perc, hp_perc, image]
         )
     }
     
@@ -127,11 +127,35 @@ export async function deleteItemRegistry(id) {
     return { success: true }
 }
 
+// ─── Asset Utilities ───────────────────────────────────────────
+
+import { readdirSync } from "fs"
+import { join } from "path"
+
+export async function getRegistryAssets() {
+    const publicDir = join(process.cwd(), "public")
+    
+    const pets = readdirSync(join(publicDir, "pets")).filter(f => f.endsWith(".webp"))
+    const weapons = readdirSync(join(publicDir, "items", "weapon")).filter(f => f.endsWith(".webp"))
+    const armors = readdirSync(join(publicDir, "items", "armor")).filter(f => f.endsWith(".webp"))
+    const accessories = readdirSync(join(publicDir, "items", "accessory")).filter(f => f.endsWith(".webp"))
+    
+    return {
+        pets,
+        items: {
+            Weapon: weapons,
+            Armor: armors,
+            Accessory: accessories
+        }
+    }
+}
+
 export async function getFullRegistryData() {
-    const [heroes, pets, items] = await Promise.all([
+    const [heroes, pets, items, assets] = await Promise.all([
         getHeroesRegistry(),
         getPetsRegistry(),
-        getItemsRegistry()
+        getItemsRegistry(),
+        getRegistryAssets()
     ])
-    return { heroes, pets, items }
+    return { heroes, pets, items, assets }
 }

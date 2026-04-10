@@ -58,8 +58,8 @@ export default function RegistryDashboard({ initialData }) {
             {/* Content Section */}
             <div className="relative min-h-[600px]">
                 {activeTab === "heroes" && <HeroRegistry initialData={initialData.heroes} />}
-                {activeTab === "pets" && <PetRegistry initialData={initialData.pets} />}
-                {activeTab === "items" && <ItemRegistry initialData={initialData.items} />}
+                {activeTab === "pets" && <PetRegistry initialData={initialData.pets} assets={initialData.assets?.pets} />}
+                {activeTab === "items" && <ItemRegistry initialData={initialData.items} assets={initialData.assets?.items} />}
             </div>
         </div>
     )

@@ -81,9 +81,9 @@ export default function HeroRegistry({ initialData }) {
     }
 
     return (
-        <div className="flex gap-6 relative">
+        <div className="relative">
             {/* Table Section */}
-            <div className={clsx("flex-1 transition-all duration-500", editingHero ? "w-2/3" : "w-full")}>
+            <div className="w-full">
                 <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
                     <div className="p-6 border-b border-white/5 flex items-center justify-between gap-4 bg-gradient-to-r from-white/[0.02] to-transparent">
                         <div className="relative flex-1 max-w-md">
@@ -102,9 +102,9 @@ export default function HeroRegistry({ initialData }) {
                     </div>
 
                     <div className="overflow-x-auto custom-scrollbar">
-                        <table className="w-full border-separate border-spacing-0">
+                        <table className="w-full border-separate border-spacing-0 text-left">
                             <thead>
-                                <tr className="text-[9px] font-black text-gray-500 uppercase tracking-widest text-left">
+                                <tr className="text-[9px] font-black text-gray-500 uppercase tracking-widest">
                                     <th className="px-6 py-4 border-b border-white/5">Hero</th>
                                     <th className="px-6 py-4 border-b border-white/5">Group / Type</th>
                                     <th className="px-6 py-4 border-b border-white/5">Primary Stats</th>
@@ -116,7 +116,7 @@ export default function HeroRegistry({ initialData }) {
                                     <tr key={hero.filename} className="group hover:bg-white/[0.02] transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 relative rounded-lg overflow-hidden border border-white/10 group-hover:border-[#FFD700]/30 transition-all">
+                                                <div className="w-10 h-10 relative rounded-xl overflow-hidden border border-white/10 group-hover:border-[#FFD700]/30 transition-all">
                                                     <SafeImage src={`/heroes/${hero.filename}.webp`} fill className="object-cover" />
                                                 </div>
                                                 <div>
@@ -172,87 +172,89 @@ export default function HeroRegistry({ initialData }) {
                 </div>
             </div>
 
-            {/* Editing Side Panel */}
+            {/* Editing Centered Modal */}
             {editingHero && (
-                <div className="w-[400px] flex-shrink-0 bg-[#0a0a0a] border border-[#FFD700]/20 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(255,215,0,0.05)] h-fit sticky top-6 animate-in slide-in-from-right duration-500">
-                    <div className="p-6 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-[#FFD700]/5 to-transparent">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 relative rounded-xl overflow-hidden border border-[#FFD700]/30 shadow-2xl">
-                                <SafeImage src={`/heroes/${editingHero.filename}.webp`} fill className="object-cover" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-black text-white italic tracking-tight">{editingHero.name}</h3>
-                                <p className="text-[9px] font-bold text-[#FFD700] uppercase tracking-[0.2em]">{editingHero.grade}</p>
-                            </div>
-                        </div>
-                        <button onClick={() => setEditingHero(null)} className="text-gray-600 hover:text-white transition-colors">
-                            <X size={20} />
-                        </button>
-                    </div>
-
-                    <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
-                        {/* Classification */}
-                        <div className="space-y-4">
-                            <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
-                                <div className="w-1 h-1 bg-[#FFD700] rounded-full" />
-                                Classification
-                            </h4>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-1.5">
-                                    <label className="text-[8px] font-bold text-gray-600 uppercase ml-1">Hero Group</label>
-                                    <select 
-                                        value={formData.hero_group}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, hero_group: e.target.value }))}
-                                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-2 text-xs font-bold text-white outline-none focus:border-orange-500 transition-all appearance-none cursor-pointer"
-                                    >
-                                        {GROUPS.map(g => <option key={g} value={g}>{g}</option>)}
-                                    </select>
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="w-full max-w-lg bg-[#0a0a0a] border border-[#FFD700]/20 rounded-3xl overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.6)] animate-in zoom-in-95 duration-300">
+                        <div className="p-6 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-[#FFD700]/5 to-transparent">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 relative rounded-xl overflow-hidden border border-[#FFD700]/30 shadow-2xl">
+                                    <SafeImage src={`/heroes/${editingHero.filename}.webp`} fill className="object-cover" />
                                 </div>
-                                <div className="space-y-1.5">
-                                    <label className="text-[8px] font-bold text-gray-600 uppercase ml-1">Role Type</label>
-                                    <select 
-                                        value={formData.type}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value }))}
-                                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-2 text-xs font-bold text-white outline-none focus:border-blue-500 transition-all appearance-none cursor-pointer"
-                                    >
-                                        {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                                    </select>
+                                <div>
+                                    <h3 className="text-lg font-black text-white italic tracking-tight">{editingHero.name}</h3>
+                                    <p className="text-[9px] font-bold text-[#FFD700] uppercase tracking-[0.2em]">{editingHero.grade}</p>
                                 </div>
                             </div>
+                            <button onClick={() => setEditingHero(null)} className="text-gray-600 hover:text-white transition-colors">
+                                <X size={20} />
+                            </button>
                         </div>
 
-                        {/* Stats */}
-                        <div className="space-y-4">
-                            <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
-                                <div className="w-1 h-1 bg-[#FFD700] rounded-full" />
-                                Base Stats (Lv 30 +5)
-                            </h4>
-                            <div className="grid grid-cols-2 gap-x-4 gap-y-4">
-                                {STAT_FIELDS.map((stat) => (
-                                    <div key={stat.key} className="space-y-1.5">
-                                        <label className="text-[8px] font-bold text-gray-600 uppercase ml-1">{stat.label}</label>
-                                        <input 
-                                            type="number"
-                                            step={stat.type === "float" ? "0.01" : "1"}
-                                            value={formData[stat.key]}
-                                            onChange={(e) => setFormData(prev => ({ ...prev, [stat.key]: parseFloat(e.target.value) || 0 }))}
-                                            className="w-full bg-black border border-white/10 rounded-xl px-4 py-2 text-xs font-bold text-white outline-none focus:border-[#FFD700] transition-all"
-                                        />
+                        <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                            {/* Classification */}
+                            <div className="space-y-4">
+                                <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                                    <div className="w-1 h-1 bg-[#FFD700] rounded-full" />
+                                    Classification
+                                </h4>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-[8px] font-bold text-gray-600 uppercase ml-1">Hero Group</label>
+                                        <select 
+                                            value={formData.hero_group}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, hero_group: e.target.value }))}
+                                            className="w-full bg-black border border-white/10 rounded-xl px-4 py-2 text-xs font-bold text-white outline-none focus:border-orange-500 transition-all appearance-none cursor-pointer"
+                                        >
+                                            {GROUPS.map(g => <option key={g} value={g}>{g}</option>)}
+                                        </select>
                                     </div>
-                                ))}
+                                    <div className="space-y-1.5">
+                                        <label className="text-[8px] font-bold text-gray-600 uppercase ml-1">Role Type</label>
+                                        <select 
+                                            value={formData.type}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value }))}
+                                            className="w-full bg-black border border-white/10 rounded-xl px-4 py-2 text-xs font-bold text-white outline-none focus:border-blue-500 transition-all appearance-none cursor-pointer"
+                                        >
+                                            {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Stats */}
+                            <div className="space-y-4">
+                                <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                                    <div className="w-1 h-1 bg-[#FFD700] rounded-full" />
+                                    Base Stats (Lv 30 +5)
+                                </h4>
+                                <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+                                    {STAT_FIELDS.map((stat) => (
+                                        <div key={stat.key} className="space-y-1.5">
+                                            <label className="text-[8px] font-bold text-gray-600 uppercase ml-1">{stat.label}</label>
+                                            <input 
+                                                type="number"
+                                                step={stat.type === "float" ? "0.01" : "1"}
+                                                value={formData[stat.key]}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, [stat.key]: parseFloat(e.target.value) || 0 }))}
+                                                className="w-full bg-black border border-white/10 rounded-xl px-4 py-2 text-xs font-bold text-white outline-none focus:border-[#FFD700] transition-all"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="p-6 border-t border-white/5 bg-black/40">
-                        <button 
-                            onClick={handleSave}
-                            disabled={isSaving}
-                            className="w-full bg-[#FFD700] text-black h-12 rounded-xl font-black uppercase text-xs tracking-widest flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-[#FFD700]/10"
-                        >
-                            {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                            Update Registry
-                        </button>
+                        <div className="p-6 border-t border-white/5 bg-black/40">
+                            <button 
+                                onClick={handleSave}
+                                disabled={isSaving}
+                                className="w-full bg-[#FFD700] text-black h-12 rounded-xl font-black uppercase text-xs tracking-widest flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-[#FFD700]/10"
+                            >
+                                {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                                Update Registry
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

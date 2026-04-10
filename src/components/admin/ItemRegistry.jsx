@@ -5,11 +5,13 @@ import { Plus, Edit3, Trash2, X, Save, Loader2, Sword } from "lucide-react"
 import { clsx } from "clsx"
 import { upsertItemRegistry, deleteItemRegistry } from "@/lib/registry-actions"
 import { toast } from "sonner"
+import SafeImage from "../shared/SafeImage"
 
-const GRADES = ["r", "l", "l+", "l++"]
+const GRADES = ["r", "l"]
 const ITEM_TYPES = ["Weapon", "Armor", "Accessory"]
 
-export default function ItemRegistry({ initialData }) {
+
+export default function ItemRegistry({ initialData, assets = {} }) {
     const [items, setItems] = useState(initialData)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingItem, setEditingItem] = useState(null)
@@ -17,20 +19,24 @@ export default function ItemRegistry({ initialData }) {
 
     // Form State
     const [formData, setFormData] = useState({ 
-        name: "", grade: "l", item_type: "Weapon", 
-        atk_all_perc: 0, def_perc: 0, hp_perc: 0 
+        name: "", item_type: "Weapon", 
+        atk_all_perc: 0, def_perc: 0, hp_perc: 0,
+        image: ""
     })
+
 
     const openModal = (item = null) => {
         if (item) {
             setEditingItem(item)
-            setFormData({ ...item })
+            setFormData({ ...item, image: item.image || "" })
         } else {
             setEditingItem(null)
             setFormData({ 
-                name: "", grade: "l", item_type: "Weapon", 
-                atk_all_perc: 0, def_perc: 0, hp_perc: 0 
+                name: "", item_type: "Weapon", 
+                atk_all_perc: 0, def_perc: 0, hp_perc: 0,
+                image: ""
             })
+
         }
         setIsModalOpen(true)
     }
@@ -63,6 +69,15 @@ export default function ItemRegistry({ initialData }) {
         }
     }
 
+    const getAssetPath = () => {
+        if (formData.item_type === "Weapon") return "/items/weapon"
+        if (formData.item_type === "Armor") return "/items/armor"
+        if (formData.item_type === "Accessory") return "/items/accessory"
+        return "/items"
+    }
+
+    const availableAssets = assets[formData.item_type] || []
+
     return (
         <div className="space-y-6">
             <div className="flex justify-end">
@@ -90,24 +105,31 @@ export default function ItemRegistry({ initialData }) {
                                 <tr key={item.id} className="group hover:bg-white/[0.02] transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                                                <Sword className="w-5 h-5 text-emerald-500" />
+                                            <div className="relative w-12 h-12 rounded-xl bg-black border border-white/5 overflow-hidden flex-shrink-0">
+                                                <SafeImage 
+                                                    src={item.image ? `/items/${item.item_type.toLowerCase()}/${item.image}` : null} 
+                                                    fill 
+                                                    className="object-cover" 
+                                                    alt={item.name} 
+                                                    sizes="48px"
+                                                />
                                             </div>
                                             <div>
                                                 <div className="text-sm font-black text-white">{item.name}</div>
                                                 <div className="flex gap-2">
-                                                    <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest border border-emerald-500/20 px-1.5 py-0.5 rounded leading-none">{item.grade}</span>
                                                     <span className="text-[8px] font-black text-gray-600 uppercase tracking-widest bg-gray-900 border border-gray-800 px-1.5 py-0.5 rounded leading-none">{item.item_type}</span>
                                                 </div>
+
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex gap-6 text-[10px] items-center tabular-nums">
-                                            <span className="text-gray-400 group-hover:text-white transition-colors"><span className="text-gray-600 uppercase font-black mr-2">ATK (%)</span>{item.atk_all_perc}%</span>
-                                            <span className="text-gray-400 group-hover:text-white transition-colors"><span className="text-gray-600 uppercase font-black mr-2">DEF (%)</span>{item.def_perc}%</span>
-                                            <span className="text-gray-400 group-hover:text-white transition-colors"><span className="text-gray-600 uppercase font-black mr-2">HP (%)</span>{item.hp_perc}%</span>
+                                            <span className="text-gray-400 group-hover:text-white transition-colors"><span className="text-gray-600 uppercase font-black mr-2">ATK</span>{item.atk_all_perc}</span>
+                                            <span className="text-gray-400 group-hover:text-white transition-colors"><span className="text-gray-600 uppercase font-black mr-2">DEF</span>{item.def_perc}</span>
+                                            <span className="text-gray-400 group-hover:text-white transition-colors"><span className="text-gray-600 uppercase font-black mr-2">HP</span>{item.hp_perc}</span>
                                         </div>
+
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex justify-end gap-2 text-right">
@@ -144,7 +166,7 @@ export default function ItemRegistry({ initialData }) {
                                 <X size={20} />
                             </button>
                         </div>
-                        <form onSubmit={handleSave} className="p-6 space-y-6">
+                        <form onSubmit={handleSave} className="p-6 space-y-6 overflow-y-auto max-h-[80vh] custom-scrollbar">
                             <div className="space-y-4">
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Item Name</label>
@@ -159,60 +181,73 @@ export default function ItemRegistry({ initialData }) {
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Grade</label>
-                                        <select 
-                                            value={formData.grade}
-                                            onChange={(e) => setFormData(prev => ({ ...prev, grade: e.target.value }))}
-                                            className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-emerald-500 appearance-none cursor-pointer"
-                                        >
-                                            {GRADES.map(g => <option key={g} value={g}>{g.toUpperCase()}</option>)}
-                                        </select>
-                                    </div>
-                                    <div className="space-y-1.5">
                                         <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Item Type</label>
                                         <select 
                                             value={formData.item_type}
-                                            onChange={(e) => setFormData(prev => ({ ...prev, item_type: e.target.value }))}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, item_type: e.target.value, image: "" }))}
                                             className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-emerald-500 appearance-none cursor-pointer"
                                         >
                                             {ITEM_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                                         </select>
                                     </div>
+
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Asset Image</label>
+                                    <select 
+                                        value={formData.image}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
+                                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-[11px] font-bold text-white outline-none focus:border-emerald-500 appearance-none cursor-pointer transition-all"
+                                    >
+                                        <option value="">Select Image</option>
+                                        {availableAssets.map(img => (
+                                            <option key={img} value={img}>{img}</option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-3 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1 text-center">Atk %</label>
+                                    <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1 text-center">Atk Value</label>
                                     <input 
                                         type="number"
-                                        step="0.01"
                                         value={formData.atk_all_perc}
                                         onChange={(e) => setFormData(prev => ({ ...prev, atk_all_perc: parseFloat(e.target.value) || 0 }))}
                                         className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-emerald-500 transition-all text-center"
                                     />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1 text-center">Def %</label>
+                                    <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1 text-center">Def Value</label>
                                     <input 
                                         type="number"
-                                        step="0.01"
                                         value={formData.def_perc}
                                         onChange={(e) => setFormData(prev => ({ ...prev, def_perc: parseFloat(e.target.value) || 0 }))}
                                         className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-emerald-500 transition-all text-center"
                                     />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1 text-center">HP %</label>
+                                    <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1 text-center">HP Value</label>
                                     <input 
                                         type="number"
-                                        step="0.01"
                                         value={formData.hp_perc}
                                         onChange={(e) => setFormData(prev => ({ ...prev, hp_perc: parseFloat(e.target.value) || 0 }))}
                                         className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-emerald-500 transition-all text-center"
                                     />
                                 </div>
+
                             </div>
+
+                            {/* Preview */}
+                            {formData.image && (
+                                <div className="p-4 bg-white/5 rounded-2xl border border-white/5 flex flex-col items-center gap-2">
+                                    <div className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Asset Preview</div>
+                                    <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-emerald-500/20 shadow-lg shadow-emerald-500/10">
+                                        <SafeImage src={`${getAssetPath()}/${formData.image}`} fill className="object-cover" alt="preview" />
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="pt-4 flex gap-3">
                                 <button 
