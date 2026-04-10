@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation"
 import {
     LayoutDashboard, LogOut, FileImage, Map, Crown,
     Landmark, Skull, Compass, Swords, Shield, Crosshair, TrendingUp, Settings,
-    Menu, X, Users, CreditCard, MessageSquare
+    Menu, X, Users, CreditCard, MessageSquare, Database
 } from "lucide-react"
 import { logout } from "@/lib/actions"
 import { clsx } from "clsx"
@@ -117,6 +117,12 @@ export default function Sidebar({ user }) {
                 { name: "Arena Teams", href: "/admin/arena", icon: Crosshair, color: "text-orange-500", perm: "MANAGE_ARENA" },
                 { name: "Total War", href: "/admin/total-war", icon: Swords, color: "text-rose-500", perm: "MANAGE_TOTAL_WAR" },
                 { name: "Guild War Teams", href: "/admin/guild-war", icon: Shield, color: "text-indigo-500", perm: "MANAGE_GUILD_WAR" },
+            ]
+        },
+        {
+            title: "Database",
+            items: [
+                { name: "Registry", href: "/admin/registry", icon: Database, color: "text-[#FFD700]", perm: "*" },
             ]
         },
         {

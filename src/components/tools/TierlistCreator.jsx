@@ -6,13 +6,14 @@ import SafeImage from "../shared/SafeImage"
 import { 
     Download, Copy, Trash2, RotateCcw, 
     Search, LayoutGrid, Type, Rows, 
-    Grid2X2, Check, Info, ChevronRight, X
+    Grid2X2, Check, Info, ChevronRight, X,
+    ChevronUp
 } from "lucide-react"
 import { clsx } from "clsx"
 import { toast } from "sonner"
 import { toPng, toBlob } from "html-to-image"
 
-const RANKS = ["EX", "S", "A", "B", "C", "D", "E"]
+const RANKS = ["EX", "S", "A", "B", "C"]
 const TYPES = ["Attack", "Magic", "Defense", "Support", "Universal"]
 
 export default function TierlistCreator() {
@@ -25,6 +26,9 @@ export default function TierlistCreator() {
     
     const [tiers, setTiers] = useState({})
     const [isInitialized, setIsInitialized] = useState(false)
+
+    // Mobile: toggle hero pool visibility
+    const [poolOpen, setPoolOpen] = useState(false)
 
     const exportRef = useRef(null)
 
@@ -216,36 +220,49 @@ export default function TierlistCreator() {
     }
 
     return (
-        <div className="h-[calc(100vh-80px)] overflow-hidden flex flex-col animate-in fade-in duration-700 font-sans">
+        <div className="h-auto lg:h-[calc(100vh-80px)] overflow-visible lg:overflow-hidden flex flex-col animate-in fade-in duration-700 font-sans">
             
             {/* Top Bar Navigation */}
-            <div className="flex-shrink-0 bg-[#0a0a0a] border-b border-white/5 px-6 py-4 flex items-center justify-between shadow-2xl z-[35]">
-                <div className="flex items-center gap-6 flex-1">
+            <div className="flex-shrink-0 bg-[#0a0a0a] border-b border-white/5 px-3 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-2xl z-[35]">
+                {/* Left side */}
+                <div className="flex items-center gap-3 sm:gap-6 flex-1 min-w-0">
                     <input 
                         type="text"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-lg font-black text-white outline-none focus:border-[#FFD700] transition-all uppercase tracking-tighter w-full max-w-md"
+                        className="bg-white/5 border border-white/10 rounded-xl px-3 sm:px-4 py-2 text-sm sm:text-lg font-black text-white outline-none focus:border-[#FFD700] transition-all uppercase tracking-tighter w-full max-w-md min-w-0"
                         placeholder="Archive Identity..."
                     />
                     
-                    <div className="h-8 w-px bg-white/10 hidden md:block"></div>
+                    <div className="h-8 w-px bg-white/10 hidden lg:block"></div>
                     
-                    <div className="flex items-center gap-2">
+                    <div className="hidden sm:flex items-center gap-2">
                         <button 
                             onClick={toggleLayout}
                             className={clsx(
-                                "flex items-center gap-2 px-4 py-2 rounded-xl border transition-all font-black uppercase text-[10px] tracking-widest",
+                                "flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl border transition-all font-black uppercase text-[10px] tracking-widest whitespace-nowrap",
                                 layoutMode === "MATRIX" ? "bg-[#FFD700]/10 border-[#FFD700]/30 text-[#FFD700]" : "bg-white/5 border-white/10 text-gray-400"
                             )}
                         >
                             {layoutMode === "MATRIX" ? <Grid2X2 size={14} /> : <Rows size={14} />}
-                            {layoutMode === "MATRIX" ? "Rank / Table View" : "Rank Table"}
+                            <span className="hidden md:inline">{layoutMode === "MATRIX" ? "Rank / Table View" : "Rank Table"}</span>
                         </button>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                {/* Right side */}
+                <div className="flex items-center gap-2 sm:gap-3 justify-end">
+                    {/* Mobile-only layout toggle */}
+                    <button 
+                        onClick={toggleLayout}
+                        className={clsx(
+                            "sm:hidden flex items-center gap-1.5 px-3 py-2 rounded-xl border transition-all font-black uppercase text-[10px] tracking-widest",
+                            layoutMode === "MATRIX" ? "bg-[#FFD700]/10 border-[#FFD700]/30 text-[#FFD700]" : "bg-white/5 border-white/10 text-gray-400"
+                        )}
+                    >
+                        {layoutMode === "MATRIX" ? <Grid2X2 size={14} /> : <Rows size={14} />}
+                    </button>
+
                     <button 
                         onClick={resetTierlist}
                         className="p-2 bg-white/5 border border-white/10 text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
@@ -253,34 +270,34 @@ export default function TierlistCreator() {
                     >
                         <RotateCcw size={18} />
                     </button>
-                    <div className="h-8 w-px bg-white/10 mx-2"></div>
+                    <div className="h-8 w-px bg-white/10 hidden sm:block"></div>
                     <button 
                         onClick={() => handleExport('copy')}
-                        className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black text-white transition-all uppercase tracking-widest"
+                        className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black text-white transition-all uppercase tracking-widest"
                     >
                         <Copy size={16} className="text-[#FFD700]" /> 
-                        Copy
+                        <span className="hidden sm:inline">Copy</span>
                     </button>
                     <button 
                         onClick={() => handleExport('download')}
-                        className="flex items-center gap-2 px-4 py-2 bg-[#FFD700] text-black rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,215,0,0.1)]"
+                        className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-[#FFD700] text-black rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,215,0,0.1)]"
                     >
                         <Download size={16} /> 
-                        Export
+                        <span className="hidden sm:inline">Export</span>
                     </button>
                 </div>
             </div>
 
-            <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 flex flex-col lg:flex-row overflow-visible lg:overflow-hidden">
                 
-                {/* Workspace (Left) */}
-                <div className="flex-1 overflow-auto custom-scrollbar bg-[#050505] p-6 relative">
+                {/* Workspace (Left / Top on mobile) */}
+                <div className="flex-1 overflow-auto custom-scrollbar bg-[#050505] p-3 sm:p-6 relative order-2 lg:order-1">
                     <div ref={exportRef} className="bg-[#050505] border border-white/5 rounded-2xl overflow-hidden shadow-2xl mx-auto w-fit min-w-full">
                         
                         {/* Header Branding */}
-                        <div className="py-6 px-10 flex flex-col items-center justify-center bg-[#070707] border-b border-white/5 relative overflow-hidden">
+                        <div className="py-4 sm:py-6 px-4 sm:px-10 flex flex-col items-center justify-center bg-[#070707] border-b border-white/5 relative overflow-hidden">
                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-30"></div>
-                            <h2 className="text-2xl font-black text-white italic tracking-tighter uppercase mb-1">
+                            <h2 className="text-lg sm:text-2xl font-black text-white italic tracking-tighter uppercase mb-1">
                                 {title}
                             </h2>
                         </div>
@@ -288,16 +305,16 @@ export default function TierlistCreator() {
                         {layoutMode === "SIMPLE" ? (
                             <div className="flex flex-col bg-[#080808]">
                                 {RANKS.map((rank) => (
-                                    <div key={rank} className="min-h-[90px] flex border-b border-white/20 group/row">
-                                        <div className="w-20 md:w-28 flex-shrink-0 flex items-center justify-center sticky left-0 z-20 border-r border-white/20 bg-[#050505] group-hover/row:bg-[#070707] transition-colors">
+                                    <div key={rank} className="min-h-[70px] sm:min-h-[90px] flex border-b border-white/20 group/row">
+                                        <div className="w-14 sm:w-20 md:w-28 flex-shrink-0 flex items-center justify-center sticky left-0 z-20 border-r border-white/20 bg-[#050505] group-hover/row:bg-[#070707] transition-colors">
                                             <div className="flex items-center justify-center w-full h-full">
-                                                <div className="relative h-12 w-12 transform group-hover:scale-110 transition-transform duration-500">
+                                                <div className="relative h-8 w-8 sm:h-12 sm:w-12 transform group-hover:scale-110 transition-transform duration-500">
                                                     <SafeImage src={`/logo_tiers/rank_tier/${rank}.webp`} fill unoptimized className="object-contain" alt={rank} />
                                                 </div>
                                             </div>
                                         </div>
                                         <div 
-                                            className="flex-1 p-3 flex flex-wrap gap-2 content-start bg-[#0a0a0a]"
+                                            className="flex-1 p-2 sm:p-3 flex flex-wrap gap-1.5 sm:gap-2 content-start bg-[#0a0a0a]"
                                             onDragOver={(e) => e.preventDefault()}
                                             onDrop={(e) => {
                                                 const hero = JSON.parse(e.dataTransfer.getData("hero"))
@@ -312,12 +329,12 @@ export default function TierlistCreator() {
                                                         e.dataTransfer.setData("hero", JSON.stringify(hero))
                                                     }}
                                                     onClick={() => removeFromCell(hero, rank)} 
-                                                    className="group/hero relative w-[50px] md:w-[54px] h-[60px] md:h-[64px] cursor-pointer"
+                                                    className="group/hero relative w-[40px] sm:w-[50px] md:w-[54px] h-[48px] sm:h-[60px] md:h-[64px] cursor-pointer"
                                                 >
                                                     <div className="relative w-full h-full overflow-hidden rounded-sm border border-white/10 group-hover/hero:border-red-500 group-hover/hero:scale-110 transition-all duration-300 shadow-2xl">
                                                         <SafeImage src={`/heroes/${hero.filename}`} fill unoptimized className="object-cover" alt="" />
                                                         <div className="absolute inset-0 bg-red-600/60 opacity-0 group-hover/hero:opacity-100 transition-opacity flex items-center justify-center">
-                                                            <Trash2 className="text-white w-5 h-5" />
+                                                            <Trash2 className="text-white w-4 h-4 sm:w-5 sm:h-5" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -327,19 +344,19 @@ export default function TierlistCreator() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="bg-[#080808] overflow-visible">
-                                <table className="w-full border-separate border-spacing-0">
+                            <div className="bg-[#080808] overflow-x-auto">
+                                <table className="w-full border-separate border-spacing-0 min-w-[600px]">
                                     <thead className="sticky top-0 z-20">
                                         <tr>
-                                            <th className="p-3 w-20 border-b border-r border-white/20 bg-[#050505] sticky left-0 top-0 z-30">
-                                                <div className="flex items-center justify-center h-12">
+                                            <th className="p-2 sm:p-3 w-14 sm:w-20 border-b border-r border-white/20 bg-[#050505] sticky left-0 top-0 z-30">
+                                                <div className="flex items-center justify-center h-8 sm:h-12">
                                                     <span className="text-[7px] text-gray-600 font-black uppercase tracking-widest italic leading-none">R / T</span>
                                                 </div>
                                             </th>
                                             {TYPES.map(type => (
-                                                <th key={type} className="p-3 border-b border-white/20 bg-[#050505] min-w-[100px] sticky top-0 z-30">
-                                                    <div className="flex items-center justify-center h-12">
-                                                        <div className="relative h-8 w-16">
+                                                <th key={type} className="p-2 sm:p-3 border-b border-white/20 bg-[#050505] min-w-[80px] sm:min-w-[100px] sticky top-0 z-30">
+                                                    <div className="flex items-center justify-center h-8 sm:h-12">
+                                                        <div className="relative h-6 w-12 sm:h-8 sm:w-16">
                                                             <SafeImage src={`/logo_tiers/type/${type.toLowerCase()}.webp`} fill unoptimized className="object-contain" alt={type} />
                                                         </div>
                                                     </div>
@@ -350,9 +367,9 @@ export default function TierlistCreator() {
                                     <tbody>
                                         {RANKS.map((rank) => (
                                             <tr key={rank} className="group/row">
-                                                <th className="p-2 border-r border-b border-white/20 bg-[#050505] w-20 h-20 sticky left-0 z-10">
+                                                <th className="p-1 sm:p-2 border-r border-b border-white/20 bg-[#050505] w-14 sm:w-20 h-16 sm:h-20 sticky left-0 z-10">
                                                     <div className="flex items-center justify-center w-full h-full">
-                                                        <div className="relative h-12 w-14 transform group-hover/row:scale-110 transition-transform duration-500">
+                                                        <div className="relative h-8 w-10 sm:h-12 sm:w-14 transform group-hover/row:scale-110 transition-transform duration-500">
                                                             <SafeImage src={`/logo_tiers/rank_tier/${rank}.webp`} fill unoptimized className="object-contain" alt={rank} />
                                                         </div>
                                                     </div>
@@ -363,7 +380,7 @@ export default function TierlistCreator() {
                                                     return (
                                                         <td 
                                                             key={type} 
-                                                            className="p-1 border-r border-b border-white/20 align-top min-h-[80px] h-20 bg-[#0a0a0a] hover:bg-[#FFD700]/[0.02] transition-colors"
+                                                            className="p-1 border-r border-b border-white/20 align-top min-h-[60px] sm:min-h-[80px] h-16 sm:h-20 bg-[#0a0a0a] hover:bg-[#FFD700]/[0.02] transition-colors"
                                                             onDragOver={(e) => e.preventDefault()}
                                                             onDrop={(e) => {
                                                                 const hero = JSON.parse(e.dataTransfer.getData("hero"))
@@ -379,7 +396,7 @@ export default function TierlistCreator() {
                                                                             e.dataTransfer.setData("hero", JSON.stringify(hero))
                                                                         }}
                                                                         onClick={() => removeFromCell(hero, cellKey)} 
-                                                                        className="group/hero relative w-[36px] h-[43px] cursor-pointer"
+                                                                        className="group/hero relative w-[30px] sm:w-[36px] h-[36px] sm:h-[43px] cursor-pointer"
                                                                     >
                                                                         <div className="relative w-full h-full overflow-hidden rounded border border-white/10 group-hover:border-red-500">
                                                                             <SafeImage src={`/heroes/${hero.filename}`} fill unoptimized className="object-cover" alt="" />
@@ -399,31 +416,60 @@ export default function TierlistCreator() {
                     </div>
                 </div>
 
-                {/* Heroes Pool (Right Sidebar) */}
-                <div className="w-[350px] flex-shrink-0 bg-[#0a0a0a] border-l border-white/5 flex flex-col shadow-2xl overflow-hidden relative">
-                    <div className="p-6 space-y-4 border-b border-white/5 relative z-10 bg-[#0a0a0a]/80 backdrop-blur-md">
+                {/* Heroes Pool - Mobile: collapsible bottom panel, Desktop: right sidebar */}
+                <div className={clsx(
+                    "bg-[#0a0a0a] border-white/5 flex flex-col shadow-2xl overflow-hidden relative",
+                    "order-1 lg:order-2",
+                    "w-full lg:w-[350px] flex-shrink-0",
+                    "border-b lg:border-b-0 lg:border-l"
+                )}>
+                    {/* Pool Header - acts as toggle on mobile */}
+                    <div 
+                        className="p-4 sm:p-6 space-y-3 sm:space-y-4 border-b border-white/5 relative z-10 bg-[#0a0a0a]/80 backdrop-blur-md cursor-pointer lg:cursor-default"
+                        onClick={() => setPoolOpen(!poolOpen)}
+                    >
                         <div className="flex items-center justify-between">
                             <h3 className="text-[10px] font-black text-white/60 uppercase tracking-[0.3em] flex items-center gap-2">
                                 <LayoutGrid size={14} className="text-[#FFD700]" />
                                 Heroes Pool
                             </h3>
-                            <span className="text-[9px] font-bold text-gray-700 uppercase bg-white/5 px-2 py-0.5 rounded-full">{filteredPool.length} Units</span>
+                            <div className="flex items-center gap-2">
+                                <span className="text-[9px] font-bold text-gray-700 uppercase bg-white/5 px-2 py-0.5 rounded-full">{filteredPool.length} Units</span>
+                                <ChevronUp 
+                                    size={16} 
+                                    className={clsx(
+                                        "text-gray-600 transition-transform duration-300 lg:hidden",
+                                        poolOpen ? "rotate-180" : "rotate-0"
+                                    )} 
+                                />
+                            </div>
                         </div>
                         
-                        <div className="relative">
+                        {/* Search - always visible on desktop, visible when open on mobile */}
+                        <div className={clsx(
+                            "relative transition-all duration-300 overflow-hidden",
+                            poolOpen ? "max-h-20 opacity-100" : "max-h-0 opacity-0 lg:max-h-20 lg:opacity-100"
+                        )}>
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 w-3.5 h-3.5" />
                             <input 
                                 type="text" 
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
                                 placeholder="Unit Identification..."
                                 className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs font-bold text-white outline-none focus:border-[#FFD700] placeholder:text-gray-700"
                             />
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
-                        <div className="grid grid-cols-4 gap-3 pb-20">
+                    {/* Hero Grid - collapsible on mobile, always visible on desktop */}
+                    <div className={clsx(
+                        "overflow-y-auto custom-scrollbar transition-all duration-300",
+                        poolOpen 
+                            ? "max-h-[50vh] sm:max-h-[40vh] opacity-100 p-4 sm:p-6" 
+                            : "max-h-0 opacity-0 p-0 lg:max-h-none lg:opacity-100 lg:p-6 lg:flex-1"
+                    )}>
+                        <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-4 gap-2 sm:gap-3 pb-16 lg:pb-20">
                             {filteredPool.map(hero => (
                                 <div 
                                     key={hero.filename}
@@ -450,14 +496,14 @@ export default function TierlistCreator() {
                         </div>
 
                         {filteredPool.length === 0 && (
-                            <div className="py-20 text-center opacity-20">
+                            <div className="py-10 lg:py-20 text-center opacity-20">
                                 <p className="text-[8px] font-black uppercase tracking-widest text-gray-800">No Heroes Found</p>
                             </div>
                         )}
                     </div>
 
-                    {/* Footer Tips */}
-                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent pointer-events-none">
+                    {/* Footer Tips - only on desktop */}
+                    <div className="hidden lg:block absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent pointer-events-none">
                         <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest text-center italic">Drag units to classify • Click to auto-assign</p>
                     </div>
                 </div>

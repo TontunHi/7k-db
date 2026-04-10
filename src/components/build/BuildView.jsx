@@ -130,7 +130,7 @@ export default function BuildView({ heroes }) {
 
                                     {/* Image */}
                                     <SafeImage
-                                        src={`/heroes/${hero.filename}`}
+                                        src={`/heroes/${hero.filename}${hero.filename?.endsWith('.webp') ? '' : '.webp'}`}
                                         alt={hero.name}
                                         fill
                                         className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -172,15 +172,16 @@ export default function BuildView({ heroes }) {
                     </div>
                 )}
 
-                {/* Modal */}
-                {selectedHero && viewerData && (
-                    <BuildViewerModal
-                        hero={selectedHero}
-                        data={viewerData}
-                        onClose={closeViewer}
-                    />
-                )}
             </div>
+            
+            {/* Modal - Moved here to escape the relative z-10 stacking context */}
+            {selectedHero && viewerData && (
+                <BuildViewerModal
+                    hero={selectedHero}
+                    data={viewerData}
+                    onClose={closeViewer}
+                />
+            )}
         </div>
     )
 }

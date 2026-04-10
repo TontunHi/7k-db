@@ -7,7 +7,7 @@ import { Plus, X, Edit2 } from "lucide-react"
 import { getTierlistData, saveTierlistEntry, removeTierlistEntry } from "@/lib/tierlist-db"
 
 const CATEGORIES = ["PVE", "PVP", "Raid", "GVG", "ART", "Tower"]
-const RANKS = ["EX", "S", "A", "B", "C", "D", "E"]
+const RANKS = ["EX", "S", "A", "B", "C"]
 const TYPES = ["Attack", "Magic", "Defense", "Support", "Universal"]
 
 function getNameFromFilename(filename) {
