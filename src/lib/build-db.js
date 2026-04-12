@@ -27,6 +27,7 @@ export async function getHeroData(filename) {
         filename: data.filename,
         name: data.name,
         grade: data.grade,
+        hero_group: data.hero_group,
         is_new_hero: !!data.is_new_hero,
         skillPriority: typeof data.skill_priority === 'string' ? JSON.parse(data.skill_priority) : (data.skill_priority || [])
     }
@@ -186,6 +187,22 @@ export async function getItemImages(type) {
         if (rankA !== rankB) return rankB - rankA // Higher rank first
         return a.localeCompare(b) // Alphabetical if same rank
     })
+}
+
+export async function getFilteredItems(type, group = null) {
+    await ensureDB()
+    let query = "SELECT image FROM items WHERE item_type = ?"
+    const params = [type === 'weapon' ? 'Weapon' : type === 'armor' ? 'Armor' : 'Accessory']
+    
+    if (type === 'weapon' && group) {
+        query += " AND weapon_group = ?"
+        params.push(group)
+    }
+    
+    query += " ORDER BY FIELD(grade, 'l++', 'l+', 'l', 'r', 'uc', 'c'), name ASC"
+    
+    const [rows] = await pool.query(query, params)
+    return rows.map(r => r.image)
 }
 
 export async function getHeroSkills(heroFilename) {

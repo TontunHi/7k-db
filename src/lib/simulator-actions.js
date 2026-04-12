@@ -1,6 +1,6 @@
 "use server"
 
-import { getItemImages, getHeroSkills, getHeroData } from "./build-db"
+import { getItemImages, getHeroSkills, getHeroData, getFilteredItems } from "./build-db"
 import fs from "fs"
 import path from "path"
 
@@ -48,12 +48,16 @@ export async function getSimulatorHeroes() {
 }
 
 export async function getSimulatorData(heroFilename) {
-    const [weapons, armors, accessories, skills, heroData] = await Promise.all([
-        getItemImages("weapon"),
+    // Phase 1: Fetch basic hero data to get group
+    const heroData = heroFilename ? await getHeroData(heroFilename) : null
+    const heroGroup = heroData?.hero_group || null
+
+    // Phase 2: Fetch resources (weapons filtered by group)
+    const [weapons, armors, accessories, skills] = await Promise.all([
+        getFilteredItems("weapon", heroGroup),
         getItemImages("armor"),
         getItemImages("accessory"),
-        heroFilename ? getHeroSkills(heroFilename) : [],
-        heroFilename ? getHeroData(heroFilename) : null
+        heroFilename ? getHeroSkills(heroFilename) : []
     ])
 
     return {

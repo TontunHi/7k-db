@@ -102,17 +102,17 @@ export async function getItemsRegistry() {
 
 export async function upsertItemRegistry(data) {
     await ensureDB()
-    const { id, name, grade, item_type, atk_all_perc, def_perc, hp_perc, image } = data
+    const { id, name, grade, item_type, weapon_group, atk_all_perc, def_perc, hp_perc, image } = data
     
     if (id) {
         await pool.query(
-            "UPDATE items SET name = ?, grade = ?, item_type = ?, atk_all_perc = ?, def_perc = ?, hp_perc = ?, image = ? WHERE id = ?",
-            [name, grade, item_type, atk_all_perc, def_perc, hp_perc, image, id]
+            "UPDATE items SET name = ?, grade = ?, item_type = ?, weapon_group = ?, atk_all_perc = ?, def_perc = ?, hp_perc = ?, image = ? WHERE id = ?",
+            [name, grade, item_type, weapon_group, atk_all_perc, def_perc, hp_perc, image, id]
         )
     } else {
         await pool.query(
-            "INSERT INTO items (name, grade, item_type, atk_all_perc, def_perc, hp_perc, image) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            [name, grade, item_type, atk_all_perc, def_perc, hp_perc, image]
+            "INSERT INTO items (name, grade, item_type, weapon_group, atk_all_perc, def_perc, hp_perc, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            [name, grade, item_type, weapon_group, atk_all_perc, def_perc, hp_perc, image]
         )
     }
     

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { Search, Shield, Swords, Zap, Sparkles, X, ChevronRight, RotateCcw, Plus, Calculator, ChevronLeft } from "lucide-react"
+import { Search, Shield, Swords, Zap, Sparkles, X, ChevronRight, RotateCcw, Plus, Calculator, ChevronLeft, AlertCircle } from "lucide-react"
 import { clsx } from "clsx"
 import SafeImage from "../shared/SafeImage"
 
@@ -26,17 +26,29 @@ const STAT_FIELDS = [
 
 
 
-const ITEM_MAIN_STATS = [
-    { label: "Weakness Hit Chance", value: 28, unit: "%", key: "weak_hit" },
-    { label: "Crit Rate", value: 24, unit: "%", key: "crit_rate" },
-    { label: "Crit Damage", value: 36, unit: "%", key: "crit_dmg" },
-    { label: "All Attack (%)", value: 28, unit: "%", key: "atk_all_perc" },
-    { label: "All Attack", value: 240, unit: "", key: "atk_all" },
-    { label: "Defense (%)", value: 28, unit: "%", key: "def_perc" },
-    { label: "Defense", value: 160, unit: "", key: "def" },
-    { label: "HP (%)", value: 28, unit: "%", key: "hp_perc" },
-    { label: "HP", value: 850, unit: "", key: "hp" },
-    { label: "Effect Hit Rate", value: 30, unit: "%", key: "eff_hit" },
+const WEAPON_MAIN_STATS = [
+    { label: "Weakness Hit Chance", value: 28, unit: "%", key: "weak_hit", icon: "/about_website/icon_weakness_hit_chance.webp" },
+    { label: "Crit Rate", value: 24, unit: "%", key: "crit_rate", icon: "/about_website/icon_crit_rate.webp" },
+    { label: "Crit Damage", value: 36, unit: "%", key: "crit_dmg", icon: "/about_website/icon_crit_damage.webp" },
+    { label: "All Attack (%)", value: 28, unit: "%", key: "atk_all_perc", icon: "/about_website/icon_physical_attack.webp" },
+    { label: "All Attack", value: 240, unit: "", key: "atk_all", icon: "/about_website/icon_physical_attack.webp" },
+    { label: "Defense (%)", value: 28, unit: "%", key: "def_perc", icon: "/about_website/icon_defense.webp" },
+    { label: "Defense", value: 160, unit: "", key: "def", icon: "/about_website/icon_defense.webp" },
+    { label: "HP (%)", value: 28, unit: "%", key: "hp_perc", icon: "/about_website/icon_hp.webp" },
+    { label: "HP", value: 850, unit: "", key: "hp", icon: "/about_website/icon_hp.webp" },
+    { label: "Effect Hit Rate", value: 30, unit: "%", key: "eff_hit", icon: "/about_website/icon_effect_hit_rate.webp" },
+]
+
+const ARMOR_MAIN_STATS = [
+    { label: "Damage Taken Reduction", value: 10, unit: "%", key: "dmg_red", icon: "/about_website/icon_damage_taken_reduction.webp" },
+    { label: "Block Rate", value: 24, unit: "%", key: "block_rate", icon: "/about_website/icon_block_rate.webp" },
+    { label: "All Attack (%)", value: 28, unit: "%", key: "atk_all_perc", icon: "/about_website/icon_physical_attack.webp" },
+    { label: "All Attack", value: 240, unit: "", key: "atk_all", icon: "/about_website/icon_physical_attack.webp" },
+    { label: "Defense (%)", value: 28, unit: "%", key: "def_perc", icon: "/about_website/icon_defense.webp" },
+    { label: "Defense", value: 160, unit: "", key: "def", icon: "/about_website/icon_defense.webp" },
+    { label: "HP (%)", value: 28, unit: "%", key: "hp_perc", icon: "/about_website/icon_hp.webp" },
+    { label: "HP", value: 850, unit: "", key: "hp", icon: "/about_website/icon_hp.webp" },
+    { label: "Effect Resistance", value: 30, unit: "%", key: "eff_res", icon: "/about_website/icon_effect_resistance.webp" },
 ]
 
 const SUBSTAT_LIST = [
@@ -55,9 +67,9 @@ const SUBSTAT_LIST = [
     { label: "Effect Resistance", key: "eff_res", values: [5, 10, 15, 20, 25, 30] }
 ]
 
-const getInitialItemState = () => ({
+const getInitialItemState = (slotKey = "") => ({
     item: null,
-    mainStatKey: ITEM_MAIN_STATS[3].key, // Default to All Attack (%)
+    mainStatKey: slotKey.startsWith('Weapon') ? WEAPON_MAIN_STATS[3].key : ARMOR_MAIN_STATS[2].key, // Default to All Attack (%)
     substats: Array(4).fill(null).map(() => ({ key: null, level: 0 }))
 })
 
@@ -67,12 +79,25 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
     const [search, setSearch] = useState("")
     const [heroStats, setHeroStats] = useState({})
     const [equippedItems, setEquippedItems] = useState({
-        Weapon1: getInitialItemState(),
-        Armor1: getInitialItemState(),
-        Weapon2: getInitialItemState(),
-        Armor2: getInitialItemState()
+        Weapon1: getInitialItemState('Weapon1'),
+        Armor1: getInitialItemState('Armor1'),
+        Weapon2: getInitialItemState('Weapon2'),
+        Armor2: getInitialItemState('Armor2')
     })
     const [showItemSelector, setShowItemSelector] = useState(null)
+    const [showWarning, setShowWarning] = useState(false)
+
+    useEffect(() => {
+        const hasSeenWarning = sessionStorage.getItem("hero-stats-warning-seen-v1")
+        if (!hasSeenWarning) {
+            setShowWarning(true)
+        }
+    }, [])
+
+    const closeWarning = () => {
+        setShowWarning(false)
+        sessionStorage.setItem("hero-stats-warning-seen-v1", "true")
+    }
 
     const formatValue = (val) => {
         if (val === "" || val === undefined) return "0"
@@ -238,20 +263,25 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
         const extraPerc = { atk: 0, def: 0, hp: 0 }
         const otherStats = { 
             crit_rate: 0, crit_dmg: 0, weak_hit: 0, 
-            block_rate: 0, eff_hit: 0, eff_res: 0 
+            block_rate: 0, eff_hit: 0, eff_res: 0,
+            dmg_red: 0
         }
         
         Object.values(equippedItems).forEach(slot => {
-            // 1. Add Base Item Stats (Legacy Flat Stats)
+            // 1. Add Base Item Stats (Flat Stats: 304 Atk / 1079 HP / 189 Def)
             if (slot.item) {
-                if (slot.item.atk_all_perc) extraFlat.atk += parseFloat(slot.item.atk_all_perc)
-                if (slot.item.def_perc) extraFlat.def += parseFloat(slot.item.def_perc)
-                if (slot.item.hp_perc) extraFlat.hp += parseFloat(slot.item.hp_perc)
+                if (slot.item.item_type === 'Weapon') {
+                    extraFlat.atk += 304
+                } else if (slot.item.item_type === 'Armor') {
+                    extraFlat.hp += 1079
+                    extraFlat.def += 189
+                }
             }
 
             // 2. Add Selected Main Stat
             if (slot.item && slot.mainStatKey) {
-                const mainStat = ITEM_MAIN_STATS.find(s => s.key === slot.mainStatKey)
+                const statOptions = slot.item.item_type === 'Weapon' ? WEAPON_MAIN_STATS : ARMOR_MAIN_STATS
+                const mainStat = statOptions.find(s => s.key === slot.mainStatKey)
                 if (mainStat) {
                     const val = mainStat.value
                     if (mainStat.key === 'atk_all') extraFlat.atk += val
@@ -465,10 +495,10 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
 
                     <div className="xl:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6">
                         {['Weapon1', 'Armor1', 'Weapon2', 'Armor2'].map((slotKey) => (
-                            <div key={slotKey} className="bg-[#0a0a0a] border border-white/5 rounded-[2.5rem] p-7 shadow-xl space-y-6 flex flex-col">
-                                <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                            <div key={slotKey} className="bg-[#0a0a0a] border border-white/5 rounded-[2.5rem] p-3 sm:p-5 shadow-xl space-y-4 flex flex-col">
+                                <div className="flex items-center justify-between border-b border-white/5 pb-5 mb-4">
                                     <div className="flex items-center gap-3">
-                                        <span className="text-xs font-black uppercase tracking-widest text-[#FFD700] italic">
+                                        <span className="text-sm font-black uppercase tracking-[0.2em] text-[#FFD700] italic px-2 py-1 bg-[#FFD700]/5 rounded-lg border border-[#FFD700]/10">
                                             {slotKey.replace(/\d+$/, '')}
                                         </span>
                                     </div>
@@ -485,57 +515,80 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
                                 <div 
                                     onClick={() => setShowItemSelector(slotKey)}
                                     className={clsx(
-                                        "relative h-24 rounded-2xl border-2 border-dashed transition-all cursor-pointer flex items-center justify-center group overflow-hidden",
-                                        equippedItems[slotKey].item ? "border-[#FFD700]/30 bg-[#FFD700]/5" : "border-white/5 bg-black/40 hover:border-white/10 hover:bg-black/60"
+                                        "relative min-h-[160px] w-full rounded-[2.5rem] border-2 border-dashed transition-all cursor-pointer flex flex-col group backdrop-blur-sm",
+                                        equippedItems[slotKey].item 
+                                            ? "border-[#FFD700]/30 bg-gradient-to-br from-[#FFD700]/[0.05] to-transparent shadow-[0_20px_50px_rgba(0,0,0,0.5)]" 
+                                            : "border-white/5 bg-black/40 hover:border-[#FFD700]/20 hover:bg-black/60 items-center justify-center hover:shadow-[0_0_30px_rgba(255,215,0,0.05)] overflow-hidden"
                                     )}
                                 >
                                     {equippedItems[slotKey].item ? (
-                                        <div className="flex items-start gap-4 px-5 w-full">
-                                            <div className="w-20 h-20 relative rounded-2xl overflow-hidden border-2 border-[#FFD700]/30 shadow-[0_0_20px_rgba(255,215,0,0.1)] flex-shrink-0 group-hover:scale-105 transition-transform duration-500">
-                                                <SafeImage src={equippedItems[slotKey].item.image} fill className="object-cover" />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                                            </div>
-                                            
-                                            <div className="flex-1 min-w-0 py-1 space-y-2">
-                                                <div>
-                                                    <h4 className="text-[11px] font-black text-white uppercase tracking-tight leading-tight line-clamp-1 group-hover:text-[#FFD700] transition-colors">
+                                        <div className="p-3 sm:p-4 flex flex-col gap-4 w-full">
+                                            <div className="flex items-center gap-3 w-full">
+                                                <div className="w-16 h-16 relative rounded-xl overflow-hidden border-2 border-[#FFD700]/30 shadow-[0_0_20px_rgba(255,215,0,0.1)] flex-shrink-0 group-hover:scale-110 transition-transform duration-700">
+                                                    <SafeImage src={equippedItems[slotKey].item.image} fill className="object-cover" />
+                                                </div>
+                                                
+                                                <div className="flex-1 py-1 overflow-hidden">
+                                                    <h4 className="text-[13px] font-black text-white uppercase tracking-tight leading-tight line-clamp-1 group-hover:text-[#FFD700] transition-colors mb-2 italic">
                                                         {equippedItems[slotKey].item.name}
                                                     </h4>
+                                                    
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        {equippedItems[slotKey].item.item_type === 'Weapon' ? (
+                                                            <div className="flex items-center gap-1.5 px-2 py-1 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+                                                                <div className="w-3 h-3 relative opacity-70">
+                                                                    <SafeImage src="/about_website/icon_physical_attack.webp" fill className="object-contain" />
+                                                                </div>
+                                                                <span className="text-[10px] font-black text-orange-500 whitespace-nowrap">ATTACK +304</span>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="flex items-center gap-2.5 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg w-fit">
+                                                                <div className="flex items-center gap-1.5 pr-2.5 border-r border-white/10">
+                                                                    <div className="w-3 h-3 relative opacity-70">
+                                                                        <SafeImage src="/about_website/icon_hp.webp" fill className="object-contain" />
+                                                                    </div>
+                                                                    <span className="text-[10px] font-black text-green-500 whitespace-nowrap">HP +1079</span>
+                                                                </div>
+                                                                <div className="flex items-center gap-1.5">
+                                                                    <div className="w-3 h-3 relative opacity-70">
+                                                                        <SafeImage src="/about_website/icon_defense.webp" fill className="object-contain" />
+                                                                    </div>
+                                                                    <span className="text-[10px] font-black text-blue-500 whitespace-nowrap">DEF +189</span>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-3 pt-3 border-t border-white/5">
+                                                <div className="flex items-center justify-between px-1">
+                                                    <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest">Additional Main Stat</p>
                                                     {(() => {
-                                                        const item = equippedItems[slotKey].item
-                                                        const statValue = item.atk_all_perc || item.def_perc || item.hp_perc
-                                                        const statName = item.atk_all_perc ? "ATTACK" : (item.def_perc ? "DEFENSE" : "HP")
-                                                        const statColor = item.atk_all_perc ? "text-orange-500" : (item.def_perc ? "text-blue-500" : "text-green-500")
-                                                        
-                                                        if (!statValue) return null
-                                                        return (
-                                                            <div className={clsx("text-[10px] font-black italic tracking-widest mt-0.5 uppercase", statColor)}>
-                                                                {statName} +{statValue}
+                                                        const statOptions = slotKey.startsWith('Weapon') ? WEAPON_MAIN_STATS : ARMOR_MAIN_STATS
+                                                        const currentStat = statOptions.find(s => s.key === equippedItems[slotKey].mainStatKey)
+                                                        return currentStat && (
+                                                            <div className="w-3 h-3 relative opacity-40">
+                                                                <SafeImage src={currentStat.icon} fill className="object-contain" />
                                                             </div>
                                                         )
                                                     })()}
                                                 </div>
-
-                                                <div className="h-px bg-white/5 w-full"></div>
-
-                                                <div className="space-y-1.5">
-                                                    <p className="text-[8px] font-bold text-gray-500 uppercase tracking-[0.2em]">Item Main Stat</p>
-                                                    <div className="relative group/select">
-                                                        <select 
-                                                            value={equippedItems[slotKey].mainStatKey || ""}
-                                                            onChange={(e) => handleItemAction(slotKey, 'SET_MAIN_STAT', { key: e.target.value })}
-                                                            onClick={(e) => e.stopPropagation()}
-                                                            className="w-full bg-white/[0.03] border border-white/10 rounded-xl pl-3 pr-8 py-2 text-[10px] font-black text-cyan-400 outline-none focus:border-cyan-500/50 transition-all appearance-none cursor-pointer hover:bg-white/[0.07] shadow-inner"
-                                                        >
-                                                            {ITEM_MAIN_STATS.map(s => (
-                                                                <option key={s.key} value={s.key} className="bg-[#0a0a0a] text-white">
-                                                                    {s.label} (+{formatValue(s.value)}{s.unit})
-                                                                </option>
-                                                            ))}
-                                                        </select>
-                                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-cyan-500/50 group-hover/select:text-cyan-400 transition-colors">
-                                                            <ChevronRight size={12} className="rotate-90" />
-                                                        </div>
+                                                <div className="relative group/select">
+                                                    <select 
+                                                        value={equippedItems[slotKey].mainStatKey || ""}
+                                                        onChange={(e) => handleItemAction(slotKey, 'SET_MAIN_STAT', { key: e.target.value })}
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        className="w-full bg-white/[0.03] border border-white/10 rounded-[1.25rem] pl-4 pr-10 py-3 text-[11px] font-black text-cyan-400 outline-none focus:border-cyan-500/50 transition-all appearance-none cursor-pointer hover:bg-white/[0.07] shadow-inner"
+                                                    >
+                                                        {(slotKey.startsWith('Weapon') ? WEAPON_MAIN_STATS : ARMOR_MAIN_STATS).map(s => (
+                                                            <option key={s.key} value={s.key} className="bg-[#0a0a0a] text-white">
+                                                                {s.label} (+{formatValue(s.value)}{s.unit})
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-cyan-500/50 group-hover/select:text-cyan-400 transition-colors">
+                                                        <ChevronRight size={14} className="rotate-90" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -651,6 +704,52 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
                                 </button>
                             ))}
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {showWarning && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl animate-in fade-in duration-500">
+                    <div className="w-full max-w-2xl bg-[#0a0a0a] border border-[#FFD700]/20 rounded-[3rem] overflow-hidden shadow-[0_0_100px_rgba(255,215,0,0.1)] p-8 md:p-12 space-y-8 relative">
+                        <div className="absolute top-0 right-0 p-8">
+                            <AlertCircle className="w-12 h-12 text-[#FFD700]/20 rotate-12" />
+                        </div>
+                        
+                        <div className="space-y-4 relative">
+                            <div className="flex items-center gap-4 text-[#FFD700]">
+                                <AlertCircle className="w-8 h-8" />
+                                <h3 className="text-2xl font-black uppercase italic tracking-tighter">Important Notice / ข้อมูลสำคัญ</h3>
+                            </div>
+                            
+                            <div className="space-y-6">
+                                <div className="space-y-2">
+                                    <p className="text-gray-400 text-sm font-medium leading-relaxed">
+                                        We haven't added data for all characters yet. Some legends may not have pre-loaded stats, but you can enter them manually.
+                                    </p>
+                                    <p className="text-[#FFD700] text-lg font-bold leading-tight">
+                                        เรายังไม่ได้เพิ่มข้อมูลครบทุกตัวละคร อาจมีบางตัวละครที่ยังไม่มี Stat มาให้คุณสามารถใส่เองได้เลย
+                                    </p>
+                                </div>
+
+                                <div className="h-px bg-white/5 w-full" />
+
+                                <div className="space-y-2">
+                                    <p className="text-gray-400 text-sm font-medium leading-relaxed">
+                                        All character stats start from Base Stat (C0 + 5 Lv.30) values.
+                                    </p>
+                                    <p className="text-[#FFD700] text-lg font-bold leading-tight">
+                                        ตัวละครทุกตัว Stat จะเริ่มจาก Base Stat ( C0 + 5 Lv.30 )
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button 
+                            onClick={closeWarning}
+                            className="w-full py-5 bg-[#FFD700] text-black text-xs font-black uppercase tracking-[0.3em] rounded-2xl hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,215,0,0.3)] transition-all active:scale-95"
+                        >
+                            Accept & Continue / รับทราบและดำเนินการต่อ
+                        </button>
                     </div>
                 </div>
             )}

@@ -1,18 +1,16 @@
 "use server"
 
-import { getHeroBuilds, saveHeroBuilds, getItemImages, getHeroSkills, getHeroData, saveHeroData } from "@/lib/build-db"
+import { getHeroBuilds, saveHeroBuilds, getItemImages, getHeroSkills, getHeroData, saveHeroData, getFilteredItems } from "@/lib/build-db"
 import { logSiteUpdate } from "@/lib/log-actions"
 import { requireAdmin } from "./auth-guard"
 
 export async function openEditor(filename) {
-    const [builds, heroDataRaw] = await Promise.all([
-        getHeroBuilds(filename),
-        getHeroData(filename)
-    ])
+    const heroDataRaw = await getHeroData(filename)
+    const heroGroup = heroDataRaw?.hero_group || null
 
-    // Fetch all resources needed for the editor
-    const [weapons, armors, accessories, skills] = await Promise.all([
-        getItemImages('weapon'),
+    const [builds, weapons, armors, accessories, skills] = await Promise.all([
+        getHeroBuilds(filename),
+        getFilteredItems('weapon', heroGroup),
         getItemImages('armor'),
         getItemImages('accessory'),
         getHeroSkills(filename)

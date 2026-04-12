@@ -79,6 +79,7 @@ async function run() {
                 name VARCHAR(255) NOT NULL,
                 grade VARCHAR(50),
                 item_type ENUM('Weapon', 'Armor', 'Accessory') NOT NULL,
+                weapon_group VARCHAR(50) DEFAULT NULL,
                 atk_all_perc DECIMAL(10,2) DEFAULT 0.00,
                 def_perc DECIMAL(10,2) DEFAULT 0.00,
                 hp_perc DECIMAL(10,2) DEFAULT 0.00,

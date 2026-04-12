@@ -4,6 +4,7 @@ import { Sword, Map, Skull, Landmark, Trophy, Crown, Compass, Swords, Wand2, Spa
 import RecentUpdates from '@/components/shared/RecentUpdates'
 import GlobalCredits from '@/components/shared/GlobalCredits'
 import FeatureCard from '@/components/shared/FeatureCard'
+import WebsiteUpdates from '@/components/shared/WebsiteUpdates'
 
 export const revalidate = 60;
 
@@ -79,6 +80,11 @@ export default async function HomePage() {
                             }>
                                 <RecentUpdates />
                             </Suspense>
+                        </div>
+
+                        <div className="glass-card rounded-3xl p-6 relative overflow-hidden group">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400/40 to-transparent" />
+                            <WebsiteUpdates />
                         </div>
 
                         {/* Integrated Partner Section */}

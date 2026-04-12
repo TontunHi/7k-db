@@ -19,7 +19,7 @@ export default function ItemRegistry({ initialData, assets = {} }) {
 
     // Form State
     const [formData, setFormData] = useState({ 
-        name: "", item_type: "Weapon", 
+        name: "", item_type: "Weapon", weapon_group: "Physical",
         atk_all_perc: 0, def_perc: 0, hp_perc: 0,
         image: ""
     })
@@ -28,11 +28,11 @@ export default function ItemRegistry({ initialData, assets = {} }) {
     const openModal = (item = null) => {
         if (item) {
             setEditingItem(item)
-            setFormData({ ...item, image: item.image || "" })
+            setFormData({ ...item, image: item.image || "", weapon_group: item.weapon_group || "Physical" })
         } else {
             setEditingItem(null)
             setFormData({ 
-                name: "", item_type: "Weapon", 
+                name: "", item_type: "Weapon", weapon_group: "Physical",
                 atk_all_perc: 0, def_perc: 0, hp_perc: 0,
                 image: ""
             })
@@ -118,6 +118,14 @@ export default function ItemRegistry({ initialData, assets = {} }) {
                                                 <div className="text-sm font-black text-white">{item.name}</div>
                                                 <div className="flex gap-2">
                                                     <span className="text-[8px] font-black text-gray-600 uppercase tracking-widest bg-gray-900 border border-gray-800 px-1.5 py-0.5 rounded leading-none">{item.item_type}</span>
+                                                    {item.item_type === "Weapon" && (
+                                                        <span className={clsx(
+                                                            "text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded leading-none border",
+                                                            item.weapon_group === "Physical" ? "text-orange-400 border-orange-400/20 bg-orange-400/5" : "text-blue-400 border-blue-400/20 bg-blue-400/5"
+                                                        )}>
+                                                            {item.weapon_group}
+                                                        </span>
+                                                    )}
                                                 </div>
 
                                             </div>
@@ -184,12 +192,25 @@ export default function ItemRegistry({ initialData, assets = {} }) {
                                         <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Item Type</label>
                                         <select 
                                             value={formData.item_type}
-                                            onChange={(e) => setFormData(prev => ({ ...prev, item_type: e.target.value, image: "" }))}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, item_type: e.target.value, image: "", weapon_group: e.target.value === "Weapon" ? "Physical" : null }))}
                                             className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-emerald-500 appearance-none cursor-pointer"
                                         >
                                             {ITEM_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                                         </select>
                                     </div>
+                                    {formData.item_type === "Weapon" && (
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Weapon Group</label>
+                                            <select 
+                                                value={formData.weapon_group || "Physical"}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, weapon_group: e.target.value }))}
+                                                className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-orange-500 appearance-none cursor-pointer"
+                                            >
+                                                <option value="Physical">Physical</option>
+                                                <option value="Magic">Magic</option>
+                                            </select>
+                                        </div>
+                                    )}
 
                                 </div>
 
