@@ -70,11 +70,12 @@ export async function createSet(data) {
         const nextIndex = countResult[0].next_index
 
         const [result] = await pool.query(
-            `INSERT INTO raid_sets (raid_key, set_index, formation, pet_file, heroes_json, skill_rotation, video_url, note)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO raid_sets (raid_key, set_index, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 validatedData.raid_key, 
                 nextIndex, 
+                validatedData.team_name || null,
                 validatedData.formation, 
                 validatedData.pet_file || null, 
                 JSON.stringify(validatedData.heroes), 
@@ -110,9 +111,10 @@ export async function updateSet(id, data) {
     try {
         await pool.query(
             `UPDATE raid_sets 
-             SET formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
+             SET team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
              WHERE id = ?`,
             [
+                validatedData.team_name || null,
                 validatedData.formation, 
                 validatedData.pet_file || null, 
                 JSON.stringify(validatedData.heroes), 

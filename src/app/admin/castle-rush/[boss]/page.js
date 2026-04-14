@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import NextImage from 'next/image'
 import SafeImage from '@/components/shared/SafeImage'
 import Link from 'next/link'
-import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Crown, Zap, X, Pencil } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Crown, Zap, X, Pencil, ScrollText, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { 
     getBossInfo, 
@@ -119,6 +119,7 @@ export default function BossDetailPage({ params }) {
     const [skillErrors, setSkillErrors] = useState({})
     // Skill picker state: { setIdx, slotIdx } or null
     const [skillPicker, setSkillPicker] = useState(null)
+    const [collapsedSets, setCollapsedSets] = useState(new Set())
 
     useEffect(() => {
         async function loadData() {
@@ -267,6 +268,13 @@ export default function BossDetailPage({ params }) {
         setSkillErrors(prev => ({ ...prev, [key]: true }))
     }
 
+    const toggleCollapse = (id) => {
+        const next = new Set(collapsedSets)
+        if (next.has(id)) next.delete(id)
+        else next.add(id)
+        setCollapsedSets(next)
+    }
+
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
@@ -395,44 +403,80 @@ export default function BossDetailPage({ params }) {
                     {sets.map((set, idx) => {
                         const hasHeroes = set.heroes?.some(h => h !== null)
                         const rotation = set.skill_rotation || []
+                        const isCollapsed = collapsedSets.has(set.id)
 
                         return (
                             <div 
                                 key={set.id} 
                                 className={cn(
-                                    "bg-gray-900/50 border rounded-xl overflow-hidden",
+                                    "bg-gray-900/50 border rounded-xl overflow-hidden transition-all duration-300",
                                     set._dirty ? "border-[#FFD700]/50" : "border-gray-800"
                                 )}
                             >
                                 {/* Team Header with editable name */}
                                 <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800 bg-gray-900/50">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg bg-[#FFD700]/10 flex items-center justify-center text-[#FFD700] font-black">
-                                            {idx + 1}
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <Pencil className="w-3.5 h-3.5 text-gray-500" />
-                                            <input
-                                                type="text"
-                                                value={set.team_name || ''}
-                                                onChange={(e) => handleUpdateSet(idx, 'team_name', e.target.value)}
-                                                placeholder={`Team ${idx + 1}`}
-                                                className="bg-transparent border-none outline-none text-lg font-bold text-white placeholder-gray-500 w-48 focus:ring-0"
-                                            />
-                                        </div>
-                                        {set._dirty && <span className="px-2 py-0.5 bg-[#FFD700]/20 text-[#FFD700] text-xs font-bold rounded">Unsaved</span>}
-                                    </div>
-                                    <button
-                                        onClick={() => handleDeleteSet(idx)}
-                                        className="text-gray-500 hover:text-red-400 transition-colors p-2 hover:bg-red-500/10 rounded-lg"
+                                    <div 
+                                        className="flex items-center gap-4 cursor-pointer group/header flex-1"
+                                        onClick={() => toggleCollapse(set.id)}
                                     >
-                                        <Trash2 className="w-5 h-5" />
-                                    </button>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-[#FFD700]/10 flex items-center justify-center text-[#FFD700] font-black group-hover/header:bg-[#FFD700]/20 transition-colors">
+                                                {idx + 1}
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Pencil className="w-3.5 h-3.5 text-gray-500" />
+                                                <input
+                                                    type="text"
+                                                    value={set.team_name || ''}
+                                                    onChange={(e) => {
+                                                        e.stopPropagation();
+                                                        handleUpdateSet(idx, 'team_name', e.target.value);
+                                                    }}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    placeholder={`Team ${idx + 1}`}
+                                                    className="bg-transparent border-none outline-none text-lg font-bold text-white placeholder-gray-500 w-48 focus:ring-0"
+                                                />
+                                            </div>
+                                            {set._dirty && <span className="px-2 py-0.5 bg-[#FFD700]/20 text-[#FFD700] text-xs font-bold rounded">Unsaved</span>}
+                                        </div>
+
+                                        {/* Collapse Summary (Icons when minimized) */}
+                                        {isCollapsed && (
+                                            <div className="flex items-center gap-1.5 ml-8 animate-in fade-in slide-in-from-left-2 duration-300">
+                                                {set.heroes.map((hero, hIdx) => hero && (
+                                                    <div key={hIdx} className="relative w-6 h-6 rounded-md overflow-hidden border border-gray-700">
+                                                        <SafeImage src={`/heroes/${hero}`} alt="" fill className="object-cover" />
+                                                    </div>
+                                                ))}
+                                                {set.pet_file && (
+                                                    <div className="relative w-6 h-6 rounded-md overflow-hidden border border-gray-700/50 bg-gray-800/30 p-1 ml-2">
+                                                        <SafeImage src={set.pet_file} alt="" fill className="object-cover" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => toggleCollapse(set.id)}
+                                            className="text-gray-500 hover:text-[#FFD700] p-2 hover:bg-gray-800 rounded-xl transition-colors"
+                                        >
+                                            {isCollapsed ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteSet(idx)}
+                                            className="text-gray-500 hover:text-red-400 transition-colors p-2 hover:bg-red-500/10 rounded-lg"
+                                        >
+                                            <Trash2 className="w-5 h-5" />
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <div className="p-5 space-y-6">
-                                    {/* Team Builder */}
-                                    <TeamBuilder
+                                {!isCollapsed && (
+                                    <div className="p-5 space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                                        {/* Team Builder */}
+                                        <TeamBuilder
                                         team={{
                                             index: idx + 1,
                                             formation: set.formation,
@@ -556,18 +600,22 @@ export default function BossDetailPage({ params }) {
 
                                     {/* Note */}
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                                            Note
-                                        </label>
+                                        <div className="flex items-center gap-2">
+                                            <ScrollText className="w-4 h-4 text-[#FFD700]" />
+                                            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                                Note
+                                            </label>
+                                        </div>
                                         <textarea
                                             value={set.note || ''}
                                             onChange={(e) => handleUpdateSet(idx, 'note', e.target.value)}
-                                            placeholder="Optional notes for this team..."
-                                            rows={2}
-                                            className="w-full bg-black border border-gray-800 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#FFD700] transition-colors resize-none"
+                                            placeholder="Add strategic notes or tips for this team..."
+                                            rows={4}
+                                            className="w-full bg-black border border-gray-800 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#FFD700] transition-colors resize-y min-h-[100px]"
                                         />
                                     </div>
                                 </div>
+                                )}
                             </div>
                         )
                     })}

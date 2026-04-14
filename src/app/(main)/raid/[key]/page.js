@@ -1,10 +1,13 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { getRaidInfo, getSetsByRaid } from '@/lib/raid-actions'
-import { Skull, ArrowLeft, Video, ExternalLink, Users, Star, Zap } from 'lucide-react'
+import { Skull, ArrowLeft, Video, ExternalLink, Users, Star, Zap, ScrollText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 import { getHeroImageMap } from '@/lib/hero-utils-server'
+import FormationGrid from '@/components/shared/FormationGrid'
+import PetDisplay from '@/components/shared/PetDisplay'
+import RaidSkillRotation from '@/components/shared/RaidSkillRotation'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,10 +22,6 @@ export async function generateMetadata({ params }) {
     }
 }
 
-import FormationGrid from '@/components/shared/FormationGrid'
-import PetDisplay from '@/components/shared/PetDisplay'
-import { getSkillImagePath } from '@/lib/formation-utils'
-
 export default async function RaidDetailPage({ params }) {
     const { key: raidKey } = await params
     const raid = await getRaidInfo(raidKey)
@@ -34,7 +33,7 @@ export default async function RaidDetailPage({ params }) {
     const sets = await getSetsByRaid(raidKey)
     const heroImageMap = await getHeroImageMap()
     
-    // Parse heroes JSON
+    // Parse JSON data
     const parsedSets = sets.map(set => ({
         ...set,
         heroes: typeof set.heroes_json === 'string' 
@@ -46,221 +45,160 @@ export default async function RaidDetailPage({ params }) {
     }))
 
     return (
-        <div className="relative min-h-screen w-full bg-[#050505] overflow-hidden pb-20">
+        <div className="relative min-h-screen w-full bg-[#050505] overflow-hidden pb-32">
             {/* Background Effects */}
             <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-                <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-red-500 opacity-20 blur-[100px]"></div>
+                <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[500px] w-[500px] rounded-full bg-red-600/10 blur-[120px]"></div>
             </div>
 
-            {/* Hero Banner */}
+            {/* Navigation & Header */}
             <div className="relative z-10">
                 <div className="container mx-auto px-4 py-8">
                     <Link 
                         href="/raid" 
-                        className="inline-flex items-center gap-2 text-gray-400 hover:text-red-400 transition-colors mb-6 backdrop-blur-sm bg-black/30 px-4 py-2 rounded-lg border border-gray-700/50"
+                        className="group inline-flex items-center gap-2 text-gray-400 hover:text-red-500 transition-all mb-8 backdrop-blur-sm bg-white/5 px-4 py-2 rounded-xl border border-white/5 hover:border-red-500/30"
                     >
-                        <ArrowLeft className="w-5 h-5" />
-                        <span>Back to Raids</span>
+                        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                        <span className="font-bold uppercase tracking-wider text-xs">Return to Raids</span>
                     </Link>
                     
-                    <div className="flex flex-col lg:flex-row gap-8 items-start">
-                        {/* Raid Image */}
-                        <div className="relative w-full lg:w-1/2 aspect-[16/9] rounded-2xl overflow-hidden border border-gray-800 bg-gradient-to-br from-[#1a1a1a] to-black shadow-2xl">
+                    <div className="flex flex-col lg:flex-row gap-8 items-center">
+                        {/* Raid Boss Banner - Compact & Full Visibility */}
+                        <div className="relative w-full lg:w-72 aspect-[3/4] rounded-2xl overflow-hidden border border-white/10 shadow-2xl group bg-black/40">
+                            {/* Ambient Blurred Background */}
+                            <Image 
+                                src={raid.image} 
+                                alt="" 
+                                fill 
+                                className="object-cover opacity-20 blur-xl scale-110" 
+                            />
+                            {/* Main Contain Image */}
                             <Image 
                                 src={raid.image} 
                                 alt={raid.name} 
                                 fill 
-                                className="object-contain" 
+                                className="object-contain relative z-10 transition-transform duration-700 group-hover:scale-[1.02]" 
                                 priority
-                                sizes="(max-width: 768px) 100vw, 50vw"
+                                sizes="(max-width: 1024px) 100vw, 288px"
                             />
+                            {/* Gradient Overlay */}
+                            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black via-black/40 to-transparent z-20" />
                         </div>
                         
-                        {/* Raid Info */}
-                        <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-4">
-                                <Skull className="w-10 h-10 text-red-500" />
-                                <span className="text-red-500 text-sm font-bold uppercase tracking-wider">Raid Guide</span>
+                        {/* Raid Info Section */}
+                        <div className="flex-1 text-center lg:text-left space-y-4">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 mb-1">
+                                <Skull className="w-4 h-4 text-red-500" />
+                                <span className="text-red-500 text-[9px] font-black uppercase tracking-[0.2em]">Raid Intel</span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase italic transform -skew-x-3 drop-shadow-2xl">
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter uppercase italic transform -skew-x-3">
                                 {raid.name}
                             </h1>
-                            <div className="h-1 w-32 bg-gradient-to-r from-red-500 to-orange-500 transform -skew-x-12 mt-4 shadow-[0_0_15px_#ef4444]"></div>
+                            <p className="text-gray-400 text-base max-w-lg mx-auto lg:mx-0 font-medium">
+                                Optimized team configurations and strategic rotation sequences.
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Teams Section */}
-            <div className="container mx-auto px-4 mt-8 relative z-10">
+            <div className="container mx-auto px-4 mt-16 relative z-10">
                 {parsedSets.length === 0 ? (
-                    <div className="text-center py-20 border border-dashed border-gray-700 rounded-2xl bg-gray-900/30">
-                        <Users className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                        <p className="text-gray-500">No team recommendations available yet.</p>
+                    <div className="text-center py-32 border border-dashed border-white/10 rounded-[3rem] bg-white/[0.02] backdrop-blur-md">
+                        <Users className="w-16 h-16 text-gray-700 mx-auto mb-6" />
+                        <p className="text-gray-500 text-lg font-bold uppercase tracking-widest italic">Awaiting tactical data deployment...</p>
                     </div>
                 ) : (
-                    <div className="space-y-8 max-w-5xl mx-auto">
+                    <div className="space-y-12 max-w-4xl mx-auto">
                         {parsedSets.map((set, idx) => (
                             <div 
                                 key={set.id} 
-                                className="bg-gradient-to-b from-gray-900/80 to-black border border-gray-800 rounded-2xl overflow-hidden"
+                                className="group/set relative"
                             >
-                                {/* Team Header */}
-                                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-gray-900/50">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-500 font-black text-lg">
-                                            {idx + 1}
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xl font-bold text-white">Team {idx + 1}</h3>
-                                            <p className="text-sm text-gray-400">Formation: {set.formation?.replace('-', ' - ')}</p>
-                                        </div>
-                                    </div>
-                                    
-                                    {set.video_url && (
-                                        <a 
-                                            href={set.video_url} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            className="hidden sm:flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-bold transition-colors shadow-lg shadow-red-900/20"
-                                        >
-                                            <Video className="w-4 h-4" />
-                                            Watch Video
-                                            <ExternalLink className="w-3 h-3" />
-                                        </a>
-                                    )}
-                                </div>
-
-                                <div className="p-6">
-                                    <div className="flex flex-col md:flex-row gap-8">
-                                        {/* Heroes Grid */}
-                                        <FormationGrid 
-                                            formation={set.formation} 
-                                            heroes={set.heroes} 
-                                            heroImageMap={heroImageMap}
-                                            customClasses={{
-                                                container: "grid grid-cols-5 gap-3 pb-6 max-w-full",
-                                                emptyRender: ({isFront}) => (
-                                                    <div className="absolute inset-0 flex items-center justify-center text-gray-700 text-xs">Empty</div>
-                                                ),
-                                                cardString: "bg-black border-2 aspect-[3/4] rounded-lg overflow-hidden transition-all duration-300"
-                                            }}
-                                        />
-
-                                        {/* Pet */}
-                                        <PetDisplay 
-                                            petFile={set.pet_file} 
-                                            hideLabel={true}
-                                            customClasses={{
-                                                wrapper: "w-20 h-20 border-none bg-transparent shadow-none"
-                                            }}
-                                        />
-                                    </div>
-
-                                    {/* Skill Rotation Grid */}
-                                    <div className="mt-6 p-4 bg-black/50 border border-gray-800 rounded-xl">
-                                        <div className="flex items-center gap-2 mb-4">
-                                            <Zap className="w-4 h-4 text-yellow-500" />
-                                            <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">Skill Rotation</span>
+                                {/* Team Card */}
+                                <div className="bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 rounded-[2rem] overflow-hidden backdrop-blur-xl transition-all duration-500 group-hover/set:border-red-500/30">
+                                    {/* Team Header */}
+                                    <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-b border-white/5 bg-white/[0.02]">
+                                        <div className="flex items-center gap-4 mb-3 sm:mb-0">
+                                            <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center text-white font-black text-lg shadow-lg">
+                                                {idx + 1}
+                                            </div>
+                                            <div>
+                                                <h3 className="text-xl font-black text-white group-hover/set:text-red-400 transition-colors uppercase italic tracking-tight">
+                                                    {set.team_name || `Team ${idx + 1}`}
+                                                </h3>
+                                            </div>
                                         </div>
                                         
-                                        <div className="flex gap-4">
-                                            {[0, 1, 2, 3, 4].map(heroIdx => {
-                                                const heroFile = set.heroes?.[heroIdx]
-                                                
-                                                return (
-                                                    <div key={heroIdx} className="space-y-2">
-                                                        {/* Skill 2 */}
-                                                        {(() => {
-                                                            const skillKey = `${heroIdx}-2`
-                                                            const skillPath = getSkillImagePath(heroFile, 2)
-                                                            const orderIndex = (set.skill_rotation || []).indexOf(skillKey)
-                                                            const order = orderIndex >= 0 ? orderIndex + 1 : null
-                                                            
-                                                            return (
-                                                                <div className={cn(
-                                                                    "relative w-14 h-14 rounded-lg overflow-hidden border-2 flex items-center justify-center",
-                                                                    order ? "border-yellow-500/70 shadow-lg shadow-yellow-500/20" : "border-gray-700",
-                                                                    heroFile && skillPath ? "bg-gray-900" : "bg-gray-900/30"
-                                                                )}>
-                                                                    {heroFile && skillPath ? (
-                                                                        <Image
-                                                                            src={skillPath}
-                                                                            alt="Skill 2"
-                                                                            fill
-                                                                            className="object-contain p-1"
-                                                                            sizes="56px"
-                                                                        />
-                                                                    ) : (
-                                                                        <span className="text-gray-700 text-xs">-</span>
-                                                                    )}
-                                                                    {order && (
-                                                                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 text-black text-xs font-black rounded-full flex items-center justify-center shadow-lg">
-                                                                            {order}
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            )
-                                                        })()}
-                                                        
-                                                        {/* Skill 3 */}
-                                                        {(() => {
-                                                            const skillKey = `${heroIdx}-3`
-                                                            const skillPath = getSkillImagePath(heroFile, 3)
-                                                            const orderIndex = (set.skill_rotation || []).indexOf(skillKey)
-                                                            const order = orderIndex >= 0 ? orderIndex + 1 : null
-                                                            
-                                                            return (
-                                                                <div className={cn(
-                                                                    "relative w-14 h-14 rounded-lg overflow-hidden border-2 flex items-center justify-center",
-                                                                    order ? "border-yellow-500/70 shadow-lg shadow-yellow-500/20" : "border-gray-700",
-                                                                    heroFile && skillPath ? "bg-gray-900" : "bg-gray-900/30"
-                                                                )}>
-                                                                    {heroFile && skillPath ? (
-                                                                        <Image
-                                                                            src={skillPath}
-                                                                            alt="Skill 3"
-                                                                            fill
-                                                                            className="object-contain p-1"
-                                                                            sizes="56px"
-                                                                        />
-                                                                    ) : (
-                                                                        <span className="text-gray-700 text-xs">-</span>
-                                                                    )}
-                                                                    {order && (
-                                                                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 text-black text-xs font-black rounded-full flex items-center justify-center shadow-lg">
-                                                                            {order}
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            )
-                                                        })()}
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
+                                        {set.video_url && (
+                                            <a 
+                                                href={set.video_url} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-3 px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-red-900/40 hover:scale-105 active:scale-95"
+                                            >
+                                                <Video className="w-4 h-4" />
+                                                Field Recording
+                                                <ExternalLink className="w-3.5 h-3.5 opacity-50" />
+                                            </a>
+                                        )}
                                     </div>
-                                    
-                                    {/* Mobile Video Button */}
-                                    {set.video_url && (
-                                        <a 
-                                            href={set.video_url} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            className="flex sm:hidden w-full items-center justify-center gap-2 px-4 py-3 bg-red-600 hover:bg-red-500 text-white rounded-lg font-bold transition-colors mt-6"
-                                        >
-                                            <Video className="w-4 h-4" />
-                                            Watch Video Guide
-                                        </a>
-                                    )}
 
-                                    {/* Note */}
-                                    {set.note && set.note.trim() !== "" && (
-                                        <div className="mt-6 p-4 bg-gray-900/50 border border-gray-800 rounded-xl">
-                                            <p className="text-gray-400 text-sm italic">&quot;{set.note}&quot;</p>
+                                    <div className="p-6 lg:p-10">
+                                        <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-end">
+                                            {/* Heroes Grid */}
+                                            <div className="w-full lg:w-[60%]">
+                                                <div className="flex items-center gap-2 mb-4 ml-1">
+                                                    <Users className="w-4 h-4 text-red-500" />
+                                                    <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Formation: {set.formation?.replace('-', ' - ')}</span>
+                                                </div>
+                                                <FormationGrid 
+                                                    formation={set.formation} 
+                                                    heroes={set.heroes} 
+                                                    heroImageMap={heroImageMap}
+                                                    customClasses={{
+                                                        container: "grid grid-cols-5 gap-3 max-w-full",
+                                                        emptyRender: () => null,
+                                                        cardString: "bg-black/40 border-[1px] border-white/5 aspect-[3/4] rounded-xl overflow-hidden transition-all duration-500 hover:border-red-500/50"
+                                                    }}
+                                                />
+                                            </div>
+
+                                            {/* Pet */}
+                                            <div className="w-full lg:w-[40%] flex flex-col items-center lg:items-end justify-end pb-4">
+                                                <PetDisplay 
+                                                    petFile={set.pet_file} 
+                                                    hideLabel={true}
+                                                    customClasses={{
+                                                        wrapper: "w-24 h-24 md:w-28 md:h-28 border-none bg-gradient-to-br from-white/5 to-transparent rounded-2xl p-3 shadow-xl"
+                                                    }}
+                                                />
+                                            </div>
                                         </div>
-                                    )}
+
+                                        {/* Premium Skill Rotation Grid */}
+                                        <RaidSkillRotation 
+                                            skillRotation={set.skill_rotation} 
+                                            heroes={set.heroes} 
+                                        />
+                                        
+                                        {/* Strategy Note */}
+                                        {set.note && set.note.trim() !== "" && (
+                                            <div className="mt-8 relative group/note">
+                                                <div className="relative p-6 bg-white/[0.02] border border-white/5 rounded-[1.5rem] backdrop-blur-xl">
+                                                    <div className="flex items-center gap-2 mb-3">
+                                                        <ScrollText className="w-4 h-4 text-red-500" />
+                                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500/80">Strategy Note</span>
+                                                    </div>
+                                                    <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap font-medium">
+                                                        {set.note}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -270,3 +208,4 @@ export default async function RaidDetailPage({ params }) {
         </div>
     )
 }
+

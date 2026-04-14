@@ -4,6 +4,14 @@ import { Terminal, Sparkles, Zap, Wrench } from "lucide-react"
 
 const UPDATES = [
     {
+        date: "Apr 14, 2026",
+        items: [
+            { category: "UI/UX", text: "Modernized Raid guide interface with high-end animations and glassmorphism.", icon: Zap },
+            { category: "FEATURE", text: "Implemented 'Smart-Hide' skill rotation grid that handles missing assets beautifully.", icon: Sparkles },
+            { category: "SYSTEM", text: "Optimized database connection stability and server-side performance.", icon: Wrench }
+        ]
+    },
+    {
         date: "Apr 12, 2026",
         items: [
             { category: "FEATURE", text: "Added Hero Stats Builder tool with bilingual support.", icon: Sparkles },

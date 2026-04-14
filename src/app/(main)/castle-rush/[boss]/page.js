@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { getBossInfo, getSetsByBoss } from '@/lib/castle-rush-actions'
-import { Crown, ArrowLeft, Video, ExternalLink, Users, Zap } from 'lucide-react'
+import { Crown, ArrowLeft, Video, ExternalLink, Users, Zap, ScrollText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 import { getHeroImageMap } from '@/lib/hero-utils-server'
@@ -175,8 +175,19 @@ export default async function CastleRushBossPage({ params }) {
 
                                     {/* Note */}
                                     {set.note && set.note.trim() !== "" && (
-                                        <div className="mt-6 p-4 bg-gray-900/50 border border-gray-800 rounded-xl">
-                                            <p className="text-gray-400 text-sm italic">{set.note}</p>
+                                        <div className="mt-8 relative group">
+                                            <div className="absolute -inset-1 bg-gradient-to-r from-amber-500/10 to-[#FFD700]/10 rounded-[2rem] blur opacity-25 px-4 h-full" />
+                                            <div className="relative p-6 bg-white/[0.02] border border-white/5 rounded-[1.5rem] backdrop-blur-sm">
+                                                <div className="flex items-center gap-2 mb-3">
+                                                    <div className="p-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                                                        <ScrollText className="w-4 h-4 text-amber-400" />
+                                                    </div>
+                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-500/80">Strategy Note</span>
+                                                </div>
+                                                <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap font-medium">
+                                                    {set.note}
+                                                </p>
+                                            </div>
                                         </div>
                                     )}
                                 </div>

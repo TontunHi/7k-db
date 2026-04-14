@@ -25,6 +25,7 @@ if (process.env.NODE_ENV !== "production") {
 
 // ─── DB DEBUG WRAPPER ────────────────────────────────────────────────
 const patchQuery = (obj, label) => {
+  if (obj.__patchedQuery) return;
   const original = obj.query.bind(obj);
   obj.query = async (...args) => {
     const start = Date.now();
@@ -48,16 +49,20 @@ const patchQuery = (obj, label) => {
       throw err;
     }
   };
+  obj.__patchedQuery = true;
 };
 
-patchQuery(pool, 'QUERY');
+if (!pool.__patched) {
+  patchQuery(pool, 'QUERY');
 
-const originalGetConnection = pool.getConnection.bind(pool);
-pool.getConnection = async () => {
-  const connection = await originalGetConnection();
-  patchQuery(connection, 'TX/CONN');
-  return connection;
-};
+  const originalGetConnection = pool.getConnection.bind(pool);
+  pool.getConnection = async () => {
+    const connection = await originalGetConnection();
+    patchQuery(connection, 'TX/CONN');
+    return connection;
+  };
+  pool.__patched = true;
+}
 
 export default pool;
 

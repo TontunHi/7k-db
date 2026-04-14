@@ -44,6 +44,7 @@ export const DungeonSetSchema = z.object({
 export const RaidSetSchema = z.object({
   raid_key: z.string().min(1),
   set_index: z.number().int().optional(),
+  team_name: z.string().max(100).optional().nullable(),
   formation: z.string().min(1),
   pet_file: z.string().optional().nullable(),
   heroes: TeamHeroesSchema,
