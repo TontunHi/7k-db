@@ -42,6 +42,48 @@ export async function getRecentUpdates(limit = 10) {
     })
 }
 
+/** Get paginated updates with optional filtering */
+export async function getPaginatedUpdates({ type = 'all', page = 1, limit = 50 } = {}) {
+    await initDB()
+    const offset = (page - 1) * limit
+    
+    let query = 'SELECT *, UNIX_TIMESTAMP(created_at) as ts FROM site_updates'
+    const params = []
+
+    if (type !== 'all') {
+        query += ' WHERE content_type = ?'
+        params.push(type)
+    }
+
+    query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?'
+    params.push(limit, offset)
+
+    const [rows] = await pool.query(query, params)
+    const [countResult] = await pool.query(
+        `SELECT COUNT(*) as total FROM site_updates ${type !== 'all' ? 'WHERE content_type = ?' : ''}`,
+        type !== 'all' ? [type] : []
+    )
+
+    const nowTs = Math.floor(Date.now() / 1000)
+    
+    return {
+        logs: rows.map(row => ({
+            ...row,
+            display_time: new Date(row.ts * 1000).toLocaleString('en-US', {
+                timeZone: 'Asia/Bangkok',
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            })
+        })),
+        total: countResult[0].total,
+        page,
+        totalPages: Math.ceil(countResult[0].total / limit)
+    }
+}
+
 /** Get the single most recent update time for a content type */
 export async function getLastUpdate(contentType) {
     await initDB()
