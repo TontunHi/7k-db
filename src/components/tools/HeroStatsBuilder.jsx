@@ -67,6 +67,45 @@ const SUBSTAT_LIST = [
     { label: "Effect Resistance", key: "eff_res", values: [5, 10, 15, 20, 25, 30] }
 ]
 
+const SET_BONUSES = {
+    "Vanguard": {
+        2: { atk_all_perc: 20 },
+        4: { atk_all_perc: 45, eff_hit: 20 }
+    },
+    "Bounty Tracker": {
+        2: { weak_hit: 15 },
+        4: { weak_hit: 35 }
+    },
+    "Paladin": {
+        2: { hp_perc: 17 },
+        4: { hp_perc: 40 }
+    },
+    "Orchestrator": {
+        2: { eff_res: 17 },
+        4: { eff_res: 35 }
+    },
+    "Spellweaver": {
+        2: { eff_hit: 17 },
+        4: { eff_hit: 35 }
+    },
+    "Assassin": {
+        2: { crit_rate: 15 },
+        4: { crit_rate: 30 }
+    },
+    "Gatekeeper": {
+        2: { block_rate: 15 },
+        4: { block_rate: 40 }
+    },
+    "Guardian": {
+        2: { def_perc: 20 },
+        4: { def_perc: 45, eff_res: 20 }
+    },
+    "Avenger": {
+        2: {},
+        4: {}
+    }
+}
+
 const getInitialItemState = (slotKey = "") => ({
     item: null,
     mainStatKey: slotKey.startsWith('Weapon') ? WEAPON_MAIN_STATS[3].key : ARMOR_MAIN_STATS[2].key, // Default to All Attack (%)
@@ -267,7 +306,15 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
             dmg_red: 0
         }
         
+        const setCounts = {}
+        
         Object.values(equippedItems).forEach(slot => {
+            // Count Sets for Bonuses
+            if (slot.item && slot.item.item_set) {
+                const s = slot.item.item_set
+                setCounts[s] = (setCounts[s] || 0) + 1
+            }
+
             // 1. Add Base Item Stats (Flat Stats: 304 Atk / 1079 HP / 189 Def)
             if (slot.item) {
                 if (slot.item.item_type === 'Weapon') {
@@ -319,6 +366,26 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
             })
         })
 
+        // 4. Apply SET BONUSES (Non-Cumulative)
+        Object.entries(setCounts).forEach(([setName, count]) => {
+            if (count >= 2) {
+                const bonusesConfig = SET_BONUSES[setName]
+                if (!bonusesConfig) return
+                
+                const bonus = count >= 4 ? bonusesConfig[4] : bonusesConfig[2]
+                if (!bonus) return
+
+                Object.entries(bonus).forEach(([statKey, val]) => {
+                    if (statKey === 'atk_all_perc') extraPerc.atk += val
+                    else if (statKey === 'def_perc') extraPerc.def += val
+                    else if (statKey === 'hp_perc') extraPerc.hp += val
+                    else if (otherStats[statKey] !== undefined) {
+                        otherStats[statKey] += val
+                    }
+                })
+            }
+        })
+
         // Final Calculation based on "Base Stat Only" principle
         const res = { ...base }
         
@@ -342,7 +409,18 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
             res[key] = (base[key] || 0) + otherStats[key]
         })
 
-        return res
+        const activeSets = []
+        Object.entries(setCounts).forEach(([setName, count]) => {
+            if (count >= 2) {
+                const bonusesConfig = SET_BONUSES[setName]
+                if (bonusesConfig) {
+                    const pieces = count >= 4 ? 4 : 2
+                    activeSets.push({ name: setName, pieces, bonus: bonusesConfig[pieces] })
+                }
+            }
+        })
+
+        return { stats: res, activeSets }
     }, [heroStats, equippedItems, selectedHero])
 
 
@@ -483,14 +561,47 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
                                             </div>
                                             <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{field.label.replace(' %', '')}</span>
                                         </div>
-                                        <div className="text-xs font-black text-white tabular-nums tracking-tighter italic">
-                                            {formatValue(finalStats[field.key])}
+                                        <div className="text-xs font-black text-white tabular-nums tracking-tighter italic flex items-center gap-2">
+                                            {formatValue(finalStats.stats[field.key])}
                                             {field.unit && <span className="ml-0.5 text-[8px] opacity-40">{field.unit}</span>}
+                                            {finalStats.activeSets.some(set => 
+                                                Object.keys(set.bonus).some(sk => 
+                                                    sk === field.key || 
+                                                    (sk === 'atk_all_perc' && (field.key === 'atk_phys' || field.key === 'atk_mag')) ||
+                                                    (sk === 'def_perc' && field.key === 'def') ||
+                                                    (sk === 'hp_perc' && field.key === 'hp')
+                                                )
+                                            ) && (
+                                                <div className="w-1.5 h-1.5 rounded-full bg-[#FFD700] shadow-[0_0_8px_rgba(255,215,0,0.5)] animate-pulse" title="Set Bonus Active" />
+                                            )}
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         </div>
+
+                        {/* Active Set Bonuses */}
+                        {finalStats.activeSets.length > 0 && (
+                            <div className="bg-[#0a0a0a] border border-[#FFD700]/10 rounded-[2.5rem] p-8 shadow-2xl space-y-6 animate-in slide-in-from-bottom-5 duration-500">
+                                <h3 className="text-xs font-black text-[#FFD700] uppercase tracking-widest flex items-center gap-3">
+                                    <Sparkles className="w-4 h-4" />
+                                    Active Set Bonuses
+                                </h3>
+                                <div className="space-y-3">
+                                    {finalStats.activeSets.map(set => (
+                                        <div key={set.name} className="flex flex-col gap-2 p-4 bg-[#FFD700]/5 border border-[#FFD700]/10 rounded-2xl relative overflow-hidden group/setcard">
+                                            <div className="absolute inset-0 bg-gradient-to-r from-[#FFD700]/10 to-transparent opacity-0 group-hover/setcard:opacity-100 transition-opacity" />
+                                            <div className="flex items-center justify-between relative z-10">
+                                                <span className="text-sm font-black text-white uppercase italic tracking-tight">{set.name} Set</span>
+                                                <span className="px-2 py-0.5 bg-[#FFD700] text-black text-[9px] font-black rounded uppercase shadow-lg shadow-[#FFD700]/20">
+                                                    {set.pieces} Pieces
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div className="xl:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6">

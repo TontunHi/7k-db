@@ -9,6 +9,10 @@ import SafeImage from "../shared/SafeImage"
 
 const GRADES = ["r", "l"]
 const ITEM_TYPES = ["Weapon", "Armor", "Accessory"]
+const ITEM_SETS = [
+    "Vanguard", "Bounty Tracker", "Paladin", "Avenger", 
+    "Orchestrator", "Spellweaver", "Assassin", "Gatekeeper", "Guardian"
+]
 
 
 export default function ItemRegistry({ initialData, assets = {} }) {
@@ -19,7 +23,7 @@ export default function ItemRegistry({ initialData, assets = {} }) {
 
     // Form State
     const [formData, setFormData] = useState({ 
-        name: "", item_type: "Weapon", weapon_group: "Physical",
+        name: "", item_type: "Weapon", weapon_group: "Physical", item_set: "",
         atk_all_perc: 0, def_perc: 0, hp_perc: 0,
         image: ""
     })
@@ -28,11 +32,16 @@ export default function ItemRegistry({ initialData, assets = {} }) {
     const openModal = (item = null) => {
         if (item) {
             setEditingItem(item)
-            setFormData({ ...item, image: item.image || "", weapon_group: item.weapon_group || "Physical" })
+            setFormData({ 
+                ...item, 
+                image: item.image || "", 
+                weapon_group: item.weapon_group || "Physical",
+                item_set: item.item_set || ""
+            })
         } else {
             setEditingItem(null)
             setFormData({ 
-                name: "", item_type: "Weapon", weapon_group: "Physical",
+                name: "", item_type: "Weapon", weapon_group: "Physical", item_set: "",
                 atk_all_perc: 0, def_perc: 0, hp_perc: 0,
                 image: ""
             })
@@ -126,6 +135,9 @@ export default function ItemRegistry({ initialData, assets = {} }) {
                                                             {item.weapon_group}
                                                         </span>
                                                     )}
+                                                    {item.item_set && (
+                                                        <span className="text-[8px] font-black text-amber-500 uppercase tracking-widest bg-amber-500/5 border border-amber-500/20 px-1.5 py-0.5 rounded leading-none">set: {item.item_set}</span>
+                                                    )}
                                                 </div>
 
                                             </div>
@@ -211,6 +223,18 @@ export default function ItemRegistry({ initialData, assets = {} }) {
                                             </select>
                                         </div>
                                     )}
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Item Set</label>
+                                        <select 
+                                            value={formData.item_set || ""}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, item_set: e.target.value }))}
+                                            className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-emerald-500 appearance-none cursor-pointer"
+                                        >
+                                            <option value="">No Set</option>
+                                            {ITEM_SETS.map(s => <option key={s} value={s}>{s}</option>)}
+                                        </select>
+                                    </div>
 
                                 </div>
 
