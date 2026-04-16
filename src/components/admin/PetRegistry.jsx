@@ -7,6 +7,8 @@ import { upsertPetRegistry, deletePetRegistry } from "@/lib/registry-actions"
 import { toast } from "sonner"
 import SafeImage from "../shared/SafeImage"
 
+const GRADES = ["r", "l"]
+
 
 
 
