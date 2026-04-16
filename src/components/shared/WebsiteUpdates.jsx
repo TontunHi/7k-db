@@ -4,6 +4,14 @@ import { Terminal, Sparkles, Zap, Wrench } from "lucide-react"
 
 const UPDATES = [
     {
+        date: "Apr 16, 2026",
+        items: [
+            { category: "FEATURE", text: "Implemented Item Set Bonus system (Vanguard, Bounty Tracker, etc.) in Hero Stats Builder.", icon: Sparkles },
+            { category: "UI/UX", text: "Added visual 'Set Bonus' pulse indicators in the Final Stats Analysis grid.", icon: Zap },
+            { category: "ADMIN", text: "Enhanced Item Registry with Set selection and database integration.", icon: Terminal }
+        ]
+    },
+    {
         date: "Apr 14, 2026",
         items: [
             { category: "UI/UX", text: "Modernized Raid guide interface with high-end animations and glassmorphism.", icon: Zap },
