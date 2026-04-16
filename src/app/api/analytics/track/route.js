@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import pool from '@/lib/db';
+import { getAdminUser } from '@/lib/auth-guard';
 
 function hashIpAddress(ip) {
   const salt = process.env.ANALYTICS_SALT || '7k-tracker-secret';
@@ -25,6 +26,16 @@ export async function POST(request) {
     // Ensure session_id and page_path exist
     if (!sessionId || !pagePath) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // SKIP TRACKING FOR ADMINS OR ADMIN PATHS
+    if (pagePath.startsWith('/admin')) {
+      return NextResponse.json({ success: true, message: 'Admin path ignored' });
+    }
+
+    const adminUser = await getAdminUser();
+    if (adminUser) {
+      return NextResponse.json({ success: true, message: 'Admin user ignored' });
     }
 
     if (type === 'pageview') {

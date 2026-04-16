@@ -14,7 +14,7 @@ function generateSessionId() {
 }
 
 export function trackCustomPageView(path) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined' || path?.startsWith('/admin')) return;
   const sid = generateSessionId();
 
   fetch('/api/analytics/track', {
@@ -30,6 +30,10 @@ export function trackCustomPageView(path) {
 
 export function trackOutboundClick(url, linkId = 'generic_link') {
   if (typeof window === 'undefined') return;
+  
+  // Skip if we are on an admin page
+  if (window.location.pathname.startsWith('/admin')) return;
+
   const sid = generateSessionId();
   
   // Track click asynchronously
@@ -51,7 +55,7 @@ export default function AnalyticsTracker() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (!pathname) return;
+    if (!pathname || pathname.startsWith('/admin')) return;
     
     const sid = generateSessionId();
 

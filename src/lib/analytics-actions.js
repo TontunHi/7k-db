@@ -6,10 +6,10 @@ import pool from './db';
 export async function getReachStats() {
   try {
     const [pvResult] = await pool.query(
-      `SELECT COUNT(*) as pv FROM analytics_views WHERE event_type = "pageview"`
+      `SELECT COUNT(*) as pv FROM analytics_views WHERE event_type = "pageview" AND page_path NOT LIKE '/admin%'`
     );
     const [uvResult] = await pool.query(
-      `SELECT COUNT(DISTINCT ip_hash) as uv FROM analytics_views`
+      `SELECT COUNT(DISTINCT ip_hash) as uv FROM analytics_views WHERE page_path NOT LIKE '/admin%'`
     );
     
     return {
@@ -59,7 +59,7 @@ export async function getClickStats() {
     // Here we'll do an overall rough estimation for pages where clicks occurred
     let ctr = 0;
     const [viewsResult] = await pool.query(
-       `SELECT COUNT(*) as views FROM analytics_views WHERE event_type = "pageview"`
+       `SELECT COUNT(*) as views FROM analytics_views WHERE event_type = "pageview" AND page_path NOT LIKE '/admin%'`
     );
     
     const totalViews = viewsResult[0].views;
@@ -89,6 +89,7 @@ export async function getExitPages() {
         SELECT session_id, page_path, 
                ROW_NUMBER() OVER(PARTITION BY session_id ORDER BY created_at DESC) as rn
         FROM analytics_views
+        WHERE page_path NOT LIKE '/admin%'
       )
       SELECT page_path, COUNT(*) as exits
       FROM RankedViews
@@ -111,7 +112,7 @@ export async function getFilteredPageViews(filters) {
   
   let query = `SELECT page_path, COUNT(*) as views, COUNT(DISTINCT ip_hash) as unique_visitors 
                FROM analytics_views 
-               WHERE event_type = "pageview"`;
+               WHERE event_type = "pageview" AND page_path NOT LIKE '/admin%'`;
   const params = [];
   
   if (startDate) {
