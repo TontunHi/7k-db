@@ -6,15 +6,15 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url)
 
-    // Dynamic title from query params (e.g., ?title=Teo Build)
+    // Dynamic title from query params
     const hasTitle = searchParams.has('title')
     const title = hasTitle
       ? searchParams.get('title')?.slice(0, 100)
-      : 'Seven Knights Rebirth Database'
+      : 'SEVEN KNIGHTS REBIRTH DB'
 
     const subtitle = hasTitle
-      ? 'Seven Knights Rebirth Database'
-      : 'Builds, Guides, Tier Lists & Tools'
+      ? 'SEVEN KNIGHTS REBIRTH DATABASE'
+      : 'The ultimate database for heroes, builds, and strategies.'
 
     return new ImageResponse(
       (
@@ -27,32 +27,33 @@ export async function GET(request) {
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: '#050505',
-            backgroundImage: 'radial-gradient(circle at 50% 50%, #1e1b4b 0%, #050505 100%)',
+            // Create a subtle gold glow effect from the center bottom
+            backgroundImage: 'radial-gradient(circle at 50% 120%, rgba(255, 215, 0, 0.15) 0%, #050505 70%)',
           }}
         >
-          {/* Decorative elements */}
+          {/* Decorative Gold Orbs */}
           <div
             style={{
               position: 'absolute',
-              top: '-100px',
-              left: '-100px',
-              width: '400px',
-              height: '400px',
+              top: '10%',
+              left: '10%',
+              width: '300px',
+              height: '300px',
               borderRadius: '50%',
-              background: 'rgba(79, 70, 229, 0.1)',
-              filter: 'blur(100px)',
+              background: 'rgba(255, 215, 0, 0.08)',
+              filter: 'blur(80px)',
             }}
           />
           <div
             style={{
               position: 'absolute',
-              bottom: '-100px',
-              right: '-100px',
+              top: '20%',
+              right: '5%',
               width: '400px',
               height: '400px',
               borderRadius: '50%',
-              background: 'rgba(139, 92, 246, 0.1)',
-              filter: 'blur(100px)',
+              background: 'rgba(255, 165, 0, 0.05)',
+              filter: 'blur(90px)',
             }}
           />
 
@@ -62,34 +63,36 @@ export async function GET(request) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '80px',
-              height: '80px',
-              borderRadius: '20px',
-              background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
-              marginBottom: '40px',
-              boxShadow: '0 0 40px rgba(79, 70, 229, 0.4)',
-              color: 'white',
-              fontSize: '40px',
+              padding: '12px 32px',
+              borderRadius: '16px',
+              background: 'linear-gradient(to right, #FFD700, #FFA500)',
+              marginBottom: '32px',
+              boxShadow: '0 8px 32px rgba(255, 215, 0, 0.25)',
+              color: '#000000',
+              fontSize: '32px',
               fontWeight: 900,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
             }}
           >
-            7K
+            7K-DB
           </div>
 
           {/* Main Title */}
           <div
             style={{
               display: 'flex',
-              fontSize: '72px',
-              fontStyle: 'normal',
+              fontSize: hasTitle ? '80px' : '96px',
+              fontStyle: 'italic',
               fontWeight: 900,
-              color: 'white',
+              color: '#ffffff',
               textAlign: 'center',
-              lineHeight: 1.2,
+              lineHeight: 1.1,
               whiteSpace: 'pre-wrap',
-              padding: '0 80px',
+              padding: '0 60px',
               letterSpacing: '-0.02em',
-              textShadow: '0 4px 20px rgba(0,0,0,0.5)',
+              textShadow: '0 10px 30px rgba(0,0,0,0.8)',
+              textTransform: 'uppercase',
             }}
           >
             {title}
@@ -100,15 +103,29 @@ export async function GET(request) {
             style={{
               display: 'flex',
               fontSize: '32px',
-              fontWeight: 400,
-              color: '#94a3b8',
-              marginTop: '24px',
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
+              fontWeight: 300,
+              color: '#a1a1aa',
+              marginTop: '32px',
+              letterSpacing: '0.02em',
+              textAlign: 'center',
+              padding: '0 80px',
             }}
           >
             {subtitle}
           </div>
+
+          {/* Bottom Accent Line */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '120px',
+              width: '120px',
+              height: '4px',
+              background: 'linear-gradient(to right, #FFD700, #FFA500)',
+              boxShadow: '0 0 20px rgba(255,215,0,0.5)',
+              borderRadius: '2px',
+            }}
+          />
 
           {/* Site URL Footer */}
           <div
@@ -117,14 +134,14 @@ export async function GET(request) {
               bottom: '40px',
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
+              gap: '16px',
             }}
           >
-            <div style={{ width: '40px', height: '1px', background: 'rgba(255,255,255,0.2)' }} />
-            <div style={{ fontSize: '20px', color: 'rgba(255,255,255,0.4)', fontWeight: 600, letterSpacing: '0.1em' }}>
+            <div style={{ width: '60px', height: '1px', background: 'rgba(255,215,0,0.3)' }} />
+            <div style={{ fontSize: '24px', color: 'rgba(255,255,255,0.7)', fontWeight: 700, letterSpacing: '0.15em' }}>
               7K-DB.COM
             </div>
-            <div style={{ width: '40px', height: '1px', background: 'rgba(255,255,255,0.2)' }} />
+            <div style={{ width: '60px', height: '1px', background: 'rgba(255,215,0,0.3)' }} />
           </div>
         </div>
       ),
