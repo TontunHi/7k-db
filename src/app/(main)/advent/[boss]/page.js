@@ -8,6 +8,8 @@ import { getHeroImageMap } from '@/lib/hero-utils-server'
 
 export const dynamic = 'force-dynamic'
 
+import BossClient from './BossClient'
+
 export async function generateMetadata({ params }) {
     const { boss: bossKey } = await params
     const boss = await getBossInfo(bossKey)
@@ -17,67 +19,6 @@ export async function generateMetadata({ params }) {
         title: `${boss.name} - Advent Expedition`,
         description: `Team recommendations for Advent Expedition boss ${boss.name}.`
     }
-}
-
-import FormationGrid from '@/components/shared/FormationGrid'
-import PetDisplay from '@/components/shared/PetDisplay'
-import SkillSequence from '@/components/shared/SkillSequence'
-
-// Reusable team display component
-function TeamDisplay({ heroes, formation, petFile, skillRotation, teamLabel, teamColor, heroImageMap }) {
-    return (
-        <div className="space-y-4">
-            {/* Team label */}
-            <div className="flex items-center gap-2">
-                <div className={cn(
-                    "w-6 h-6 rounded-md flex items-center justify-center text-xs font-black",
-                    teamColor === 'sky' ? "bg-sky-500/20 text-sky-400" : "bg-rose-500/20 text-rose-400"
-                )}>
-                    {teamLabel}
-                </div>
-                <span className={cn(
-                    "text-sm font-bold uppercase tracking-wider",
-                    teamColor === 'sky' ? "text-sky-400" : "text-rose-400"
-                )}>
-                    Team {teamLabel}
-                </span>
-                <span className="text-xs text-gray-500">Formation: {formation?.replace('-', ' - ')}</span>
-            </div>
-
-            <div className="flex flex-col md:flex-row gap-6">
-                {/* Heroes Grid */}
-                <FormationGrid 
-                    formation={formation} 
-                    heroes={heroes} 
-                    heroImageMap={heroImageMap}
-                    customClasses={{
-                        container: "grid grid-cols-5 gap-2 pb-2 max-w-[300px] md:max-w-[340px]",
-                        emptyRender: ({isFront}) => (
-                            <div className="absolute inset-0 flex items-center justify-center text-gray-700 text-xs">Empty</div>
-                        ),
-                        cardString: cn(
-                            "bg-black border aspect-[3/4] rounded-lg overflow-hidden transition-all duration-300 shadow-inner"
-                        )
-                    }}
-                />
-
-                {/* Pet */}
-                <PetDisplay 
-                    petFile={petFile} 
-                    hideLabel={true}
-                    customClasses={{
-                        wrapper: "w-20 h-20 border-none bg-transparent shadow-none"
-                    }}
-                />
-            </div>
-
-            {/* Skill Rotation Slots */}
-            <SkillSequence 
-                skillRotation={skillRotation} 
-                heroes={heroes} 
-            />
-        </div>
-    )
 }
 
 export default async function AdventBossPage({ params }) {
@@ -137,82 +78,8 @@ export default async function AdventBossPage({ params }) {
                 </div>
             </div>
 
-            {/* Teams Section */}
-            <div className="container mx-auto px-4 mt-8 relative z-10">
-                {sets.length === 0 ? (
-                    <div className="text-center py-20 border border-dashed border-gray-700 rounded-2xl bg-gray-900/30">
-                        <Users className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                        <p className="text-gray-500">No team recommendations available yet.</p>
-                    </div>
-                ) : (
-                    <div className="space-y-8">
-                        {sets.map((set, idx) => (
-                            <div 
-                                key={set.id} 
-                                className="bg-gradient-to-b from-gray-900/80 to-black border border-gray-800 rounded-2xl overflow-hidden"
-                            >
-                                {/* Set Header */}
-                                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-gray-900/50">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-400 font-black text-lg">
-                                            {idx + 1}
-                                        </div>
-                                        <h3 className="text-xl font-bold text-white">
-                                            {set.team_name || `Set ${idx + 1}`}
-                                        </h3>
-                                    </div>
-                                    
-                                    {set.video_url && (
-                                        <a 
-                                            href={set.video_url} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-bold transition-colors"
-                                        >
-                                            <Video className="w-4 h-4" />
-                                            Watch Video
-                                            <ExternalLink className="w-3 h-3" />
-                                        </a>
-                                    )}
-                                </div>
-
-                                <div className="p-6 space-y-6">
-                                    {/* Team 1 */}
-                                    <TeamDisplay
-                                        heroes={set.team1_heroes}
-                                        formation={set.team1_formation}
-                                        petFile={set.team1_pet_file}
-                                        skillRotation={set.team1_skill_rotation}
-                                        teamLabel={1}
-                                        teamColor="sky"
-                                        heroImageMap={heroImageMap}
-                                    />
-
-                                    <div className="border-t border-gray-800" />
-
-                                    {/* Team 2 */}
-                                    <TeamDisplay
-                                        heroes={set.team2_heroes}
-                                        formation={set.team2_formation}
-                                        petFile={set.team2_pet_file}
-                                        skillRotation={set.team2_skill_rotation}
-                                        teamLabel={2}
-                                        teamColor="rose"
-                                        heroImageMap={heroImageMap}
-                                    />
-
-                                    {/* Note */}
-                                    {set.note && set.note.trim() !== "" && (
-                                        <div className="mt-6 p-4 bg-gray-900/50 border border-gray-800 rounded-xl">
-                                            <p className="text-gray-400 text-sm italic">{set.note}</p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+            {/* Boss Client (Teams, Phases) */}
+            <BossClient sets={sets} heroImageMap={heroImageMap} />
         </div>
     )
 }

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import NextImage from 'next/image'
 import SafeImage from '@/components/shared/SafeImage'
 import Link from 'next/link'
-import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Compass, Zap, X } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Video, Save, Loader2, Compass, Zap, X, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { 
     getBossInfo, 
@@ -23,8 +23,7 @@ function getSkillImagePath(heroFilename, skillNumber) {
     return `/skills/${folderName}/${skillNumber}.webp`
 }
 
-// Sub-Team Skill Rotation component
-function SkillSlotRow({ heroes, rotation, onAddSlot, onUpdateLabel, onSelectSkill, onDeleteSlot, onOpenPicker, skillErrors, setId, teamNum }) {
+function SkillSlotRow({ heroes, rotation, onAddSlot, onUpdateLabel, onSelectSkill, onDeleteSlot, onOpenPicker, skillErrors, setId }) {
     const hasHeroes = heroes?.some(h => h !== null)
     
     return (
@@ -41,7 +40,7 @@ function SkillSlotRow({ heroes, rotation, onAddSlot, onUpdateLabel, onSelectSkil
                         const [hIdx, sNum] = (slot.skill || '').split('-').map(Number)
                         const heroFile = heroes?.[hIdx]
                         const skillPath = slot.skill ? getSkillImagePath(heroFile, sNum) : null
-                        const errKey = `slot-${setId}-t${teamNum}-${slotIdx}`
+                        const errKey = `slot-${setId}-${slotIdx}`
                         const hasError = skillErrors[errKey]
 
                         return (
@@ -106,10 +105,9 @@ function SkillSlotRow({ heroes, rotation, onAddSlot, onUpdateLabel, onSelectSkil
     )
 }
 
-// Skill Picker Modal Component
 const SkillPickerModal = ({ skillPicker, sets, teamHeroes, heroes, onSelectSkill, onClose }) => {
     if (!skillPicker) return null
-    const { setIdx, teamNum, slotIdx } = skillPicker
+    const { setIdx, slotIdx } = skillPicker
 
     return (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-md">
@@ -117,7 +115,7 @@ const SkillPickerModal = ({ skillPicker, sets, teamHeroes, heroes, onSelectSkill
                 <div className="p-5 border-b border-gray-800 flex justify-between items-center bg-black/50">
                     <div>
                         <h3 className="text-xl font-black text-white">Select Skill</h3>
-                        <p className="text-sm text-gray-400 mt-1">Choose a skill for Team {teamNum}</p>
+                        <p className="text-sm text-gray-400 mt-1">Choose a skill for the Team</p>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400">
                         <X size={22} />
@@ -152,7 +150,7 @@ const SkillPickerModal = ({ skillPicker, sets, teamHeroes, heroes, onSelectSkill
                                             <button
                                                 key={skillNum}
                                                 type="button"
-                                                onClick={() => onSelectSkill(setIdx, teamNum, slotIdx, skillKey)}
+                                                onClick={() => onSelectSkill(setIdx, slotIdx, skillKey)}
                                                 className="relative w-14 h-14 rounded-lg overflow-hidden border-2 border-gray-700 hover:border-violet-400 hover:shadow-[0_0_15px_rgba(139,92,246,0.3)] transition-all bg-gray-900"
                                             >
                                                 {skillPath ? (
@@ -188,7 +186,15 @@ export default function AdventBossDetailPage({ params }) {
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [skillErrors, setSkillErrors] = useState({})
-    const [skillPicker, setSkillPicker] = useState(null) // { setIdx, teamNum (1|2), slotIdx }
+    const [skillPicker, setSkillPicker] = useState(null)
+    const [expandedSets, setExpandedSets] = useState({})
+
+    const toggleSetExpand = (idx) => {
+        setExpandedSets(prev => ({
+            ...prev,
+            [idx]: prev[idx] === false ? true : false
+        }))
+    }
 
     useEffect(() => {
         async function loadData() {
@@ -214,16 +220,13 @@ export default function AdventBossDetailPage({ params }) {
         const newSet = {
             id: `new-${Date.now()}`,
             boss_key: bossKey,
+            phase: 'Phase 1',
             set_index: sets.length + 1,
             team_name: '',
-            team1_formation: formations[0]?.value || '2-3',
-            team1_pet_file: '',
-            team1_heroes: [null, null, null, null, null],
-            team1_skill_rotation: [],
-            team2_formation: formations[0]?.value || '2-3',
-            team2_pet_file: '',
-            team2_heroes: [null, null, null, null, null],
-            team2_skill_rotation: [],
+            formation: formations[0]?.value || '2-3',
+            pet_file: '',
+            heroes: [null, null, null, null, null],
+            skill_rotation: [],
             video_url: '',
             note: '',
             _isNew: true,
@@ -238,14 +241,13 @@ export default function AdventBossDetailPage({ params }) {
         setSets(updated)
     }
 
-    const handleTeamUpdate = (setIdx, teamNum, teamData) => {
+    const handleTeamUpdate = (setIdx, teamData) => {
         const updated = [...sets]
-        const prefix = `team${teamNum}_`
         updated[setIdx] = { 
             ...updated[setIdx], 
-            [`${prefix}formation`]: teamData.formation,
-            [`${prefix}pet_file`]: teamData.pet_file,
-            [`${prefix}heroes`]: teamData.heroes,
+            formation: teamData.formation,
+            pet_file: teamData.pet_file,
+            heroes: teamData.heroes,
             _dirty: true 
         }
         setSets(updated)
@@ -266,15 +268,12 @@ export default function AdventBossDetailPage({ params }) {
 
             const data = {
                 boss_key: bossKey,
+                phase: set.phase,
                 team_name: set.team_name,
-                team1_formation: set.team1_formation,
-                team1_pet_file: set.team1_pet_file,
-                team1_heroes: set.team1_heroes,
-                team1_skill_rotation: set.team1_skill_rotation,
-                team2_formation: set.team2_formation,
-                team2_pet_file: set.team2_pet_file,
-                team2_heroes: set.team2_heroes,
-                team2_skill_rotation: set.team2_skill_rotation,
+                formation: set.formation,
+                pet_file: set.pet_file,
+                heroes: set.heroes,
+                skill_rotation: set.skill_rotation,
                 video_url: set.video_url,
                 note: set.note
             }
@@ -291,41 +290,36 @@ export default function AdventBossDetailPage({ params }) {
         setSaving(false)
     }
 
-    // Skill Slot handlers
-    const handleAddSlot = (setIdx, teamNum) => {
-        const key = `team${teamNum}_skill_rotation`
+    const handleAddSlot = (setIdx) => {
         const updated = [...sets]
-        const rotation = [...(updated[setIdx][key] || [])]
+        const rotation = [...(updated[setIdx].skill_rotation || [])]
         rotation.push({ label: '', skill: null })
-        updated[setIdx] = { ...updated[setIdx], [key]: rotation, _dirty: true }
+        updated[setIdx] = { ...updated[setIdx], skill_rotation: rotation, _dirty: true }
         setSets(updated)
     }
 
-    const handleUpdateSlotLabel = (setIdx, teamNum, slotIdx, label) => {
-        const key = `team${teamNum}_skill_rotation`
+    const handleUpdateSlotLabel = (setIdx, slotIdx, label) => {
         const updated = [...sets]
-        const rotation = [...(updated[setIdx][key] || [])]
+        const rotation = [...(updated[setIdx].skill_rotation || [])]
         rotation[slotIdx] = { ...rotation[slotIdx], label }
-        updated[setIdx] = { ...updated[setIdx], [key]: rotation, _dirty: true }
+        updated[setIdx] = { ...updated[setIdx], skill_rotation: rotation, _dirty: true }
         setSets(updated)
     }
 
-    const handleSelectSkillForSlot = (setIdx, teamNum, slotIdx, skillKey) => {
-        const key = `team${teamNum}_skill_rotation`
+    const handleSelectSkillForSlot = (setIdx, slotIdx, skillKey) => {
         const updated = [...sets]
-        const rotation = [...(updated[setIdx][key] || [])]
+        const rotation = [...(updated[setIdx].skill_rotation || [])]
         rotation[slotIdx] = { ...rotation[slotIdx], skill: skillKey }
-        updated[setIdx] = { ...updated[setIdx], [key]: rotation, _dirty: true }
+        updated[setIdx] = { ...updated[setIdx], skill_rotation: rotation, _dirty: true }
         setSets(updated)
         setSkillPicker(null)
     }
 
-    const handleDeleteSlot = (setIdx, teamNum, slotIdx) => {
-        const key = `team${teamNum}_skill_rotation`
+    const handleDeleteSlot = (setIdx, slotIdx) => {
         const updated = [...sets]
-        const rotation = [...(updated[setIdx][key] || [])]
+        const rotation = [...(updated[setIdx].skill_rotation || [])]
         rotation.splice(slotIdx, 1)
-        updated[setIdx] = { ...updated[setIdx], [key]: rotation, _dirty: true }
+        updated[setIdx] = { ...updated[setIdx], skill_rotation: rotation, _dirty: true }
         setSets(updated)
     }
 
@@ -343,10 +337,8 @@ export default function AdventBossDetailPage({ params }) {
 
     const hasDirty = sets.some(s => s._dirty)
 
-
     return (
         <div className="flex gap-6 pb-20">
-            {/* Left Sidebar - Boss Image */}
             <div className="hidden lg:block w-64 flex-shrink-0">
                 <div className="sticky top-8 space-y-4">
                     <Link 
@@ -376,9 +368,7 @@ export default function AdventBossDetailPage({ params }) {
                 </div>
             </div>
 
-            {/* Main Content */}
             <div className="flex-1 space-y-6">
-                {/* Mobile Header */}
                 <div className="lg:hidden flex items-center gap-4 mb-4">
                     <Link href="/admin/advent" className="p-2 hover:bg-gray-800 rounded-lg">
                         <ArrowLeft className="w-6 h-6" />
@@ -393,7 +383,6 @@ export default function AdventBossDetailPage({ params }) {
                     </div>
                 </div>
 
-                {/* Action Buttons */}
                 <div className="flex items-center justify-between gap-4 p-4 bg-gray-900/50 border border-gray-800 rounded-xl">
                     <h1 className="hidden lg:block text-2xl font-black text-white">Team Management</h1>
                     <div className="flex items-center gap-3 ml-auto">
@@ -420,7 +409,6 @@ export default function AdventBossDetailPage({ params }) {
                     </div>
                 </div>
 
-                {/* Sets List */}
                 <div className="space-y-6">
                     {sets.length === 0 && (
                         <div className="text-center py-16 border border-dashed border-gray-700 rounded-xl bg-gray-900/30">
@@ -438,106 +426,95 @@ export default function AdventBossDetailPage({ params }) {
                                 set._dirty ? "border-violet-500/50" : "border-gray-800"
                             )}
                         >
-                            {/* Set Header */}
-                            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800 bg-gray-900/50">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between px-5 py-4 border-b border-gray-800 bg-gray-900/50 gap-4">
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400 font-black">
                                         {idx + 1}
                                     </div>
+                                    <select
+                                        value={set.phase || 'Phase 1'}
+                                        onChange={(e) => handleUpdateSet(idx, 'phase', e.target.value)}
+                                        className="bg-black border border-gray-800 rounded-lg px-2 py-1.5 text-white text-sm focus:outline-none focus:border-violet-500"
+                                    >
+                                        <option value="Phase 1">Phase 1</option>
+                                        <option value="Phase 2">Phase 2</option>
+                                    </select>
                                     <input
                                         type="text"
                                         value={set.team_name || ''}
                                         onChange={(e) => handleUpdateSet(idx, 'team_name', e.target.value)}
-                                        placeholder={`Set ${idx + 1}`}
-                                        className="text-lg font-bold bg-transparent border-none outline-none text-white focus:ring-0 p-0 placeholder-gray-500 max-w-[200px]"
+                                        placeholder={`Name (Optional)`}
+                                        className="text-lg font-bold bg-transparent border-none outline-none text-white focus:ring-0 p-0 placeholder-gray-500 max-w-[150px]"
                                     />
                                     {set._dirty && <span className="px-2 py-0.5 bg-violet-500/20 text-violet-400 text-xs font-bold rounded">Unsaved</span>}
                                 </div>
-                                <button
-                                    onClick={() => handleDeleteSet(idx)}
-                                    className="text-gray-500 hover:text-red-400 transition-colors p-2 hover:bg-red-500/10 rounded-lg"
-                                >
-                                    <Trash2 className="w-5 h-5" />
-                                </button>
+                                <div className="flex items-center gap-1 shrink-0">
+                                    <button
+                                        onClick={() => toggleSetExpand(idx)}
+                                        className="text-gray-500 hover:text-white transition-colors p-2 hover:bg-gray-800 rounded-lg shrink-0"
+                                    >
+                                        {expandedSets[idx] === false ? <ChevronDown className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeleteSet(idx)}
+                                        className="text-gray-500 hover:text-red-400 transition-colors p-2 hover:bg-red-500/10 rounded-lg shrink-0"
+                                    >
+                                        <Trash2 className="w-5 h-5" />
+                                    </button>
+                                </div>
                             </div>
 
-                            <div className="p-5 space-y-6">
-                                {/* Sub-Team 1 */}
-                                {[1, 2].map(teamNum => {
-                                    const teamHeroes = set[`team${teamNum}_heroes`] || [null, null, null, null, null]
-                                    const teamRotation = set[`team${teamNum}_skill_rotation`] || []
+                            <div className={cn("p-5 space-y-6 transition-all", expandedSets[idx] === false && "hidden")}>
+                                <TeamBuilder
+                                    team={{
+                                        index: 1,
+                                        formation: set.formation,
+                                        pet_file: set.pet_file,
+                                        heroes: set.heroes || [null, null, null, null, null]
+                                    }}
+                                    index={idx}
+                                    heroesList={heroes}
+                                    petsList={pets}
+                                    formations={formations}
+                                    onUpdate={(teamData) => handleTeamUpdate(idx, teamData)}
+                                    onRemove={null}
+                                />
 
-                                    return (
-                                        <div key={teamNum} className="space-y-4">
-                                            <div className="flex items-center gap-2 border-b border-gray-800 pb-2">
-                                                <div className={cn(
-                                                    "w-6 h-6 rounded-md flex items-center justify-center text-xs font-black",
-                                                    teamNum === 1 ? "bg-sky-500/20 text-sky-400" : "bg-rose-500/20 text-rose-400"
-                                                )}>
-                                                    {teamNum}
-                                                </div>
-                                                <span className={cn(
-                                                    "text-sm font-bold uppercase tracking-wider",
-                                                    teamNum === 1 ? "text-sky-400" : "text-rose-400"
-                                                )}>
-                                                    Team {teamNum}
-                                                </span>
-                                            </div>
+                                <SkillSlotRow
+                                    heroes={set.heroes || [null, null, null, null, null]}
+                                    rotation={set.skill_rotation || []}
+                                    onAddSlot={() => handleAddSlot(idx)}
+                                    onUpdateLabel={(slotIdx, label) => handleUpdateSlotLabel(idx, slotIdx, label)}
+                                    onSelectSkill={(slotIdx, skillKey) => handleSelectSkillForSlot(idx, slotIdx, skillKey)}
+                                    onDeleteSlot={(slotIdx) => handleDeleteSlot(idx, slotIdx)}
+                                    onOpenPicker={(slotIdx) => setSkillPicker({ setIdx: idx, slotIdx })}
+                                    skillErrors={skillErrors}
+                                    setId={set.id}
+                                />
 
-                                            <TeamBuilder
-                                                team={{
-                                                    index: teamNum,
-                                                    formation: set[`team${teamNum}_formation`],
-                                                    pet_file: set[`team${teamNum}_pet_file`],
-                                                    heroes: teamHeroes
-                                                }}
-                                                index={`${idx}-t${teamNum}`}
-                                                heroesList={heroes}
-                                                petsList={pets}
-                                                formations={formations}
-                                                onUpdate={(teamData) => handleTeamUpdate(idx, teamNum, teamData)}
-                                                onRemove={null}
-                                            />
-
-                                            <SkillSlotRow
-                                                heroes={teamHeroes}
-                                                rotation={teamRotation}
-                                                onAddSlot={() => handleAddSlot(idx, teamNum)}
-                                                onUpdateLabel={(slotIdx, label) => handleUpdateSlotLabel(idx, teamNum, slotIdx, label)}
-                                                onSelectSkill={(slotIdx, skillKey) => handleSelectSkillForSlot(idx, teamNum, slotIdx, skillKey)}
-                                                onDeleteSlot={(slotIdx) => handleDeleteSlot(idx, teamNum, slotIdx)}
-                                                onOpenPicker={(slotIdx) => setSkillPicker({ setIdx: idx, teamNum, slotIdx })}
-                                                skillErrors={skillErrors}
-                                                setId={set.id}
-                                                teamNum={teamNum}
-                                            />
-                                        </div>
-                                    )
-                                })}
-
-                                {/* Video URL */}
-                                <div className="space-y-2">
-                                    <label className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
-                                        <Video className="w-4 h-4" />
-                                        Video URL
-                                    </label>
-                                    <input
-                                        type="url"
-                                        value={set.video_url || ''}
-                                        onChange={(e) => handleUpdateSet(idx, 'video_url', e.target.value)}
-                                        placeholder="https://youtube.com/watch?v=..."
-                                        className="w-full bg-black border border-gray-800 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-violet-400 transition-colors"
-                                    />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                            <Video className="w-4 h-4" />
+                                            Video URL
+                                        </label>
+                                        <input
+                                            type="url"
+                                            value={set.video_url || ''}
+                                            onChange={(e) => handleUpdateSet(idx, 'video_url', e.target.value)}
+                                            placeholder="https://youtube.com/watch?v=..."
+                                            className="w-full bg-black border border-gray-800 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-violet-400 transition-colors"
+                                        />
+                                    </div>
                                 </div>
 
-                                {/* Note */}
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Note</label>
                                     <textarea
                                         value={set.note || ''}
                                         onChange={(e) => handleUpdateSet(idx, 'note', e.target.value)}
-                                        placeholder="Optional notes..."
-                                        rows={2}
+                                        placeholder="Optional notes or strategy..."
+                                        rows={3}
                                         className="w-full bg-black border border-gray-800 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-violet-400 transition-colors resize-none"
                                     />
                                 </div>
@@ -550,7 +527,7 @@ export default function AdventBossDetailPage({ params }) {
             <SkillPickerModal 
                 skillPicker={skillPicker}
                 sets={sets}
-                teamHeroes={skillPicker ? sets[skillPicker.setIdx][`team${skillPicker.teamNum}_heroes`] : []}
+                teamHeroes={skillPicker ? sets[skillPicker.setIdx].heroes : []}
                 heroes={heroes}
                 onSelectSkill={handleSelectSkillForSlot}
                 onClose={() => setSkillPicker(null)}

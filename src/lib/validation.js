@@ -61,15 +61,12 @@ export const GlobalCreditSchema = z.object({
 
 export const AdventSetSchema = z.object({
   boss_key: z.string().min(1),
+  phase: z.string().default('Phase 1'),
   team_name: z.string().max(100).optional().nullable(),
-  team1_formation: z.string().min(1),
-  team1_pet_file: z.string().optional().nullable(),
-  team1_heroes: TeamHeroesSchema,
-  team1_skill_rotation: SkillRotationSchema,
-  team2_formation: z.string().min(1),
-  team2_pet_file: z.string().optional().nullable(),
-  team2_heroes: TeamHeroesSchema,
-  team2_skill_rotation: SkillRotationSchema,
+  formation: z.string().min(1),
+  pet_file: z.string().optional().nullable(),
+  heroes: TeamHeroesSchema,
+  skill_rotation: SkillRotationSchema,
   video_url: z.string().url().or(z.string().length(0)).nullable(),
   note: z.string().max(1000).optional().nullable()
 })

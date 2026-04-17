@@ -48,10 +48,8 @@ export async function getSetsByBoss(bossKey) {
         }
         return {
             ...row,
-            team1_heroes: parseJSON(row.team1_heroes_json),
-            team1_skill_rotation: parseJSON(row.team1_skill_rotation),
-            team2_heroes: parseJSON(row.team2_heroes_json),
-            team2_skill_rotation: parseJSON(row.team2_skill_rotation),
+            heroes: parseJSON(row.heroes_json),
+            skill_rotation: parseJSON(row.skill_rotation),
         }
     })
 }
@@ -77,12 +75,11 @@ export async function createSet(data) {
 
         const [result] = await pool.query(
             `INSERT INTO advent_expedition_sets 
-             (boss_key, set_index, team_name, team1_formation, team1_pet_file, team1_heroes_json, team1_skill_rotation, team2_formation, team2_pet_file, team2_heroes_json, team2_skill_rotation, video_url, note)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+             (boss_key, phase, set_index, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
-                validatedData.boss_key, nextIndex, validatedData.team_name || null,
-                validatedData.team1_formation, validatedData.team1_pet_file || null, JSON.stringify(validatedData.team1_heroes), JSON.stringify(validatedData.team1_skill_rotation),
-                validatedData.team2_formation, validatedData.team2_pet_file || null, JSON.stringify(validatedData.team2_heroes), JSON.stringify(validatedData.team2_skill_rotation),
+                validatedData.boss_key, validatedData.phase || 'Phase 1', nextIndex, validatedData.team_name || null,
+                validatedData.formation, validatedData.pet_file || null, JSON.stringify(validatedData.heroes), JSON.stringify(validatedData.skill_rotation),
                 validatedData.video_url, validatedData.note
             ]
         )
@@ -112,14 +109,12 @@ export async function updateSet(id, data) {
     try {
         await pool.query(
             `UPDATE advent_expedition_sets 
-             SET team_name = ?, team1_formation = ?, team1_pet_file = ?, team1_heroes_json = ?, team1_skill_rotation = ?,
-                 team2_formation = ?, team2_pet_file = ?, team2_heroes_json = ?, team2_skill_rotation = ?,
+             SET phase = ?, team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?,
                  video_url = ?, note = ?
              WHERE id = ?`,
             [
-                validatedData.team_name || null,
-                validatedData.team1_formation, validatedData.team1_pet_file || null, JSON.stringify(validatedData.team1_heroes), JSON.stringify(validatedData.team1_skill_rotation),
-                validatedData.team2_formation, validatedData.team2_pet_file || null, JSON.stringify(validatedData.team2_heroes), JSON.stringify(validatedData.team2_skill_rotation),
+                validatedData.phase || 'Phase 1', validatedData.team_name || null,
+                validatedData.formation, validatedData.pet_file || null, JSON.stringify(validatedData.heroes), JSON.stringify(validatedData.skill_rotation),
                 validatedData.video_url, validatedData.note, id
             ]
         )
