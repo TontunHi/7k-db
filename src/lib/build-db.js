@@ -35,9 +35,9 @@ export async function getHeroData(filename) {
 
 export async function getHeroesMetadata() {
     await ensureDB()
-    const [rows] = await pool.query("SELECT filename, is_new_hero FROM heroes")
+    const [rows] = await pool.query("SELECT filename, is_new_hero, type FROM heroes")
     return rows.reduce((acc, r) => {
-        acc[r.filename] = { is_new_hero: !!r.is_new_hero }
+        acc[r.filename] = { is_new_hero: !!r.is_new_hero, type: r.type || null }
         return acc
     }, {})
 }

@@ -79,14 +79,17 @@ export default function Navbar() {
 
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex items-center gap-1">
-                    {navItems.map((item, index) => (
+                    {navItems.map((item, index) => {
+                        const isChildActive = item.children?.some(child => pathname.startsWith(child.href))
+                        return (
                         <div key={item.name} className="relative group">
                             {item.children ? (
                                 <button
                                     className={clsx(
                                         "flex items-center gap-1 px-4 py-2 text-sm font-bold uppercase tracking-wider transition-all rounded-lg",
-                                        "text-gray-400 hover:text-white hover:bg-white/5",
-                                        pathname.startsWith(item.href) && item.href !== '#' && "text-[#FFD700]"
+                                        isChildActive
+                                            ? "text-[#FFD700] bg-[#FFD700]/10"
+                                            : "text-gray-400 hover:text-white hover:bg-white/5"
                                     )}
                                 >
                                     {item.name}
@@ -115,30 +118,36 @@ export default function Navbar() {
                                     <div className="relative bg-[#0a0a0a] border border-gray-800 rounded-xl shadow-2xl overflow-hidden p-1.5">
                                         <div className="absolute inset-0 bg-gradient-to-b from-[#FFD700]/5 to-transparent pointer-events-none z-0" />
                                         <div className="relative z-10">
-                                            {item.children.map((child) => (
-                                            <Link
-                                                key={child.href}
-                                                href={child.href}
-                                                className={clsx(
-                                                    "block px-4 py-3 text-sm font-medium transition-all rounded-lg mb-0.5",
-                                                    pathname === child.href
-                                                        ? "bg-[#FFD700]/10 text-[#FFD700]"
-                                                        : "text-gray-400 hover:text-white hover:bg-white/5 hover:pl-6"
-                                                )}
-                                            >
-                                                {child.name}
-                                            </Link>
-                                        ))}
+                                            {item.children.map((child) => {
+                                                const isActive = pathname === child.href || pathname.startsWith(child.href + '/')
+                                                return (
+                                                <Link
+                                                    key={child.href}
+                                                    href={child.href}
+                                                    className={clsx(
+                                                        "flex items-center justify-between px-4 py-3 text-sm font-medium transition-all rounded-lg mb-0.5",
+                                                        isActive
+                                                            ? "bg-[#FFD700]/10 text-[#FFD700]"
+                                                            : "text-gray-400 hover:text-white hover:bg-white/5 hover:pl-6"
+                                                    )}
+                                                >
+                                                    {child.name}
+                                                    {isActive && (
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-[#FFD700] shrink-0" />
+                                                    )}
+                                                </Link>
+                                            )})}
                                         </div>
                                     </div>
                                 </div>
                             )}
                         </div>
-                    ))}
+                        )
+                    })}
 
                 </div>
 
-                {/* Mobile Menu Button & Search */}
+                {/* Mobile Menu Button */}
                 <div className="flex items-center gap-2 md:hidden">
                     <button
                         className="p-2 text-gray-400 hover:text-white transition-colors"

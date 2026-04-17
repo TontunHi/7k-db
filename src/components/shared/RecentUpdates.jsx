@@ -12,7 +12,7 @@ const CONTENT_CONFIG = {
     STAGE:       { icon: Map,       color: '#FFD700', label: 'Stage Guide',   href: '/stages' },
     TIERLIST:    { icon: Trophy,    color: '#a855f7', label: 'Tier List',     href: '/tierlist' },
     ARENA:       { icon: Crosshair, color: '#eab308', label: 'Arena',         href: '/arena' },
-    ADVENT:      { icon: Compass,   color: '#8b5cf6', label: 'Advent',        href: '/advent' },
+    ADVENT:      { icon: Compass,   color: '#8b5cf6', label: 'Advent',        href: '/advent/ae_god_of_destruction' },
 }
 
 

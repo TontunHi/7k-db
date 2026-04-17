@@ -10,7 +10,7 @@ const ICON_MAP = {
     Sword, Map, Skull, Landmark, Trophy, Crown, Compass, Swords, Wand2, Sparkles, Zap
 }
 
-export default function FeatureCard({ title, iconName, href, color, glow }) {
+export default function FeatureCard({ title, description, iconName, href, color, glow }) {
     const Icon = ICON_MAP[iconName] || Sword
 
     return (
@@ -19,7 +19,7 @@ export default function FeatureCard({ title, iconName, href, color, glow }) {
             className={clsx(
                 "group relative p-6 bg-[#0a0a0a] border border-gray-800 rounded-2xl overflow-hidden transition-all duration-500",
                 "hover:border-white/20 hover:-translate-y-1.5 hover:bg-gradient-to-br hover:from-[#111] hover:to-black",
-                "shadow-2xl",
+                "shadow-2xl flex flex-col",
                 glow
             )}
         >
@@ -35,14 +35,13 @@ export default function FeatureCard({ title, iconName, href, color, glow }) {
                 color
             )} />
 
-            <div className="relative z-10 flex flex-col items-center text-center space-y-5">
+            <div className="relative z-10 flex flex-col items-center text-center gap-4 flex-1">
                 {/* Icon Container */}
                 <div className={clsx(
                     "p-4 rounded-2xl bg-black border border-gray-800 transition-all duration-500",
                     "group-hover:scale-110 group-hover:border-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]",
-                    "relative overflow-hidden"
+                    "relative overflow-hidden shrink-0"
                 )}>
-                    {/* Subtle icon background glow */}
                     <div className={clsx(
                         "absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity bg-gradient-to-br",
                         color
@@ -50,16 +49,21 @@ export default function FeatureCard({ title, iconName, href, color, glow }) {
                     <Icon className="w-8 h-8 text-white relative z-10" />
                 </div>
 
-                <div className="space-y-1">
-                    <h3 className="text-lg md:text-xl font-black italic uppercase text-white tracking-wider group-hover:text-[#FFD700] transition-colors duration-300">
+                <div className="space-y-2 flex-1 flex flex-col justify-center">
+                    <h3 className="text-lg md:text-xl font-black italic uppercase text-white tracking-wider group-hover:text-[#FFD700] transition-colors duration-300 leading-tight">
                         {title}
                     </h3>
+                    {description && (
+                        <p className="text-[11px] text-gray-500 group-hover:text-gray-400 transition-colors duration-300 leading-relaxed font-medium">
+                            {description}
+                        </p>
+                    )}
                 </div>
+            </div>
 
-                {/* Arrow indicator */}
-                <div className="opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-500 absolute right-4 top-4">
-                    <ArrowRight className="w-4 h-4 text-gray-400" />
-                </div>
+            {/* Arrow indicator */}
+            <div className="opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-500 absolute right-4 top-4">
+                <ArrowRight className="w-4 h-4 text-gray-400" />
             </div>
 
             {/* Animated Light Sweep Effect */}

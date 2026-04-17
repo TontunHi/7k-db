@@ -6,33 +6,10 @@ const UPDATES = [
     {
         date: "Apr 17, 2026",
         items: [
+            { category: "FEATURE", text: "Added Role/Type Filter Bar to Hero Builds and Tier List.", icon: Sparkles },
+            { category: "UI/UX", text: "Implemented premium Skeleton Loading screens across all pages.", icon: Zap },
             { category: "FEATURE", text: "Refactored Advent Expedition guides to a streamlined Phase 1/Phase 2 structure.", icon: Sparkles },
-            { category: "UI/UX", text: "Added interactive strategy note toggles and team collapsing in the Admin dashboard.", icon: Zap },
-            { category: "SYSTEM", text: "Cleaned up obsolete database fields and consolidated Team Payload processing.", icon: Wrench }
-        ]
-    },
-    {
-        date: "Apr 16, 2026",
-        items: [
-            { category: "FEATURE", text: "Implemented Item Set Bonus system (Vanguard, Bounty Tracker, etc.) in Hero Stats Builder.", icon: Sparkles },
-            { category: "UI/UX", text: "Added visual 'Set Bonus' pulse indicators in the Final Stats Analysis grid.", icon: Zap },
-            { category: "ADMIN", text: "Enhanced Item Registry with Set selection and database integration.", icon: Terminal }
-        ]
-    },
-    {
-        date: "Apr 14, 2026",
-        items: [
-            { category: "UI/UX", text: "Modernized Raid guide interface with high-end animations and glassmorphism.", icon: Zap },
-            { category: "FEATURE", text: "Implemented 'Smart-Hide' skill rotation grid that handles missing assets beautifully.", icon: Sparkles },
-            { category: "SYSTEM", text: "Optimized database connection stability and server-side performance.", icon: Wrench }
-        ]
-    },
-    {
-        date: "Apr 12, 2026",
-        items: [
-            { category: "FEATURE", text: "Added Hero Stats Builder tool with bilingual support.", icon: Sparkles },
-            { category: "UI/UX", text: "Integrated Hero Stats into the main navigation menu.", icon: Zap },
-            { category: "SYSTEM", text: "Launched 'Website Updates' log for developer transparency.", icon: Terminal }
+            { category: "UI/UX", text: "Added interactive strategy note toggles and team collapsing in the Admin dashboard.", icon: Zap }
         ]
     }
 ]

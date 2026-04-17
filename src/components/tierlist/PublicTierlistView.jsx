@@ -10,10 +10,22 @@ const CATEGORIES = ["PVE", "PVP", "Raid", "GVG", "ART", "Tower"]
 const RANKS = ["EX", "S", "A", "B", "C"]
 const TYPES = ["Attack", "Magic", "Defense", "Support", "Universal"]
 
+const ROLE_FILTERS = [
+    { key: "all",       label: "All",       icon: null },
+    { key: "Attack",    label: "Attack",    icon: "/logo_tiers/type/attack.webp" },
+    { key: "Defense",   label: "Defense",   icon: "/logo_tiers/type/defense.webp" },
+    { key: "Magic",     label: "Magic",     icon: "/logo_tiers/type/magic.webp" },
+    { key: "Support",   label: "Support",   icon: "/logo_tiers/type/support.webp" },
+    { key: "Universal", label: "Universal", icon: "/logo_tiers/type/universal.webp" },
+]
+
 export default function PublicTierlistView() {
     const [category, setCategory] = useState("PVE")
+    const [activeType, setActiveType] = useState("all")
     const [tierData, setTierData] = useState([])
     const [loading, setLoading] = useState(true)
+
+    const visibleTypes = activeType === "all" ? TYPES : TYPES.filter(t => t === activeType)
 
     useEffect(() => {
         const fetchTiers = async () => {
@@ -53,8 +65,8 @@ export default function PublicTierlistView() {
                     <div className="h-12"></div>
                 </div>
 
-                {/* Category Buttons - RECTANGULAR & TECH STYLE */}
-                <div className="flex justify-center mb-16">
+                {/* Category Buttons */}
+                <div className="flex justify-center mb-8">
                     <div className="flex flex-wrap justify-center gap-4 p-1">
                         {CATEGORIES.map(cat => (
                             <button
@@ -68,14 +80,37 @@ export default function PublicTierlistView() {
                                         : "border-gray-800 bg-black/60 text-gray-500 hover:border-gray-500 hover:text-white hover:bg-white/5"
                                 )}
                             >
-                                {/* Corner Accents */}
                                 <span className={clsx("absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 transition-colors duration-300", category === cat ? "border-[#FFD700]" : "border-gray-600 group-hover:border-white")}></span>
                                 <span className={clsx("absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 transition-colors duration-300", category === cat ? "border-[#FFD700]" : "border-gray-600 group-hover:border-white")}></span>
-
                                 {cat}
                             </button>
                         ))}
                     </div>
+                </div>
+
+                {/* Role Filter Bar */}
+                <div className="flex flex-wrap justify-center gap-2 mb-16">
+                    {ROLE_FILTERS.map((role) => (
+                        <button
+                            key={role.key}
+                            onClick={() => setActiveType(role.key)}
+                            className={clsx(
+                                "flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-bold transition-all duration-200",
+                                activeType === role.key
+                                    ? "bg-[#FFD700]/15 border-[#FFD700]/50 text-[#FFD700] shadow-[0_0_12px_rgba(255,215,0,0.15)]"
+                                    : "bg-[#0a0a0a] border-gray-800 text-gray-500 hover:border-gray-600 hover:text-gray-300"
+                            )}
+                        >
+                            {role.icon ? (
+                                <div className="relative w-5 h-5 shrink-0">
+                                    <Image src={role.icon} alt={role.label} fill className="object-contain" />
+                                </div>
+                            ) : (
+                                <span className="w-5 h-5 flex items-center justify-center text-[10px] font-black">★</span>
+                            )}
+                            {role.label}
+                        </button>
+                    ))}
                 </div>
 
                 {/* Main Content */}
@@ -96,16 +131,14 @@ export default function PublicTierlistView() {
                                     <thead>
                                         <tr>
                                             <th className="p-6 w-32 border-b border-gray-800 bg-[#050505]"></th>
-                                            {TYPES.map(type => (
+                                            {visibleTypes.map(type => (
                                                 <th key={type} className="p-4 border-b border-gray-800 bg-[#050505] min-w-[140px] relative">
                                                     <div className="flex flex-col items-center gap-3">
                                                         <div className="relative h-10 w-full transition-transform hover:-translate-y-1 duration-300">
                                                             <Image src={`/logo_tiers/type/${type.toLowerCase()}.webp`} fill className="object-contain drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]" alt={type} sizes="96px" />
                                                         </div>
-                                                        {/* Underline for columns */}
                                                         <div className="w-8 h-[1px] bg-gray-700"></div>
                                                     </div>
-                                                    {/* Vertical Divider */}
                                                     <div className="absolute right-0 top-4 bottom-4 w-[1px] bg-gray-800/50"></div>
                                                 </th>
                                             ))}
@@ -114,17 +147,14 @@ export default function PublicTierlistView() {
                                     <tbody>
                                         {RANKS.map((rank, idx) => (
                                             <tr key={rank} className="group border-b border-gray-800/40 hover:bg-white/[0.02] transition-colors duration-200">
-                                                {/* Rank Row Header */}
                                                 <th className="p-4 border-r border-gray-800/50 bg-[#050505] relative w-32">
                                                     <div className="relative h-20 w-full mx-auto transition-transform group-hover:scale-110 duration-300">
                                                         <Image src={`/logo_tiers/rank_tier/${rank}.webp`} fill className="object-contain drop-shadow-[0_0_15px_rgba(0,0,0,0.8)]" alt={rank} sizes="80px" />
                                                     </div>
-                                                    {/* Side accent */}
                                                     <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-gray-800 to-transparent group-hover:via-[#FFD700] transition-colors duration-500"></div>
                                                 </th>
 
-                                                {/* Tier Cells */}
-                                                {TYPES.map(type => {
+                                                {visibleTypes.map(type => {
                                                     const cellHeroes = tierData.filter(d => d.rank === rank && d.type === type)
 
                                                     return (

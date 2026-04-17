@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import SafeImage from "../shared/SafeImage"
+import Image from "next/image"
 import { clsx } from "clsx"
 import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -10,24 +11,34 @@ import BuildViewerModal from "./BuildViewerModal"
 import { fetchHeroBuildData } from "@/lib/viewer-actions"
 import { trackCustomPageView } from "../analytics/AnalyticsTracker"
 
+const ROLE_FILTERS = [
+    { key: "all",       label: "All",       icon: null },
+    { key: "Attack",    label: "Attack",    icon: "/logo_tiers/type/attack.webp" },
+    { key: "Defense",   label: "Defense",   icon: "/logo_tiers/type/defense.webp" },
+    { key: "Magic",     label: "Magic",     icon: "/logo_tiers/type/magic.webp" },
+    { key: "Support",   label: "Support",   icon: "/logo_tiers/type/support.webp" },
+    { key: "Universal", label: "Universal", icon: "/logo_tiers/type/universal.webp" },
+]
+
 export default function BuildView({ heroes }) {
     const router = useRouter()
     const [activeTab, setActiveTab] = useState("legendary") // 'legendary' | 'rare'
     const [searchQuery, setSearchQuery] = useState("")
+    const [activeRole, setActiveRole] = useState("all")
 
     // Popup State
     const [selectedHero, setSelectedHero] = useState(null)
     const [viewerData, setViewerData] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
 
-    // Filter heroes based on active tab and search query
+    // Filter heroes based on active tab, search query, and role
     const filteredHeroes = heroes.filter((hero) => {
         const matchesTab = activeTab === "legendary" ? hero.grade.startsWith("l") : hero.grade === "r"
         const matchesSearch = hero.name.toLowerCase().includes(searchQuery.toLowerCase())
-        return matchesTab && matchesSearch
+        const matchesRole = activeRole === "all" || (hero.type?.toLowerCase() === activeRole.toLowerCase())
+        return matchesTab && matchesSearch && matchesRole
     })
 
-    // Heroes are already sorted by the server (page.js) by grade + filename
     const sortedHeroes = filteredHeroes
 
     const handleHeroClick = async (hero) => {
@@ -36,7 +47,6 @@ export default function BuildView({ heroes }) {
             const data = await fetchHeroBuildData(hero.filename)
             setViewerData(data)
             setSelectedHero(hero)
-            // Track the overlay opening as a pageview for this build
             trackCustomPageView(`/build/${hero.slug}`)
         } catch (err) {
             console.error("Failed to fetch build data", err)
@@ -74,7 +84,7 @@ export default function BuildView({ heroes }) {
                         </p>
                     </div>
 
-                    {/* Search Input (Stage Style) */}
+                    {/* Search Input */}
                     <div className="w-full max-w-md relative group">
                         <div className="absolute inset-0 blur-lg opacity-20 transition-opacity group-hover:opacity-40 bg-[#FFD700]"></div>
                         <input
@@ -89,7 +99,7 @@ export default function BuildView({ heroes }) {
                         />
                     </div>
 
-                    {/* Tabs */}
+                    {/* Legendary / Rare Tabs */}
                     <div className="flex bg-[#0a0a0a]/80 backdrop-blur-md border border-gray-800 p-1.5 rounded-2xl shadow-2xl">
                         {['legendary', 'rare'].map((tab) => (
                             <button
@@ -106,6 +116,31 @@ export default function BuildView({ heroes }) {
                                     <div className="absolute inset-0 bg-[#FFD700] animate-in fade-in zoom-in duration-300"></div>
                                 )}
                                 <span className="relative z-10">{tab}</span>
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Role Filter Bar */}
+                    <div className="flex flex-wrap justify-center gap-2">
+                        {ROLE_FILTERS.map((role) => (
+                            <button
+                                key={role.key}
+                                onClick={() => setActiveRole(role.key)}
+                                className={clsx(
+                                    "flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-bold transition-all duration-200",
+                                    activeRole === role.key
+                                        ? "bg-[#FFD700]/15 border-[#FFD700]/50 text-[#FFD700] shadow-[0_0_12px_rgba(255,215,0,0.15)]"
+                                        : "bg-[#0a0a0a] border-gray-800 text-gray-500 hover:border-gray-600 hover:text-gray-300"
+                                )}
+                            >
+                                {role.icon ? (
+                                    <div className="relative w-5 h-5 shrink-0">
+                                        <Image src={role.icon} alt={role.label} fill className="object-contain" />
+                                    </div>
+                                ) : (
+                                    <span className="w-5 h-5 flex items-center justify-center text-[10px] font-black">★</span>
+                                )}
+                                {role.label}
                             </button>
                         ))}
                     </div>

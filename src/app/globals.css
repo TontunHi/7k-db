@@ -131,6 +131,12 @@ body {
   animation: shine 0.75s;
 }
 
+@keyframes shimmer {
+  100% {
+    transform: translateX(200%);
+  }
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }

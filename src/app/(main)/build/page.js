@@ -43,7 +43,8 @@ export default async function BuildPage() {
                     slug: slug,
                     grade: grade,
                     name: file.replace(/^(l\+\+|l\+|l|r)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " "),
-                    is_new_hero: metadata[slug]?.is_new_hero || false
+                    is_new_hero: metadata[slug]?.is_new_hero || false,
+                    type: metadata[slug]?.type || null
                 }
             })
             .filter((h) => h !== null) // Remove unknowns
