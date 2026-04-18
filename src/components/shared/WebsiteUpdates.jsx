@@ -4,12 +4,13 @@ import { Terminal, Sparkles, Zap, Wrench } from "lucide-react"
 
 const UPDATES = [
     {
-        date: "Apr 17, 2026",
+        date: "Apr 19, 2026",
         items: [
-            { category: "FEATURE", text: "Added Role/Type Filter Bar to Hero Builds and Tier List.", icon: Sparkles },
-            { category: "UI/UX", text: "Implemented premium Skeleton Loading screens across all pages.", icon: Zap },
-            { category: "FEATURE", text: "Refactored Advent Expedition guides to a streamlined Phase 1/Phase 2 structure.", icon: Sparkles },
-            { category: "UI/UX", text: "Added interactive strategy note toggles and team collapsing in the Admin dashboard.", icon: Zap }
+            { category: "GUILD WAR", text: "Modernized Guild War interface with a high-fidelity 'Command Center' aesthetic.", icon: Sparkles },
+            { category: "UI/UX", text: "Implemented asset-centric tactical summaries (Heroes + Pets) in minimized card states.", icon: Zap },
+            { category: "FEATURE", text: "Added support for tactical labels and step indicators in Skill Rotations.", icon: Wrench },
+            { category: "UI/UX", text: "Standardized tactical terminology (Build, Build Counter, Skill Rotation) across the platform.", icon: Zap },
+            { category: "UI/UX", text: "Optimized squad previews with larger hero portraits and discrete tactical icons.", icon: Sparkles }
         ]
     }
 ]

@@ -98,11 +98,13 @@ export default function TeamBuilder({
 
     const [isHeroOpen, setIsHeroOpen] = useState(null) // index of slot opening modal
     const [isPetOpen, setIsPetOpen] = useState(false)
+    const [isSupportPetOpen, setIsSupportPetOpen] = useState(null) // index of support slot (0, 1, 2)
 
     // Sort heroes by grade (l++ > l+ > l > r > uc > c) then by name
     // Grade is parsed from filename prefix: l++_xxx, l+_xxx, l_xxx, r_xxx, uc_xxx, c_xxx
     const sortedHeroesList = useMemo(() => {
         const gradeOrder = { 'l++': 6, 'l+': 5, 'l': 4, 'r': 3, 'uc': 2, 'c': 1 }
+        const allowedGrades = ['l++', 'l+', 'l', 'r']
 
         const getGradeFromFilename = (filename) => {
             if (!filename) return 0
@@ -111,8 +113,6 @@ export default function TeamBuilder({
             if (lower.startsWith('l+_')) return gradeOrder['l+']
             if (lower.startsWith('l_')) return gradeOrder['l']
             if (lower.startsWith('r_')) return gradeOrder['r']
-            if (lower.startsWith('uc_')) return gradeOrder['uc']
-            if (lower.startsWith('c_')) return gradeOrder['c']
             return 0
         }
 
@@ -125,14 +125,17 @@ export default function TeamBuilder({
         }
 
         return [...heroesList]
-            .filter(h => h && h.filename)
+            .filter(h => {
+                if (!h || !h.filename) return false
+                const lower = h.filename.toLowerCase()
+                return allowedGrades.some(g => lower.startsWith(g + '_'))
+            })
             .sort((a, b) => {
                 const gradeA = getGradeFromFilename(a.filename)
                 const gradeB = getGradeFromFilename(b.filename)
 
                 if (gradeA !== gradeB) return gradeB - gradeA // Higher grade first
 
-                // Then sort by name
                 const nameA = getNameFromFilename(a.filename)
                 const nameB = getNameFromFilename(b.filename)
                 return nameA.localeCompare(nameB)
@@ -140,18 +143,40 @@ export default function TeamBuilder({
     }, [heroesList])
 
     const handleHeroSelect = (filename) => {
-        const newHeroes = [...(team.heroes || [])]
-        // Ensure array size
-        while (newHeroes.length < 5) newHeroes.push(null)
+        const newHeroes = [...(team.heroes || [null, null, null, null, null])]
+        const currentCount = newHeroes.filter(h => h).length
+        const newOrder = [...(team.selection_order || [])]
+
+        // If clicking an empty slot and already have 3 heroes, block
+        if (!newHeroes[isHeroOpen] && currentCount >= 3) {
+            alert("Maximum 3 heroes allowed for Guild War.")
+            setIsHeroOpen(null)
+            return
+        }
+        
+        // If replacing an existing hero, keep the order index
+        if (newHeroes[isHeroOpen]) {
+            // No change to order needed, just updating the file
+        } else {
+            // Adding new hero, push index to order
+            newOrder.push(isHeroOpen)
+        }
 
         newHeroes[isHeroOpen] = filename
-        onUpdate({ ...team, heroes: newHeroes })
+        onUpdate({ ...team, heroes: newHeroes, selection_order: newOrder })
         setIsHeroOpen(null)
     }
 
     const handlePetSelect = (filename) => {
-        onUpdate({ ...team, pet_file: filename })
-        setIsPetOpen(false)
+        if (isSupportPetOpen !== null) {
+            const supports = [...(team.pet_supports || [null, null, null])]
+            supports[isSupportPetOpen] = filename
+            onUpdate({ ...team, pet_supports: supports })
+            setIsSupportPetOpen(null)
+        } else {
+            onUpdate({ ...team, pet_file: filename })
+            setIsPetOpen(false)
+        }
     }
 
 
@@ -171,12 +196,20 @@ export default function TeamBuilder({
 
             {/* Hero Grid & Pet */}
             <div className="flex flex-col lg:flex-row gap-8 items-start">
-                {/* Heroes - 5 Cols */}
-                <div className="flex-1 space-y-3">
-                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                        <Swords className="w-3 h-3" /> Heroes
-                    </label>
-                    <div className="grid grid-cols-5 gap-2 sm:gap-3 pb-8 max-w-[380px] md:max-w-[500px]"> {/* pb-8 for stagger space */}
+                {/* Heroes - 3 Cols */}
+                <div className="flex-1 space-y-4">
+                    <div className="flex items-center justify-between px-1">
+                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                            <Swords className="w-3.5 h-3.5" /> Formation ({maxHeroes} Heroes Max)
+                        </label>
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-sky-500 shadow-[0_0_8px_rgba(14,165,233,0.5)]" />
+                            <span className="text-[8px] font-black text-sky-500/80 uppercase tracking-tighter">Front</span>
+                            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)] ml-2" />
+                            <span className="text-[8px] font-black text-rose-500/80 uppercase tracking-tighter">Back</span>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-5 gap-3 pb-4"> 
                         {[0, 1, 2, 3, 4].map((i) => {
                             const type = getSlotType(team.formation, i)
                             const heroFileOrSlug = team.heroes?.[i]
@@ -186,98 +219,148 @@ export default function TeamBuilder({
                             )
                             const heroFile = heroData?.filename || heroFileOrSlug
                             const stagger = getStaggerClass(team.formation, i)
-                            const currentCount = team.heroes?.filter(h => h !== null).length || 0
-                            const isDisabled = !heroFile && currentCount >= maxHeroes
+                            const isSlotActive = (team.heroes || []).filter(h => h).length < maxHeroes || heroFile
 
                             return (
-                                <button
+                                <div
                                     key={i}
-                                    type="button"
-                                    onClick={() => !isDisabled && setIsHeroOpen(i)}
+                                    onClick={() => setIsHeroOpen(i)}
                                     className={cn(
-                                        "relative aspect-[3/4] rounded-lg border flex items-center justify-center transition-all overflow-hidden",
-                                        !isDisabled && "group hover:shadow-xl hover:z-10",
+                                        "relative aspect-[3/4] rounded-2xl border-2 flex items-center justify-center transition-all duration-300 overflow-hidden cursor-pointer",
+                                        "group hover:z-10 hover:shadow-[0_0_30px_rgba(0,0,0,0.5)]",
                                         stagger,
                                         type === 'front'
-                                            ? "border-sky-500/30 bg-sky-500/5"
-                                            : "border-rose-500/30 bg-rose-500/5",
-                                        !isDisabled && type === 'front' && "hover:bg-sky-500/10 hover:border-sky-500",
-                                        !isDisabled && type !== 'front' && "hover:bg-rose-500/10 hover:border-rose-500",
-                                        !heroFile && "border-dashed",
-                                        isDisabled && "opacity-20 cursor-not-allowed grayscale"
+                                            ? "border-sky-500/20 bg-sky-500/5 hover:border-sky-500/60"
+                                            : "border-rose-500/20 bg-rose-500/5 hover:border-rose-500/60",
+                                        !heroFile && "border-dashed"
                                     )}
                                 >
                                     {heroFile ? (
                                         <>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             <SafeImage
                                                 src={`/heroes/${heroFile}`}
                                                 alt="Hero"
                                                 fill
-                                                className="object-cover transition-transform group-hover:scale-105"
-                                                sizes="(max-width: 768px) 20vw, 15vw"
+                                                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                                sizes="(max-width: 768px) 30vw, 20vw"
                                             />
-                                            {/* Labels Removed */}
                                             {/* Remove Button */}
-                                            <div
-                                                className="absolute top-1 right-1 p-1 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 hover:bg-destructive transition-all"
+                                            <button
+                                                className="absolute top-2 right-2 p-1.5 bg-black/80 text-white rounded-lg opacity-0 group-hover:opacity-100 hover:bg-rose-600 transition-all z-30 border border-white/10 backdrop-blur-md"
                                                 onClick={(e) => {
                                                     e.stopPropagation()
                                                     const newHeroes = [...(team.heroes || [])]
                                                     newHeroes[i] = null
-                                                    onUpdate({ ...team, heroes: newHeroes })
+                                                    const newOrder = (team.selection_order || []).filter(idx => idx !== i)
+                                                    onUpdate({ ...team, heroes: newHeroes, selection_order: newOrder })
                                                 }}
                                             >
-                                                <X size={12} />
-                                            </div>
+                                                <X size={12} strokeWidth={3} />
+                                            </button>
                                         </>
                                     ) : (
-                                        <Plus className={cn("w-8 h-8 opacity-50", type === 'front' ? "text-sky-500" : "text-rose-500")} />
+                                        <div className="flex flex-col items-center gap-2 opacity-20 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110">
+                                            <div className={cn(
+                                                "w-10 h-10 rounded-full flex items-center justify-center border-2 border-dashed",
+                                                type === 'front' ? "border-sky-500/40 text-sky-500/60" : "border-rose-500/40 text-rose-500/60"
+                                            )}>
+                                                <Plus size={20} />
+                                            </div>
+                                            <span className={cn(
+                                                "text-[8px] font-black uppercase tracking-[0.2em]",
+                                                type === 'front' ? "text-sky-500/60" : "text-rose-500/60"
+                                            )}>
+                                                {type}
+                                            </span>
+                                        </div>
                                     )}
-                                </button>
+                                </div>
                             )
                         })}
                     </div>
                 </div>
 
-                {/* Pet (Right - smaller) */}
-                <div className="space-y-3 w-32 shrink-0 self-start">
-                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                        <Star className="w-3 h-3 text-yellow-500" /> Pet
-                    </label>
-                    <button
-                        type="button"
-                        onClick={() => setIsPetOpen(true)}
-                        className={cn(
-                            "relative w-20 h-20 rounded-xl border border-dashed border-primary/30 flex items-center justify-center transition-all overflow-hidden group hover:border-primary hover:bg-primary/5 mx-auto",
-                            team.pet_file ? "border-solid border-primary bg-primary/5" : ""
-                        )}
-                    >
-                        {team.pet_file ? (
-                            <>
-                                <SafeImage 
-                                    src={team.pet_file} 
-                                    alt="Pet" 
-                                    fill 
-                                    className="object-contain p-2 group-hover:scale-110 transition-transform" 
-                                    sizes="80px"
-                                />
-                                <div
-                                    className="absolute top-1 right-1 p-1 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 hover:bg-destructive transition-all z-10"
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        onUpdate({ ...team, pet_file: null })
-                                    }}
-                                >
-                                    <X size={12} />
+                {/* Pet Section */}
+                <div className="space-y-6 w-full xl:w-48 shrink-0">
+                    <div className="space-y-3">
+                        <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                            <Star className="w-3 h-3 text-yellow-500" />
+                        </label>
+                        <div
+                            onClick={() => setIsPetOpen(true)}
+                            className={cn(
+                                "relative w-20 h-20 rounded-xl border border-dashed border-primary/30 flex items-center justify-center transition-all overflow-hidden group hover:border-primary hover:bg-primary/5 cursor-pointer",
+                                team.pet_file ? "border-solid border-primary bg-primary/5" : ""
+                            )}
+                        >
+                            {team.pet_file ? (
+                                <>
+                                    <SafeImage 
+                                        src={team.pet_file} 
+                                        alt="Pet" 
+                                        fill 
+                                        className="object-contain p-2 group-hover:scale-110 transition-transform" 
+                                        sizes="80px"
+                                    />
+                                    <button
+                                        className="absolute top-1 right-1 p-1 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 hover:bg-destructive transition-all z-10"
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            onUpdate({ ...team, pet_file: null })
+                                        }}
+                                    >
+                                        <X size={12} />
+                                    </button>
+                                </>
+                            ) : (
+                                <div className="flex flex-col items-center gap-1 text-primary/50 group-hover:text-primary">
+                                    <Plus className="w-5 h-5" />
                                 </div>
-                            </>
-                        ) : (
-                            <div className="flex flex-col items-center gap-1 text-primary/50 group-hover:text-primary">
-                                <Plus className="w-5 h-5" />
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-center">Select Pet</span>
-                            </div>
-                        )}
-                    </button>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest"></label>
+                        <div className="flex gap-2">
+                            {[0, 1, 2].map(idx => (
+                                <div
+                                    key={idx}
+                                    onClick={() => setIsSupportPetOpen(idx)}
+                                    className={cn(
+                                        "relative w-12 h-12 rounded-lg border border-dashed border-white/10 flex items-center justify-center transition-all overflow-hidden group hover:border-primary/50 hover:bg-white/5 cursor-pointer",
+                                        team.pet_supports?.[idx] ? "border-solid border-white/20 bg-black/40" : ""
+                                    )}
+                                >
+                                    {team.pet_supports?.[idx] ? (
+                                        <>
+                                            <SafeImage 
+                                                src={team.pet_supports[idx]} 
+                                                alt="Support Pet" 
+                                                fill 
+                                                className="object-contain p-1.5" 
+                                                sizes="48px"
+                                            />
+                                            <button
+                                                className="absolute top-0 right-0 p-0.5 bg-black/50 text-white rounded-bl-md opacity-0 group-hover:opacity-100 hover:bg-destructive transition-all z-10"
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    const supports = [...(team.pet_supports || [null, null, null])]
+                                                    supports[idx] = null
+                                                    onUpdate({ ...team, pet_supports: supports })
+                                                }}
+                                            >
+                                                <X size={10} />
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <Plus className="w-3 h-3 text-white/20" />
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -290,10 +373,10 @@ export default function TeamBuilder({
                 onClose={() => setIsHeroOpen(null)} 
             />
             <PetPicker 
-                isOpen={isPetOpen} 
+                isOpen={isPetOpen || isSupportPetOpen !== null} 
                 petsList={petsList} 
                 onSelect={handlePetSelect} 
-                onClose={() => setIsPetOpen(false)} 
+                onClose={() => { setIsPetOpen(false); setIsSupportPetOpen(null); }} 
             />
 
         </div >

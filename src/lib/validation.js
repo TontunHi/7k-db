@@ -82,15 +82,38 @@ export const ArenaTeamSchema = z.object({
 })
 
 export const GuildWarTeamSchema = z.object({
-  type: z.enum(['attacker', 'defender']),
+  type: z.string().default('general'),
   team_name: z.string().max(100).optional().nullable(),
   formation: z.string().min(1),
   pet_file: z.string().optional().nullable(),
-  heroes: TeamHeroesSchema,
-  skill_rotation: SkillRotationSchema,
-  video_url: z.string().url().or(z.string().length(0)).nullable(),
+  pet_supports: z.array(z.string().optional().nullable()).max(3).optional().nullable(),
+  heroes: z.array(z.string().optional().nullable()).length(5),
+  selection_order: z.array(z.number().optional().nullable()).optional().nullable(),
+  skill_rotation: SkillRotationSchema.optional().nullable(),
+  items: z.array(z.object({
+    weapon: z.string().optional().nullable(),
+    armor: z.string().optional().nullable(),
+    accessories: z.array(z.string().optional().nullable()).optional().nullable(),
+    note: z.string().max(1000).optional().nullable()
+  })).optional().nullable(),
   note: z.string().max(1000).optional().nullable(),
-  counters: z.array(z.number()).optional().nullable()
+  counters: z.array(z.number()).optional().nullable(),
+  counter_teams: z.array(z.object({
+    team_name: z.string().max(100).optional().nullable(),
+    formation: z.string().min(1),
+    heroes: z.array(z.string().optional().nullable()).length(5),
+    selection_order: z.array(z.number().optional().nullable()).optional().nullable(),
+    pet_file: z.string().optional().nullable(),
+    pet_supports: z.array(z.string().optional().nullable()).max(3).optional().nullable(),
+    skill_rotation: SkillRotationSchema.optional().nullable(),
+    items: z.array(z.object({
+        weapon: z.string().optional().nullable(),
+        armor: z.string().optional().nullable(),
+        accessories: z.array(z.string().optional().nullable()).optional().nullable(),
+        note: z.string().max(1000).optional().nullable()
+    })).optional().nullable(),
+    note: z.string().max(1000).optional().nullable()
+  })).optional().nullable()
 })
 
 export const TotalWarSetSchema = z.object({

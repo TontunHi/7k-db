@@ -278,15 +278,24 @@ async function runMigrations() {
           )
         `);
 
-        // Check and add counters_json if not exists
-        try {
-            const [columns] = await connection.query("SHOW COLUMNS FROM guild_war_teams LIKE 'counters_json'");
-            if (columns.length === 0) {
-                console.log("[Migration] Adding counters_json to guild_war_teams...");
-                await connection.query("ALTER TABLE guild_war_teams ADD COLUMN counters_json JSON");
+        // Check and add new columns for Guild War Redesign
+        const gwNewColumns = [
+            { name: 'items_json', type: 'JSON' },
+            { name: 'pet_supports_json', type: 'JSON' },
+            { name: 'counter_teams_json', type: 'JSON' },
+            { name: 'selection_order_json', type: 'JSON' }
+        ];
+
+        for (const col of gwNewColumns) {
+            try {
+                const [columns] = await connection.query("SHOW COLUMNS FROM guild_war_teams LIKE ?", [col.name]);
+                if (columns.length === 0) {
+                    console.log(`[Migration] Adding ${col.name} to guild_war_teams...`);
+                    await connection.query(`ALTER TABLE guild_war_teams ADD COLUMN ${col.name} ${col.type}`);
+                }
+            } catch (colErr) {
+                console.warn(`[Migration] Could not add ${col.name} column:`, colErr.message);
             }
-        } catch (colErr) {
-            console.warn("[Migration] Could not add counters_json column:", colErr.message);
         }
 
         await connection.query(`

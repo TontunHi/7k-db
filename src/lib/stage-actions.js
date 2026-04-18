@@ -197,13 +197,13 @@ export async function getAllHeroes() {
         const files = await fs.promises.readdir(heroesDir)
         const heroFiles = files.filter(f => /\.(png|jpg|jpeg|webp)$/i.test(f))
 
-        // 2. Get DB data for Grades
-        const [dbHeroes] = await pool.query("SELECT filename as slug, name, grade FROM heroes")
-        const dbMap = new Map(dbHeroes.map(h => [h.slug, h]))
+        // 2. Get DB data for Grades, Group, and Type
+        const [dbHeroes] = await pool.query("SELECT filename as slug, name, grade, hero_group, type FROM heroes")
+        const dbMap = new Map(dbHeroes.map(h => [h.slug.toLowerCase(), h]))
 
         // 3. Merge
         const combined = heroFiles.map(filename => {
-            const slug = filename.replace(/\.[^/.]+$/, "")
+            const slug = filename.replace(/\.[^/.]+$/, "").toLowerCase()
             const dbData = dbMap.get(slug)
             // Use DB data if valid, else derive from filename
             const displayName = dbData?.name || slug.replace(/_/g, " ")
@@ -216,7 +216,9 @@ export async function getAllHeroes() {
             return {
                 filename,
                 name: displayName,
-                grade: grade
+                grade: grade,
+                hero_group: dbData?.hero_group || 'Physical',
+                type: dbData?.type || 'Universal'
             }
         })
 
