@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import SafeImage from "../shared/SafeImage"
 import { 
     X, Plus, Sword, Shield, Trash2, 
@@ -75,6 +75,20 @@ export default function BuildSimulator({ initialHero, onBack }) {
         skillPriority: [],
         cLevel: "None"
     })
+
+    // Filter to only include skill files 1, 2, 3, 4 and sort descending (4,3,2,1)
+    const displaySkills = useMemo(() => {
+        return skills
+            .filter(s => {
+                const filename = s.split('/').pop().split('.')[0]
+                return ["1", "2", "3", "4"].includes(filename)
+            })
+            .sort((a, b) => {
+                const numA = parseInt(a.split('/').pop().split('.')[0]) || 0
+                const numB = parseInt(b.split('/').pop().split('.')[0]) || 0
+                return numB - numA // Descending: 4, 3, 2, 1
+            })
+    }, [skills])
 
     const [activePicker, setActivePicker] = useState(null) // { type, index }
     const exportRef = useRef(null)
@@ -416,7 +430,7 @@ export default function BuildSimulator({ initialHero, onBack }) {
                     {/* Skill Priority Selector */}
                     <Section title="Manual Skill Priority">
                         <div className="flex flex-wrap gap-4">
-                            {skills.slice(0, 4).map((s, i) => {
+                            {displaySkills.map((s, i) => {
                                 const isSelected = build.skillPriority.includes(s)
                                 const order = isSelected ? build.skillPriority.indexOf(s) + 1 : null
                                 return (
@@ -522,7 +536,7 @@ export default function BuildSimulator({ initialHero, onBack }) {
                             <p className="text-center text-[10px] text-gray-600 font-bold uppercase tracking-[0.5em] mb-4">Live Preview</p>
                             <div className="p-2 bg-gradient-to-br from-white/10 to-transparent rounded-[40px] shadow-2xl">
                                 <div className="overflow-hidden rounded-[32px]">
-                                    <BuildCardExport ref={exportRef} hero={hero} build={build} skills={skills} />
+                                    <BuildCardExport ref={exportRef} hero={hero} build={build} skills={displaySkills} />
                                 </div>
                             </div>
                         </div>
@@ -767,7 +781,7 @@ const BuildCardExport = forwardRef(({ hero, build, skills }, ref) => {
                                  <div className="h-px flex-1 bg-white/5"></div>
                             </h4>
                             <div className="flex gap-3">
-                                {skills.slice(0, 4).map((s, idx) => {
+                                {skills.map((s, idx) => {
                                     const rankIndex = build.skillPriority.indexOf(s)
                                     const isRanked = rankIndex !== -1
                                     return (

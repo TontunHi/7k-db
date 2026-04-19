@@ -27,10 +27,15 @@ export default function BuildViewerModal({ hero, data, onClose }) {
     const { builds, heroData, skills: allSkills } = data
     const { skillPriority } = heroData
 
-    const sortedSkills = [...allSkills].sort((a, b) => {
-        const getNum = (s) => parseInt(s.split('/').pop()) || 0
-        return getNum(b) - getNum(a)
-    })
+    const sortedSkills = allSkills
+        .filter(s => {
+            const filename = s.split('/').pop().split('.')[0]
+            return ["1", "2", "3", "4"].includes(filename)
+        })
+        .sort((a, b) => {
+            const getNum = (s) => parseInt(s.split('/').pop().split('.')[0]) || 0
+            return getNum(b) - getNum(a)
+        })
 
     const getPriorityRank = (skillPath) => {
         if (!skillPriority) return null
