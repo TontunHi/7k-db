@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
  * Premium Skill Rotation Grid for Raid
  * Handles missing skills beautifully and shows sequence numbers.
  */
-export default function RaidSkillRotation({ skillRotation = [], heroes = [] }) {
+export default function RaidSkillRotation({ skillRotation = [], heroes = [], skillsMap = {} }) {
     const [skillErrors, setSkillErrors] = useState({})
 
     const handleSkillError = (key) => {
@@ -36,25 +36,39 @@ export default function RaidSkillRotation({ skillRotation = [], heroes = [] }) {
                 </div>
 
                 <div className="grid grid-cols-5 gap-2 sm:gap-3 md:gap-4">
-                    {[0, 1, 2, 3, 4].map((heroIdx) => {
-                        const heroFile = heroes?.[heroIdx]
+                    {(() => {
+                        // 1. Identify all unique skills used across the entire team rotation
+                        const allRotationSkills = skillRotation
+                            .filter(s => typeof s === 'string' && s.includes('-'))
+                            .map(s => s.split('-')[1])
                         
-                        return (
-                            <div key={heroIdx} className="space-y-3 flex flex-col items-center">
-                                {/* Skill 2 Slot */}
-                                {(() => {
-                                    const skillDataKey = `${heroIdx}-2`
-                                    const errorKey = `h${heroIdx}-s2`
-                                    const path = getSkillPath(heroFile, 2)
-                                    const orderIndex = skillRotation.indexOf(skillDataKey)
-                                    const order = orderIndex >= 0 ? orderIndex + 1 : null
-                                    
-                                    const isMissing = !heroFile || skillErrors[errorKey]
-                                    
-                                    if (isMissing) return <div className="w-11 h-11 sm:w-12 sm:h-12" />
+                        // 2. Create a uniform set of rows: [2, 3] + any others in rotation
+                        // Use strings for everything to avoid Set duplication and key errors
+                        const rowSkills = Array.from(new Set(['2', '3', ...allRotationSkills]))
+                            .sort((a, b) => (parseInt(a) || 0) - (parseInt(b) || 0))
 
-                                    return (
-                                        <div className={cn(
+                        return [0, 1, 2, 3, 4].map((heroIdx) => {
+                            const heroFile = heroes?.[heroIdx]
+                            const folderName = (typeof heroFile === 'string') ? heroFile.replace(/\.[^/.]+$/, "") : null
+
+                            return (
+                                <div key={heroIdx} className="space-y-3 flex flex-col items-center">
+                                    {rowSkills.map(skillName => {
+                                        const skillDataKey = `${heroIdx}-${skillName}`
+                                        const errorKey = `h${heroIdx}-s${skillName}`
+                                        const path = getSkillPath(heroFile, skillName)
+                                        const orderIndex = skillRotation.indexOf(skillDataKey)
+                                        const order = orderIndex >= 0 ? orderIndex + 1 : null
+                                        
+                                        const isMissing = !heroFile || skillErrors[errorKey]
+                                        
+                                        if (isMissing) {
+                                            // Render empty space to keep grid uniform
+                                            return <div key={skillName} className="w-11 h-11 sm:w-12 sm:h-12 opacity-0" />
+                                        }
+
+                                        return (
+                                            <div key={skillName} className={cn(
                                             "relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden border-2 transition-all duration-300",
                                             order 
                                                 ? "border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)]" 
@@ -62,7 +76,7 @@ export default function RaidSkillRotation({ skillRotation = [], heroes = [] }) {
                                         )}>
                                             <Image
                                                 src={path}
-                                                alt="S2"
+                                                alt={skillName}
                                                 fill
                                                 className="object-contain p-1"
                                                 onError={() => handleSkillError(errorKey)}
@@ -77,48 +91,13 @@ export default function RaidSkillRotation({ skillRotation = [], heroes = [] }) {
                                             )}
                                         </div>
                                     )
-                                })()}
-
-                                {/* Skill 3 Slot */}
-                                {(() => {
-                                    const skillDataKey = `${heroIdx}-3`
-                                    const errorKey = `h${heroIdx}-s3`
-                                    const path = getSkillPath(heroFile, 3)
-                                    const orderIndex = skillRotation.indexOf(skillDataKey)
-                                    const order = orderIndex >= 0 ? orderIndex + 1 : null
-                                    
-                                    const isMissing = !heroFile || skillErrors[errorKey]
-                                    
-                                    if (isMissing) return <div className="w-11 h-11 sm:w-12 sm:h-12" />
-
-                                    return (
-                                        <div className={cn(
-                                            "relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden border-2 transition-all duration-300",
-                                            order 
-                                                ? "border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)]" 
-                                                : "border-white/10 opacity-30 hover:opacity-50"
-                                        )}>
-                                            <Image
-                                                src={path}
-                                                alt="S3"
-                                                fill
-                                                className="object-contain p-1"
-                                                onError={() => handleSkillError(errorKey)}
-                                                sizes="(max-width: 640px) 44px, 48px"
-                                            />
-                                            {order && (
-                                                <div className="absolute top-0 right-0 p-0.5">
-                                                    <div className="w-4 h-4 sm:w-5 sm:h-5 bg-red-600 text-white text-[8px] sm:text-[9px] font-black rounded-md flex items-center justify-center shadow-lg transform translate-x-1 -translate-y-1">
-                                                        {order}
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    )
-                                })()}
+                                })}
+                                {/* Placeholder if no skills visible to keep grid aligned */}
+                                {rowSkills.length === 0 && <div className="w-11 h-11 sm:w-12 sm:h-12" />}
                             </div>
                         )
-                    })}
+                    })
+                })()}
                 </div>
             </div>
         </div>

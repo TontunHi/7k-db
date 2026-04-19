@@ -6,11 +6,11 @@ const UPDATES = [
     {
         date: "Apr 19, 2026",
         items: [
-            { category: "GUILD WAR", text: "Modernized Guild War interface with a high-fidelity 'Command Center' aesthetic.", icon: Sparkles },
-            { category: "UI/UX", text: "Implemented asset-centric tactical summaries (Heroes + Pets) in minimized card states.", icon: Zap },
-            { category: "FEATURE", text: "Added support for tactical labels and step indicators in Skill Rotations.", icon: Wrench },
-            { category: "UI/UX", text: "Standardized tactical terminology (Build, Build Counter, Skill Rotation) across the platform.", icon: Zap },
-            { category: "UI/UX", text: "Optimized squad previews with larger hero portraits and discrete tactical icons.", icon: Sparkles }
+            { category: "ENGINE", text: "Implemented dynamic Skill Discovery logic that automatically scans the filesystem for all hero skill assets.", icon: Zap },
+            { category: "ADMIN", text: "Migrated all administrative modules (Raid, Dungeon, Total War, Arena) to support the dynamic skill system.", icon: Wrench },
+            { category: "UI/UX", text: "Refactored the Raid Skill Grid to maintain a uniform 2x5 layout while supporting custom rotations.", icon: Sparkles },
+            { category: "FEATURE", text: "Standardized Skill Rotation pickers across all game modes with a unified modal-based interface.", icon: Zap },
+            { category: "STABILITY", text: "Enhanced error handling for hero slots and skill identifiers to prevent runtime crashes.", icon: Wrench }
         ]
     }
 ]

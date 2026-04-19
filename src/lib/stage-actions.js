@@ -240,6 +240,39 @@ export async function getAllHeroes() {
     }
 }
 
+export async function getHeroSkillsMap() {
+    const skillsDir = path.join(process.cwd(), 'public', 'skills')
+    try {
+        if (!fs.existsSync(skillsDir)) return {}
+        const folders = await fs.promises.readdir(skillsDir)
+        
+        let skillsMap = {}
+        for (const folder of folders) {
+            const folderPath = path.join(skillsDir, folder)
+            const stat = await fs.promises.stat(folderPath)
+            if (stat.isDirectory()) {
+                const files = await fs.promises.readdir(folderPath)
+                const skillNames = files
+                    .filter(f => /\.(png|jpg|jpeg|webp)$/i.test(f))
+                    .map(f => f.replace(/\.[^/.]+$/, "")) // Remove extension
+                    .sort((a, b) => {
+                        const numA = parseInt(a) || 0
+                        const numB = parseInt(b) || 0
+                        if (numA !== numB) return numA - numB
+                        return a.localeCompare(b)
+                    })
+                if (skillNames.length > 0) {
+                    skillsMap[folder] = skillNames
+                }
+            }
+        }
+        return skillsMap
+    } catch (error) {
+        console.error("Error getting hero skills map:", error)
+        return {}
+    }
+}
+
 export async function getAllSkills() {
     const skillsDir = path.join(process.cwd(), 'public', 'skills')
     try {

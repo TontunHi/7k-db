@@ -15,7 +15,7 @@ import {
     deleteSet,
     getRaids
 } from '@/lib/raid-actions'
-import { getAllHeroes, getPets, getFormations } from '@/lib/stage-actions'
+import { getAllHeroes, getPets, getFormations, getHeroSkillsMap } from '@/lib/stage-actions'
 import TeamBuilder from '@/components/admin/TeamBuilder'
 
 // Helper to get hero skill image path
@@ -38,18 +38,20 @@ export default function RaidDetailPage({ params }) {
     const [saving, setSaving] = useState(false)
     const [allRaids, setAllRaids] = useState([])
     const [skillErrors, setSkillErrors] = useState({})
+    const [skillsMap, setSkillsMap] = useState({})
     const [collapsedSets, setCollapsedSets] = useState(new Set())
 
     useEffect(() => {
         async function loadData() {
             setLoading(true)
-            const [raidInfo, setsData, heroesData, petsData, formationsData, allRaidsData] = await Promise.all([
+            const [raidInfo, setsData, heroesData, petsData, formationsData, allRaidsData, skillsData] = await Promise.all([
                 getRaidInfo(raidKey),
                 getSetsByRaid(raidKey),
                 getAllHeroes(),
                 getPets(),
                 getFormations(),
-                getRaids()
+                getRaids(),
+                getHeroSkillsMap()
             ])
             setRaid(raidInfo)
             setAllRaids(allRaidsData)
@@ -57,6 +59,7 @@ export default function RaidDetailPage({ params }) {
             setHeroes(heroesData)
             setPets(petsData)
             setFormations(formationsData)
+            setSkillsMap(skillsData)
             setLoading(false)
         }
         loadData()
@@ -405,23 +408,24 @@ export default function RaidDetailPage({ params }) {
                                             <div className="grid grid-cols-5 gap-4">
                                                 {[0, 1, 2, 3, 4].map(heroIdx => {
                                                     const heroFile = set.heroes?.[heroIdx]
+                                                    if (!heroFile) return <div key={heroIdx} className="space-y-4 flex flex-col items-center" />
                                                     
                                                     return (
                                                         <div key={heroIdx} className="space-y-4 flex flex-col items-center">
-                                                            {/* Skill 2 */}
-                                                            {(() => {
-                                                                const skillKey = `set-${set.id}-h${heroIdx}-s2`
-                                                                const skillDataKey = `${heroIdx}-2`
-                                                                const skillPath = getSkillImagePath(heroFile, 2)
+                                                            {(skillsMap?.[heroFile.replace(/\.[^/.]+$/, "")] || [4, 3, 2, 1]).map(skillName => {
+                                                                const skillKey = `set-${set.id}-h${heroIdx}-s${skillName}`
+                                                                const skillDataKey = `${heroIdx}-${skillName}`
+                                                                const skillPath = getSkillImagePath(heroFile, skillName)
                                                                 const orderIndex = rotation.indexOf(skillDataKey)
                                                                 const order = orderIndex >= 0 ? orderIndex + 1 : null
-                                                                
+
                                                                 if (!heroFile || (skillPath && skillErrors[skillKey])) {
-                                                                    return <div className="w-16 h-16" />
+                                                                    return null
                                                                 }
 
                                                                 return (
                                                                     <button
+                                                                        key={skillName}
                                                                         type="button"
                                                                         onClick={() => handleToggleSkillRotation(idx, skillDataKey)}
                                                                         className={cn(
@@ -435,7 +439,7 @@ export default function RaidDetailPage({ params }) {
                                                                         {heroFile && skillPath && (
                                                                             <NextImage
                                                                                 src={skillPath}
-                                                                                alt="Skill 2"
+                                                                                alt={`Skill ${skillName}`}
                                                                                 fill
                                                                                 className={cn("object-contain p-1", order ? "opacity-100" : "opacity-60")}
                                                                                 onError={() => handleSkillError(skillKey)}
@@ -450,51 +454,7 @@ export default function RaidDetailPage({ params }) {
                                                                         )}
                                                                     </button>
                                                                 )
-                                                            })()}
-                                                            
-                                                            {/* Skill 3 */}
-                                                            {(() => {
-                                                                const skillKey = `set-${set.id}-h${heroIdx}-s3`
-                                                                const skillDataKey = `${heroIdx}-3`
-                                                                const skillPath = getSkillImagePath(heroFile, 3)
-                                                                const orderIndex = rotation.indexOf(skillDataKey)
-                                                                const order = orderIndex >= 0 ? orderIndex + 1 : null
-                                                                
-                                                                if (!heroFile || (skillPath && skillErrors[skillKey])) {
-                                                                    return <div className="w-16 h-16" />
-                                                                }
-
-                                                                return (
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => handleToggleSkillRotation(idx, skillDataKey)}
-                                                                        className={cn(
-                                                                            "relative w-16 h-16 rounded-xl overflow-hidden border-2 flex items-center justify-center transition-all duration-300",
-                                                                            order 
-                                                                                ? "border-red-500 shadow-[0_0_20px_rgba(220,38,38,0.3)] bg-red-950/20" 
-                                                                                : "border-gray-700/50 hover:border-gray-500",
-                                                                            !heroFile && "opacity-20 cursor-not-allowed bg-gray-900"
-                                                                        )}
-                                                                    >
-                                                                        {heroFile && skillPath && (
-                                                                            <NextImage
-                                                                                src={skillPath}
-                                                                                alt="Skill 3"
-                                                                                fill
-                                                                                className={cn("object-contain p-1", order ? "opacity-100" : "opacity-60")}
-                                                                                onError={() => handleSkillError(skillKey)}
-                                                                            />
-                                                                        )}
-                                                                        {order && (
-                                                                            <div className="absolute top-0 right-0 p-1">
-                                                                                <div className="w-5 h-5 bg-red-600 text-white text-[10px] font-black rounded-lg flex items-center justify-center shadow-lg transform translate-x-1 -translate-y-1">
-                                                                                    {order}
-                                                                                </div>
-                                                                            </div>
-                                                                        )}
-                                                                    </button>
-                                                                )
-                                                            })()}
+                                                            })}
                                                         </div>
                                                     )
                                                 })}

@@ -14,7 +14,7 @@ import {
     updateSet, 
     deleteSet 
 } from '@/lib/advent-actions'
-import { getAllHeroes, getPets, getFormations } from '@/lib/stage-actions'
+import { getAllHeroes, getPets, getFormations, getHeroSkillsMap } from '@/lib/stage-actions'
 import TeamBuilder from '@/components/admin/TeamBuilder'
 
 function getSkillImagePath(heroFilename, skillNumber) {
@@ -105,7 +105,7 @@ function SkillSlotRow({ heroes, rotation, onAddSlot, onUpdateLabel, onSelectSkil
     )
 }
 
-const SkillPickerModal = ({ skillPicker, sets, teamHeroes, heroes, onSelectSkill, onClose }) => {
+const SkillPickerModal = ({ skillPicker, sets, teamHeroes, heroes, skillsMap, onSelectSkill, onClose }) => {
     if (!skillPicker) return null
     const { setIdx, slotIdx } = skillPicker
 
@@ -141,27 +141,27 @@ const SkillPickerModal = ({ skillPicker, sets, teamHeroes, heroes, onSelectSkill
                                     </div>
                                     <span className="text-sm font-bold text-gray-300 capitalize">{heroName}</span>
                                 </div>
-                                <div className="flex gap-2 ml-10">
-                                    {[4, 3, 2, 1].map(skillNum => {
-                                        const skillKey = `${heroIdx}-${skillNum}`
-                                        const skillPath = getSkillImagePath(heroFile, skillNum)
-
-                                        return (
-                                            <button
-                                                key={skillNum}
-                                                type="button"
-                                                onClick={() => onSelectSkill(setIdx, slotIdx, skillKey)}
-                                                className="relative w-14 h-14 rounded-lg overflow-hidden border-2 border-gray-700 hover:border-violet-400 hover:shadow-[0_0_15px_rgba(139,92,246,0.3)] transition-all bg-gray-900"
-                                            >
-                                                {skillPath ? (
-                                                    <SafeImage src={skillPath} alt={`Skill ${skillNum}`} fill className="object-contain p-0.5" />
-                                                ) : (
-                                                    <span className="text-gray-600 text-xs flex items-center justify-center w-full h-full">S{skillNum}</span>
-                                                )}
-                                            </button>
-                                        )
-                                    })}
-                                </div>
+                                <div className="flex gap-2 ml-10 flex-wrap">
+                                    {(skillsMap?.[heroFile.replace(/\.[^/.]+$/, "")] || [4, 3, 2, 1]).map(skillName => {
+                                         const skillKey = `${heroIdx}-${skillName}`
+                                         const skillPath = getSkillImagePath(heroFile, skillName)
+ 
+                                         return (
+                                             <button
+                                                 key={skillName}
+                                                 type="button"
+                                                 onClick={() => onSelectSkill(setIdx, slotIdx, skillKey)}
+                                                 className="relative w-14 h-14 rounded-lg overflow-hidden border-2 border-gray-700 hover:border-violet-400 hover:shadow-[0_0_15px_rgba(139,92,246,0.3)] transition-all bg-gray-900"
+                                             >
+                                                 {skillPath ? (
+                                                     <SafeImage src={skillPath} alt={`Skill ${skillName}`} fill className="object-contain p-0.5" />
+                                                 ) : (
+                                                     <span className="text-gray-600 text-xs flex items-center justify-center w-full h-full">S{skillName}</span>
+                                                 )}
+                                             </button>
+                                         )
+                                     })}
+                                 </div>
                             </div>
                         )
                     })}
@@ -183,6 +183,7 @@ export default function AdventBossDetailPage({ params }) {
     const [heroes, setHeroes] = useState([])
     const [pets, setPets] = useState([])
     const [formations, setFormations] = useState([])
+    const [skillsMap, setSkillsMap] = useState({})
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [skillErrors, setSkillErrors] = useState({})
@@ -199,18 +200,20 @@ export default function AdventBossDetailPage({ params }) {
     useEffect(() => {
         async function loadData() {
             setLoading(true)
-            const [bossInfo, setsData, heroesData, petsData, formationsData] = await Promise.all([
+            const [bossInfo, setsData, heroesData, petsData, formationsData, skillsData] = await Promise.all([
                 getBossInfo(bossKey),
                 getSetsByBoss(bossKey),
                 getAllHeroes(),
                 getPets(),
-                getFormations()
+                getFormations(),
+                getHeroSkillsMap()
             ])
             setBoss(bossInfo)
             setSets(setsData.map(s => ({ ...s, _dirty: false })))
             setHeroes(heroesData)
             setPets(petsData)
             setFormations(formationsData)
+            setSkillsMap(skillsData)
             setLoading(false)
         }
         loadData()
@@ -529,6 +532,7 @@ export default function AdventBossDetailPage({ params }) {
                 sets={sets}
                 teamHeroes={skillPicker ? sets[skillPicker.setIdx].heroes : []}
                 heroes={heroes}
+                skillsMap={skillsMap}
                 onSelectSkill={handleSelectSkillForSlot}
                 onClose={() => setSkillPicker(null)}
             />

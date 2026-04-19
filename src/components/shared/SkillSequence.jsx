@@ -18,7 +18,9 @@ export default function SkillSequence({ skillRotation = [], heroes = [], customC
                 <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
                 
                 {skillRotation.map((slot, sIdx) => {
-                    const [hIdx, sNum] = (slot.skill || '').split('-').map(Number)
+                    const parts = (slot.skill || '').split('-')
+                    const hIdx = parseInt(parts[0])
+                    const sNum = parts[1]
                     const hFile = heroes?.[hIdx]
                     const sPath = slot.skill ? getSkillImagePath(hFile, sNum) : null
                     const isLast = sIdx === skillRotation.length - 1;

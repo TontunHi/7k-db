@@ -15,7 +15,7 @@ import {
     deleteGuildWarTeam,
     getItemFiles
 } from '@/lib/guild-war-actions'
-import { getAllHeroes, getPets, getFormations } from '@/lib/stage-actions'
+import { getAllHeroes, getPets, getFormations, getHeroSkillsMap } from '@/lib/stage-actions'
 import TeamBuilder from '@/components/admin/TeamBuilder'
 import { getSkillImagePath } from '@/lib/formation-utils'
 
@@ -68,7 +68,7 @@ function MiniHeroPicker({ heroes, onSelect, onClose }) {
 }
 
 
-function SkillPickerModal({ skillPicker, teams, heroes, skillErrors, onSelect, onClose, onSkillError }) {
+function SkillPickerModal({ skillPicker, teams, heroes, skillsMap, skillErrors, onSelect, onClose, onSkillError }) {
     if (!skillPicker) return null
     const { teamId, slotIdx, isCounter, counterIdx } = skillPicker
     const team = teams.find(t => t.id === teamId)
@@ -109,16 +109,16 @@ function SkillPickerModal({ skillPicker, teams, heroes, skillErrors, onSelect, o
                                     </div>
                                     <span className="text-sm font-bold text-gray-300 capitalize">{heroName}</span>
                                 </div>
-                                <div className="flex gap-2 ml-10">
-                                    {[4, 3, 2, 1].map(skillNum => {
-                                        const skillKey = `${heroIdx}-${skillNum}`
-                                        const skillPath = getSkillImagePath(heroFile, skillNum)
-                                        const errKey = `pick-${heroIdx}-${skillNum}`
+                                <div className="flex gap-2 ml-10 flex-wrap">
+                                    {(skillsMap?.[heroFile.replace(/\.[^/.]+$/, "")] || [4, 3, 2, 1]).map(skillName => {
+                                        const skillKey = `${heroIdx}-${skillName}`
+                                        const skillPath = getSkillImagePath(heroFile, skillName)
+                                        const errKey = `pick-${heroIdx}-${skillName}`
                                         const hasError = skillErrors[errKey]
 
                                         return (
                                             <button
-                                                key={skillNum}
+                                                key={skillName}
                                                 type="button"
                                                 onClick={() => onSelect(teamId, slotIdx, skillKey)}
                                                 className="relative w-14 h-14 rounded-lg overflow-hidden border-2 border-gray-700 hover:border-red-500 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all bg-gray-900"
@@ -126,13 +126,13 @@ function SkillPickerModal({ skillPicker, teams, heroes, skillErrors, onSelect, o
                                                 {skillPath && !hasError ? (
                                                     <SafeImage
                                                         src={skillPath}
-                                                        alt={`Skill ${skillNum}`}
+                                                        alt={`Skill ${skillName}`}
                                                         fill
                                                         className="object-cover"
                                                         onError={() => onSkillError(errKey)}
                                                     />
                                                 ) : (
-                                                    <span className="text-gray-600 text-xs flex items-center justify-center w-full h-full">S{skillNum}</span>
+                                                    <span className="text-gray-600 text-xs flex items-center justify-center w-full h-full">S{skillName}</span>
                                                 )}
                                             </button>
                                         )
@@ -155,6 +155,7 @@ export default function AdminGuildWarPage() {
     const [heroes, setHeroes] = useState([])
     const [pets, setPets] = useState([])
     const [formations, setFormations] = useState([])
+    const [skillsMap, setSkillsMap] = useState({})
     const [weapons, setWeapons] = useState([])
     const [armors, setArmors] = useState([])
     const [accessories, setAccessories] = useState([])
@@ -188,17 +189,19 @@ export default function AdminGuildWarPage() {
     useEffect(() => {
         async function loadData() {
             try {
-                const [t, h, p, f, itemData] = await Promise.all([
+                const [t, h, p, f, itemData, skillsData] = await Promise.all([
                     getGuildWarTeams('all'),
                     getAllHeroes(),
                     getPets(),
                     getFormations(),
-                    getItemFiles()
+                    getItemFiles(),
+                    getHeroSkillsMap()
                 ])
                 setTeams(t.map(s => ({ ...s, _dirty: false })))
                 setHeroes(h)
                 setPets(p)
                 setFormations(f)
+                setSkillsMap(skillsData)
                 setWeapons(sortItems(itemData.weapons))
                 setArmors(sortItems(itemData.armors))
                 setAccessories(sortItems(itemData.accessories))
@@ -847,6 +850,7 @@ export default function AdminGuildWarPage() {
                 skillPicker={skillPicker}
                 teams={teams}
                 heroes={heroes}
+                skillsMap={skillsMap}
                 skillErrors={skillErrors}
                 onSelect={(tid, sidx, skey) => {
                     if (skillPicker.isCounter) {
@@ -963,6 +967,7 @@ function CounterTeamEditor({ teamId, ct, ctIdx, heroesList, petsList, formations
                                     selection_order: updated.selection_order
                                 })
                             }}
+                            maxHeroes={3}
                             className="bg-transparent border-none p-0"
                         />
                     </div>

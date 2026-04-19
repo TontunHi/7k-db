@@ -14,7 +14,7 @@ import {
     updateSet, 
     deleteSet 
 } from '@/lib/dungeon-actions'
-import { getAllHeroes, getPets, getFormations } from '@/lib/stage-actions'
+import { getAllHeroes, getPets, getFormations, getHeroSkillsMap } from '@/lib/stage-actions'
 import TeamBuilder from '@/components/admin/TeamBuilder'
 
 // Helper to get hero skill image path
@@ -36,24 +36,27 @@ export default function DungeonDetailPage({ params }) {
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [skillErrors, setSkillErrors] = useState({})
+    const [skillsMap, setSkillsMap] = useState({})
     // Skill picker state: { setIdx, slotIdx } or null
     const [skillPicker, setSkillPicker] = useState(null)
 
     useEffect(() => {
         async function loadData() {
             setLoading(true)
-            const [dungeonInfo, setsData, heroesData, petsData, formationsData] = await Promise.all([
+            const [dungeonInfo, setsData, heroesData, petsData, formationsData, skillsData] = await Promise.all([
                 getDungeonInfo(dungeonKey),
                 getSetsByDungeon(dungeonKey),
                 getAllHeroes(),
                 getPets(),
-                getFormations()
+                getFormations(),
+                getHeroSkillsMap()
             ])
             setDungeon(dungeonInfo)
             setSets(setsData.map(s => ({ ...s, _dirty: false })))
             setHeroes(heroesData)
             setPets(petsData)
             setFormations(formationsData)
+            setSkillsMap(skillsData)
             setLoading(false)
         }
         loadData()
@@ -442,16 +445,16 @@ export default function DungeonDetailPage({ params }) {
                                             </div>
                                             <span className="text-sm font-bold text-gray-300 capitalize">{heroName}</span>
                                         </div>
-                                        <div className="flex gap-2 ml-10">
-                                            {[4, 3, 2, 1].map(skillNum => {
-                                                const skillKey = `${heroIdx}-${skillNum}`
-                                                const skillPath = getSkillImagePath(heroFile, skillNum)
-                                                const errKey = `pick-${heroIdx}-${skillNum}`
+                                        <div className="flex gap-2 ml-10 flex-wrap">
+                                            {(skillsMap?.[heroFile.replace(/\.[^/.]+$/, "")] || [4, 3, 2, 1]).map(skillName => {
+                                                const skillKey = `${heroIdx}-${skillName}`
+                                                const skillPath = getSkillImagePath(heroFile, skillName)
+                                                const errKey = `pick-${heroIdx}-${skillName}`
                                                 const hasError = skillErrors[errKey]
 
                                                 return (
                                                     <button
-                                                        key={skillNum}
+                                                        key={skillName}
                                                         type="button"
                                                         onClick={() => handleSelectSkillForSlot(skillPicker.setIdx, skillPicker.slotIdx, skillKey)}
                                                         className="relative w-14 h-14 rounded-lg overflow-hidden border-2 border-gray-700 hover:border-[#FFD700] hover:shadow-[0_0_15px_rgba(255,215,0,0.3)] transition-all bg-gray-900"
@@ -459,13 +462,13 @@ export default function DungeonDetailPage({ params }) {
                                                         {skillPath && !hasError ? (
                                                             <SafeImage
                                                                 src={skillPath}
-                                                                alt={`Skill ${skillNum}`}
+                                                                alt={`Skill ${skillName}`}
                                                                 fill
                                                                 className="object-cover"
                                                                 onError={() => handleSkillError(errKey)}
                                                             />
                                                         ) : (
-                                                            <span className="text-gray-600 text-xs flex items-center justify-center w-full h-full">S{skillNum}</span>
+                                                            <span className="text-gray-600 text-xs flex items-center justify-center w-full h-full">S{skillName}</span>
                                                         )}
                                                     </button>
                                                 )

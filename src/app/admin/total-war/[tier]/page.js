@@ -16,7 +16,7 @@ import {
     updateTeam,
     deleteTeam,
 } from '@/lib/total-war-actions'
-import { getAllHeroes, getPets, getFormations } from '@/lib/stage-actions'
+import { getAllHeroes, getPets, getFormations, getHeroSkillsMap } from '@/lib/stage-actions'
 import TeamBuilder from '@/components/admin/TeamBuilder'
 
 const uid = () => `new-${Date.now()}-${Math.random()}`
@@ -27,7 +27,7 @@ function getSkillImagePath(heroFilename, skillNumber) {
 }
 
 // ─── Skill Picker Modal ────────────────────────────────────────────────────────
-function SkillPickerModal({ open, teamHeroes, heroes, skillErrors, onError, onSelect, onClose }) {
+function SkillPickerModal({ open, teamHeroes, heroes, skillsMap, skillErrors, onError, onSelect, onClose }) {
     if (!open) return null
     return (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-md">
@@ -60,23 +60,23 @@ function SkillPickerModal({ open, teamHeroes, heroes, skillErrors, onError, onSe
                                     </div>
                                     <span className="text-sm font-bold text-gray-300 capitalize">{heroName}</span>
                                 </div>
-                                <div className="flex gap-2 ml-10">
-                                    {[4, 3, 2, 1].map(skillNum => {
-                                        const skillKey = `${heroIdx}-${skillNum}`
-                                        const skillPath = getSkillImagePath(heroFile, skillNum)
-                                        const hasError = skillErrors[`pick-${heroIdx}-${skillNum}`]
+                                <div className="flex gap-2 ml-10 flex-wrap">
+                                    {(skillsMap?.[heroFile.replace(/\.[^/.]+$/, "")] || [4, 3, 2, 1]).map(skillName => {
+                                        const skillKey = `${heroIdx}-${skillName}`
+                                        const skillPath = getSkillImagePath(heroFile, skillName)
+                                        const hasError = skillErrors[`pick-${heroIdx}-${skillName}`]
                                         return (
                                             <button
-                                                key={skillNum}
+                                                key={skillName}
                                                 type="button"
                                                 onClick={() => onSelect(skillKey)}
                                                 className="relative w-14 h-14 rounded-lg overflow-hidden border-2 border-gray-700 hover:border-[#FFD700] hover:shadow-[0_0_15px_rgba(255,215,0,0.3)] transition-all bg-gray-900"
                                             >
                                                 {skillPath && !hasError ? (
-                                                    <SafeImage src={skillPath} alt={`Skill ${skillNum}`} fill className="object-cover"
-                                                        onError={() => onError(`pick-${heroIdx}-${skillNum}`)} />
+                                                    <SafeImage src={skillPath} alt={`Skill ${skillName}`} fill className="object-cover"
+                                                        onError={() => onError(`pick-${heroIdx}-${skillName}`)} />
                                                 ) : (
-                                                    <span className="text-gray-600 text-xs flex items-center justify-center w-full h-full">S{skillNum}</span>
+                                                    <span className="text-gray-600 text-xs flex items-center justify-center w-full h-full">S{skillName}</span>
                                                 )}
                                             </button>
                                         )
@@ -348,19 +348,20 @@ export default function AdminTotalWarTierPage({ params }) {
     const [pets, setPets] = useState([])
     const [formations, setFormations] = useState([])
     const [loading, setLoading] = useState(true)
-    const [skillErrors, setSkillErrors] = useState({})
     const [skillPicker, setSkillPicker] = useState(null) // { setIdx, teamIdx, slotIdx }
+    const [skillsMap, setSkillsMap] = useState({})
     const [savingSetId, setSavingSetId] = useState(null)
 
     useEffect(() => {
         if (!tierCfg) return
         async function load() {
             setLoading(true)
-            const [setsData, heroesData, petsData, formsData] = await Promise.all([
+            const [setsData, heroesData, petsData, formsData, skillsData] = await Promise.all([
                 getSetsByTier(tierKey),
                 getAllHeroes(),
                 getPets(),
                 getFormations(),
+                getHeroSkillsMap()
             ])
             setSets(setsData.map(s => ({
                 ...s,
@@ -370,6 +371,7 @@ export default function AdminTotalWarTierPage({ params }) {
             setHeroes(heroesData)
             setPets(petsData)
             setFormations(formsData)
+            setSkillsMap(skillsData)
             setLoading(false)
         }
         load()
@@ -593,6 +595,7 @@ export default function AdminTotalWarTierPage({ params }) {
                 open={skillPicker !== null}
                 teamHeroes={pickerHeroes}
                 heroes={heroes}
+                skillsMap={skillsMap}
                 skillErrors={skillErrors}
                 onError={handleSkillError}
                 onSelect={handleSkillSelect}

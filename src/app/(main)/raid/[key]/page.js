@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { getRaidInfo, getSetsByRaid } from '@/lib/raid-actions'
+import { getHeroSkillsMap } from '@/lib/stage-actions'
 import { Skull, ArrowLeft, Video, ExternalLink, Users, Star, Zap, ScrollText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { notFound } from 'next/navigation'
@@ -32,17 +33,21 @@ export default async function RaidDetailPage({ params }) {
     
     const sets = await getSetsByRaid(raidKey)
     const heroImageMap = await getHeroImageMap()
+    const skillsMap = await getHeroSkillsMap()
     
     // Parse JSON data
-    const parsedSets = sets.map(set => ({
-        ...set,
-        heroes: typeof set.heroes_json === 'string' 
-            ? JSON.parse(set.heroes_json) 
-            : (set.heroes_json || set.heroes || []),
-        skill_rotation: typeof set.skill_rotation === 'string'
-            ? JSON.parse(set.skill_rotation)
-            : (set.skill_rotation || [])
-    }))
+    const parsedSets = sets.map(set => {
+        if (!set) return null
+        return {
+            ...set,
+            heroes: typeof set.heroes_json === 'string' 
+                ? JSON.parse(set.heroes_json) 
+                : (set.heroes_json || set.heroes || []),
+            skill_rotation: typeof set.skill_rotation === 'string'
+                ? JSON.parse(set.skill_rotation)
+                : (set.skill_rotation || [])
+        }
+    }).filter(Boolean)
 
     return (
         <div className="relative min-h-screen w-full bg-[#050505] overflow-hidden pb-32">
@@ -182,6 +187,7 @@ export default async function RaidDetailPage({ params }) {
                                         <RaidSkillRotation 
                                             skillRotation={set.skill_rotation} 
                                             heroes={set.heroes} 
+                                            skillsMap={skillsMap}
                                         />
                                         
                                         {/* Strategy Note */}

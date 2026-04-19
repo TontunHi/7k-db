@@ -147,9 +147,9 @@ export default function TeamBuilder({
         const currentCount = newHeroes.filter(h => h).length
         const newOrder = [...(team.selection_order || [])]
 
-        // If clicking an empty slot and already have 3 heroes, block
-        if (!newHeroes[isHeroOpen] && currentCount >= 3) {
-            alert("Maximum 3 heroes allowed for Guild War.")
+        // If clicking an empty slot and already have maxHeroes, block
+        if (!newHeroes[isHeroOpen] && currentCount >= maxHeroes) {
+            alert(`Maximum ${maxHeroes} heroes allowed for this mode.`)
             setIsHeroOpen(null)
             return
         }
