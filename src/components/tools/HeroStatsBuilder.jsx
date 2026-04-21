@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { Search, Shield, Swords, Zap, Sparkles, X, ChevronRight, RotateCcw, Plus, Calculator, ChevronLeft, AlertCircle } from "lucide-react"
+import { Search, Shield, Swords, Zap, Sparkles, X, ChevronRight, RotateCcw, Plus, Calculator, ChevronLeft } from "lucide-react"
 import { clsx } from "clsx"
 import SafeImage from "../shared/SafeImage"
 
@@ -124,19 +124,6 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
         Armor2: getInitialItemState('Armor2')
     })
     const [showItemSelector, setShowItemSelector] = useState(null)
-    const [showWarning, setShowWarning] = useState(false)
-
-    useEffect(() => {
-        const hasSeenWarning = sessionStorage.getItem("hero-stats-warning-seen-v1")
-        if (!hasSeenWarning) {
-            setShowWarning(true)
-        }
-    }, [])
-
-    const closeWarning = () => {
-        setShowWarning(false)
-        sessionStorage.setItem("hero-stats-warning-seen-v1", "true")
-    }
 
     const formatValue = (val) => {
         if (val === "" || val === undefined) return "0"
@@ -819,51 +806,6 @@ export default function HeroStatsBuilder({ heroes = [], items = [] }) {
                 </div>
             )}
 
-            {showWarning && (
-                <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl animate-in fade-in duration-500">
-                    <div className="w-full max-w-2xl bg-[#0a0a0a] border border-[#FFD700]/20 rounded-[3rem] overflow-hidden shadow-[0_0_100px_rgba(255,215,0,0.1)] p-8 md:p-12 space-y-8 relative">
-                        <div className="absolute top-0 right-0 p-8">
-                            <AlertCircle className="w-12 h-12 text-[#FFD700]/20 rotate-12" />
-                        </div>
-                        
-                        <div className="space-y-4 relative">
-                            <div className="flex items-center gap-4 text-[#FFD700]">
-                                <AlertCircle className="w-8 h-8" />
-                                <h3 className="text-2xl font-black uppercase italic tracking-tighter">Important Notice / ข้อมูลสำคัญ</h3>
-                            </div>
-                            
-                            <div className="space-y-6">
-                                <div className="space-y-2">
-                                    <p className="text-gray-400 text-sm font-medium leading-relaxed">
-                                        We haven't added data for all characters yet. Some legends may not have pre-loaded stats, but you can enter them manually.
-                                    </p>
-                                    <p className="text-[#FFD700] text-lg font-bold leading-tight">
-                                        เรายังไม่ได้เพิ่มข้อมูลครบทุกตัวละคร อาจมีบางตัวละครที่ยังไม่มี Stat มาให้คุณสามารถใส่เองได้เลย
-                                    </p>
-                                </div>
-
-                                <div className="h-px bg-white/5 w-full" />
-
-                                <div className="space-y-2">
-                                    <p className="text-gray-400 text-sm font-medium leading-relaxed">
-                                        All character stats start from Base Stat (C0 + 5 Lv.30) values.
-                                    </p>
-                                    <p className="text-[#FFD700] text-lg font-bold leading-tight">
-                                        ตัวละครทุกตัว Stat จะเริ่มจาก Base Stat ( C0 + 5 Lv.30 )
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button 
-                            onClick={closeWarning}
-                            className="w-full py-5 bg-[#FFD700] text-black text-xs font-black uppercase tracking-[0.3em] rounded-2xl hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,215,0,0.3)] transition-all active:scale-95"
-                        >
-                            Accept & Continue / รับทราบและดำเนินการต่อ
-                        </button>
-                    </div>
-                </div>
-            )}
         </div>
     )
 }
