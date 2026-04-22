@@ -4,6 +4,15 @@ import { Terminal, Sparkles, Zap, Wrench } from "lucide-react"
 
 const UPDATES = [
     {
+        date: "Apr 22, 2026",
+        items: [
+            { category: "GUILD WAR", text: "Transformed Guild War into a high-performance Tactical Dashboard with professional command-center aesthetics.", icon: Zap },
+            { category: "UI/UX", text: "Implemented 'Hero Banner' collapsed states for both primary and counter teams with full-height portraits.", icon: Sparkles },
+            { category: "INTEL", text: "Expanded Counter Team Intelligence to include primary targets, skill rotations, and detailed hero item notes.", icon: Zap },
+            { category: "ASSETS", text: "Optimized asset pathing and implemented 'Smart-Hide' logic for empty formation slots to ensure clean rendering.", icon: Wrench }
+        ]
+    },
+    {
         date: "Apr 19, 2026",
         items: [
             { category: "ENGINE", text: "Implemented dynamic Skill Discovery logic that automatically scans the filesystem for all hero skill assets.", icon: Zap },
