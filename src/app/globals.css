@@ -31,6 +31,21 @@
 
   --font-sans: var(--font-inter);
   --font-thai: var(--font-prompt);
+
+  /* Linear Design Tokens */
+  --color-linear-bg: #08090a;
+  --color-linear-panel: #0f1011;
+  --color-linear-surface: #191a1b;
+  --color-linear-accent: #5e6ad2;
+  --color-linear-accent-hover: #7170ff;
+  
+  --color-linear-text-primary: #f7f8f8;
+  --color-linear-text-secondary: #d0d6e0;
+  --color-linear-text-tertiary: #8a8f98;
+  --color-linear-text-quaternary: #62666d;
+
+  --color-linear-border: rgba(255, 255, 255, 0.08);
+  --color-linear-border-subtle: rgba(255, 255, 255, 0.05);
 }
 
 /* Enforce Dark Theme Variables at Root with GOLD/BLACK Theme */
@@ -188,23 +203,62 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+@utility linear-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--linear-border-standard);
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@utility linear-card-hover {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+@utility font-linear {
+  font-family: var(--font-inter);
+  font-feature-settings: "cv01", "ss03";
 }
 
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+@utility tracking-display-xl { letter-spacing: -1.584px; }
+@utility tracking-display-lg { letter-spacing: -1.408px; }
+@utility tracking-display { letter-spacing: -1.056px; }
+@utility tracking-h1 { letter-spacing: -0.704px; }
+
+@utility bg-linear-gradient {
+  background: radial-gradient(circle at center, rgba(94, 106, 210, 0.05) 0%, transparent 70%);
 }
+
+@utility linear-mask {
+  mask-image: linear-gradient(to bottom, black 0%, black 50%, transparent 100%);
+}
+
+@utility font-linear {
+  font-feature-settings: "cv01", "ss03", "cv02", "cv03", "cv04", "cv05", "cv06", "cv08", "cv09", "cv10", "cv11";
+}
+
+@utility tracking-display-xl { letter-spacing: -1.584px; }
+@utility tracking-display-lg { letter-spacing: -1.408px; }
+@utility tracking-display { letter-spacing: -1.056px; }
+@utility tracking-h1 { letter-spacing: -0.704px; }
+@utility tracking-h2 { letter-spacing: -0.288px; }
+@utility tracking-h3 { letter-spacing: -0.24px; }
+@utility tracking-body-lg { letter-spacing: -0.165px; }
+
+@utility linear-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+@utility linear-card-hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+@layer base {
+  * {
+    @apply font-linear;
+  }
+}

@@ -1,0 +1,122 @@
+.card {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(31, 41, 55, 0.5);
+  transition: all 0.5s ease;
+}
+
+.card:hover {
+  border-color: rgba(255, 215, 0, 0.4);
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.15);
+}
+
+.imageWrapper {
+  position: relative;
+  aspect-ratio: 3168 / 514;
+  background: linear-gradient(to bottom right, #1a1a1a, #000);
+  overflow: hidden;
+}
+
+.glow {
+  position: absolute;
+  inset: 0;
+  background-color: var(--primary);
+  filter: blur(60px);
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.card:hover .glow {
+  opacity: 0.1;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+
+.card:hover .image {
+  transform: scale(1.05);
+}
+
+.overlayTop {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, black, rgba(0, 0, 0, 0.3) 50%, transparent);
+}
+
+.overlayRight {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.4), transparent);
+}
+
+.content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .content {
+    padding: 1.5rem;
+  }
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.badgeIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--primary);
+  opacity: 0.8;
+}
+
+.badgeText {
+  color: rgba(255, 215, 0, 0.6);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--foreground);
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  transition: color 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .name {
+    font-size: 1.875rem;
+  }
+}
+
+.card:hover .name {
+  color: var(--primary);
+}
+
+.underline {
+  height: 2px;
+  width: 0;
+  background: linear-gradient(to right, var(--primary), #FFA500);
+  transition: width 0.5s ease;
+  margin-top: 0.5rem;
+}
+
+.card:hover .underline {
+  width: 6rem;
+}

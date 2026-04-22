@@ -1,0 +1,198 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(to bottom right, rgba(17, 24, 39, 0.8), rgba(0, 0, 0, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  transition: all 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-0.25rem);
+  box-shadow: 0 15px 45px -10px rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.05);
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.headerInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.number {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(to bottom right, rgba(99, 102, 241, 0.2), rgba(147, 51, 234, 0.3));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #818cf8;
+  font-weight: 900;
+  font-size: 0.875rem;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.tagline {
+  font-size: 9px;
+  font-weight: 900;
+  color: rgba(99, 102, 241, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 0.125rem;
+}
+
+.teamName {
+  font-size: 1.125rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.025em;
+}
+
+@media (min-width: 768px) {
+  .teamName { font-size: 1.25rem; }
+}
+
+.videoLink {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem 1.25rem;
+  background: rgba(99, 102, 241, 0.1);
+  color: #e0e7ff;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.videoLink:hover {
+  background: rgba(99, 102, 241, 0.2);
+}
+
+.videoIcon {
+  width: 1rem;
+  height: 1rem;
+  color: #ef4444;
+  transition: transform 0.3s ease;
+}
+
+.videoLink:hover .videoIcon {
+  transform: scale(1.1);
+}
+
+.externalIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: rgba(129, 140, 248, 0.6);
+}
+
+/* Body */
+.body {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.coreRow {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 1.5rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.coreRow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(99, 102, 241, 0.05);
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.card:hover .coreRow::before {
+  opacity: 1;
+}
+
+.formationArea {
+  flex: 1;
+  padding: 0 1rem;
+}
+
+.divider {
+  width: 1px;
+  height: 4rem;
+  background: linear-gradient(to bottom, transparent, #1f2937, transparent);
+  flex-shrink: 0;
+}
+
+.petArea {
+  flex-shrink: 0;
+}
+
+/* Note Section */
+.noteSection {
+  margin-top: auto;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1.25rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.noteBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: rgba(99, 102, 241, 0.4);
+}
+
+.noteText {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  line-height: 1.625;
+  font-weight: 500;
+  font-style: italic;
+}

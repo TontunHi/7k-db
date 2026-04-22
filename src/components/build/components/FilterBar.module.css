@@ -1,0 +1,148 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+}
+
+/* Search Input */
+.searchWrapper {
+  width: 100%;
+  max-width: 28rem; /* max-w-md */
+  position: relative;
+}
+
+.searchGlow {
+  position: absolute;
+  inset: 0;
+  filter: blur(12px);
+  background-color: var(--primary);
+  opacity: 0.1;
+  transition: opacity 0.3s ease;
+}
+
+.searchWrapper:hover .searchGlow {
+  opacity: 0.3;
+}
+
+.searchInput {
+  width: 100%;
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1rem 1.5rem;
+  text-align: center;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.searchInput::placeholder {
+  color: #374151; /* gray-700 */
+}
+
+.searchInput:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
+}
+
+/* Grade Tabs */
+.tabs {
+  display: flex;
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  padding: 0.375rem;
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.tabButton {
+  padding: 0.75rem 2rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.tabButtonActive {
+  color: #000;
+}
+
+.tabIndicator {
+  position: absolute;
+  inset: 0;
+  background-color: var(--primary);
+  animation: scaleIn 0.3s ease-out;
+}
+
+.tabLabel {
+  position: relative;
+  z-index: 10;
+}
+
+/* Role Filters */
+.roles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.roleButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: #0a0a0a;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.roleButtonActive {
+  background: rgba(255, 215, 0, 0.1);
+  border-color: rgba(255, 215, 0, 0.5);
+  color: var(--primary);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.1);
+}
+
+.roleIconWrapper {
+  position: relative;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.roleStar {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

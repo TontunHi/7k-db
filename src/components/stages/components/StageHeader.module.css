@@ -1,0 +1,86 @@
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.titleWrapper {
+  display: inline-block;
+  position: relative;
+}
+
+.title {
+  font-size: 3.75rem; /* 6xl */
+  font-weight: 900;
+  color: var(--foreground);
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  font-style: italic;
+  transform: skewX(-6deg);
+  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.8));
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 4.5rem; /* 7xl */
+  }
+}
+
+.goldGradient {
+  color: transparent;
+  background: linear-gradient(to right, var(--primary), #FDB931, #FFA500);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.redGradient {
+  color: transparent;
+  background: linear-gradient(to right, #FF0000, #FF4444, #800000);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.underline {
+  position: absolute;
+  bottom: -0.5rem;
+  width: 100%;
+  height: 4px;
+  transform: skewX(-12deg);
+  transition: all 0.3s ease;
+}
+
+.goldUnderline {
+  background: linear-gradient(to right, var(--primary), #FFA500);
+  box-shadow: 0 0 15px var(--primary);
+}
+
+.redUnderline {
+  background: linear-gradient(to right, #FF0000, #800000);
+  box-shadow: 0 0 15px #FF0000;
+}
+
+.titleWrapper:hover .underline {
+  width: 120%;
+  left: -10%;
+}
+
+.subtitle {
+  color: var(--muted-foreground);
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 300;
+  letter-spacing: 0.025em;
+  max-width: 42rem;
+  margin: 1.5rem auto 0;
+  line-height: 1.6;
+}
+
+.highlight {
+  color: var(--foreground);
+  font-weight: 500;
+}
+
+.modeName {
+  font-weight: 700;
+}
+
+.modeStage { color: var(--primary); }
+.modeNightmare { color: #ef4444; }

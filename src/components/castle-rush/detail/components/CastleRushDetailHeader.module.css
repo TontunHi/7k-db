@@ -1,0 +1,114 @@
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(31, 41, 55, 0.5);
+}
+
+.backLink:hover {
+  color: var(--primary);
+}
+
+.banner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3168 / 514;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: linear-gradient(to bottom right, #1a1a1a, #000);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  margin-bottom: 0.5rem;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.overlayTop {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, black, rgba(0, 0, 0, 0.3) 50%, transparent);
+}
+
+.overlayRight {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.6), transparent);
+}
+
+.infoOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .infoOverlay {
+    padding: 2rem;
+  }
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.badgeIcon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--primary);
+}
+
+.badgeText {
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: var(--foreground);
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  font-style: italic;
+  transform: skewX(-3deg);
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+}
+
+@media (min-width: 768px) {
+  .title { font-size: 3rem; }
+}
+
+@media (min-width: 1024px) {
+  .title { font-size: 3.75rem; }
+}
+
+.underline {
+  height: 0.25rem;
+  width: 8rem;
+  background: linear-gradient(to right, var(--primary), #FFA500);
+  margin-top: 1rem;
+  transform: skewX(-12deg);
+  box-shadow: 0 0 15px var(--primary);
+}

@@ -1,0 +1,81 @@
+.page {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--background);
+  overflow: hidden;
+  padding-bottom: 8rem;
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.gridPattern {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to right, rgba(128, 128, 128, 0.07) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(128, 128, 128, 0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.topGlow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  margin: auto;
+  height: 500px;
+  width: 500px;
+  border-radius: 9999px;
+  background-color: rgba(220, 38, 38, 0.1); /* red-600/10 */
+  filter: blur(120px);
+}
+
+.content {
+  position: relative;
+  z-index: 10;
+}
+
+.teamsSection {
+  max-width: 1280px;
+  margin: 4rem auto 0;
+  padding: 0 1rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 8rem 0;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 3rem;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(12px);
+}
+
+.emptyIcon {
+  width: 4rem;
+  height: 4rem;
+  color: #374151;
+  margin: 0 auto 1.5rem;
+}
+
+.emptyText {
+  color: var(--muted-foreground);
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-style: italic;
+}
+
+.setsList {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  max-width: 56rem; /* max-w-4xl */
+  margin: 0 auto;
+}

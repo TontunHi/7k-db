@@ -1,0 +1,214 @@
+.set {
+  position: relative;
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.05), transparent);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2rem;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  transition: all 0.5s ease;
+  margin-bottom: 3rem;
+}
+
+.set:hover {
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+@media (min-width: 640px) {
+  .header {
+    flex-direction: row;
+  }
+}
+
+.headerInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .headerInfo {
+    margin-bottom: 0;
+  }
+}
+
+.number {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background-color: #dc2626; /* red-600 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 900;
+  font-size: 1.125rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.teamTitle {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--foreground);
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: -0.025em;
+  transition: color 0.3s ease;
+}
+
+.set:hover .teamTitle {
+  color: #f87171;
+}
+
+.videoLink {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #dc2626;
+  color: #fff;
+  border-radius: 1rem;
+  font-weight: 900;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 15px -3px rgba(153, 27, 27, 0.4);
+}
+
+.videoLink:hover {
+  background-color: #ef4444;
+  transform: scale(1.05);
+}
+
+.videoLink:active {
+  transform: scale(0.95);
+}
+
+/* Body */
+.body {
+  padding: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .body {
+    padding: 2.5rem;
+  }
+}
+
+.topRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .topRow {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+}
+
+.heroesArea {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .heroesArea {
+    width: 60%;
+  }
+}
+
+.formationInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  margin-left: 0.25rem;
+}
+
+.formationIcon {
+  width: 1rem;
+  height: 1rem;
+  color: #ef4444;
+}
+
+.formationLabel {
+  font-size: 9px;
+  color: #6b7280;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.petArea {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .petArea {
+    width: 40%;
+    align-items: flex-end;
+  }
+}
+
+/* Note Section */
+.noteSection {
+  margin-top: 2rem;
+  position: relative;
+}
+
+.noteContainer {
+  position: relative;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1.5rem;
+  backdrop-filter: blur(12px);
+}
+
+.noteHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.noteIcon {
+  width: 1rem;
+  height: 1rem;
+  color: #ef4444;
+}
+
+.noteBadge {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(239, 68, 68, 0.8);
+}
+
+.noteText {
+  color: #d1d5db;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  font-weight: 500;
+}

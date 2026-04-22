@@ -1,0 +1,219 @@
+.set {
+  position: relative;
+  background: linear-gradient(to bottom, #111, #000);
+  border: 1px solid rgba(31, 41, 55, 1);
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  margin-bottom: 2rem;
+}
+
+.topLine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(to right, #7c3aed, #d946ef);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(31, 41, 55, 0.8);
+  background: rgba(17, 24, 39, 0.4);
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.headerInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.number {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: rgba(139, 92, 246, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a78bfa;
+  font-weight: 800;
+  font-size: 1.125rem;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.teamTitle {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--foreground);
+  letter-spacing: 0.025em;
+}
+
+.videoLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(220, 38, 38, 0.9);
+  color: #fff;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+  font-size: 0.875rem;
+}
+
+.videoLink:hover {
+  background-color: #ef4444;
+}
+
+/* Body */
+.body {
+  padding: 1.5rem;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.heroesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.heroesLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.labelIcon {
+  width: 1rem;
+  height: 1rem;
+  color: #a78bfa;
+}
+
+.labelText {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #a78bfa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.formationText {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.gridAndPet {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .gridAndPet {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.petWrapper {
+  width: 5rem;
+  height: 5rem;
+}
+
+/* Note Section */
+.noteSection {
+  margin-top: 2rem;
+  padding: 1.25rem;
+  background: linear-gradient(to right, #111, rgba(31, 41, 55, 0.5), #111);
+  border: 1px solid rgba(31, 41, 55, 0.8);
+  border-radius: 0.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.noteBar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: rgba(139, 92, 246, 0.5);
+}
+
+.noteHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 0.5rem;
+}
+
+.noteBadge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.expandButton {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #a78bfa;
+  background: rgba(139, 92, 246, 0.1);
+  border: none;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.expandButton:hover {
+  background: rgba(139, 92, 246, 0.2);
+  color: #c4b5fd;
+}
+
+.noteContent {
+  display: grid;
+  transition: all 0.3s ease-in-out;
+}
+
+.noteExpanded {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(31, 41, 55, 0.6);
+}
+
+.noteCollapsed {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+
+.noteText {
+  overflow: hidden;
+  color: #d1d5db;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  font-weight: 500;
+}

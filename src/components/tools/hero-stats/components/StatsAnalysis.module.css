@@ -1,0 +1,241 @@
+.card {
+  background-color: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 2.5rem;
+  padding: 2rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cardAnalysis {
+  border-color: rgba(6, 182, 212, 0.2);
+}
+
+.cardBonus {
+  border-color: rgba(255, 215, 0, 0.1);
+  animation: slideInBottom 0.5s ease;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 1rem;
+}
+
+.headerTitleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.headerIcon {
+  width: 1rem;
+  height: 1rem;
+  color: #FFD700;
+}
+
+.headerTitle {
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.analysisTitle {
+  font-size: 1.25rem;
+  font-weight: 900;
+  font-style: italic;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+}
+
+.analysisTitleAccent {
+  color: #22d3ee;
+}
+
+.analysisSubtitle {
+  font-size: 9px;
+  font-weight: 700;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.analysisIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #22d3ee;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 2rem;
+  row-gap: 1rem;
+}
+
+.statRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  padding-bottom: 0.5rem;
+  transition: all 0.2s;
+}
+
+.statRow:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.statLabelGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.statIconBox {
+  width: 1rem;
+  height: 1rem;
+  position: relative;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.statRow:hover .statIconBox {
+  opacity: 1;
+}
+
+.statLabel {
+  font-size: 9px;
+  font-weight: 900;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: color 0.2s;
+}
+
+.statRow:hover .statLabel {
+  color: #fff;
+}
+
+.statInput {
+  width: 4rem;
+  background: none;
+  border: none;
+  text-align: right;
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: #FFD700;
+  outline: none;
+}
+
+.statInput::placeholder {
+  color: #111827;
+}
+
+.finalValue {
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.025em;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.unit {
+  margin-left: 0.125rem;
+  font-size: 8px;
+  opacity: 0.4;
+}
+
+.bonusIndicator {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 9999px;
+  background-color: #FFD700;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Bonus Card Specifics */
+.bonusList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.bonusItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: rgba(255, 215, 0, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.1);
+  border-radius: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.bonusItemOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(255, 215, 0, 0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.bonusItem:hover .bonusItemOverlay {
+  opacity: 1;
+}
+
+.bonusItemHeader {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bonusName {
+  font-size: 0.875rem;
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: -0.025em;
+}
+
+.bonusPieceBadge {
+  padding: 0.125rem 0.5rem;
+  background-color: #FFD700;
+  color: #000;
+  font-size: 9px;
+  font-weight: 900;
+  border-radius: 0.25rem;
+  text-transform: uppercase;
+  box-shadow: 0 10px 15px -3px rgba(255, 215, 0, 0.2);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes slideInBottom {
+  from { opacity: 0; transform: translateY(1.25rem); }
+  to { opacity: 1; transform: translateY(0); }
+}

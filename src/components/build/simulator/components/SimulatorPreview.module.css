@@ -1,0 +1,175 @@
+.preview {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #070707;
+  position: relative;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .preview {
+    padding: 3rem;
+  }
+}
+
+.hiddenMobile {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .hiddenMobile {
+    display: flex;
+  }
+}
+
+.backgroundEffects {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.2;
+}
+
+.glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 800px;
+  background-color: rgba(255, 215, 0, 0.3);
+  filter: blur(150px);
+  border-radius: 9999px;
+}
+
+.cardScaledWrapper {
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.cardScaler {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+}
+
+.livePreviewLabel {
+  text-align: center;
+  font-size: 10px;
+  color: #4b5563;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5em;
+  margin-bottom: 1rem;
+}
+
+.cardContainer {
+  padding: 0.5rem;
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.1), transparent);
+  border-radius: 40px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.cardInner {
+  overflow: hidden;
+  border-radius: 32px;
+}
+
+/* Floating Actions */
+.actions {
+  position: absolute;
+  bottom: 2.5rem;
+  right: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 50;
+}
+
+.btnCopy {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 900;
+  color: #fff;
+  transition: all 0.2s;
+  backdrop-filter: blur(12px);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.btnCopy:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.copyIcon {
+  color: #FFD700;
+}
+
+.btnDownload {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 2rem;
+  background-color: #FFD700;
+  color: #000;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  box-shadow: 0 20px 50px rgba(255, 215, 0, 0.25);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.btnDownload:hover {
+  transform: scale(1.05);
+}
+
+.btnDownload:active {
+  transform: scale(0.95);
+}
+
+/* Mobile Toggle */
+.mobileToggle {
+  position: fixed;
+  bottom: 2.5rem;
+  right: 2rem;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background-color: #FFD700;
+  color: #000;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 40px rgba(255, 215, 0, 0.4);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+@media (min-width: 1024px) {
+  .mobileToggle {
+    display: none;
+  }
+}
+
+.mobileToggle:active {
+  transform: scale(0.95);
+}

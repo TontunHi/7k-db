@@ -1,0 +1,159 @@
+.set {
+  background: linear-gradient(to bottom, rgba(17, 24, 39, 0.8), #000);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(17, 24, 39, 0.5);
+}
+
+.headerInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.number {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 215, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  font-weight: 900;
+  font-size: 1.125rem;
+}
+
+.teamTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.formationText {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.videoLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #dc2626;
+  color: #fff;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.videoLink:hover {
+  background-color: #ef4444;
+}
+
+/* Body */
+.body {
+  padding: 1.5rem;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .layout {
+    flex-direction: row;
+    gap: 3rem;
+  }
+}
+
+.heroesArea {
+  width: 100%;
+  max-width: 380px;
+}
+
+@media (min-width: 768px) {
+  .heroesArea {
+    max-width: 500px;
+  }
+}
+
+.petWrapper {
+  width: 5rem;
+  height: 5rem;
+}
+
+/* Note Section */
+.noteSection {
+  margin-top: 2rem;
+  position: relative;
+}
+
+.noteGlow {
+  position: absolute;
+  inset: -0.25rem;
+  background: linear-gradient(to right, rgba(245, 158, 11, 0.1), rgba(255, 215, 0, 0.1));
+  border-radius: 2rem;
+  filter: blur(8px);
+  opacity: 0.25;
+}
+
+.noteContainer {
+  position: relative;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1.5rem;
+  backdrop-filter: blur(4px);
+}
+
+.noteHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.noteIconWrapper {
+  padding: 0.375rem;
+  border-radius: 0.5rem;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.noteIcon {
+  width: 1rem;
+  height: 1rem;
+  color: #fbbf24; /* amber-400 */
+}
+
+.noteBadge {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(245, 158, 11, 0.8);
+}
+
+.noteText {
+  color: #d1d5db;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  font-weight: 500;
+}

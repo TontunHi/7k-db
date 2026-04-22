@@ -1,0 +1,139 @@
+.page {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #020203;
+  overflow: hidden;
+  padding-bottom: 8rem;
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.glowTop {
+  position: absolute;
+  top: -10%;
+  right: -10%;
+  width: 80%;
+  height: 80%;
+  background-color: rgba(79, 70, 229, 0.05); /* indigo-600 */
+  border-radius: 9999px;
+  filter: blur(160px);
+}
+
+.glowBottom {
+  position: absolute;
+  bottom: -10%;
+  left: -10%;
+  width: 60%;
+  height: 60%;
+  background-color: rgba(88, 28, 135, 0.05); /* purple-900 */
+  border-radius: 9999px;
+  filter: blur(140px);
+}
+
+.gridPattern {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M60 0H0v60h60V0zM1 1h58v58H1V1z' fill='white' fill-opacity='0.05'/%3E%3C/svg%3E");
+  background-position: center;
+  mask-image: radial-gradient(ellipse at center, white, transparent);
+  opacity: 0.1;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent, rgba(2, 2, 3, 0.5), #020203);
+}
+
+.content {
+  position: relative;
+  z-index: 10;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+@media (min-width: 768px) {
+  .content {
+    padding: 2rem 1.5rem;
+  }
+}
+
+.teamsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.emptyState {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  items-center: center;
+  justify-content: center;
+  padding: 10rem 0;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 3rem;
+  background: rgba(10, 10, 12, 0.5);
+  backdrop-filter: blur(4px);
+  overflow: hidden;
+  text-align: center;
+}
+
+.emptyGlow {
+  position: absolute;
+  inset: -0.25rem;
+  background: linear-gradient(to bottom, rgba(31, 41, 55, 0.2), transparent);
+  border-radius: 3rem;
+  filter: blur(24px);
+  opacity: 0.2;
+}
+
+.emptyIconWrapper {
+  padding: 1.5rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 2rem;
+  display: inline-block;
+}
+
+.emptyIcon {
+  width: 4rem;
+  height: 4rem;
+  color: #374151;
+}
+
+.emptyTitle {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #9ca3af;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.025em;
+}
+
+.emptyText {
+  color: #4b5563;
+  max-width: 24rem;
+  margin: 0 auto;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.footerGradient {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 8rem;
+  background: linear-gradient(to top, #020203, transparent);
+  pointer-events: none;
+  z-index: 20;
+}

@@ -1,0 +1,200 @@
+.heroSelection {
+  min-height: 100vh;
+  background-color: #050505;
+  color: #fff;
+  padding: 1.5rem;
+  animation: fadeIn 0.7s ease;
+}
+
+@media (min-width: 1024px) {
+  .heroSelection {
+    padding: 3rem;
+  }
+}
+
+.container {
+  max-width: 72rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.title {
+  font-size: 3.75rem;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.titleAccent {
+  color: transparent;
+  background-clip: text;
+  background-image: linear-gradient(to right, #FFD700, #FDB931, #FFD700);
+}
+
+.subtitle {
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  max-width: 32rem;
+  margin: 0 auto;
+  line-height: 1.625;
+}
+
+.pickerBox {
+  background-color: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 3rem;
+  padding: 2.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.searchWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .searchWrapper {
+    flex-direction: row;
+  }
+}
+
+.searchInputBox {
+  position: relative;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .searchInputBox {
+    width: 600px;
+  }
+}
+
+.searchIcon {
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.5rem;
+  height: 1.5rem;
+  color: rgba(255, 215, 0, 0.4);
+}
+
+.searchInput {
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2rem;
+  padding: 1.5rem 2rem 1.5rem 4rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.3s;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+}
+
+.searchInput:focus {
+  border-color: rgba(255, 215, 0, 0.5);
+}
+
+.searchInput::placeholder {
+  color: #111827;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  animation: slideInBottom 0.7s ease;
+}
+
+@media (min-width: 640px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 768px) { .grid { grid-template-columns: repeat(5, 1fr); } }
+@media (min-width: 1024px) { .grid { grid-template-columns: repeat(6, 1fr); } }
+
+.heroButton {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.heroButton:hover {
+  transform: scale(1.05);
+}
+
+.heroButton:active {
+  transform: scale(0.95);
+}
+
+.portraitWrapper {
+  position: relative;
+  aspect-ratio: 11 / 14;
+  width: 100%;
+  border-radius: 2.5rem;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  background-color: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.3s;
+}
+
+.heroButton:hover .portraitWrapper {
+  border-color: #FFD700;
+}
+
+.portraitImage {
+  object-fit: contain;
+  transition: transform 0.7s ease;
+}
+
+.heroButton:hover .portraitImage {
+  transform: scale(1.1);
+}
+
+.portraitOverlay {
+  position: absolute;
+  inset-x: 0;
+  bottom: 0;
+  height: 33.333333%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.heroButton:hover .portraitOverlay {
+  opacity: 1;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInBottom {
+  from { opacity: 0; transform: translateY(1.25rem); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,161 @@
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.backLink:hover {
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.backIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  transition: transform 0.3s ease;
+}
+
+.backLink:hover .backIcon {
+  transform: translateX(-4px);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .content {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 18rem; /* lg:w-72 */
+  aspect-ratio: 3 / 4;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.ambientBg {
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  opacity: 0.2;
+  filter: blur(24px);
+  transform: scale(1.1);
+}
+
+.mainImage {
+  position: relative;
+  z-index: 10;
+  object-fit: contain;
+  transition: transform 0.7s ease;
+}
+
+.imageWrapper:hover .mainImage {
+  transform: scale(1.02);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, black, transparent 40%);
+  z-index: 20;
+}
+
+.info {
+  flex: 1;
+  text-align: center;
+}
+
+@media (min-width: 1024px) {
+  .info {
+    text-align: left;
+    padding-top: 2rem;
+  }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  margin-bottom: 1rem;
+}
+
+.badgeIcon {
+  width: 1rem;
+  height: 1rem;
+  color: #ef4444;
+}
+
+.badgeText {
+  color: #ef4444;
+  font-size: 9px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: var(--foreground);
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  font-style: italic;
+  transform: skewX(-3deg);
+}
+
+@media (min-width: 768px) {
+  .title { font-size: 3rem; }
+}
+
+@media (min-width: 1024px) {
+  .title { font-size: 3.75rem; }
+}
+
+.subtitle {
+  color: var(--muted-foreground);
+  font-size: 1rem;
+  font-weight: 500;
+  max-width: 32rem;
+  margin: 1rem auto 0;
+}
+
+@media (min-width: 1024px) {
+  .subtitle {
+    margin-left: 0;
+  }
+}

@@ -5,6 +5,7 @@ import {
     Sword, Map, Skull, Landmark, Trophy, Crown, Compass, Swords, Wand2, Sparkles, Zap, ArrowRight 
 } from 'lucide-react'
 import { clsx } from 'clsx'
+import styles from './FeatureCard.module.css'
 
 const ICON_MAP = {
     Sword, Map, Skull, Landmark, Trophy, Crown, Compass, Swords, Wand2, Sparkles, Zap
@@ -13,48 +14,32 @@ const ICON_MAP = {
 export default function FeatureCard({ title, description, iconName, href, color, glow }) {
     const Icon = ICON_MAP[iconName] || Sword
 
+    // Note: 'color' and 'glow' currently contain Tailwind classes. 
+    // We combine them with CSS Module classes for structure.
     return (
         <Link
             href={href}
-            className={clsx(
-                "group relative p-6 bg-[#0a0a0a] border border-gray-800 rounded-2xl overflow-hidden transition-all duration-500",
-                "hover:border-white/20 hover:-translate-y-1.5 hover:bg-gradient-to-br hover:from-[#111] hover:to-black",
-                "shadow-2xl flex flex-col",
-                glow
-            )}
+            className={clsx(styles.card, glow)}
         >
             {/* Top Border Glow */}
-            <div className={clsx(
-                "absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r opacity-30 group-hover:opacity-100 transition-opacity duration-500",
-                color
-            )} />
+            <div className={clsx(styles.topGlow, "bg-gradient-to-r", color)} />
 
             {/* Background Radial Glow */}
-            <div className={clsx(
-                "absolute -inset-px bg-gradient-to-br opacity-0 group-hover:opacity-[0.05] transition-opacity duration-700",
-                color
-            )} />
+            <div className={clsx(styles.bgRadialGlow, "bg-gradient-to-br", color)} />
 
-            <div className="relative z-10 flex flex-col items-center text-center gap-4 flex-1">
+            <div className={styles.content}>
                 {/* Icon Container */}
-                <div className={clsx(
-                    "p-4 rounded-2xl bg-black border border-gray-800 transition-all duration-500",
-                    "group-hover:scale-110 group-hover:border-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]",
-                    "relative overflow-hidden shrink-0"
-                )}>
-                    <div className={clsx(
-                        "absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity bg-gradient-to-br",
-                        color
-                    )} />
-                    <Icon className="w-8 h-8 text-white relative z-10" />
+                <div className={styles.iconWrapper}>
+                    <div className={clsx(styles.iconOverlay, "bg-gradient-to-br", color)} />
+                    <Icon className={styles.icon} />
                 </div>
 
-                <div className="space-y-2 flex-1 flex flex-col justify-center">
-                    <h3 className="text-lg md:text-xl font-black italic uppercase text-white tracking-wider group-hover:text-[#FFD700] transition-colors duration-300 leading-tight">
+                <div className={styles.textContainer}>
+                    <h3 className={styles.title}>
                         {title}
                     </h3>
                     {description && (
-                        <p className="text-[11px] text-gray-500 group-hover:text-gray-400 transition-colors duration-300 leading-relaxed font-medium">
+                        <p className={styles.description}>
                             {description}
                         </p>
                     )}
@@ -62,12 +47,13 @@ export default function FeatureCard({ title, description, iconName, href, color,
             </div>
 
             {/* Arrow indicator */}
-            <div className="opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-500 absolute right-4 top-4">
-                <ArrowRight className="w-4 h-4 text-gray-400" />
+            <div className={styles.arrow}>
+                <ArrowRight className={styles.arrowIcon} />
             </div>
 
             {/* Animated Light Sweep Effect */}
-            <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-[1500ms] ease-in-out pointer-events-none bg-gradient-to-r from-transparent via-white/[0.03] to-transparent" />
+            <div className={styles.sweep} />
         </Link>
     )
 }
+

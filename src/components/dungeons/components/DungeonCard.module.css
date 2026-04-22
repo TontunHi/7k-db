@@ -1,0 +1,76 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  overflow: visible;
+}
+
+.glow {
+  position: absolute;
+  inset: 1rem;
+  background-color: var(--primary);
+  filter: blur(40px);
+  opacity: 0.1;
+  transition: opacity 0.5s ease;
+}
+
+.card:hover .glow {
+  opacity: 0.3;
+}
+
+.image {
+  object-fit: contain;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.8));
+  transition: transform 0.5s ease;
+}
+
+.card:hover .image {
+  transform: scale(1.05);
+}
+
+.nameWrapper {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--foreground);
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  font-style: italic;
+  transform: skewX(-6deg);
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+  transition: color 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .name { font-size: 1.875rem; }
+}
+
+.card:hover .name {
+  color: var(--primary);
+}
+
+.underline {
+  height: 2px;
+  width: 0;
+  background-color: var(--primary);
+  transition: width 0.3s ease;
+  margin: 0.5rem auto 0;
+  transform: skewX(-12deg);
+}
+
+.card:hover .underline {
+  width: 100%;
+}

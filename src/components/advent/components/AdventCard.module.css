@@ -1,0 +1,215 @@
+.card {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-decoration: none;
+  transition: all 0.5s ease;
+  aspect-ratio: 4 / 5; /* Default aspect ratio for all cards */
+}
+
+.card:hover {
+  transform: translateY(-0.75rem);
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%; /* Fill the card's aspect-ratio box */
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  background: #000;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.special {
+  grid-column: span 1;
+  aspect-ratio: 16 / 9 !important; /* Taller on mobile */
+}
+
+@media (min-width: 640px) {
+  .special {
+    grid-column: 1 / span 2 !important; /* Full width on 2-col */
+    aspect-ratio: 21 / 9 !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .special {
+    grid-column: 2 / span 2 !important; /* Centered on 4-col */
+    aspect-ratio: 21 / 9 !important;
+  }
+}
+
+/* Special styling for the content of the special card */
+.special .content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.special .name {
+  justify-content: center;
+  font-size: 1.5rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .special .name {
+    font-size: 2rem;
+  }
+}
+
+/* Glow effect */
+.glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom right, rgba(139, 92, 246, 0.2), transparent, transparent);
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  z-index: 5;
+}
+
+.card:hover .glow {
+  opacity: 1;
+}
+
+.imageContainer {
+  position: absolute;
+  inset: 0.25rem;
+  overflow: hidden;
+  background-color: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  /* Modified clip path for wider boxes */
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%);
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+
+.objectTop {
+  object-position: top;
+}
+
+.card:hover .image {
+  transform: scale(1.1);
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, black, transparent);
+  opacity: 0.6;
+  transition: opacity 0.5s ease;
+}
+
+.card:hover .imageOverlay {
+  opacity: 0.4;
+}
+
+/* Corner Accents */
+.accentTopLeft {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-top: 2px solid rgba(139, 92, 246, 0.4);
+  border-left: 2px solid rgba(139, 92, 246, 0.4);
+  opacity: 0;
+  transition: all 0.5s ease;
+}
+
+.accentBottomRight {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-bottom: 2px solid rgba(139, 92, 246, 0.4);
+  border-right: 2px solid rgba(139, 92, 246, 0.4);
+  opacity: 0;
+  transition: all 0.5s ease;
+}
+
+.card:hover .accentTopLeft,
+.card:hover .accentBottomRight {
+  opacity: 1;
+}
+
+/* Name Overlay */
+.content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem;
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.6);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  transform: translateY(0.5rem);
+  transition: transform 0.5s ease;
+  z-index: 10;
+}
+
+.card:hover .content {
+  transform: translateY(0);
+}
+
+.name {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--foreground);
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: color 0.3s ease;
+}
+
+.card:hover .name {
+  color: #a78bfa;
+}
+
+.nameIconWrapper {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background: rgba(139, 92, 246, 0.2);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover .nameIconWrapper {
+  opacity: 1;
+}
+
+.nameIcon {
+  width: 1rem;
+  height: 1rem;
+  color: #a78bfa;
+}
+
+.underline {
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(to right, #8b5cf6, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s ease;
+  margin-top: 0.5rem;
+}
+
+.card:hover .underline {
+  transform: scaleX(1);
+}

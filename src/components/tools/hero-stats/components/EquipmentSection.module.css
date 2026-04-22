@@ -1,0 +1,439 @@
+.slotCard {
+  background-color: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 2.5rem;
+  padding: 0.75rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .slotCard {
+    padding: 1.25rem;
+  }
+}
+
+.slotHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.slotTypeBadge {
+  font-size: 0.875rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #FFD700;
+  font-style: italic;
+  padding: 0.25rem 0.5rem;
+  background-color: rgba(255, 215, 0, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.1);
+  border-radius: 0.5rem;
+}
+
+.btnClear {
+  font-size: 9px;
+  font-weight: 900;
+  color: #ef4444;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.btnClear:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.dropZone {
+  position: relative;
+  min-height: 160px;
+  width: 100%;
+  border-radius: 2.5rem;
+  border: 2px dashed rgba(255, 255, 255, 0.05);
+  background-color: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s;
+  overflow: hidden;
+  backdrop-filter: blur(4px);
+}
+
+.dropZone:hover {
+  border-color: rgba(255, 215, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
+}
+
+.dropZoneFilled {
+  border-style: solid;
+  border-color: rgba(255, 215, 0, 0.3);
+  background: linear-gradient(to bottom right, rgba(255, 215, 0, 0.05), transparent);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.emptyContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  opacity: 0.2;
+  transition: opacity 0.5s;
+}
+
+.dropZone:hover .emptyContent {
+  opacity: 1;
+}
+
+.plusIconWrapper {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.dropZone:hover .plusIconWrapper {
+  transform: scale(1.1);
+  border-color: rgba(255, 215, 0, 0.5);
+}
+
+.plusIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #fff;
+}
+
+.equipLabel {
+  font-size: 10px;
+  font-weight: 900;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.filledContent {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .filledContent {
+    padding: 1rem;
+  }
+}
+
+.itemInfoRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.itemPortrait {
+  position: relative;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+  flex-shrink: 0;
+  transition: transform 0.7s;
+}
+
+.dropZone:hover .itemPortrait {
+  transform: scale(1.1);
+}
+
+.itemNameGroup {
+  flex: 1;
+  padding: 0.25rem 0;
+  overflow: hidden;
+}
+
+.itemName {
+  font-size: 13px;
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+  transition: color 0.2s;
+}
+
+.dropZone:hover .itemName {
+  color: #FFD700;
+}
+
+.baseStatBadges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.baseStatBadgeWeapon {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  background-color: rgba(249, 115, 22, 0.1);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+  border-radius: 0.5rem;
+}
+
+.baseStatBadgeArmor {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.375rem 0.75rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  width: fit-content;
+}
+
+.armorStatPart {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.armorStatPart:first-child {
+  padding-right: 0.625rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.statIconMini {
+  width: 0.75rem;
+  height: 0.75rem;
+  position: relative;
+  opacity: 0.7;
+}
+
+.statTextMini {
+  font-size: 10px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.statTextAtk { color: #f97316; }
+.statTextHp { color: #22c55e; }
+.statTextDef { color: #3b82f6; }
+
+.divider {
+  width: 1px;
+  height: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.mainStatSection {
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.mainStatHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.25rem;
+}
+
+.mainStatLabel {
+  font-size: 9px;
+  font-weight: 900;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.mainStatIconSmall {
+  width: 0.75rem;
+  height: 0.75rem;
+  position: relative;
+  opacity: 0.4;
+}
+
+.selectWrapper {
+  position: relative;
+}
+
+.selectMainStat {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
+  font-size: 11px;
+  font-weight: 900;
+  color: #22d3ee;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+}
+
+.selectMainStat:hover {
+  background-color: rgba(255, 255, 255, 0.07);
+}
+
+.selectMainStat:focus {
+  border-color: rgba(6, 182, 212, 0.5);
+}
+
+.chevronDown {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  pointer-events: none;
+  color: rgba(6, 182, 212, 0.5);
+}
+
+.selectWrapper:hover .chevronDown {
+  color: #22d3ee;
+}
+
+/* Substats */
+.substatsSection {
+  flex: 1;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.substatRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.substatSelectWrapper {
+  position: relative;
+  flex: 1;
+}
+
+.selectSubstat {
+  width: 100%;
+  background-color: #000;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 0.75rem;
+  padding: 0.625rem 2rem 0.625rem 1rem;
+  font-size: 10px;
+  font-weight: 900;
+  color: #9ca3af;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.selectSubstat:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.selectSubstat:focus {
+  color: #fff;
+  border-color: #FFD700;
+}
+
+.levelControl {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.25rem;
+  border-radius: 0.75rem;
+}
+
+.statValue {
+  width: 3rem;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 900;
+  color: #fff;
+}
+
+.levelButtons {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.btnLevel {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  color: #6b7280;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btnLevel:not(:disabled):hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.btnLevel:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.levelNumber {
+  width: 1rem;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: #FFD700;
+}
+
+.unlockNote {
+  font-size: 8px;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

@@ -1,0 +1,80 @@
+.container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.25rem;
+}
+
+.button {
+  position: relative;
+  padding: 0.75rem 2.5rem;
+  text-transform: uppercase;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--muted-foreground);
+  cursor: pointer;
+  clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+}
+
+.button:hover {
+  border-color: #6b7280; /* gray-500 */
+  color: var(--foreground);
+  background: rgba(255, 255, 255, 0.05);
+  transform: scale(1.05);
+}
+
+.button:active {
+  transform: scale(0.95);
+}
+
+.active {
+  border-color: var(--primary);
+  background: rgba(255, 215, 0, 0.1);
+  color: var(--primary);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
+}
+
+.corner {
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  transition: border-color 0.3s ease;
+}
+
+.topLeft {
+  top: 0;
+  left: 0;
+  border-top: 2px solid #4b5563;
+  border-left: 2px solid #4b5563;
+}
+
+.bottomRight {
+  bottom: 0;
+  right: 0;
+  border-bottom: 2px solid #4b5563;
+  border-right: 2px solid #4b5563;
+}
+
+.active .topLeft {
+  border-color: var(--primary);
+}
+
+.active .bottomRight {
+  border-color: var(--primary);
+}
+
+.button:hover .topLeft,
+.button:hover .bottomRight {
+  border-color: var(--foreground);
+}

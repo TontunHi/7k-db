@@ -1,0 +1,121 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #0a0a0a;
+  border: 1px solid rgba(31, 41, 55, 0.6);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  overflow: hidden;
+  text-decoration: none;
+  transition: all 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-0.25rem);
+}
+
+.glow {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  border-radius: 1.25rem;
+}
+
+.card:hover .glow {
+  opacity: 1;
+}
+
+.borderGlow {
+  position: absolute;
+  inset: 0;
+  border-radius: 1.25rem;
+  border: 2px solid transparent;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.card:hover .borderGlow {
+  opacity: 1;
+}
+
+.logoWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  margin-bottom: 1rem;
+  transition: transform 0.5s ease;
+  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.9));
+}
+
+.card:hover .logoWrapper {
+  transform: scale(1.05);
+}
+
+.logo {
+  object-fit: contain;
+}
+
+.info {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.meta {
+  color: #4b5563;
+  font-size: 0.75rem;
+  font-family: monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.countBadge {
+  margin-top: 0.5rem;
+  display: inline-block;
+  padding: 0.125rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #000;
+}
+
+.bottomLine {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  transition: width 0.5s ease;
+}
+
+.card:hover .bottomLine {
+  width: 100%;
+}
+
+/* Dynamic Classes from Config */
+.borderNormal { border-color: rgba(148, 163, 184, 0.5); }
+.borderElite { border-color: rgba(52, 211, 153, 0.5); }
+.borderSuperb { border-color: rgba(251, 113, 133, 0.5); }
+.borderLegendary { border-color: rgba(255, 215, 0, 0.5); }
+
+.bgNormal { background: linear-gradient(to right, #94a3b8, #475569); }
+.bgElite { background: linear-gradient(to right, #34d399, #059669); }
+.bgSuperb { background: linear-gradient(to right, #fb7185, #dc2626); }
+.bgLegendary { background: linear-gradient(to right, #ffd700, #ff8c00); }
