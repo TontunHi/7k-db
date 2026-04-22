@@ -9,7 +9,7 @@ export default async function AdminLayout({ children }) {
     const user = await getAdminUser()
 
     return (
-        <div className="min-h-screen bg-black flex flex-col md:flex-row">
+        <div className="min-h-screen bg-background flex flex-col md:flex-row">
             <Sidebar user={user} />
 
             {/* Main Content */}

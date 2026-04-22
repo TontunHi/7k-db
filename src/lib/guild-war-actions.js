@@ -26,7 +26,7 @@ export async function getGuildWarTeams(type = 'attacker') {
             : (row.counters_json || []),
         items: typeof row.items_json === 'string'
             ? JSON.parse(row.items_json)
-            : (row.items_json || {}),
+            : (row.items_json || []),
         pet_supports: typeof row.pet_supports_json === 'string'
             ? JSON.parse(row.pet_supports_json)
             : (row.pet_supports_json || []),
@@ -72,7 +72,7 @@ export async function createGuildWarTeam(data) {
                 JSON.stringify(validatedData.heroes), 
                 JSON.stringify(validatedData.selection_order || []),
                 JSON.stringify(validatedData.skill_rotation), 
-                JSON.stringify(validatedData.items || {}),
+                JSON.stringify(validatedData.items || []),
                 validatedData.video_url, 
                 validatedData.note,
                 JSON.stringify(validatedData.counters || []),
@@ -116,7 +116,7 @@ export async function updateGuildWarTeam(id, data) {
                 JSON.stringify(validatedData.heroes), 
                 JSON.stringify(validatedData.selection_order || []),
                 JSON.stringify(validatedData.skill_rotation), 
-                JSON.stringify(validatedData.items || {}),
+                JSON.stringify(validatedData.items || []),
                 validatedData.video_url, 
                 validatedData.note, 
                 JSON.stringify(validatedData.counters || []),

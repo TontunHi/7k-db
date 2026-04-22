@@ -1,0 +1,414 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Header */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+/* Tier Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.tierCard {
+  position: relative;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.tierCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.tierLogo {
+  position: relative;
+  width: 10rem;
+  height: 10rem;
+  transition: transform 0.5s ease;
+}
+
+.tierCard:hover .tierLogo {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.tierName {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.tierMeta {
+  font-size: 0.625rem;
+  font-weight: 900;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.setBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 2rem;
+}
+
+.tierLine {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 0;
+  transition: width 0.5s ease;
+}
+
+.tierCard:hover .tierLine {
+  width: 100%;
+}
+
+/* Editor Layout */
+.editorLayout {
+  display: flex;
+  gap: 2rem;
+}
+
+.sidebar {
+  width: 16rem;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sidebarLogoCard {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  border: 2px solid var(--border);
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 2rem;
+}
+
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  background-color: rgba(var(--card-rgb), 0.5);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  backdrop-filter: blur(10px);
+}
+
+/* Set Card */
+.setCard {
+  border-radius: 1.5rem;
+  border: 1px solid var(--border);
+  background-color: rgba(var(--card-rgb), 0.2);
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+
+.setCardDirty {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.setHead {
+  padding: 1rem 1.5rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.setMeta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.indexBadge {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 0.875rem;
+  color: #000;
+}
+
+.setNameInput {
+  background-color: transparent;
+  border: none;
+  font-size: 1.125rem;
+  font-weight: 900;
+  color: #fff;
+  outline: none;
+  flex: 1;
+}
+
+.setBody {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Team Card */
+.teamCard {
+  border-radius: 1.25rem;
+  border: 1px solid var(--border);
+  background-color: rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.teamCardDirty {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.teamHead {
+  padding: 0.75rem 1.25rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.teamBody {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Rotation */
+.rotationGrid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  position: relative;
+}
+
+.slotLabel {
+  width: 3.5rem;
+  background-color: transparent;
+  border: none;
+  text-align: center;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--muted-foreground);
+  outline: none;
+}
+
+.skillBtn {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  border: 2px dashed var(--border);
+  background-color: var(--background);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.skillBtnActive {
+  border-style: solid;
+}
+
+.addTeamBtn {
+  width: 100%;
+  padding: 1rem;
+  border: 2px dashed var(--border);
+  border-radius: 1rem;
+  background-color: transparent;
+  color: var(--muted-foreground);
+  font-weight: 700;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.addTeamBtn:hover {
+  border-color: var(--muted-foreground);
+  color: var(--foreground);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1024px) {
+  .editorLayout {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+  }
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.modalContent {
+  background-color: #111;
+  width: 100%;
+  max-width: 42rem;
+  border-radius: 2rem;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+}
+
+.modalHeader {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.modalBody {
+  padding: 2rem;
+  max-height: 70vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.heroRow {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.heroSkills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-left: 3.5rem;
+}
+
+.skillPickBtn {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
+  border: 2px solid var(--border);
+  overflow: hidden;
+  position: relative;
+  background-color: var(--background);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+}
+
+.skillPickBtn:hover {
+  border-color: #ef4444;
+  transform: scale(1.1);
+  z-index: 10;
+}
+
+.skillPickBtn:active {
+  transform: scale(0.95);
+}

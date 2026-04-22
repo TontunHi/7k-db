@@ -5,6 +5,7 @@ import fs from "fs"
 import path from "path"
 import { logSiteUpdate } from "@/lib/log-actions"
 import { requireAdmin } from "./auth-guard"
+import { getGradeFromFilename, parseHeroDetails } from "./hero-utils"
 
 async function ensureDB() {
     await initDB()
@@ -41,8 +42,7 @@ export async function saveTierlistEntry(data) {
     const slug = heroFilename.replace(/\.[^/.]+$/, "")
 
     // 1. Ensure Hero Exists in DB (Minimal)
-    const grade = getGradeFromFilename(heroFilename)
-    const name = getNameFromFilename(heroFilename)
+    const { name, grade } = parseHeroDetails(heroFilename)
 
     await pool.query(`
         INSERT IGNORE INTO heroes (filename, name, grade, skill_priority)
@@ -65,26 +65,11 @@ export async function removeTierlistEntry(heroFilename, category) {
     await requireAdmin()
     await ensureDB()
     const slug = heroFilename.replace(/\.[^/.]+$/, "")
-    const name = getNameFromFilename(heroFilename)
+    const { name } = parseHeroDetails(heroFilename)
     await pool.query("DELETE FROM tierlist WHERE hero_filename = ? AND category = ?", [slug, category])
     await logSiteUpdate('TIERLIST', name, 'DELETE', `Removed from Tier List: ${name} [${category.toUpperCase()}]`)
 }
 
-// Logic to parse filename
-function getGradeFromFilename(filename) {
-    if (filename.startsWith("l++_")) return "l++"
-    if (filename.startsWith("l+_")) return "l+"
-    if (filename.startsWith("l_")) return "l"
-    if (filename.startsWith("r_")) return "r"
-    return "unknown"
-}
-
-function getNameFromFilename(filename) {
-    return filename
-        .replace(/^(l\+\+|l\+|l|r)_/, "") // Remove grade prefix
-        .replace(/\.[^/.]+$/, "")         // Remove extension
-        .replace(/_/g, " ")               // Replace underscores
-}
 
 export async function getAllHeroesForTierlist() {
     // Read from File System to get ALL heroes in the folder
@@ -97,16 +82,8 @@ export async function getAllHeroesForTierlist() {
     // Convert files to hero objects
     const heroes = files
         .filter(file => /\.(png|jpg|jpeg|webp)$/i.test(file))
-        .map(file => {
-            const grade = getGradeFromFilename(file)
-            return {
-                filename: file,
-                grade: grade,
-                name: getNameFromFilename(file)
-            }
-        })
-        // Filter specifically for requested grades
-        .filter(h => ["l++", "l+", "l", "r"].includes(h.grade))
+        .map(file => parseHeroDetails(file))
+        .filter(h => h && ["l++", "l+", "l", "r"].includes(h.grade))
 
     return heroes
 }

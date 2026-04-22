@@ -1,0 +1,306 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Header */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+/* Raid Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.raidCard {
+  position: relative;
+  aspect-ratio: 3/4;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background-color: #000;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.raidCard:hover {
+  transform: translateY(-8px);
+  border-color: #ef4444;
+  box-shadow: 0 30px 60px -12px rgba(239, 68, 68, 0.3);
+}
+
+.bgImage {
+  object-fit: cover;
+  opacity: 0.7;
+  transition: all 0.8s ease;
+}
+
+.raidCard:hover .bgImage {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #000 0%, transparent 60%);
+  z-index: 1;
+}
+
+.cardContent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.raidName {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  font-style: italic;
+  line-height: 1;
+}
+
+.setBadge {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 10;
+  background-color: #ef4444;
+  color: #fff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 2rem;
+  font-size: 0.625rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+/* Editor Layout */
+.editorLayout {
+  display: flex;
+  gap: 2rem;
+}
+
+.sidebar {
+  width: 18rem;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sidebarCard {
+  position: relative;
+  aspect-ratio: 3/4;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background-color: var(--card);
+}
+
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.stickyHeader {
+  position: sticky;
+  top: 1rem;
+  z-index: 40;
+  background-color: rgba(var(--background-rgb), 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Team Set Card */
+.teamSet {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.teamSetDirty {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.setHead {
+  padding: 1rem 1.5rem;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.setNameInput {
+  background-color: transparent;
+  border: none;
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  font-style: italic;
+  outline: none;
+  width: 250px;
+}
+
+.setBody {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* Skill Rotation Grid - New Hybrid Design */
+.rotationSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sectionLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.625rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--muted-foreground);
+}
+
+.skillPool {
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.5rem;
+}
+
+.heroColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.skillToggle {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
+  border: 2px solid var(--border);
+  background-color: var(--background);
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.skillIconWrapper {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.875rem;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.skillToggleActive {
+  border-color: #ef4444;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+.skillToggleActive::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.orderBadge {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: #ef4444;
+  color: #fff;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 900;
+  z-index: 20;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 2px solid #000;
+}
+
+@keyframes popIn {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .editorLayout {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .sidebarCard {
+    width: 8rem;
+  }
+}

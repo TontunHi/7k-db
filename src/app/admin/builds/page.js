@@ -1,21 +1,20 @@
 import fs from "fs"
 import path from "path"
-import BuildManager from "@/components/admin/BuildManager"
 import { getHeroesMetadata } from "@/lib/build-db"
-
-// Logic to parse filename to grade (Same as BuildPage to ensure consistency)
-function getGradeFromFilename(filename) {
-    if (filename.startsWith("l++_")) return "l++"
-    if (filename.startsWith("l+_")) return "l+"
-    if (filename.startsWith("l_")) return "l"
-    if (filename.startsWith("r_")) return "r"
-    return "unknown"
-}
+import { parseHeroDetails } from "@/lib/hero-utils"
+import BuildManagerView from "@/components/admin/builds/BuildManagerView"
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = { title: 'Hero Builds' }
+export const metadata = { 
+    title: 'Hero Builds Management | Admin',
+    description: 'Configure and optimize hero equipment sets and skill priorities.'
+}
 
+/**
+ * AdminBuildsPage - Server Component
+ * Handles scanning the filesystem and fetching metadata for hero builds.
+ */
 export default async function AdminBuildsPage() {
     const heroesDir = path.join(process.cwd(), "public", "heroes")
     let heroes = []
@@ -33,38 +32,36 @@ export default async function AdminBuildsPage() {
         heroes = files
             .filter((file) => /\.(png|jpg|jpeg|webp)$/i.test(file))
             .map((file) => {
-                const slug = file.replace(/\.[^/.]+$/, "")
-                const grade = getGradeFromFilename(file)
-                if (grade === "unknown") return null
+                const details = parseHeroDetails(file)
+                if (!details || details.grade === "unknown") return null
 
                 return {
-                    filename: file,
-                    slug: slug,
-                    grade: grade,
-                    name: file.replace(/^(l\+\+|l\+|l|r)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " "),
-                    is_new_hero: metadata[slug]?.is_new_hero || false
+                    ...details,
+                    is_new_hero: metadata[details.slug]?.is_new_hero || false
                 }
             })
-            .filter((h) => h !== null)
-
-            // Sort logic: is_new_hero > grade > filename
+            .filter(Boolean)
             .sort((a, b) => {
-                // 1. is_new_hero
+                // Priority 1: New Heroes first
                 if (a.is_new_hero !== b.is_new_hero) return b.is_new_hero ? 1 : -1
 
-                // 2. grade
+                // Priority 2: Grade ranking (L++ > L+ > L > R)
                 const gradesOrder = { "l++": 4, "l+": 3, "l": 2, "r": 1 }
                 const rankA = gradesOrder[a.grade] || 0
                 const rankB = gradesOrder[b.grade] || 0
                 if (rankA !== rankB) return rankB - rankA
 
-                // 3. filename
+                // Priority 3: Alphabetical by filename
                 return a.filename.localeCompare(b.filename)
             })
 
     } catch (error) {
-        console.error("Error reading hero files:", error)
+        console.error("[ADMIN_BUILDS] Error loading hero registry:", error)
     }
 
-    return <BuildManager heroes={heroes} />
+    return (
+        <main>
+            <BuildManagerView heroes={heroes} />
+        </main>
+    )
 }

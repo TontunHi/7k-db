@@ -20,3 +20,32 @@ export function resolveHeroImage(slug, imageMap) {
     }
     return imageMap[slug] || null
 }
+
+/**
+ * Logic to parse filename to grade.
+ * @param {string} filename 
+ */
+export function getGradeFromFilename(filename) {
+    if (!filename) return "unknown"
+    if (filename.startsWith("l++_")) return "l++"
+    if (filename.startsWith("l+_")) return "l+"
+    if (filename.startsWith("l_")) return "l"
+    if (filename.startsWith("r_")) return "r"
+    return "unknown"
+}
+
+/**
+ * Parses hero filename into a clean object.
+ * @param {string} filename 
+ */
+export function parseHeroDetails(filename) {
+    if (!filename) return null
+    const slug = filename.replace(/\.[^/.]+$/, "")
+    const grade = getGradeFromFilename(filename)
+    const name = filename
+        .replace(/^(l\+\+|l\+|l|r)_/, "")
+        .replace(/\.[^/.]+$/, "")
+        .replace(/_/g, " ")
+
+    return { filename, slug, grade, name }
+}
