@@ -88,7 +88,16 @@
   --input: oklch(0.85 0.05 85);
   --ring: #FFD700;
 
+  --surface: oklch(1 0 0);
+  --surface-hover: oklch(0.96 0.01 85);
+
   --radius: 0.75rem;
+
+  --primary-opacity: color-mix(in srgb, var(--primary), transparent 85%);
+  --shadow-sm: 0 4px 6px -1px oklch(0 0 0 / 0.08);
+  --shadow-md: 0 10px 30px -10px oklch(0 0 0 / 0.12);
+  --shadow-lg: 0 25px 50px -12px oklch(0 0 0 / 0.15);
+  --overlay-dark: oklch(0 0 0 / 0.75);
 }
 
 .dark {
@@ -129,6 +138,15 @@
   /* Subtle Gold Border */
   --input: oklch(0.2 0.04 260);
   --ring: #FFD700;
+
+  --surface: oklch(0.16 0.03 260);
+  --surface-hover: oklch(0.2 0.04 260);
+
+  --primary-opacity: color-mix(in srgb, var(--primary), transparent 85%);
+  --shadow-sm: 0 4px 6px -1px oklch(0 0 0 / 0.3);
+  --shadow-md: 0 10px 30px -10px oklch(0 0 0 / 0.5);
+  --shadow-lg: 0 25px 50px -12px oklch(0 0 0 / 0.6);
+  --overlay-dark: oklch(0 0 0 / 0.85);
 }
 
 body {

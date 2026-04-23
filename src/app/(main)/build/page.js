@@ -1,6 +1,7 @@
 import BuildView from "@/components/build/BuildView"
 import ContributorPopup from "@/components/builds/ContributorPopup"
 import { getHeroBuildList } from "@/lib/hero-actions"
+import styles from './page.module.css'
 
 export const metadata = {
     title: "Hero Builds",
@@ -13,7 +14,7 @@ export default async function BuildPage() {
     const heroes = await getHeroBuildList()
 
     return (
-        <main className="container mx-auto relative min-h-screen">
+        <main className={styles.main}>
             <BuildView heroes={heroes} />
             <ContributorPopup />
         </main>

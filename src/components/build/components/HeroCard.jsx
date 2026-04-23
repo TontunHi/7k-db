@@ -25,9 +25,7 @@ export default function HeroCard({ hero, onClick }) {
                     <div className={styles.badgeWrapper}>
                         <div className={styles.newBadge}>
                             <div className={styles.badgeGlow} />
-                            <div className={styles.badgeText}>
-                                NEW HERO
-                            </div>
+                            NEW HERO
                         </div>
                     </div>
                 )}

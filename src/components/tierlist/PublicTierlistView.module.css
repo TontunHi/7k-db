@@ -1,92 +1,87 @@
 .page {
   position: relative;
-  min-height: calc(100vh - 64px);
-  width: 100%;
+  min-height: 100vh;
   background-color: var(--background);
-  overflow: hidden;
+  color: var(--foreground);
+  overflow-x: hidden;
 }
 
 .background {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 0;
-  opacity: 0.4;
   pointer-events: none;
 }
 
 .gridPattern {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(to right, rgba(128, 128, 128, 0.07) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(128, 128, 128, 0.07) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-image: radial-gradient(var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.15;
+  mask-image: radial-gradient(circle at center, black, transparent 80%);
 }
 
 .topGlow {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  margin: auto;
-  height: 310px;
-  width: 310px;
-  border-radius: 9999px;
-  background-color: var(--primary);
-  opacity: 0.2;
-  filter: blur(100px);
-  display: none;
-}
-
-:global(.dark) .topGlow {
-  display: block;
+  top: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 40%;
+  background: radial-gradient(circle at center, var(--primary-opacity) 0%, transparent 70%);
+  filter: blur(80px);
+  opacity: 0.4;
 }
 
 .bottomGlow {
   position: absolute;
-  right: -10%;
   bottom: -10%;
-  height: 500px;
-  width: 500px;
-  border-radius: 9999px;
-  background-color: color-mix(in srgb, var(--primary), transparent 80%);
-  filter: blur(120px);
-  display: none;
-}
-
-:global(.dark) .bottomGlow {
-  display: block;
+  right: -10%;
+  width: 50%;
+  height: 50%;
+  background: radial-gradient(circle at center, var(--primary-opacity) 0%, transparent 70%);
+  filter: blur(100px);
+  opacity: 0.2;
 }
 
 .content {
   position: relative;
   z-index: 10;
   width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 3rem 1rem 8rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .content {
+    padding: 4rem 2rem;
+    gap: 3rem;
+  }
+}
+
+.roleFilterWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
 }
 
 .loadingWrapper {
   display: flex;
-  height: 24rem; /* h-96 */
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  min-height: 400px;
 }
 
 .loader {
-  width: 4rem; /* 16 */
-  height: 4rem;
+  width: 3rem;
+  height: 3rem;
   color: var(--primary);
   animation: spin 1s linear infinite;
-  filter: drop-shadow(0 0 10px var(--primary));
-}
-
-.mainContent {
-  animation: fadeIn 0.7s ease-out;
-}
-
-.roleFilterWrapper {
-  margin-bottom: 4rem;
 }
 
 @keyframes spin {
@@ -94,7 +89,22 @@
   to { transform: rotate(360deg); }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(2rem); }
-  to { opacity: 1; transform: translateY(0); }
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.footer {
+  text-align: center;
+  padding: 4rem 0 2rem;
+  opacity: 0.4;
+}
+
+.footerText {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--muted-foreground);
 }

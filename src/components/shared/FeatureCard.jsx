@@ -11,26 +11,24 @@ const ICON_MAP = {
     Sword, Map, Skull, Landmark, Trophy, Crown, Compass, Swords, Wand2, Sparkles, Zap
 }
 
-export default function FeatureCard({ title, description, iconName, href, color, glow }) {
+export default function FeatureCard({ title, description, iconName, href }) {
     const Icon = ICON_MAP[iconName] || Sword
 
-    // Note: 'color' and 'glow' currently contain Tailwind classes. 
-    // We combine them with CSS Module classes for structure.
     return (
         <Link
             href={href}
-            className={clsx(styles.card, glow)}
+            className={styles.card}
         >
             {/* Top Border Glow */}
-            <div className={clsx(styles.topGlow, "bg-gradient-to-r", color)} />
+            <div className={styles.topGlow} />
 
             {/* Background Radial Glow */}
-            <div className={clsx(styles.bgRadialGlow, "bg-gradient-to-br", color)} />
+            <div className={styles.bgRadialGlow} />
 
             <div className={styles.content}>
                 {/* Icon Container */}
                 <div className={styles.iconWrapper}>
-                    <div className={clsx(styles.iconOverlay, "bg-gradient-to-br", color)} />
+                    <div className={styles.iconOverlay} />
                     <Icon className={styles.icon} />
                 </div>
 

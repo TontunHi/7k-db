@@ -1,231 +1,189 @@
+/* ─── Outer Container ─── */
 .matrixContainer {
   position: relative;
-  background: var(--card);
+  background: var(--surface);
   border: 1px solid var(--border);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(4px);
-  overflow: hidden;
+  border-radius: 1rem;
+  box-shadow: var(--shadow-lg);
+  /* NO overflow:hidden — needed for sticky to work */
 }
 
+/* ─── Sticky Header Row ─── */
+.stickyHeader {
+  position: sticky;
+  top: 63px; /* Below Navbar (64px) */
+  z-index: 200;
+  display: flex;
+  align-items: stretch;
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+  border-radius: 1rem 1rem 0 0;
+  overflow: hidden; /* Only the header row is clipped, not the table */
+}
+
+/* Fixed rank cell inside sticky header */
+.headerRankCell {
+  width: 8rem;
+  min-width: 8rem;
+  flex-shrink: 0;
+  border-right: 2px solid var(--border);
+  background: var(--surface);
+}
+
+/* Scrolling type cells area */
+.headerScroll {
+  display: flex;
+  flex: 1;
+  overflow: hidden; /* Controlled by JS — no scrollbar */
+  min-width: 0;
+}
+
+.headerTypeCell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.75rem 0.5rem;
+  min-width: 140px;
+  flex: 1 0 140px;
+  border-right: 1px solid color-mix(in srgb, var(--border), transparent 50%);
+  background: var(--surface);
+}
+
+.headerTypeCell:last-child {
+  border-right: none;
+}
+
+.typeIconWrapper {
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  transition: transform 0.3s ease;
+}
+
+.headerTypeCell:hover .typeIconWrapper {
+  transform: translateY(-3px) scale(1.1);
+}
+
+.typeIcon {
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.4));
+}
+
+/* ─── Content Scroll Area ─── */
 .scrollArea {
   overflow-x: auto;
-  padding: 0.25rem;
-}
-
-.scrollArea::-webkit-scrollbar {
-  height: 4px;
-}
-
-.scrollArea::-webkit-scrollbar-track {
-  background: var(--background);
-}
-
-.scrollArea::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 2px;
+  /* border-radius bottom needs to be on scrollarea or table */
 }
 
 .table {
   width: 100%;
   min-width: 1000px;
-  border-collapse: collapse;
-  background: var(--card);
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-.thType {
-  padding: 1rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--card);
-  min-width: 140px;
-  position: relative;
-}
-
-.thEmpty {
-  padding: 1.5rem;
-  width: 8rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--card);
-}
-
-.typeHeader {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.typeIconWrapper {
-  position: relative;
-  height: 2.5rem;
-  width: 100%;
-  transition: transform 0.3s ease;
-}
-
-.typeIconWrapper:hover {
-  transform: translateY(-4px);
-}
-
-.typeIcon {
-  object-fit: contain;
-  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--foreground), transparent 90%));
-}
-
-.typeDivider {
-  width: 2rem;
-  height: 1px;
-  background-color: var(--border);
-}
-
-.typeSeparator {
-  position: absolute;
-  right: 0;
-  top: 1rem;
-  bottom: 1rem;
-  width: 1px;
-  background-color: var(--border);
-  opacity: 0.5;
-}
-
-/* Ranks */
-.row {
-  border-bottom: 1px solid var(--border);
-  transition: background-color 0.2s ease;
-}
-
-.row:hover {
-  background-color: color-mix(in srgb, var(--primary), transparent 98%);
-}
-
+/* ─── Rank Column (sticky left) ─── */
 .thRank {
-  padding: 1rem;
-  border-right: 1px solid var(--border);
-  background: var(--card);
-  position: relative;
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  padding: 1.25rem 0.75rem;
   width: 8rem;
+  min-width: 8rem;
+  background: var(--surface);
+  border-right: 2px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  vertical-align: middle;
 }
 
 .rankIconWrapper {
   position: relative;
-  height: 5rem;
-  width: 100%;
+  width: 4.5rem;
+  height: 4.5rem;
   margin: 0 auto;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .row:hover .rankIconWrapper {
-  transform: scale(1.1);
+  transform: scale(1.12) rotate(-3deg);
 }
 
-.rankIcon {
-  object-fit: contain;
-  filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.1));
-}
+.rankIcon { object-fit: contain; }
 
-:global(.dark) .rankIcon {
-  filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.8));
-}
+/* Tier-specific glows */
+.row[data-rank="EX"] .rankIcon { filter: drop-shadow(0 0 18px rgba(255, 215,  0, 0.55)); }
+.row[data-rank="S"]  .rankIcon { filter: drop-shadow(0 0 18px rgba(248, 113,113, 0.55)); }
+.row[data-rank="A"]  .rankIcon { filter: drop-shadow(0 0 18px rgba(251, 191, 36, 0.55)); }
+.row[data-rank="B"]  .rankIcon { filter: drop-shadow(0 0 18px rgba( 96, 165,250, 0.55)); }
+.row[data-rank="C"]  .rankIcon { filter: drop-shadow(0 0 18px rgba(156, 163,175, 0.45)); }
 
-.rankIndicator {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: linear-gradient(to bottom, transparent, var(--border), transparent);
-  transition: background-color 0.5s ease;
-}
+/* ─── Rows ─── */
+.row { transition: background-color 0.2s ease; }
+.row:hover { background: color-mix(in srgb, var(--primary), transparent 97%); }
 
-.row:hover .rankIndicator {
-  background: var(--primary);
-}
-
-/* Cells */
+/* ─── Cells ─── */
 .td {
-  padding: 0.5rem;
-  border-left: 1px solid var(--border);
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid color-mix(in srgb, var(--border), transparent 60%);
   vertical-align: top;
-  height: 10rem;
-  position: relative;
-  transition: background-color 0.2s ease;
+  min-width: 140px;
 }
 
-.td:hover {
-  background-color: var(--primary-opacity);
-}
-
+/* ─── Hero List ─── */
 .heroList {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
+  gap: 0.75rem;
   align-content: flex-start;
-  height: 100%;
-  position: relative;
-  z-index: 10;
-  padding: 0.75rem;
+  min-height: 5rem;
 }
 
+/* ─── Hero Cards ─── */
 .heroItem {
   position: relative;
-  width: 60px;
-  height: 72px;
-  background: var(--card);
-  border-radius: 2px;
+  width: 52px;
+  height: 64px;
+  background: var(--background);
+  border-radius: 0.35rem;
   border: 1px solid var(--border);
   overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .heroItem:hover {
-  z-index: 20;
-  transform: scale(1.2);
+  transform: translateY(-6px) scale(1.25);
+  z-index: 50;
   border-color: var(--primary);
-  box-shadow: 0 0 25px var(--primary-opacity);
+  box-shadow: 0 12px 24px -8px rgba(0,0,0,0.6), 0 0 16px var(--primary-opacity);
 }
 
-.heroImage {
-  object-fit: cover;
-}
+.heroImage { object-fit: cover; }
 
 .shine {
   position: absolute;
-  inset: -100%;
-  top: 0;
-  display: none;
-  height: 100%;
-  width: 50%;
-  transform: skewX(-12deg);
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
+  inset: 0;
+  transform: translateX(-150%) skewX(-20deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
   pointer-events: none;
 }
 
-:global(.dark) .shine {
-  display: block;
-}
-
 .heroItem:hover .shine {
-  animation: shine 0.75s forwards;
+  animation: shine 0.55s ease-in-out forwards;
 }
 
 @keyframes shine {
-  from { transform: translateX(-100%) skewX(-12deg); }
-  to { transform: translateX(300%) skewX(-12deg); }
+  0%   { transform: translateX(-150%) skewX(-20deg); }
+  100% { transform: translateX(150%)  skewX(-20deg); }
 }
 
-.footer {
-  text-align: center;
-  padding: 3rem 1rem;
-  border-top: 1px solid var(--border);
-  margin-top: 4rem;
-}
-
-.footerText {
-  color: var(--muted-foreground);
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  font-weight: 700;
-  opacity: 0.6;
-}
+/* ─── Scrollbar ─── */
+.scrollArea::-webkit-scrollbar { height: 6px; }
+.scrollArea::-webkit-scrollbar-track { background: var(--surface); }
+.scrollArea::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+.scrollArea::-webkit-scrollbar-thumb:hover { background: var(--muted-foreground); }

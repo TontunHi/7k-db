@@ -1,120 +1,119 @@
 .hero {
-  position: relative;
-  text-align: center;
-  margin-bottom: 4rem;
-  padding-top: 3rem;
-  animation: fadeInSlideUp 1s ease-out forwards;
-}
-
-@media (min-width: 768px) {
-  .hero {
-    margin-bottom: 6rem;
-    padding-top: 6rem;
-  }
+    position: relative;
+    padding: 4rem 0 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
 }
 
 .titleWrapper {
-  position: relative;
-  display: inline-block;
+    position: relative;
+    margin-bottom: 1.5rem;
+    z-index: 10;
 }
 
 .title {
-  font-size: 2.25rem; /* 4xl */
-  font-weight: 900;
-  color: var(--foreground);
-  letter-spacing: -0.05em;
-  text-transform: uppercase;
-  font-style: italic;
-  transform: skewX(-6deg);
-  line-height: 1;
-  filter: drop-shadow(0 5px 5px color-mix(in srgb, var(--foreground), transparent 80%));
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: var(--tracking-display-xl);
+    color: var(--foreground);
+    margin: 0;
+    text-transform: uppercase;
 }
 
-@media (min-width: 640px) { .title { font-size: 3rem; } }
-@media (min-width: 768px) { .title { font-size: 4.5rem; } }
-@media (min-width: 1024px) { .title { font-size: 6rem; } }
-
 .goldText {
-  color: transparent;
-  background: linear-gradient(to right, var(--primary), #FDB931, #FFA500);
-  background-clip: text;
-  -webkit-background-clip: text;
+  color: var(--primary);
+  text-shadow: 0 0 30px color-mix(in srgb, var(--primary), transparent 80%);
 }
 
 .subtitle {
-  font-size: 1.5rem; /* 2xl */
-  font-weight: 900;
-  color: var(--muted-foreground);
-  letter-spacing: -0.025em;
-  text-transform: uppercase;
-  font-style: italic;
-  transform: skewX(-6deg);
-  margin-top: 0.25rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--foreground);
+  margin: 0;
+  opacity: 0.9;
 }
 
-@media (min-width: 640px) { .subtitle { font-size: 1.875rem; } }
-@media (min-width: 768px) { .subtitle { font-size: 3rem; } }
-@media (min-width: 1024px) { .subtitle { font-size: 3.75rem; } }
+@media (min-width: 768px) {
+  .subtitle {
+    font-size: 2rem;
+  }
+}
 
 .dbLabel {
-  color: color-mix(in srgb, var(--foreground), transparent 80%);
-  letter-spacing: 0.1em;
+  background: var(--primary);
+  color: var(--background);
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  vertical-align: middle;
   margin-left: 0.5rem;
+  letter-spacing: 0;
 }
 
 .underline {
-  position: absolute;
-  bottom: -0.5rem;
-  width: 100%;
+  width: 80px;
   height: 4px;
-  background: linear-gradient(to right, var(--primary), #FFA500);
-  transform: skewX(-12deg);
-  box-shadow: 0 0 15px var(--primary);
-  transition: all 0.3s ease;
-}
-
-@media (min-width: 768px) {
-  .underline {
-    bottom: -1.5rem;
-  }
-}
-
-.titleWrapper:hover .underline {
-  width: 120%;
-  left: -10%;
+  background: var(--primary);
+  border-radius: 2px;
+  margin-top: 1rem;
+  box-shadow: 0 0 20px var(--primary);
 }
 
 .description {
+  max-width: 32rem;
+  font-size: 1.125rem;
   color: var(--muted-foreground);
-  font-size: 0.875rem;
-  font-weight: 300;
-  letter-spacing: 0.025em;
-  max-width: 42rem;
-  margin: 1.5rem auto 0;
   line-height: 1.6;
-  padding: 0 1rem;
-}
-
-@media (min-width: 768px) {
-  .description {
-    font-size: 1.5rem;
-    margin-top: 3rem;
-  }
+  margin: 0;
 }
 
 .highlight {
   color: var(--foreground);
-  font-weight: 500;
+  font-weight: 600;
 }
 
-/* Animations */
-@keyframes fadeInSlideUp {
-  from {
+/* Entrance Animation */
+.hero {
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
+.titleWrapper {
+    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.description {
     opacity: 0;
-    transform: translateY(2rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 3rem 0 2rem;
+    }
+    
+    .description {
+        font-size: 1rem;
+        padding: 0 1rem;
+    }
 }

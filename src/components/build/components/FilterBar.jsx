@@ -11,7 +11,6 @@ export default function FilterBar({
         <div className={styles.container}>
             {/* Search Input */}
             <div className={styles.searchWrapper}>
-                <div className={styles.searchGlow} />
                 <input
                     type="text"
                     placeholder="Search heroes..."
@@ -19,6 +18,7 @@ export default function FilterBar({
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className={styles.searchInput}
                 />
+                <div className={styles.searchGlow} />
             </div>
 
             {/* Legendary / Rare Tabs */}
@@ -29,7 +29,6 @@ export default function FilterBar({
                         onClick={() => setActiveTab(tab)}
                         className={clsx(styles.tabButton, activeTab === tab && styles.tabButtonActive)}
                     >
-                        {activeTab === tab && <div className={styles.tabIndicator} />}
                         <span className={styles.tabLabel}>{tab}</span>
                     </button>
                 ))}

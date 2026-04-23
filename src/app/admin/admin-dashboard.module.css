@@ -16,7 +16,7 @@
   border: 1px solid var(--border);
   background-color: var(--card);
   padding: 2rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-lg);
 }
 
 @media (min-width: 768px) {
@@ -198,7 +198,7 @@
   height: 1.5rem;
   background-color: var(--primary);
   border-radius: 9999px;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--primary), transparent 70%);
 }
 
 .categoryTitle {
@@ -236,7 +236,7 @@
 }
 
 .toolCard:hover {
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: color-mix(in srgb, var(--foreground), transparent 85%);
   background-color: var(--accent);
 }
 
@@ -406,7 +406,7 @@
   border: 1px solid var(--border);
   border-radius: 2.5rem;
   padding: 1.5rem;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
 }
@@ -418,7 +418,7 @@
   right: 0;
   width: 6rem;
   height: 6rem;
-  background: rgba(239, 68, 68, 0.1);
+  background: color-mix(in srgb, var(--destructive), transparent 90%);
   filter: blur(3rem);
   border-radius: 50%;
   pointer-events: none;
@@ -505,7 +505,7 @@
   border-radius: 2.5rem;
   background: linear-gradient(to bottom right, #ef4444, #d97706);
   color: white;
-  box-shadow: 0 10px 30px -10px rgba(220, 38, 38, 0.3);
+  box-shadow: 0 10px 30px -10px color-mix(in srgb, #dc2626, transparent 70%);
   position: relative;
   overflow: hidden;
 }
@@ -517,7 +517,7 @@
   right: -10%;
   width: 8rem;
   height: 8rem;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: color-mix(in srgb, white, transparent 90%);
   border-radius: 50%;
   filter: blur(2rem);
   transition: transform 0.7s ease;

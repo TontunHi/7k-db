@@ -19,11 +19,10 @@
   overflow: hidden;
   border: 1px solid var(--border);
   background: var(--card);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
 }
 
 :global(.dark) .imageWrapper {
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   border-color: var(--primary-opacity);
 }
 
@@ -113,7 +112,7 @@
 .imageOverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  background: linear-gradient(to top, var(--overlay-dark), transparent);
 }
 
 /* Corner Accents */
@@ -154,8 +153,8 @@
   right: 0;
   padding: 1.5rem;
   backdrop-filter: blur(8px);
-  background: rgba(0, 0, 0, 0.8);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--overlay-dark);
+  border-top: 1px solid color-mix(in srgb, var(--foreground), transparent 90%);
   transform: translateY(0.5rem);
   transition: transform 0.5s ease;
   z-index: 10;
@@ -168,14 +167,14 @@
 .name {
   font-size: 1.25rem;
   font-weight: 900;
-  color: #ffffff;
+  color: oklch(1 0 0);
   text-transform: uppercase;
   letter-spacing: -0.025em;
   display: flex;
   align-items: center;
   justify-content: space-between;
   transition: color 0.3s ease;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 2px 4px var(--overlay-dark));
 }
 
 .card:hover .name {
