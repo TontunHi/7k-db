@@ -1,68 +1,85 @@
+/* ===== Raid Index Header ===== */
 .header {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
+  gap: 1.25rem;
   margin-bottom: 4rem;
   text-align: center;
 }
 
-.icon {
-  width: 3rem;
-  height: 3rem;
-  color: #ef4444; /* red-500 */
+/* Icon Badge */
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  box-shadow: 0 0 24px rgba(239, 68, 68, 0.15);
 }
 
+.icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: #ef4444;
+}
+
+/* Title Block */
 .titleWrapper {
   display: inline-block;
   position: relative;
 }
 
 .title {
-  font-size: 3.75rem; /* 6xl */
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
   font-weight: 900;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
   text-transform: uppercase;
   font-style: italic;
-  transform: skewX(-6deg);
-  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.8));
+  transform: skewX(-5deg);
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.15));
+  line-height: 1;
 }
 
-@media (min-width: 768px) {
-  .title {
-    font-size: 4.5rem; /* 7xl */
-  }
+:global(.dark) .title {
+  filter: drop-shadow(0 6px 24px rgba(0, 0, 0, 0.8));
 }
 
 .redText {
   color: transparent;
-  background: linear-gradient(to right, #ef4444, #f87171, #f97316);
+  background: linear-gradient(135deg, #ef4444 0%, #f97316 50%, #ef4444 100%);
   background-clip: text;
   -webkit-background-clip: text;
 }
 
+/* Animated underline */
 .underline {
   position: absolute;
-  bottom: -0.5rem;
+  bottom: -0.625rem;
   left: 50%;
   transform: translateX(-50%) skewX(-12deg);
-  width: 8rem; /* 32 */
-  height: 4px;
-  background: linear-gradient(to right, #ef4444, #f97316);
-  box-shadow: 0 0 15px #ef4444;
-  transition: all 0.3s ease;
+  width: 8rem;
+  height: 3px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, #ef4444, #f97316, #ef4444, transparent);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .titleWrapper:hover .underline {
-  width: 12rem; /* 48 */
+  width: 14rem;
 }
 
 .subtitle {
   color: var(--muted-foreground);
-  font-size: 1.125rem; /* text-lg */
-  font-weight: 300;
-  letter-spacing: 0.025em;
-  max-width: 32rem;
-  margin: 1.5rem auto 0;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  max-width: 36rem;
+  margin: 1.75rem auto 0;
+  line-height: 1.7;
 }

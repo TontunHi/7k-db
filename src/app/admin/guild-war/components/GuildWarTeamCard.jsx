@@ -23,7 +23,7 @@ export default function GuildWarTeamCard({
     onOpenItemPicker,
     getSkillImagePath 
 }) {
-    const [isMinimized, setIsMinimized] = useState(false)
+    const [isMinimized, setIsMinimized] = useState(true)
 
     const handleItemUpdate = (heroIdx, field, value, accIdx = null) => {
         const items = [...(team.items || [])]

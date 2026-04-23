@@ -75,6 +75,9 @@ export default function AdventTeamSet({ set, index, heroImageMap }) {
                         </div>
                     </div>
 
+                </div>
+
+                <div className={styles.skillsWrapper}>
                     <SkillSequence 
                         skillRotation={set.skill_rotation} 
                         heroes={set.heroes} 
@@ -87,19 +90,19 @@ export default function AdventTeamSet({ set, index, heroImageMap }) {
                 {set.note && set.note.trim() !== "" && (
                     <div className={styles.noteSection}>
                         <div className={styles.noteBar} />
-                        <div className={styles.noteHeader}>
+                        <div 
+                            className={styles.noteHeader}
+                            onClick={() => setExpanded(!expanded)}
+                        >
                             <span className={styles.noteBadge}>Strategy Note</span>
-                            <button 
-                                onClick={() => setExpanded(!expanded)}
-                                className={styles.expandButton}
-                            >
+                            <button className={styles.expandButton}>
                                 {expanded ? 'Hide Note' : 'Read Note'}
                             </button>
                         </div>
                         
                         <div className={clsx(
                             styles.noteContent,
-                            expanded ? styles.noteExpanded : styles.noteCollapsed
+                            expanded && styles.noteExpanded
                         )}>
                             <p className={styles.noteText}>
                                 {set.note}

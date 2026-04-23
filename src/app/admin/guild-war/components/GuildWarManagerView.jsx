@@ -200,18 +200,18 @@ export default function GuildWarManagerView({ initialTeams, initialHeroes, initi
                 <div className={styles.headerGlow} />
                 <div className={styles.titleSection}>
                     <div className={styles.iconWrapper}>
-                        <Swords size={32} className="text-indigo-500" />
+                        <Swords size={32} className="text-red-600" />
                     </div>
                     <div>
-                        <h1 className={styles.title}>Strategic Intel</h1>
-                        <p className={styles.subtitle}>Guild War command center. Coordinate elite squads and response incursions.</p>
+                        <h1 className={styles.title}>Guild War Management</h1>
+                        <p className={styles.subtitle}>Manage defense teams and counter-strategies for Guild War operations.</p>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-4 relative z-10">
                     <button onClick={handleAddTeam} className={styles.btnSecondary}>
                         <Plus size={18} />
-                        <span>Deploy Squad</span>
+                        <span>Add Team</span>
                     </button>
                     <button 
                         onClick={handleSaveAll}
@@ -219,7 +219,7 @@ export default function GuildWarManagerView({ initialTeams, initialHeroes, initi
                         className={styles.btnPrimary}
                     >
                         {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                        <span>Sync Intel</span>
+                        <span>Save Changes</span>
                     </button>
                 </div>
             </header>
@@ -229,8 +229,8 @@ export default function GuildWarManagerView({ initialTeams, initialHeroes, initi
                 {teams.length === 0 && (
                     <div className={styles.emptyState}>
                         <ShieldAlert size={48} className="text-muted-foreground opacity-20" />
-                        <p className="text-muted-foreground font-black italic uppercase tracking-widest">No strategic squads active</p>
-                        <button onClick={handleAddTeam} className={styles.btnPrimary}>Initialize First Squad</button>
+                        <p className="text-muted-foreground font-black italic uppercase tracking-widest">No teams configured</p>
+                        <button onClick={handleAddTeam} className={styles.btnPrimary}>Create First Team</button>
                     </div>
                 )}
 
@@ -256,6 +256,25 @@ export default function GuildWarManagerView({ initialTeams, initialHeroes, initi
                     />
                 ))}
             </div>
+
+            {/* Sticky Action Bar */}
+            {hasDirty && (
+                <div className={styles.actionBar}>
+                    <div className={styles.saveHint}>
+                        <div className={styles.dirtyIndicator} />
+                        <span>Unsaved Changes Detected</span>
+                    </div>
+                    <button 
+                        onClick={handleSaveAll}
+                        disabled={saving}
+                        className={styles.btnPrimary}
+                    >
+                        {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
+                        <span>{saving ? 'Saving...' : 'Save All Changes'}</span>
+                    </button>
+                </div>
+            )}
+
 
             {/* Modals */}
             <GuildWarSkillPicker

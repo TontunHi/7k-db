@@ -1,87 +1,66 @@
+/* ===== Total War Header (Module Standard) ===== */
 .header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
-  margin-bottom: 4rem;
   text-align: center;
-}
-
-.badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-}
-
-.icon {
-  width: 2.5rem;
-  height: 2.5rem;
-  color: var(--primary);
-  filter: drop-shadow(0 0 10px var(--primary-opacity));
-}
-
-.titleWrapper {
+  padding: 4rem 1.25rem 4rem;
   position: relative;
-  display: inline-block;
 }
 
+/* Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  backdrop-filter: blur(8px);
+}
+
+.badgeIcon {
+  width: 1rem;
+  height: 1rem;
+  color: #f59e0b;
+}
+
+.badgeText {
+  color: #f59e0b;
+  font-size: 0.65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+/* Title */
 .title {
-  font-size: 3.75rem;
+  font-size: clamp(2.5rem, 8vw, 5.5rem);
   font-weight: 900;
   color: var(--foreground);
-  letter-spacing: -0.025em;
   text-transform: uppercase;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
   font-style: italic;
-  transform: skewX(-6deg);
-  line-height: 1;
-}
-
-@media (min-width: 768px) {
-  .title { font-size: 4.5rem; }
-}
-
-.gradientText {
-  background: linear-gradient(to right, #ef4444, #fb923c, #facc15);
-  background-clip: text;
+  transform: skewX(-5deg);
+  margin-bottom: 1.5rem;
+  background: linear-gradient(to bottom, var(--foreground) 60%, color-mix(in srgb, var(--foreground), transparent 40%));
   -webkit-background-clip: text;
-  color: transparent;
-  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.1));
+  background-clip: text;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
 }
 
-:global(.dark) .gradientText {
-  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.8));
+:global(.dark) .title {
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5));
 }
 
-.bar {
-  position: absolute;
-  bottom: -0.5rem;
-  left: 50%;
-  transform: translateX(-50%) skewX(-12deg);
-  width: 12rem;
-  height: 4px;
-  background: linear-gradient(to right, #ef4444, #facc15);
-  box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
-  transition: width 0.3s ease;
-}
-
-:global(.dark) .bar {
-  box-shadow: 0 0 15px rgba(239, 68, 68, 0.8);
-}
-
-.header:hover .bar {
-  width: 16rem;
-}
-
+/* Subtitle */
 .subtitle {
-  margin-top: 1.5rem;
+  font-size: 1rem;
   color: var(--muted-foreground);
-  font-size: 1.125rem;
-  font-weight: 300;
-  letter-spacing: 0.025em;
   max-width: 32rem;
-  margin-left: auto;
-  margin-right: auto;
+  line-height: 1.6;
+  margin: 0 auto;
 }

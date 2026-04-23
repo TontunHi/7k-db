@@ -1,36 +1,98 @@
+/* ===== Advent Phase Selector (Segmented Control) ===== */
 .container {
+  margin-bottom: 3.5rem;
   display: flex;
   justify-content: center;
-  margin-bottom: 2rem;
+  align-items: center;
 }
 
 .wrapper {
-  background: var(--muted);
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  padding: 0.25rem;
+  position: relative;
   display: flex;
-  gap: 0.25rem;
+  /* Support Light/Dark Mode using variables */
+  background: color-mix(in srgb, var(--muted), transparent 40%);
+  backdrop-filter: blur(16px);
+  padding: 0.4rem;
+  border-radius: 1.25rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Dark mode specific override for wrapper */
+:global(.dark) .wrapper {
+  background: rgba(15, 15, 20, 0.8);
+  border-color: rgba(168, 85, 247, 0.15);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5),
+              inset 0 0 20px rgba(168, 85, 247, 0.03);
 }
 
 .button {
-  padding: 0.75rem 2rem;
-  border-radius: 0.5rem;
-  font-weight: 700;
-  transition: all 0.3s ease;
-  color: var(--muted-foreground);
-  background: transparent;
+  position: relative;
+  z-index: 2;
+  padding: 0.75rem 2.5rem;
   border: none;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
   cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  border-radius: 0.875rem;
+  outline: none;
+  min-width: 140px;
 }
 
 .button:hover:not(.active) {
   color: var(--foreground);
-  background: var(--background);
+  background: color-mix(in srgb, var(--muted), transparent 50%);
 }
 
 .active {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  box-shadow: 0 0 15px var(--primary-opacity);
+  color: #ffffff;
+}
+
+/* Sliding Background Effect */
+.active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+  border-radius: 0.875rem;
+  z-index: -1;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4),
+              inset 0 0 12px rgba(255, 255, 255, 0.2);
+  animation: slideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Glow under the active button */
+.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: #a855f7;
+  border-radius: 9999px;
+  box-shadow: 0 0 12px #a855f7;
+  opacity: 0.8;
+}
+
+/* Text shadow for active button in dark mode only for clarity */
+:global(.dark) .active {
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }

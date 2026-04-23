@@ -1,47 +1,52 @@
+/* ===== Raid Detail Header ===== */
 .container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2rem 1.25rem;
 }
 
+/* ===== Back Navigation ===== */
 .backLink {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   color: var(--muted-foreground);
   text-decoration: none;
-  transition: all 0.3s ease;
-  margin-bottom: 2rem;
-  backdrop-filter: blur(4px);
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.5rem 1rem;
-  border-radius: 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
+  margin-bottom: 2rem;
+  padding: 0.5rem 1.125rem;
+  border-radius: 0.625rem;
+  background: color-mix(in srgb, var(--muted), transparent 30%);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+  transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
 }
 
 .backLink:hover {
   color: #ef4444;
-  border-color: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.08);
 }
 
 .backIcon {
-  width: 1.25rem;
-  height: 1.25rem;
-  transition: transform 0.3s ease;
+  width: 1.1rem;
+  height: 1.1rem;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  flex-shrink: 0;
 }
 
 .backLink:hover .backIcon {
   transform: translateX(-4px);
 }
 
+/* ===== Layout ===== */
 .content {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2.5rem;
   align-items: center;
 }
 
@@ -52,45 +57,53 @@
   }
 }
 
+/* ===== Boss Portrait ===== */
 .imageWrapper {
   position: relative;
   width: 100%;
-  max-width: 18rem; /* lg:w-72 */
+  max-width: 18rem;
   aspect-ratio: 3 / 4;
-  border-radius: 1rem;
+  border-radius: 1.25rem;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.4);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.5),
+              0 0 40px rgba(239, 68, 68, 0.06);
+  flex-shrink: 0;
 }
 
+/* Blurred ambient BG layer */
 .ambientBg {
   position: absolute;
   inset: 0;
   object-fit: cover;
-  opacity: 0.2;
-  filter: blur(24px);
-  transform: scale(1.1);
+  opacity: 0.15;
+  filter: blur(28px);
+  transform: scale(1.15);
 }
 
+/* Main sharp boss image */
 .mainImage {
   position: relative;
   z-index: 10;
   object-fit: contain;
-  transition: transform 0.7s ease;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .imageWrapper:hover .mainImage {
-  transform: scale(1.02);
+  transform: scale(1.04);
 }
 
+/* Bottom shadow vignette */
 .overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, black, transparent 40%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 50%);
   z-index: 20;
+  pointer-events: none;
 }
 
+/* ===== Info Panel ===== */
 .info {
   flex: 1;
   text-align: center;
@@ -99,19 +112,20 @@
 @media (min-width: 1024px) {
   .info {
     text-align: left;
-    padding-top: 2rem;
+    padding-top: 1.5rem;
   }
 }
 
+/* ===== Raid Intel Badge ===== */
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.75rem;
+  gap: 0.6rem;
+  padding: 0.35rem 1rem;
   border-radius: 9999px;
   background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  margin-bottom: 1rem;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  margin-bottom: 1.25rem;
 }
 
 .badgeIcon {
@@ -122,36 +136,37 @@
 
 .badgeText {
   color: #ef4444;
-  font-size: 9px;
+  font-size: 0.65rem;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.2em;
 }
 
+/* ===== Boss Name ===== */
 .title {
-  font-size: 2.25rem;
+  font-size: clamp(2rem, 4vw, 3.75rem);
   font-weight: 900;
   color: var(--foreground);
   text-transform: uppercase;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.04em;
   font-style: italic;
   transform: skewX(-3deg);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.12));
+  line-height: 1.05;
 }
 
-@media (min-width: 768px) {
-  .title { font-size: 3rem; }
+:global(.dark) .title {
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.7));
 }
 
-@media (min-width: 1024px) {
-  .title { font-size: 3.75rem; }
-}
-
+/* ===== Subtitle ===== */
 .subtitle {
   color: var(--muted-foreground);
-  font-size: 1rem;
-  font-weight: 500;
-  max-width: 32rem;
+  font-size: 0.95rem;
+  font-weight: 400;
+  max-width: 36rem;
   margin: 1rem auto 0;
+  line-height: 1.65;
 }
 
 @media (min-width: 1024px) {

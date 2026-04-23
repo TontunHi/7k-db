@@ -1,3 +1,4 @@
+/* ===== Raid List Page ===== */
 .page {
   position: relative;
   min-height: 100vh;
@@ -6,66 +7,83 @@
   overflow: hidden;
 }
 
+/* ===== Background FX ===== */
 .background {
   position: absolute;
   inset: 0;
   z-index: 0;
-  opacity: 0.4;
   pointer-events: none;
 }
 
 .gridPattern {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(to right, rgba(128, 128, 128, 0.07) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(128, 128, 128, 0.07) 1px, transparent 1px);
-  background-size: 24px 24px;
+  /* Red-tinted tactical grid */
+  background-image:
+    linear-gradient(to right, rgba(239, 68, 68, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(239, 68, 68, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
+/* Top centre crimson halo */
 .topGlow {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  margin: auto;
-  height: 310px;
-  width: 310px;
+  left: 50%;
+  top: -120px;
+  transform: translateX(-50%);
+  height: 500px;
+  width: 500px;
   border-radius: 9999px;
-  background-color: #ef4444;
-  opacity: 0.2;
-  filter: blur(100px);
+  background-color: #dc2626;
+  opacity: 0;
+  filter: blur(140px);
+  transition: opacity 0.6s ease;
 }
 
+:global(.dark) .topGlow {
+  opacity: 0.14;
+}
+
+/* Bottom-right ember glow */
 .bottomGlow {
   position: absolute;
   right: -10%;
   bottom: -10%;
-  height: 500px;
-  width: 500px;
+  height: 640px;
+  width: 640px;
   border-radius: 9999px;
-  background-color: rgba(127, 29, 29, 0.2); /* red-900/20 */
-  filter: blur(120px);
+  background-color: rgba(127, 29, 29, 0.22);
+  filter: blur(150px);
+  opacity: 0;
+  transition: opacity 0.6s ease;
 }
 
+:global(.dark) .bottomGlow {
+  opacity: 1;
+}
+
+/* ===== Content ===== */
 .content {
   position: relative;
   z-index: 10;
   width: 100%;
+  max-width: 1280px;
   margin-left: auto;
   margin-right: auto;
-  padding: 3rem 1rem 8rem;
+  padding: 3rem 1.25rem 8rem;
 }
 
+/* ===== Raid Cards Grid ===== */
 .grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 3rem;
-  max-width: 72rem; /* max-w-6xl */
+  gap: 2.5rem;
+  max-width: 72rem;
   margin: 0 auto;
-  animation: fadeIn 0.7s ease-out;
+  animation: fadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -73,11 +91,18 @@
 
 @media (min-width: 1024px) {
   .grid {
+    /* 3-col for current 3 raids — scales cleanly to 6 in future */
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(2rem); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(2.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

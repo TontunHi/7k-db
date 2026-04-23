@@ -1,19 +1,25 @@
+/* ===== Castle Rush Boss Card ===== */
 .card {
   position: relative;
   display: block;
   text-decoration: none;
-  border-radius: 1rem;
+  border-radius: 1.25rem;
   overflow: hidden;
   border: 1px solid var(--border);
   background: var(--card);
-  transition: all 0.5s ease;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.3s ease,
+              box-shadow 0.4s ease;
 }
 
 .card:hover {
-  border-color: var(--primary);
-  box-shadow: 0 0 40px var(--primary-opacity);
+  transform: translateY(-4px) scale(1.01);
+  border-color: color-mix(in srgb, var(--primary), transparent 45%);
+  box-shadow: 0 0 40px color-mix(in srgb, var(--primary), transparent 85%),
+              0 20px 40px -10px rgba(0, 0, 0, 0.35);
 }
 
+/* ===== Image Wrapper ===== */
 .imageWrapper {
   position: relative;
   aspect-ratio: 3168 / 514;
@@ -24,110 +30,111 @@
 .glow {
   position: absolute;
   inset: 0;
-  background-color: var(--primary);
-  filter: blur(60px);
+  background: radial-gradient(circle at 20% 50%, var(--primary), transparent 60%);
   opacity: 0;
-  transition: opacity 0.7s ease;
-  display: none;
-}
-
-:global(.dark) .glow {
-  display: block;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 5;
 }
 
 .card:hover .glow {
-  opacity: 0.1;
+  opacity: 0.15;
 }
 
 .image {
   object-fit: cover;
-  transition: transform 0.7s ease;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .card:hover .image {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
+/* Cinematic Overlays */
 .overlayTop {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2) 50%, transparent);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.2) 60%, transparent 100%);
+  z-index: 10;
 }
 
 .overlayRight {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.4), transparent);
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.6) 0%, transparent 40%);
+  z-index: 11;
 }
 
+/* ===== Content Area ===== */
 .content {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 1.25rem;
+  padding: 1.25rem 2rem;
+  z-index: 20;
 }
 
 @media (min-width: 768px) {
   .content {
-    padding: 1.5rem;
+    padding: 1.5rem 2.5rem;
   }
 }
 
+/* Badge Style */
 .badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.625rem;
   margin-bottom: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--primary), transparent 90%);
+  border: 1px solid color-mix(in srgb, var(--primary), transparent 65%);
 }
 
 .badgeIcon {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1rem;
+  height: 1rem;
   color: var(--primary);
 }
 
 .badgeText {
   color: var(--primary);
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.65rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.15em;
 }
 
+/* Boss Name */
 .name {
-  font-size: 1.5rem;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
   font-weight: 900;
   color: #ffffff;
   text-transform: uppercase;
   letter-spacing: -0.025em;
+  font-style: italic;
+  transform: skewX(-4deg);
   transition: color 0.3s ease;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
-}
-
-:global(.dark) .name {
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
-}
-
-@media (min-width: 768px) {
-  .name {
-    font-size: 1.875rem;
-  }
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.8));
 }
 
 .card:hover .name {
   color: var(--primary);
 }
 
+/* Underline Effect */
 .underline {
-  height: 2px;
+  height: 3px;
   width: 0;
-  background: linear-gradient(to right, var(--primary), var(--primary-opacity));
-  transition: width 0.5s ease;
-  margin-top: 0.5rem;
+  background: linear-gradient(90deg, var(--primary), #FFA500);
+  border-radius: 9999px;
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  margin-top: 0.75rem;
+  transform: skewX(-12deg);
 }
 
 .card:hover .underline {
-  width: 6rem;
+  width: 8rem;
 }

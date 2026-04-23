@@ -2,7 +2,10 @@
 
 import { useSearchParams } from "next/navigation"
 import { useFormStatus } from "react-dom"
+import Image from "next/image"
+import Link from "next/link"
 import { login } from "@/lib/actions"
+import { Shield, User, Lock, ArrowLeft, Loader2 } from "lucide-react"
 import styles from "./login.module.css"
 
 /**
@@ -19,11 +22,15 @@ function SubmitButton() {
         >
             {pending ? (
                 <>
-                    <div className={styles.loadingSpinner} />
-                    <span>Signing in...</span>
+                    <Loader2 className={styles.loadingSpinner} />
+                    <span>Processing...</span>
                 </>
             ) : (
-                "Login"
+                <>
+                    <Shield size={18} />
+                    <span>Authorize Login</span>
+                    <div className={styles.btnGlow} />
+                </>
             )}
         </button>
     )
@@ -39,44 +46,68 @@ export default function LoginPageView() {
 
     return (
         <main className={styles.page}>
+            {/* Cinematic Background */}
+            <div className={styles.backgroundOverlay}>
+                <Image 
+                    src="/login_bg_tactical.png"
+                    alt="Background"
+                    fill
+                    className={styles.backgroundImage}
+                    priority
+                />
+                <div className={styles.backgroundTint} />
+                <div className={styles.gridPattern} />
+            </div>
+
             <div className={styles.loginCard}>
                 <header className={styles.header}>
+                    <div className={styles.badge}>Security Terminal</div>
                     <h1 className={styles.title}>
-                        Admin <span className={styles.titleSpan}>Login</span>
+                        Access <span className={styles.titleSpan}>System</span>
                     </h1>
-                    <p className={styles.subtitle}>Access Dashboard</p>
+                    <p className={styles.subtitle}>Enter administrator credentials</p>
                 </header>
 
                 <form action={login} className={styles.form}>
                     <div className={styles.inputGroup}>
-                        <label htmlFor="username" className={styles.label}>
-                            Username
-                        </label>
-                        <input
-                            id="username"
-                            type="text"
-                            name="username"
-                            placeholder="e.g. admin"
-                            defaultValue={prefillUser}
-                            required
-                            className={styles.input}
-                            autoComplete="username"
-                        />
+                        <div className={styles.labelWrapper}>
+                            <User size={12} className={styles.labelIcon} />
+                            <label htmlFor="username" className={styles.label}>
+                                Personnel ID
+                            </label>
+                        </div>
+                        <div className={styles.inputWrapper}>
+                            <input
+                                id="username"
+                                type="text"
+                                name="username"
+                                placeholder="Username"
+                                defaultValue={prefillUser}
+                                required
+                                className={styles.input}
+                                autoComplete="username"
+                            />
+                        </div>
                     </div>
                     
                     <div className={styles.inputGroup}>
-                        <label htmlFor="password" className={styles.label}>
-                            Password
-                        </label>
-                        <input
-                            id="password"
-                            type="password"
-                            name="password"
-                            placeholder="••••••••"
-                            required
-                            className={styles.input}
-                            autoComplete="current-password"
-                        />
+                        <div className={styles.labelWrapper}>
+                            <Lock size={12} className={styles.labelIcon} />
+                            <label htmlFor="password" className={styles.label}>
+                                Security Key
+                            </label>
+                        </div>
+                        <div className={styles.inputWrapper}>
+                            <input
+                                id="password"
+                                type="password"
+                                name="password"
+                                placeholder="Password"
+                                required
+                                className={styles.input}
+                                autoComplete="current-password"
+                            />
+                        </div>
                     </div>
 
                     {error && (
@@ -87,6 +118,13 @@ export default function LoginPageView() {
 
                     <SubmitButton />
                 </form>
+
+                <footer className={styles.footer}>
+                    <Link href="/" className={styles.backLink}>
+                        <ArrowLeft size={12} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                        Back to main database
+                    </Link>
+                </footer>
             </div>
         </main>
     )

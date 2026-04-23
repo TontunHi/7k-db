@@ -1,73 +1,54 @@
+/* ===== Guild War Team Card (Battle Profile) ===== */
 .card {
   position: relative;
-  transition: all 0.7s ease;
-  margin-bottom: 1rem;
-}
-
-.cardExpanded {
-  margin-bottom: 3rem;
+  width: 100%;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  margin-bottom: 1.5rem;
 }
 
 .container {
   position: relative;
-  overflow: hidden;
-  border-radius: 2.5rem;
   background: var(--card);
   border: 1px solid var(--border);
-  transition: all 0.5s ease;
-}
-
-.container:hover {
-  border-color: var(--border);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
 }
 
 .containerExpanded {
-  box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.1), 0 0 40px var(--primary-opacity);
-  border-color: var(--primary);
+  border-color: rgba(220, 38, 38, 0.2);
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5);
 }
 
-:global(.dark) .containerExpanded {
-  box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8), 0 0 40px var(--primary-opacity);
-}
-
+/* Background Effects */
 .backgroundGlow {
   position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 80%;
-  height: 150%;
-  border-radius: 9999px;
-  background: var(--primary-opacity);
-  filter: blur(120px);
-  transition: opacity 1s ease;
+  inset: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(220, 38, 38, 0.05), transparent 60%);
+  opacity: 0.5;
+  transition: all 0.5s ease;
   pointer-events: none;
-  opacity: 0;
-  display: none;
-}
-
-:global(.dark) .backgroundGlow {
-  display: block;
 }
 
 .backgroundGlowExpanded {
   opacity: 1;
+  background: radial-gradient(circle at 50% 0%, rgba(220, 38, 38, 0.08), transparent 70%);
 }
 
-/* Header */
+/* Header Area (Clickable) */
 .header {
   position: relative;
-  z-index: 10;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  z-index: 10;
 }
 
-.header:hover {
-  background-color: var(--muted);
-}
-
-/* Collapsed Content */
+/* ===== Collapsed State (Cinematic Banner style) ===== */
 .collapsedBanner {
   position: relative;
+  height: 5.5rem;
+  display: flex;
+  align-items: stretch;
   overflow: hidden;
 }
 
@@ -75,33 +56,41 @@
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(to right, transparent, var(--primary-opacity), transparent);
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #dc2626, transparent);
+  opacity: 0.6;
+  z-index: 20;
 }
 
 .bannerLayout {
   display: flex;
   align-items: stretch;
-  min-height: 6rem;
+  width: 100%;
 }
 
+/* Portraits Strip (Counter-style) */
 .portraits {
   flex: 1;
   display: flex;
-  align-items: center;
+  align-items: stretch;
+  position: relative;
+  max-width: 60%;
+  mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
 }
 
 .portraitWrapper {
   position: relative;
   flex: 1;
   min-width: 0;
+  height: 100%;
 }
 
 .portrait {
   position: relative;
   width: 100%;
-  height: 6rem;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -109,289 +98,224 @@
   object-fit: cover;
   object-position: center 30%;
   transform: scale(1.1);
+  transition: transform 0.5s ease;
 }
 
 .portraitFade {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to right, transparent, var(--card));
+  display: none; /* Removed as it covers the face */
 }
 
 .portraitShadow {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent);
+  display: none; /* Removed as it darkens the face */
 }
 
-:global(.dark) .portraitShadow {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+.portraitWrapper:hover .portraitImage {
+  transform: scale(1.15);
 }
 
+/* Team Brief Info */
 .teamBrief {
-  flex-shrink: 0;
+  flex: 0.7;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 0 1.5rem;
-  gap: 0.5rem;
-  min-width: 180px;
+  padding: 0 2rem;
+  gap: 0.375rem;
+  z-index: 20;
 }
 
 .badgeGroup {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .typeBadge {
-  font-size: 8px;
+  font-size: 0.6rem;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  padding: 0.125rem 0.5rem;
-  border-radius: 9999px;
-  border-width: 1px;
+  padding: 0.125rem 0.625rem;
+  border-radius: 0.5rem;
 }
 
-.attacker { background: color-mix(in srgb, var(--destructive), transparent 90%); color: var(--destructive); border-color: color-mix(in srgb, var(--destructive), transparent 80%); }
-.defender { background: color-mix(in srgb, var(--primary), transparent 90%); color: var(--primary); border-color: color-mix(in srgb, var(--primary), transparent 80%); }
+.attacker { background: rgba(220, 38, 38, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+.defender { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); }
 
 .formationBadge {
-  font-size: 8px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 0.125rem 0.5rem;
-  border-radius: 9999px;
-  background: var(--muted);
+  font-size: 0.65rem;
+  font-weight: 800;
   color: var(--muted-foreground);
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.125rem 0.625rem;
+  border-radius: 0.5rem;
   border: 1px solid var(--border);
 }
 
 .teamName {
-  font-size: 1.125rem;
+  font-size: 1.15rem;
   font-weight: 900;
   color: var(--foreground);
-  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  margin: 0;
   line-height: 1.2;
 }
 
+/* Pet Mini */
 .petMini {
   position: relative;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  background: var(--background);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.625rem;
   overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
 }
 
 .miniPetImage {
   object-fit: contain;
-  padding: 0.125rem;
+  padding: 0.2rem;
 }
 
+/* Expand Button */
 .expandAction {
-  flex-shrink: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding-right: 1.5rem;
 }
 
 .expandButton {
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 9999px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--border);
   color: var(--muted-foreground);
+  background: color-mix(in srgb, var(--muted), transparent 50%);
   transition: all 0.3s ease;
+  border: 1px solid var(--border);
 }
 
-.card:hover .expandButton {
-  border-color: var(--primary-opacity);
-  color: var(--primary);
+.header:hover .expandButton {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+  border-color: rgba(220, 38, 38, 0.3);
 }
 
-/* Expanded Header */
+/* ===== Expanded State ===== */
 .expandedHeader {
-  padding: 1.5rem;
+  padding: 2rem 2.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  background: color-mix(in srgb, var(--muted), transparent 40%);
+  border-bottom: 1px solid var(--border);
 }
 
-@media (min-width: 640px) {
+@media (min-width: 1024px) {
   .expandedHeader {
-    padding: 2rem;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
   }
 }
 
-.teamTitleGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
 .expandedTeamName {
-  font-size: 1.25rem;
+  font-size: 1.75rem;
   font-weight: 900;
   color: var(--foreground);
-}
-
-@media (min-width: 640px) {
-  .expandedTeamName { font-size: 1.5rem; }
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: -0.02em;
+  margin: 0.5rem 0 0;
 }
 
 .actionGroup {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .tabBar {
-  display: none;
-}
-
-@media (min-width: 1024px) {
-  .tabBar {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    background: var(--muted);
-    padding: 0.25rem;
-    border-radius: 1.25rem;
-    border: 1px solid var(--border);
-  }
+  display: flex;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.375rem;
+  border-radius: 1rem;
+  gap: 0.25rem;
 }
 
 .tabButton {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  gap: 0.625rem;
+  padding: 0.625rem 1.25rem;
   border-radius: 0.75rem;
-  font-size: 10px;
-  font-weight: 900;
+  font-size: 0.75rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  transition: all 0.3s ease;
-  background: transparent;
   color: var(--muted-foreground);
+  background: transparent;
   border: none;
   cursor: pointer;
-}
-
-.tabButton:hover {
-  color: var(--foreground);
-  background: var(--background);
+  transition: all 0.25s ease;
 }
 
 .tabActive {
-  background: var(--foreground);
-  color: var(--background);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-.tabActive:hover {
-  background: var(--foreground);
-  color: var(--background);
+  background: #dc2626;
+  color: #ffffff;
+  box-shadow: 04px 10px rgba(220, 38, 38, 0.3);
 }
 
 .collapseButton {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 9999px;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--foreground);
-  color: var(--background);
-  transform: rotate(180deg);
-  transition: all 0.5s ease;
-  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
   cursor: pointer;
+  transition: all 0.3s ease;
+  transform: rotate(180deg);
 }
 
-/* Expanded Content Area */
+.collapseButton:hover {
+  background: rgba(220, 38, 38, 0.1);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Content Area */
 .contentArea {
-  position: relative;
-  z-index: 10;
-  border-top: 1px solid var(--border);
-  animation: fadeIn 0.5s ease;
+  animation: slideDown 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-1rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.body {
+  padding: 2.5rem;
 }
 
 /* Mobile Tabs */
 .mobileTabs {
-  display: flex;
-  overflow-x: auto;
-  background: var(--muted);
-  border-bottom: 1px solid var(--border);
+  display: none;
 }
 
-@media (min-width: 1024px) {
-  .mobileTabs { display: none; }
-}
-
-.mobileTab {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 1.5rem;
-  min-width: 100px;
-  position: relative;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-.mobileTabIcon {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-.mobileTabText {
-  font-size: 9px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: -0.025em;
-  color: var(--muted-foreground);
-}
-
-.mobileTabActive {
-  background: var(--background);
-}
-
-.mobileTabActive .mobileTabText {
-  color: var(--foreground);
-}
-
-.tabIndicator {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--primary);
-}
-
-/* Body Padding */
-.body {
-  padding: 1.5rem;
-}
-
-@media (min-width: 640px) {
-  .body { padding: 2.5rem; }
+@media (max-width: 768px) {
+  .mobileTabs {
+    display: flex;
+    overflow-x: auto;
+    padding: 1rem;
+    gap: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
 }

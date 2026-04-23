@@ -1,81 +1,72 @@
+/* ===== Total War View (War Mode) ===== */
 .page {
   position: relative;
   min-height: 100vh;
   width: 100%;
   background-color: var(--background);
   overflow: hidden;
-  padding-bottom: 5rem;
+  padding-bottom: 8rem;
 }
 
+/* ===== Background FX (Amber War theme) ===== */
 .background {
   position: absolute;
   inset: 0;
   z-index: 0;
-  opacity: 0.4;
   pointer-events: none;
 }
 
 .gridPattern {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(to right, rgba(128, 128, 128, 0.07) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(128, 128, 128, 0.07) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-image:
+    linear-gradient(to right, rgba(245, 158, 11, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(245, 158, 11, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
 .topGlow {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  margin: auto;
-  height: 400px;
-  width: 400px;
+  left: 50%;
+  top: -100px;
+  transform: translateX(-50%);
+  height: 500px;
+  width: 800px;
   border-radius: 9999px;
-  background-color: var(--primary);
-  opacity: 0.15;
-  filter: blur(120px);
-  display: none;
+  background-color: #f59e0b;
+  opacity: 0;
+  filter: blur(150px);
+  transition: opacity 0.6s ease;
 }
 
 :global(.dark) .topGlow {
-  display: block;
+  opacity: 0.1;
 }
 
-.bottomGlow {
-  position: absolute;
-  right: -10%;
-  bottom: -10%;
-  height: 500px;
-  width: 500px;
-  border-radius: 9999px;
-  background-color: color-mix(in srgb, var(--primary), #ef4444 50%);
-  opacity: 0.15;
-  filter: blur(120px);
-  display: none;
-}
-
-:global(.dark) .bottomGlow {
-  display: block;
-}
-
+/* ===== Content Area ===== */
 .content {
   position: relative;
   z-index: 10;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 3rem 1rem;
+  padding: 0 1.25rem;
 }
 
+/* ===== Grid Layout ===== */
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
-  max-width: 64rem;
-  margin: 0 auto;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
 }
 
 @media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
   .grid {
     grid-template-columns: repeat(4, 1fr);
   }

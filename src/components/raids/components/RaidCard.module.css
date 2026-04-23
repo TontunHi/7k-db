@@ -1,3 +1,4 @@
+/* ===== Raid Boss Selection Card ===== */
 .card {
   position: relative;
   display: flex;
@@ -5,8 +6,25 @@
   align-items: center;
   cursor: pointer;
   text-decoration: none;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--card), transparent 10%);
+  border: 1px solid var(--border);
+  padding: 1.5rem 1.5rem 1.25rem;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
 }
 
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(239, 68, 68, 0.45);
+  box-shadow:
+    0 0 40px rgba(239, 68, 68, 0.12),
+    0 24px 48px -12px rgba(0, 0, 0, 0.4);
+}
+
+/* ===== Boss Image ===== */
 .imageWrapper {
   position: relative;
   width: 100%;
@@ -14,59 +32,65 @@
   overflow: visible;
 }
 
+/* Crimson aura behind boss art */
 .glow {
   position: absolute;
-  inset: 1rem;
-  background-color: #ef4444;
-  filter: blur(40px);
-  opacity: 0.2;
+  inset: 0.5rem;
+  background: radial-gradient(ellipse at center, #dc2626 0%, transparent 70%);
+  filter: blur(28px);
+  opacity: 0;
+  border-radius: 9999px;
   transition: opacity 0.5s ease;
+  pointer-events: none;
 }
 
 .card:hover .glow {
-  opacity: 0.4;
+  opacity: 0.35;
 }
 
 .image {
   object-fit: contain;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.8));
-  transition: transform 0.5s ease;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.7));
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .card:hover .image {
-  transform: scale(1.05);
+  transform: scale(1.07) translateY(-4px);
 }
 
+/* ===== Name Tag ===== */
 .nameWrapper {
-  margin-top: 1rem;
+  margin-top: 1.25rem;
   text-align: center;
+  display: inline-block;
+  position: relative;
 }
 
 .name {
-  font-size: 1.5rem;
+  font-size: clamp(1.25rem, 2.5vw, 1.625rem);
   font-weight: 900;
   color: var(--foreground);
   text-transform: uppercase;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
   font-style: italic;
-  transform: skewX(-6deg);
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+  transform: skewX(-4deg);
+  display: block;
   transition: color 0.3s ease;
-}
-
-@media (min-width: 768px) {
-  .name { font-size: 1.875rem; }
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
 }
 
 .card:hover .name {
   color: #f87171;
 }
 
+/* Crimson underline reveal */
 .underline {
-  height: 2px;
+  display: block;
+  height: 2.5px;
   width: 0;
-  background-color: #ef4444;
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, #ef4444, #f97316);
+  border-radius: 9999px;
+  transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   margin: 0.5rem auto 0;
   transform: skewX(-12deg);
 }

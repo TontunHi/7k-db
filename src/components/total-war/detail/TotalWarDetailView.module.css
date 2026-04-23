@@ -1,104 +1,110 @@
+/* ===== Total War Detail Page ===== */
 .page {
   position: relative;
   min-height: 100vh;
   width: 100%;
   background-color: var(--background);
   overflow: hidden;
-  padding-bottom: 5rem;
+  padding-bottom: 8rem;
 }
 
+/* Background FX */
 .background {
   position: absolute;
   inset: 0;
   z-index: 0;
-  opacity: 0.4;
   pointer-events: none;
 }
 
 .gridPattern {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(to right, rgba(128, 128, 128, 0.07) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(128, 128, 128, 0.07) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-image:
+    linear-gradient(to right, rgba(128, 128, 128, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(128, 128, 128, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
 .glow {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  margin: auto;
-  height: 350px;
-  width: 350px;
+  left: 50%;
+  top: -100px;
+  transform: translateX(-50%);
+  height: 500px;
+  width: 800px;
   border-radius: 9999px;
-  opacity: 0.15;
-  filter: blur(110px);
-  display: none;
+  opacity: 0.12;
+  filter: blur(140px);
 }
 
-:global(.dark) .glow {
-  display: block;
-}
-
+/* Content Area */
 .content {
   position: relative;
   z-index: 10;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 2rem 1.25rem;
 }
 
-@media (min-width: 768px) {
-  .content {
-    padding: 2rem 1rem;
-  }
-}
-
+/* Back Link */
 .backLink {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   color: var(--muted-foreground);
   text-decoration: none;
-  transition: all 0.2s ease;
-  margin-bottom: 2rem;
-  backdrop-filter: blur(4px);
-  background: var(--muted);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 3rem;
+  padding: 0.5rem 1.125rem;
+  border-radius: 0.625rem;
+  background: color-mix(in srgb, var(--muted), transparent 30%);
   border: 1px solid var(--border);
-  font-size: 0.875rem;
+  backdrop-filter: blur(8px);
+  transition: all 0.25s ease;
 }
 
 .backLink:hover {
   color: var(--foreground);
-  background: var(--border);
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary), transparent 90%);
+  transform: translateX(-4px);
 }
 
+/* Sets List */
+.setsList {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  margin-top: 3rem;
+}
+
+/* Empty State */
 .emptyState {
   text-align: center;
-  padding: 6rem 0;
+  padding: 8rem 2rem;
   border: 1px dashed var(--border);
-  border-radius: 1.25rem;
-  background: var(--muted);
+  border-radius: 1.5rem;
+  background: color-mix(in srgb, var(--muted), transparent 50%);
 }
 
 .emptyIcon {
-  width: 3rem;
-  height: 3rem;
+  width: 3.5rem;
+  height: 3.5rem;
   color: var(--muted-foreground);
-  opacity: 0.5;
-  margin: 0 auto 1rem;
+  opacity: 0.4;
+  margin: 0 auto 1.5rem;
 }
 
 .emptyText {
+  font-size: 1.25rem;
+  font-weight: 800;
   color: var(--foreground);
-  font-weight: 500;
+  margin-bottom: 0.5rem;
 }
 
 .emptySubtext {
   color: var(--muted-foreground);
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
 }

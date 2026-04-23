@@ -1,153 +1,175 @@
+/* ===== Filter Bar ===== */
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
-  margin-bottom: 4rem;
+  gap: 1.5rem;
+  margin-bottom: 3.5rem;
   width: 100%;
 }
 
+/* ===== Search ===== */
 .searchWrapper {
   width: 100%;
-  max-width: 28rem;
+  max-width: 30rem;
   position: relative;
 }
 
 .searchGlow {
   position: absolute;
-  inset: 0;
-  filter: blur(12px);
-  opacity: 0.1;
-  transition: opacity 0.3s ease;
-  display: none;
+  inset: -2px;
+  border-radius: 1rem;
+  filter: blur(16px);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
 }
 
-:global(.dark) .searchGlow {
-  display: block;
+:global(.dark) .searchWrapper:hover .searchGlow,
+:global(.dark) .searchWrapper:focus-within .searchGlow {
+  opacity: 0.25;
 }
 
-.searchGlowStage { background-color: var(--primary); }
-.searchGlowNightmare { background-color: var(--destructive); }
+.searchGlowStage {
+  background: var(--primary);
+}
 
-.searchWrapper:hover .searchGlow {
-  opacity: 0.3;
+.searchGlowNightmare {
+  background: #ef4444;
 }
 
 .searchInput {
   width: 100%;
-  background: var(--card);
-  backdrop-filter: blur(12px);
+  background: color-mix(in srgb, var(--card), transparent 20%);
+  backdrop-filter: blur(16px);
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  padding: 1rem 1.5rem;
+  border-radius: 0.875rem;
+  padding: 0.875rem 1.5rem;
   text-align: center;
-  font-size: 1.125rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 600;
   color: var(--foreground);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   outline: none;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .searchInput::placeholder {
   color: var(--muted-foreground);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .searchInputFocusStage:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 30px var(--primary-opacity);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary), transparent 80%);
 }
 
 .searchInputFocusNightmare:focus {
-  border-color: var(--destructive);
-  box-shadow: 0 0 30px color-mix(in srgb, var(--destructive), transparent 90%);
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
 }
 
+/* ===== Mode Toggles ===== */
 .toggles {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .toggleButton {
   position: relative;
-  padding: 1rem 2rem;
+  padding: 0.75rem 2rem;
   text-transform: uppercase;
-  font-weight: 900;
-  letter-spacing: 0.2em;
-  font-size: 0.875rem;
-  transition: all 0.3s ease;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  font-size: 0.8rem;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   border: 1px solid var(--border);
-  background: var(--card);
+  background: color-mix(in srgb, var(--card), transparent 20%);
+  backdrop-filter: blur(12px);
   color: var(--muted-foreground);
   cursor: pointer;
   clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.6rem;
+  border-radius: 0;
 }
 
 .toggleButton:hover {
-  border-color: var(--primary);
   color: var(--foreground);
-  background: var(--muted);
-  transform: scale(1.05);
+  background: color-mix(in srgb, var(--muted), transparent 20%);
+  transform: scale(1.04);
 }
 
 .activeStage {
   border-color: var(--primary);
-  background: var(--primary-opacity);
+  background: color-mix(in srgb, var(--primary), transparent 88%);
   color: var(--primary);
-  box-shadow: 0 0 30px var(--primary-opacity);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--primary), transparent 75%), inset 0 0 20px color-mix(in srgb, var(--primary), transparent 94%);
 }
 
 .activeNightmare {
-  border-color: var(--destructive);
-  background: color-mix(in srgb, var(--destructive), transparent 90%);
-  color: var(--destructive);
-  box-shadow: 0 0 30px color-mix(in srgb, var(--destructive), transparent 85%);
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  box-shadow: 0 0 28px rgba(239, 68, 68, 0.2), inset 0 0 20px rgba(239, 68, 68, 0.05);
 }
 
+/* Corner Accents */
 .corner {
   position: absolute;
-  width: 0.5rem;
-  height: 0.5rem;
-  transition: border-color 0.3s ease;
+  width: 0.45rem;
+  height: 0.45rem;
+  transition: border-color 0.25s ease;
 }
 
 .topLeft {
-  top: 0;
-  left: 0;
-  border-top: 2px solid var(--border);
-  border-left: 2px solid var(--border);
+  top: 3px;
+  left: 5px;
+  border-top: 1.5px solid var(--border);
+  border-left: 1.5px solid var(--border);
 }
 
 .bottomRight {
-  bottom: 0;
-  right: 0;
-  border-bottom: 2px solid var(--border);
-  border-right: 2px solid var(--border);
+  bottom: 3px;
+  right: 5px;
+  border-bottom: 1.5px solid var(--border);
+  border-right: 1.5px solid var(--border);
 }
 
-.activeStage .topLeft, .activeStage .bottomRight { border-color: var(--primary); }
-.activeNightmare .topLeft, .activeNightmare .bottomRight { border-color: var(--destructive); }
+.activeStage .topLeft,
+.activeStage .bottomRight {
+  border-color: var(--primary);
+}
 
-.toggleButton:hover .topLeft, .toggleButton:hover .bottomRight {
+.activeNightmare .topLeft,
+.activeNightmare .bottomRight {
+  border-color: #ef4444;
+}
+
+.toggleButton:hover .topLeft,
+.toggleButton:hover .bottomRight {
   border-color: var(--foreground);
 }
 
 .icon {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
 }
 
 .iconActive {
-  animation: pulse 2s infinite;
+  animation: iconPulse 2s ease-in-out infinite;
 }
 
-@keyframes pulse {
+@keyframes iconPulse {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.1); }
+  50% { opacity: 0.7; transform: scale(1.15); }
 }

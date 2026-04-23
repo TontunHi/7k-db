@@ -9,43 +9,45 @@ export default function TotalWarDetailHeader({ tier, setCounts }) {
     const activeTier = tier.key
 
     return (
-        <div className={styles.banner}>
+        <div className={styles.header}>
             {/* Logo */}
-            <div className={styles.logoWrapper}>
+            <div className={styles.logoArea}>
                 <Image
                     src={tier.logo}
                     alt={tier.label}
                     fill
                     className={styles.logo}
                     priority
-                    sizes="144px"
+                    sizes="(max-width: 1024px) 160px, 200px"
                 />
             </div>
 
             {/* Title Info */}
             <div className={styles.info}>
                 <div className={styles.badge}>
-                    <Swords className={styles.icon} style={{ color: tier.accent }} />
-                    <span className={styles.tag} style={{ color: tier.accent }}>
-                        Total War
+                    <Swords className={styles.badgeIcon} style={{ color: tier.accent }} />
+                    <span className={styles.badgeText} style={{ color: tier.accent }}>
+                        Total War Operation
                     </span>
                 </div>
+                
                 <h1 className={styles.title} style={{ color: tier.accent }}>
                     {tier.label}
                 </h1>
-                <div 
-                    className={styles.bar} 
-                    style={{ 
-                        background: `linear-gradient(to right, ${tier.accent}, transparent)`,
-                        boxShadow: `0 0 12px ${tier.accent}60`
-                    }} 
-                />
-                <p className={styles.meta}>
-                    {tier.maxTeams} Teams per Set • {setCounts} available
-                </p>
+                
+                <div className={styles.stats}>
+                    <div className={styles.statItem}>
+                        <span className={styles.statLabel}>Team Config</span>
+                        <span className={styles.statValue}>{tier.maxTeams} SQUADS</span>
+                    </div>
+                    <div className={styles.statItem}>
+                        <span className={styles.statLabel}>Deployments</span>
+                        <span className={styles.statValue}>{setCounts} SETS</span>
+                    </div>
+                </div>
             </div>
 
-            {/* Mini Nav */}
+            {/* Tier Navigation */}
             <div className={styles.nav}>
                 {TIER_CONFIG.map(t => (
                     <Link
@@ -55,15 +57,22 @@ export default function TotalWarDetailHeader({ tier, setCounts }) {
                             styles.navLink,
                             t.key === activeTier && styles.navActive
                         )}
-                        style={t.key === activeTier ? { borderColor: t.accent } : {}}
                     >
-                        <Image 
-                            src={t.logo} 
-                            alt={t.label} 
-                            fill 
-                            className={styles.navLogo} 
-                            sizes="44px" 
-                        />
+                        <div className={styles.navLogoWrapper}>
+                            <Image 
+                                src={t.logo} 
+                                alt={t.label} 
+                                fill 
+                                className={styles.navLogo} 
+                                sizes="48px" 
+                            />
+                        </div>
+                        {t.key === activeTier && (
+                            <div 
+                                className={styles.navIndicator} 
+                                style={{ backgroundColor: t.accent }}
+                            />
+                        )}
                     </Link>
                 ))}
             </div>
