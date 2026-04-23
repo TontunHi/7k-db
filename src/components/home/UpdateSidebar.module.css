@@ -67,9 +67,9 @@
   text-align: center;
   padding: 2rem;
   border-radius: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
   background: var(--card);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
 }
 
 .partnerTitle {
@@ -94,7 +94,7 @@
   display: inline-flex;
   padding: 0.75rem 2rem;
   border-radius: 0.75rem;
-  background: #0a0a0a;
+  background: var(--background);
   border: 1px solid var(--border);
   font-size: 0.625rem;
   font-weight: 900;
@@ -125,7 +125,7 @@
 
 .skeletonItem {
   height: 2.5rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--muted);
   border-radius: 0.75rem;
   width: 100%;
 }

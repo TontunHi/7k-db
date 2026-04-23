@@ -27,7 +27,7 @@
   font-style: italic;
   transform: skewX(-6deg);
   line-height: 1;
-  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.8));
+  filter: drop-shadow(0 5px 5px color-mix(in srgb, var(--foreground), transparent 80%));
 }
 
 @media (min-width: 640px) { .title { font-size: 3rem; } }
@@ -57,7 +57,7 @@
 @media (min-width: 1024px) { .subtitle { font-size: 3.75rem; } }
 
 .dbLabel {
-  color: rgba(255, 255, 255, 0.2);
+  color: color-mix(in srgb, var(--foreground), transparent 80%);
   letter-spacing: 0.1em;
   margin-left: 0.5rem;
 }

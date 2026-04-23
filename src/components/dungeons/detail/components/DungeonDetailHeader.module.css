@@ -13,10 +13,10 @@
   transition: color 0.3s ease;
   margin-bottom: 1.5rem;
   backdrop-filter: blur(4px);
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--muted);
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  border: 1px solid rgba(31, 41, 55, 0.5);
+  border: 1px solid var(--border);
 }
 
 .backLink:hover {
@@ -43,7 +43,11 @@
   border-radius: 1rem;
   overflow: hidden;
   border: 1px solid var(--border);
-  background: linear-gradient(to bottom right, #1a1a1a, #000);
+  background: var(--card);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+}
+
+:global(.dark) .imageWrapper {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
@@ -96,6 +100,10 @@
   letter-spacing: -0.025em;
   font-style: italic;
   transform: skewX(-3deg);
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+:global(.dark) .title {
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
 }
 
@@ -113,5 +121,5 @@
   background: linear-gradient(to right, var(--primary), #FFA500);
   margin-top: 1rem;
   transform: skewX(-12deg);
-  box-shadow: 0 0 15px var(--primary);
+  box-shadow: 0 0 15px var(--primary-opacity);
 }

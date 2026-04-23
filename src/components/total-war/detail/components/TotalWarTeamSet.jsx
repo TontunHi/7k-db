@@ -10,7 +10,7 @@ export default function TotalWarTeamSet({ set, setIdx, tier, heroImageMap }) {
             <div className={styles.setHeader}>
                 <div 
                     className={styles.setNumber}
-                    style={{ backgroundColor: tier.accent }}
+                    style={{ backgroundColor: tier.accent, color: '#000' }}
                 >
                     {setIdx + 1}
                 </div>
@@ -39,7 +39,7 @@ export default function TotalWarTeamSet({ set, setIdx, tier, heroImageMap }) {
                             <div className={styles.teamHeader}>
                                 <div 
                                     className={styles.teamNumber}
-                                    style={{ backgroundColor: tier.accent + 'cc' }}
+                                    style={{ backgroundColor: tier.accent, color: '#000' }}
                                 >
                                     {teamIdx + 1}
                                 </div>
@@ -71,9 +71,9 @@ export default function TotalWarTeamSet({ set, setIdx, tier, heroImageMap }) {
                                             customClasses={{
                                                 container: "grid grid-cols-5 gap-2 md:gap-3 pb-6 max-w-full",
                                                 emptyRender: () => (
-                                                    <div className="absolute inset-0 flex items-center justify-center text-gray-700 text-xs">Empty</div>
+                                                    <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/30 text-xs">Empty</div>
                                                 ),
-                                                cardString: "bg-black border-2 aspect-[3/4] rounded-lg overflow-hidden transition-all duration-300 shadow-inner"
+                                                cardString: "bg-card border-2 border-border aspect-[3/4] rounded-lg overflow-hidden transition-all duration-300 shadow-inner"
                                             }}
                                         />
                                     </div>

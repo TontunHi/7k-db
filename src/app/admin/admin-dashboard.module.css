@@ -28,7 +28,7 @@
 .heroGlow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.05), transparent);
+  background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--primary), transparent 95%), transparent);
   pointer-events: none;
 }
 
@@ -114,7 +114,7 @@
 .statCard {
   padding: 1.25rem;
   border-radius: 1.5rem;
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: color-mix(in srgb, var(--foreground), transparent 98%);
   border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -123,7 +123,7 @@
 }
 
 .statCard:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: color-mix(in srgb, var(--foreground), transparent 95%);
   transform: translateY(-2px);
 }
 
@@ -325,7 +325,7 @@
 .systemLink {
   padding: 1rem;
   border-radius: 1.25rem;
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: color-mix(in srgb, var(--foreground), transparent 98%);
   border: 1px solid var(--border);
   text-align: center;
   text-decoration: none;
@@ -337,7 +337,7 @@
 }
 
 .systemLink:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: color-mix(in srgb, var(--foreground), transparent 95%);
 }
 
 .systemIcon {

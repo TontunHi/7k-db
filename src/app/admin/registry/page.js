@@ -1,5 +1,5 @@
 import { getFullRegistryData } from "@/lib/registry-actions"
-import RegistryDashboard from "@/components/admin/RegistryDashboard"
+import RegistryDashboardView from "./components/RegistryDashboardView"
 
 export const metadata = {
     title: "Database Registry | 7K Admin",
@@ -10,6 +10,6 @@ export default async function RegistryPage() {
     const data = await getFullRegistryData()
 
     return (
-        <RegistryDashboard initialData={data} />
+        <RegistryDashboardView initialData={data} />
     )
 }

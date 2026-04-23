@@ -4,19 +4,20 @@
   text-decoration: none;
   border-radius: 1rem;
   overflow: hidden;
-  border: 1px solid rgba(31, 41, 55, 0.5);
+  border: 1px solid var(--border);
+  background: var(--card);
   transition: all 0.5s ease;
 }
 
 .card:hover {
-  border-color: rgba(255, 215, 0, 0.4);
-  box-shadow: 0 0 40px rgba(255, 215, 0, 0.15);
+  border-color: var(--primary);
+  box-shadow: 0 0 40px var(--primary-opacity);
 }
 
 .imageWrapper {
   position: relative;
   aspect-ratio: 3168 / 514;
-  background: linear-gradient(to bottom right, #1a1a1a, #000);
+  background: var(--card);
   overflow: hidden;
 }
 
@@ -27,6 +28,11 @@
   filter: blur(60px);
   opacity: 0;
   transition: opacity 0.7s ease;
+  display: none;
+}
+
+:global(.dark) .glow {
+  display: block;
 }
 
 .card:hover .glow {
@@ -45,7 +51,7 @@
 .overlayTop {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, black, rgba(0, 0, 0, 0.3) 50%, transparent);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2) 50%, transparent);
 }
 
 .overlayRight {
@@ -79,24 +85,29 @@
   width: 1.25rem;
   height: 1.25rem;
   color: var(--primary);
-  opacity: 0.8;
 }
 
 .badgeText {
-  color: rgba(255, 215, 0, 0.6);
+  color: var(--primary);
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .name {
   font-size: 1.5rem;
   font-weight: 900;
-  color: var(--foreground);
+  color: #ffffff;
   text-transform: uppercase;
   letter-spacing: -0.025em;
   transition: color 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+:global(.dark) .name {
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
 }
 
 @media (min-width: 768px) {
@@ -112,7 +123,7 @@
 .underline {
   height: 2px;
   width: 0;
-  background: linear-gradient(to right, var(--primary), #FFA500);
+  background: linear-gradient(to right, var(--primary), var(--primary-opacity));
   transition: width 0.5s ease;
   margin-top: 0.5rem;
 }

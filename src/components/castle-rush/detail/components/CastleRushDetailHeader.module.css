@@ -13,10 +13,10 @@
   transition: color 0.3s ease;
   margin-bottom: 1.5rem;
   backdrop-filter: blur(4px);
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--muted);
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  border: 1px solid rgba(31, 41, 55, 0.5);
+  border: 1px solid var(--border);
 }
 
 .backLink:hover {
@@ -30,9 +30,13 @@
   border-radius: 1rem;
   overflow: hidden;
   border: 1px solid var(--border);
-  background: linear-gradient(to bottom right, #1a1a1a, #000);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  background: var(--card);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
   margin-bottom: 0.5rem;
+}
+
+:global(.dark) .banner {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 .image {
@@ -42,7 +46,7 @@
 .overlayTop {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, black, rgba(0, 0, 0, 0.3) 50%, transparent);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2) 50%, transparent);
 }
 
 .overlayRight {
@@ -56,6 +60,7 @@
   bottom: 0;
   left: 0;
   padding: 1.5rem;
+  z-index: 20;
 }
 
 @media (min-width: 768px) {
@@ -83,16 +88,21 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .title {
   font-size: 2.25rem;
   font-weight: 900;
-  color: var(--foreground);
+  color: #ffffff;
   text-transform: uppercase;
   letter-spacing: -0.025em;
   font-style: italic;
   transform: skewX(-3deg);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+:global(.dark) .title {
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
 }
 
@@ -107,8 +117,8 @@
 .underline {
   height: 0.25rem;
   width: 8rem;
-  background: linear-gradient(to right, var(--primary), #FFA500);
+  background: linear-gradient(to right, var(--primary), var(--primary-opacity));
   margin-top: 1rem;
   transform: skewX(-12deg);
-  box-shadow: 0 0 15px var(--primary);
+  box-shadow: 0 0 15px var(--primary-opacity);
 }

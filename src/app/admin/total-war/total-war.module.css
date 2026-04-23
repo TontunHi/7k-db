@@ -300,6 +300,29 @@
   border-style: solid;
 }
 
+.addSlotBtn {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  border: 2px dashed var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-foreground);
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+.addSlotBtn:hover:not(:disabled) {
+  border-color: var(--muted-foreground);
+  color: var(--foreground);
+}
+
+.addSlotBtn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
 .addTeamBtn {
   width: 100%;
   padding: 1rem;

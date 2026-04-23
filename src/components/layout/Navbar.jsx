@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation"
 import { clsx } from "clsx"
 import { ChevronDown, Menu, X } from "lucide-react"
 
+import { ThemeToggle } from "@/components/shared/ThemeToggle"
+
 export default function Navbar() {
     const pathname = usePathname()
     const router = useRouter()
@@ -59,7 +61,7 @@ export default function Navbar() {
     }
 
     return (
-        <nav className="sticky top-0 z-50 w-full border-b border-[#FFD700]/10 bg-[#050505]/95 backdrop-blur-md shadow-lg">
+        <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-md shadow-lg">
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
                 {/* Logo */}
                 <div className="flex items-center gap-6">
@@ -69,7 +71,7 @@ export default function Navbar() {
                                 src="/about_website/logo_website.webp"
                                 alt="7K DB Logo"
                                 fill
-                                className="object-contain"
+                                className="object-contain dark:brightness-100 brightness-0 transition-all"
                                 sizes="(max-width: 768px) 112px, 144px"
                                 priority
                             />
@@ -88,8 +90,8 @@ export default function Navbar() {
                                     className={clsx(
                                         "flex items-center gap-1 px-4 py-2 text-sm font-bold uppercase tracking-wider transition-all rounded-lg",
                                         isChildActive
-                                            ? "text-[#FFD700] bg-[#FFD700]/10"
-                                            : "text-gray-400 hover:text-white hover:bg-white/5"
+                                            ? "text-primary bg-primary/10"
+                                            : "text-muted-foreground hover:text-foreground hover:bg-accent"
                                     )}
                                 >
                                     {item.name}
@@ -101,8 +103,8 @@ export default function Navbar() {
                                     className={clsx(
                                         "block px-4 py-2 text-sm font-bold uppercase tracking-wider transition-all rounded-lg",
                                         pathname === item.href
-                                            ? "text-[#FFD700] bg-[#FFD700]/10 shadow-[0_0_10px_rgba(255,215,0,0.1)]"
-                                            : "text-gray-400 hover:text-white hover:bg-white/5"
+                                            ? "text-primary bg-primary/10 shadow-[0_0_10px_rgba(255,215,0,0.1)]"
+                                            : "text-muted-foreground hover:text-foreground hover:bg-accent"
                                     )}
                                 >
                                     {item.name}
@@ -115,8 +117,8 @@ export default function Navbar() {
                                     "absolute top-full pt-2 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50",
                                     index > 2 ? "right-0" : "left-0"
                                 )}>
-                                    <div className="relative bg-[#0a0a0a] border border-gray-800 rounded-xl shadow-2xl overflow-hidden p-1.5">
-                                        <div className="absolute inset-0 bg-gradient-to-b from-[#FFD700]/5 to-transparent pointer-events-none z-0" />
+                                    <div className="relative bg-card border border-border rounded-xl shadow-2xl overflow-hidden p-1.5">
+                                        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none z-0" />
                                         <div className="relative z-10">
                                             {item.children.map((child) => {
                                                 const isActive = pathname === child.href || pathname.startsWith(child.href + '/')
@@ -127,13 +129,13 @@ export default function Navbar() {
                                                     className={clsx(
                                                         "flex items-center justify-between px-4 py-3 text-sm font-medium transition-all rounded-lg mb-0.5",
                                                         isActive
-                                                            ? "bg-[#FFD700]/10 text-[#FFD700]"
-                                                            : "text-gray-400 hover:text-white hover:bg-white/5 hover:pl-6"
+                                                            ? "bg-primary/10 text-primary"
+                                                            : "text-muted-foreground hover:text-foreground hover:bg-accent hover:pl-6"
                                                     )}
                                                 >
                                                     {child.name}
                                                     {isActive && (
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-[#FFD700] shrink-0" />
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
                                                     )}
                                                 </Link>
                                             )})}
@@ -147,24 +149,29 @@ export default function Navbar() {
 
                 </div>
 
-                {/* Mobile Menu Button */}
-                <div className="flex items-center gap-2 md:hidden">
-                    <button
-                        className="p-2 text-gray-400 hover:text-white transition-colors"
-                        onClick={() => {
-                            setIsMenuOpen(!isMenuOpen)
-                        }}
-                    >
-                        {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                    </button>
+                {/* Right Actions */}
+                <div className="flex items-center gap-2">
+                    <ThemeToggle />
+                    
+                    {/* Mobile Menu Button */}
+                    <div className="md:hidden flex items-center">
+                        <button
+                            className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+                            onClick={() => {
+                                setIsMenuOpen(!isMenuOpen)
+                            }}
+                        >
+                            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                        </button>
+                    </div>
                 </div>
             </div>
 
             {/* Mobile Menu */}
             {isMenuOpen && (
-                <div className="md:hidden border-t border-gray-800 bg-[#050505] animate-in slide-in-from-top-2 duration-200">
+                <div className="md:hidden border-t border-border bg-background animate-in slide-in-from-top-2 duration-200">
                     <div className="p-4 space-y-4 h-[calc(100vh-4rem)] overflow-y-auto">
-                        <div className="space-y-2 pt-2 border-t border-gray-800/50">
+                        <div className="space-y-2 pt-2 border-t border-border/50">
                             {navItems.map((item) => (
                             <div key={item.name}>
                                 {item.children ? (
@@ -174,15 +181,15 @@ export default function Navbar() {
                                             className={clsx(
                                                 "w-full flex items-center justify-between px-4 py-3 text-sm font-bold uppercase tracking-wider rounded-lg transition-colors",
                                                 activeDropdown === item.name
-                                                    ? "text-white bg-white/5"
-                                                    : "text-gray-400 hover:text-white hover:bg-white/5"
+                                                    ? "text-foreground bg-accent"
+                                                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
                                             )}
                                         >
                                             {item.name}
                                             <ChevronDown className={clsx("w-4 h-4 transition-transform", activeDropdown === item.name && "rotate-180")} />
                                         </button>
                                         {activeDropdown === item.name && (
-                                            <div className="pl-4 mt-1 space-y-1 border-l-2 border-[#FFD700]/20 ml-4">
+                                            <div className="pl-4 mt-1 space-y-1 border-l-2 border-primary/20 ml-4">
                                                 {item.children.map((child) => (
                                                     <Link
                                                         key={child.href}
@@ -190,8 +197,8 @@ export default function Navbar() {
                                                         className={clsx(
                                                             "block px-4 py-2.5 text-sm font-medium transition-colors rounded-lg",
                                                             pathname === child.href
-                                                                ? "text-[#FFD700] bg-[#FFD700]/5"
-                                                                : "text-gray-500 hover:text-white"
+                                                                ? "text-primary bg-primary/5"
+                                                                : "text-muted-foreground hover:text-foreground"
                                                         )}
                                                         onClick={() => setIsMenuOpen(false)}
                                                     >
@@ -207,8 +214,8 @@ export default function Navbar() {
                                         className={clsx(
                                             "block px-4 py-3 text-sm font-bold uppercase tracking-wider rounded-lg transition-colors",
                                             pathname === item.href
-                                                ? "text-[#FFD700] bg-[#FFD700]/10"
-                                                : "text-gray-400 hover:text-white hover:bg-white/5"
+                                                ? "text-primary bg-primary/10"
+                                                : "text-muted-foreground hover:text-foreground hover:bg-accent"
                                         )}
                                         onClick={() => setIsMenuOpen(false)}
                                     >

@@ -3,8 +3,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #0a0a0a;
-  border: 1px solid rgba(31, 41, 55, 0.6);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 1.25rem;
   padding: 1.5rem;
   overflow: hidden;
@@ -14,6 +14,11 @@
 
 .card:hover {
   transform: translateY(-0.25rem);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+}
+
+:global(.dark) .card:hover {
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
 .glow {
@@ -23,10 +28,15 @@
   transition: opacity 0.5s ease;
   pointer-events: none;
   border-radius: 1.25rem;
+  display: none;
+}
+
+:global(.dark) .glow {
+  display: block;
 }
 
 .card:hover .glow {
-  opacity: 1;
+  opacity: 0.15;
 }
 
 .borderGlow {
@@ -49,6 +59,10 @@
   aspect-ratio: 1 / 1;
   margin-bottom: 1rem;
   transition: transform 0.5s ease;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.1));
+}
+
+:global(.dark) .logoWrapper {
   filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.9));
 }
 
@@ -77,7 +91,7 @@
 }
 
 .meta {
-  color: #4b5563;
+  color: var(--muted-foreground);
   font-size: 0.75rem;
   font-family: monospace;
   text-transform: uppercase;
@@ -93,7 +107,7 @@
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #000;
+  color: #fff;
 }
 
 .bottomLine {
@@ -113,9 +127,9 @@
 .borderNormal { border-color: rgba(148, 163, 184, 0.5); }
 .borderElite { border-color: rgba(52, 211, 153, 0.5); }
 .borderSuperb { border-color: rgba(251, 113, 133, 0.5); }
-.borderLegendary { border-color: rgba(255, 215, 0, 0.5); }
+.borderLegendary { border-color: var(--primary-opacity); }
 
 .bgNormal { background: linear-gradient(to right, #94a3b8, #475569); }
 .bgElite { background: linear-gradient(to right, #34d399, #059669); }
 .bgSuperb { background: linear-gradient(to right, #fb7185, #dc2626); }
-.bgLegendary { background: linear-gradient(to right, #ffd700, #ff8c00); }
+.bgLegendary { background: linear-gradient(to right, var(--primary), color-mix(in srgb, var(--primary), black 20%)); }

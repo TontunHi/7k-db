@@ -1,7 +1,7 @@
 .simulator {
   position: relative;
   width: 100%;
-  background-color: #050505;
+  background-color: var(--background);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -22,12 +22,12 @@
 
 .nav {
   height: 4rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 1.5rem;
-  background: rgba(8, 8, 8, 0.8);
+  background: var(--card);
   backdrop-filter: blur(12px);
 }
 
@@ -40,26 +40,26 @@
 .backButton {
   padding: 0.5rem;
   border-radius: 0.5rem;
-  color: #9ca3af;
+  color: var(--muted-foreground);
   transition: background-color 0.2s, color 0.2s;
 }
 
 .backButton:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background-color: var(--accent);
+  color: var(--foreground);
 }
 
 .navDivider {
   height: 2rem;
   width: 1px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--border);
   margin: 0 0.5rem;
 }
 
 .navTitle {
   font-size: 1.125rem;
   font-weight: 900;
-  color: #fff;
+  color: var(--foreground);
   font-style: italic;
   letter-spacing: -0.025em;
   text-transform: uppercase;

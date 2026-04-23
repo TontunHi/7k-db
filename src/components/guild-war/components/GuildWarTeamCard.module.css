@@ -12,18 +12,22 @@
   position: relative;
   overflow: hidden;
   border-radius: 2.5rem;
-  background: #0a0a0c;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--card);
+  border: 1px solid var(--border);
   transition: all 0.5s ease;
 }
 
 .container:hover {
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--border);
 }
 
 .containerExpanded {
-  box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8), 0 0 40px rgba(99, 102, 241, 0.05);
-  border-color: rgba(99, 102, 241, 0.2);
+  box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.1), 0 0 40px var(--primary-opacity);
+  border-color: var(--primary);
+}
+
+:global(.dark) .containerExpanded {
+  box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8), 0 0 40px var(--primary-opacity);
 }
 
 .backgroundGlow {
@@ -33,11 +37,16 @@
   width: 80%;
   height: 150%;
   border-radius: 9999px;
-  background: rgba(99, 102, 241, 0.05);
+  background: var(--primary-opacity);
   filter: blur(120px);
   transition: opacity 1s ease;
   pointer-events: none;
   opacity: 0;
+  display: none;
+}
+
+:global(.dark) .backgroundGlow {
+  display: block;
 }
 
 .backgroundGlowExpanded {
@@ -53,7 +62,7 @@
 }
 
 .header:hover {
-  background-color: rgba(255, 255, 255, 0.015);
+  background-color: var(--muted);
 }
 
 /* Collapsed Content */
@@ -68,7 +77,7 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(to right, transparent, rgba(99, 102, 241, 0.3), transparent);
+  background: linear-gradient(to right, transparent, var(--primary-opacity), transparent);
 }
 
 .bannerLayout {
@@ -105,13 +114,17 @@
 .portraitFade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, transparent, #0a0a0c);
+  background: linear-gradient(to right, transparent, var(--card));
 }
 
 .portraitShadow {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(10, 10, 12, 0.6), transparent);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent);
+}
+
+:global(.dark) .portraitShadow {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
 }
 
 .teamBrief {
@@ -140,8 +153,8 @@
   border-width: 1px;
 }
 
-.attacker { background: rgba(245, 158, 11, 0.1); color: #fbbf24; border-color: rgba(245, 158, 11, 0.2); }
-.defender { background: rgba(14, 165, 233, 0.1); color: #38bdf8; border-color: rgba(14, 165, 233, 0.2); }
+.attacker { background: color-mix(in srgb, var(--destructive), transparent 90%); color: var(--destructive); border-color: color-mix(in srgb, var(--destructive), transparent 80%); }
+.defender { background: color-mix(in srgb, var(--primary), transparent 90%); color: var(--primary); border-color: color-mix(in srgb, var(--primary), transparent 80%); }
 
 .formationBadge {
   font-size: 8px;
@@ -150,15 +163,15 @@
   letter-spacing: 0.1em;
   padding: 0.125rem 0.5rem;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.05);
-  color: #9ca3af;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--muted);
+  color: var(--muted-foreground);
+  border: 1px solid var(--border);
 }
 
 .teamName {
   font-size: 1.125rem;
   font-weight: 900;
-  color: #fff;
+  color: var(--foreground);
   letter-spacing: -0.025em;
   line-height: 1.2;
 }
@@ -168,8 +181,8 @@
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+  background: var(--background);
   overflow: hidden;
 }
 
@@ -192,13 +205,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #6b7280;
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
   transition: all 0.3s ease;
 }
 
 .card:hover .expandButton {
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--primary-opacity);
+  color: var(--primary);
 }
 
 /* Expanded Header */
@@ -227,7 +241,7 @@
 .expandedTeamName {
   font-size: 1.25rem;
   font-weight: 900;
-  color: #fff;
+  color: var(--foreground);
 }
 
 @media (min-width: 640px) {
@@ -249,10 +263,10 @@
     display: flex;
     align-items: center;
     gap: 0.25rem;
-    background: rgba(0, 0, 0, 0.4);
+    background: var(--muted);
     padding: 0.25rem;
     border-radius: 1.25rem;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
   }
 }
 
@@ -268,25 +282,25 @@
   letter-spacing: 0.1em;
   transition: all 0.3s ease;
   background: transparent;
-  color: #6b7280;
+  color: var(--muted-foreground);
   border: none;
   cursor: pointer;
 }
 
 .tabButton:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.05);
+  color: var(--foreground);
+  background: var(--background);
 }
 
 .tabActive {
-  background: #fff;
-  color: #000;
+  background: var(--foreground);
+  color: var(--background);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .tabActive:hover {
-  background: #fff;
-  color: #000;
+  background: var(--foreground);
+  color: var(--background);
 }
 
 .collapseButton {
@@ -296,8 +310,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
-  color: #000;
+  background: var(--foreground);
+  color: var(--background);
   transform: rotate(180deg);
   transition: all 0.5s ease;
   border: none;
@@ -308,7 +322,7 @@
 .contentArea {
   position: relative;
   z-index: 10;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--border);
   animation: fadeIn 0.5s ease;
 }
 
@@ -321,8 +335,8 @@
 .mobileTabs {
   display: flex;
   overflow-x: auto;
-  background: rgba(0, 0, 0, 0.2);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--muted);
+  border-bottom: 1px solid var(--border);
 }
 
 @media (min-width: 1024px) {
@@ -353,15 +367,15 @@
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: -0.025em;
-  color: #6b7280;
+  color: var(--muted-foreground);
 }
 
 .mobileTabActive {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--background);
 }
 
 .mobileTabActive .mobileTabText {
-  color: #fff;
+  color: var(--foreground);
 }
 
 .tabIndicator {
@@ -370,6 +384,7 @@
   left: 0;
   right: 0;
   height: 2px;
+  background: var(--primary);
 }
 
 /* Body Padding */

@@ -34,6 +34,11 @@
   border-radius: 9999px;
   opacity: 0.15;
   filter: blur(110px);
+  display: none;
+}
+
+:global(.dark) .glow {
+  display: block;
 }
 
 .content {
@@ -54,44 +59,46 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: #9ca3af;
+  color: var(--muted-foreground);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
   margin-bottom: 2rem;
   backdrop-filter: blur(4px);
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--muted);
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  border: 1px solid rgba(55, 65, 81, 0.5);
+  border: 1px solid var(--border);
   font-size: 0.875rem;
 }
 
 .backLink:hover {
-  color: #fff;
+  color: var(--foreground);
+  background: var(--border);
 }
 
 .emptyState {
   text-align: center;
   padding: 6rem 0;
-  border: 1px dashed rgba(31, 41, 55, 1);
+  border: 1px dashed var(--border);
   border-radius: 1.25rem;
-  background: rgba(17, 24, 39, 0.2);
+  background: var(--muted);
 }
 
 .emptyIcon {
   width: 3rem;
   height: 3rem;
-  color: #374151;
+  color: var(--muted-foreground);
+  opacity: 0.5;
   margin: 0 auto 1rem;
 }
 
 .emptyText {
-  color: #6b7280;
+  color: var(--foreground);
   font-weight: 500;
 }
 
 .emptySubtext {
-  color: #374151;
+  color: var(--muted-foreground);
   font-size: 0.875rem;
   margin-top: 0.25rem;
 }

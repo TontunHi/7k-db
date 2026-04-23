@@ -35,6 +35,11 @@
   background-color: var(--primary);
   opacity: 0.2;
   filter: blur(100px);
+  display: none;
+}
+
+:global(.dark) .topGlow {
+  display: block;
 }
 
 .content {
@@ -53,7 +58,7 @@
   padding: 5rem 0;
   border: 1px dashed var(--border);
   border-radius: 1rem;
-  background: rgba(17, 24, 39, 0.3);
+  background: var(--muted);
 }
 
 .emptyIcon {

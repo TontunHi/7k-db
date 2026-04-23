@@ -21,16 +21,16 @@
   font-size: 0.875rem;
   transition: all 0.3s ease;
   border: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--card);
   color: var(--muted-foreground);
   cursor: pointer;
   clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
 }
 
 .button:hover {
-  border-color: #6b7280; /* gray-500 */
+  border-color: var(--primary);
   color: var(--foreground);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--muted);
   transform: scale(1.05);
 }
 
@@ -40,9 +40,9 @@
 
 .active {
   border-color: var(--primary);
-  background: rgba(255, 215, 0, 0.1);
+  background: var(--primary-opacity);
   color: var(--primary);
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
+  box-shadow: 0 0 30px var(--primary-opacity);
 }
 
 .corner {
@@ -55,15 +55,15 @@
 .topLeft {
   top: 0;
   left: 0;
-  border-top: 2px solid #4b5563;
-  border-left: 2px solid #4b5563;
+  border-top: 2px solid var(--border);
+  border-left: 2px solid var(--border);
 }
 
 .bottomRight {
   bottom: 0;
   right: 0;
-  border-bottom: 2px solid #4b5563;
-  border-right: 2px solid #4b5563;
+  border-bottom: 2px solid var(--border);
+  border-right: 2px solid var(--border);
 }
 
 .active .topLeft {

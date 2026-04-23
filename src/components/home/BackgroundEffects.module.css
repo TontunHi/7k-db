@@ -36,6 +36,7 @@
   height: 600px;
   width: 600px;
   border-radius: 9999px;
-  background-color: rgba(30, 58, 138, 0.1); /* blue-900/10 equivalent */
+  background-color: var(--secondary);
+  opacity: 0.05;
   filter: blur(150px);
 }

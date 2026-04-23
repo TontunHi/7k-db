@@ -17,9 +17,14 @@
   height: 100%; /* Fill the card's aspect-ratio box */
   border-radius: 1rem;
   overflow: hidden;
-  border: 1px solid rgba(139, 92, 246, 0.1);
-  background: #000;
+  border: 1px solid var(--border);
+  background: var(--card);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+}
+
+:global(.dark) .imageWrapper {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border-color: var(--primary-opacity);
 }
 
 .special {
@@ -67,10 +72,15 @@
 .glow {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom right, rgba(139, 92, 246, 0.2), transparent, transparent);
+  background: linear-gradient(to bottom right, color-mix(in srgb, var(--primary), transparent 80%), transparent, transparent);
   opacity: 0;
   transition: opacity 0.7s ease;
   z-index: 5;
+  display: none;
+}
+
+:global(.dark) .glow {
+  display: block;
 }
 
 .card:hover .glow {
@@ -81,8 +91,8 @@
   position: absolute;
   inset: 0.25rem;
   overflow: hidden;
-  background-color: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: var(--muted);
+  border: 1px solid var(--border);
   /* Modified clip path for wider boxes */
   clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%);
 }
@@ -103,13 +113,7 @@
 .imageOverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, black, transparent);
-  opacity: 0.6;
-  transition: opacity 0.5s ease;
-}
-
-.card:hover .imageOverlay {
-  opacity: 0.4;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
 }
 
 /* Corner Accents */
@@ -119,8 +123,8 @@
   left: 1rem;
   width: 1.5rem;
   height: 1.5rem;
-  border-top: 2px solid rgba(139, 92, 246, 0.4);
-  border-left: 2px solid rgba(139, 92, 246, 0.4);
+  border-top: 2px solid color-mix(in srgb, var(--primary), transparent 60%);
+  border-left: 2px solid color-mix(in srgb, var(--primary), transparent 60%);
   opacity: 0;
   transition: all 0.5s ease;
 }
@@ -131,8 +135,8 @@
   right: 1rem;
   width: 1.5rem;
   height: 1.5rem;
-  border-bottom: 2px solid rgba(139, 92, 246, 0.4);
-  border-right: 2px solid rgba(139, 92, 246, 0.4);
+  border-bottom: 2px solid color-mix(in srgb, var(--primary), transparent 60%);
+  border-right: 2px solid color-mix(in srgb, var(--primary), transparent 60%);
   opacity: 0;
   transition: all 0.5s ease;
 }
@@ -150,7 +154,7 @@
   right: 0;
   padding: 1.5rem;
   backdrop-filter: blur(8px);
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.8);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   transform: translateY(0.5rem);
   transition: transform 0.5s ease;
@@ -164,25 +168,26 @@
 .name {
   font-size: 1.25rem;
   font-weight: 900;
-  color: var(--foreground);
+  color: #ffffff;
   text-transform: uppercase;
   letter-spacing: -0.025em;
   display: flex;
   align-items: center;
   justify-content: space-between;
   transition: color 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
 .card:hover .name {
-  color: #a78bfa;
+  color: var(--primary);
 }
 
 .nameIconWrapper {
   width: 2rem;
   height: 2rem;
   border-radius: 9999px;
-  background: rgba(139, 92, 246, 0.2);
-  border: 1px solid rgba(139, 92, 246, 0.3);
+  background: var(--primary-opacity);
+  border: 1px solid var(--primary-opacity);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -197,13 +202,13 @@
 .nameIcon {
   width: 1rem;
   height: 1rem;
-  color: #a78bfa;
+  color: var(--primary);
 }
 
 .underline {
   height: 2px;
   width: 100%;
-  background: linear-gradient(to right, #8b5cf6, transparent);
+  background: linear-gradient(to right, var(--primary), transparent);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.5s ease;

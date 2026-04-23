@@ -102,7 +102,7 @@ export default function TotalWarTeamCard({
                                         placeholder="..."
                                         className={styles.slotLabel}
                                     />
-                                    <div className="relative">
+                                    <div className="relative group">
                                         <button
                                             onClick={() => onOpenSkillPicker(teamIdx, slotIdx)}
                                             disabled={!hasHeroes}
@@ -141,13 +141,16 @@ export default function TotalWarTeamCard({
                             )
                         })}
 
-                        <button
-                            onClick={() => onTeamChange(teamIdx, 'skill_rotation', [...rotation, { label: '', skill: null }])}
-                            disabled={!hasHeroes}
-                            className={styles.addSlotBtn}
-                        >
-                            <Plus size={16} />
-                        </button>
+                        <div className={styles.slot}>
+                            <div className={styles.slotLabel} /> {/* Spacer */}
+                            <button
+                                onClick={() => onTeamChange(teamIdx, 'skill_rotation', [...rotation, { label: '', skill: null }])}
+                                disabled={!hasHeroes}
+                                className={styles.addSlotBtn}
+                            >
+                                <Plus size={16} />
+                            </button>
+                        </div>
                     </div>
                 </div>
 

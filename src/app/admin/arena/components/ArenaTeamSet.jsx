@@ -176,14 +176,17 @@ export default function ArenaTeamSet({
                                 )
                             })}
 
-                            <button
-                                onClick={() => onAddSlot(index)}
-                                disabled={!hasHeroes}
-                                className={styles.addSlotBtn}
-                                title="Add tactical slot"
-                            >
-                                <Plus size={20} />
-                            </button>
+                            <div className={styles.slot}>
+                                <div className={styles.slotLabel} /> {/* Spacer */}
+                                <button
+                                    onClick={() => onAddSlot(index)}
+                                    disabled={!hasHeroes}
+                                    className={styles.addSlotBtn}
+                                    title="Add tactical slot"
+                                >
+                                    <Plus size={20} />
+                                </button>
+                            </div>
                         </div>
                     </div>
 

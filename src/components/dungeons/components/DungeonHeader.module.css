@@ -26,6 +26,10 @@
   text-transform: uppercase;
   font-style: italic;
   transform: skewX(-6deg);
+  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.1));
+}
+
+:global(.dark) .title {
   filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.8));
 }
 
@@ -37,7 +41,7 @@
 
 .goldText {
   color: transparent;
-  background: linear-gradient(to right, var(--primary), #FDB931, #FFA500);
+  background: linear-gradient(to right, var(--primary), var(--primary-opacity), var(--primary));
   background-clip: text;
   -webkit-background-clip: text;
 }
@@ -49,8 +53,8 @@
   transform: translateX(-50%) skewX(-12deg);
   width: 12rem; /* 48 */
   height: 4px;
-  background: linear-gradient(to right, var(--primary), #FFA500);
-  box-shadow: 0 0 15px var(--primary);
+  background: linear-gradient(to right, var(--primary), var(--primary-opacity));
+  box-shadow: 0 0 15px var(--primary-opacity);
   transition: all 0.3s ease;
 }
 

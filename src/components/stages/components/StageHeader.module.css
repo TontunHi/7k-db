@@ -16,6 +16,10 @@
   text-transform: uppercase;
   font-style: italic;
   transform: skewX(-6deg);
+  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.1));
+}
+
+:global(.dark) .title {
   filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.8));
 }
 
@@ -27,14 +31,14 @@
 
 .goldGradient {
   color: transparent;
-  background: linear-gradient(to right, var(--primary), #FDB931, #FFA500);
+  background: linear-gradient(to right, var(--primary), var(--primary-opacity), var(--primary));
   background-clip: text;
   -webkit-background-clip: text;
 }
 
 .redGradient {
   color: transparent;
-  background: linear-gradient(to right, #FF0000, #FF4444, #800000);
+  background: linear-gradient(to right, var(--destructive), color-mix(in srgb, var(--destructive), white 30%), var(--destructive));
   background-clip: text;
   -webkit-background-clip: text;
 }
@@ -49,13 +53,13 @@
 }
 
 .goldUnderline {
-  background: linear-gradient(to right, var(--primary), #FFA500);
-  box-shadow: 0 0 15px var(--primary);
+  background: linear-gradient(to right, var(--primary), var(--primary-opacity));
+  box-shadow: 0 0 15px var(--primary-opacity);
 }
 
 .redUnderline {
-  background: linear-gradient(to right, #FF0000, #800000);
-  box-shadow: 0 0 15px #FF0000;
+  background: linear-gradient(to right, var(--destructive), color-mix(in srgb, var(--destructive), transparent 50%));
+  box-shadow: 0 0 15px color-mix(in srgb, var(--destructive), transparent 50%);
 }
 
 .titleWrapper:hover .underline {
@@ -83,4 +87,4 @@
 }
 
 .modeStage { color: var(--primary); }
-.modeNightmare { color: #ef4444; }
+.modeNightmare { color: var(--destructive); }

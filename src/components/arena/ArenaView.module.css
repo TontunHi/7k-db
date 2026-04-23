@@ -32,9 +32,14 @@
   height: 500px;
   width: 600px;
   border-radius: 9999px;
-  background-color: #6366f1; /* indigo-500 */
+  background-color: var(--primary);
   opacity: 0.1;
   filter: blur(140px);
+  display: none;
+}
+
+:global(.dark) .topGlow {
+  display: block;
 }
 
 .rightGlow {
@@ -44,9 +49,14 @@
   height: 400px;
   width: 400px;
   border-radius: 9999px;
-  background-color: #9333ea; /* purple-600 */
+  background-color: color-mix(in srgb, var(--primary), white 20%);
   opacity: 0.1;
   filter: blur(120px);
+  display: none;
+}
+
+:global(.dark) .rightGlow {
+  display: block;
 }
 
 .noise {
@@ -88,28 +98,29 @@
 .emptyState {
   text-align: center;
   padding: 5rem 0;
-  border: 1px dashed rgba(128, 128, 128, 0.3);
+  border: 1px dashed var(--border);
   border-radius: 1.5rem;
-  background: rgba(17, 24, 39, 0.2);
+  background: var(--muted);
   backdrop-filter: blur(4px);
 }
 
 .emptyIcon {
   width: 4rem;
   height: 4rem;
-  color: rgba(99, 102, 241, 0.5);
+  color: var(--primary);
+  opacity: 0.5;
   margin: 0 auto 1.5rem;
 }
 
 .emptyTitle {
   font-size: 1.5rem;
   font-weight: 900;
-  color: #d1d5db;
+  color: var(--foreground);
   margin-bottom: 0.5rem;
 }
 
 .emptyText {
-  color: #6b7280;
+  color: var(--muted-foreground);
   max-width: 28rem;
   margin: 0 auto;
 }

@@ -198,21 +198,21 @@ body {
 }
 
 @utility glass-card {
-  background: rgba(10, 10, 10, 0.6);
+  background: color-mix(in srgb, var(--card), transparent 40%);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
 }
 
 @utility linear-card {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--linear-border-standard);
+  background: color-mix(in srgb, var(--foreground), transparent 98%);
+  border: 1px solid var(--border);
   border-radius: 8px;
   transition: all 0.3s ease;
 }
 
 @utility linear-card-hover {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: color-mix(in srgb, var(--foreground), transparent 95%);
+  border: 1px solid color-mix(in srgb, var(--foreground), transparent 88%);
 }
 
 @utility font-linear {
@@ -226,7 +226,7 @@ body {
 @utility tracking-h1 { letter-spacing: -0.704px; }
 
 @utility bg-linear-gradient {
-  background: radial-gradient(circle at center, rgba(94, 106, 210, 0.05) 0%, transparent 70%);
+  background: radial-gradient(circle at center, color-mix(in srgb, var(--primary), transparent 95%) 0%, transparent 70%);
 }
 
 @utility linear-mask {
@@ -246,15 +246,15 @@ body {
 @utility tracking-body-lg { letter-spacing: -0.165px; }
 
 @utility linear-card {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: color-mix(in srgb, var(--foreground), transparent 98%);
+  border: 1px solid color-mix(in srgb, var(--foreground), transparent 92%);
   border-radius: 8px;
   transition: all 0.3s ease;
 }
 
 @utility linear-card-hover {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: color-mix(in srgb, var(--foreground), transparent 96%);
+  border-color: color-mix(in srgb, var(--foreground), transparent 88%);
 }
 
 @layer base {

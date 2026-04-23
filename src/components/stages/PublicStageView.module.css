@@ -34,6 +34,11 @@
   background-color: var(--primary);
   opacity: 0.1;
   filter: blur(100px);
+  display: none;
+}
+
+:global(.dark) .topGlow {
+  display: block;
 }
 
 .bottomGlow {
@@ -45,9 +50,14 @@
   border-radius: 9999px;
   filter: blur(120px);
   transition: background-color 0.7s ease;
+  display: none;
 }
 
-.glowStage { background-color: rgba(30, 58, 138, 0.2); }
+:global(.dark) .bottomGlow {
+  display: block;
+}
+
+.glowStage { background-color: color-mix(in srgb, var(--primary), transparent 80%); }
 .glowNightmare { background-color: rgba(127, 29, 29, 0.2); }
 
 .content {

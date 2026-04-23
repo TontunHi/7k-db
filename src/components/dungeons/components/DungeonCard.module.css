@@ -21,6 +21,11 @@
   filter: blur(40px);
   opacity: 0.1;
   transition: opacity 0.5s ease;
+  display: none;
+}
+
+:global(.dark) .glow {
+  display: block;
 }
 
 .card:hover .glow {
@@ -29,8 +34,12 @@
 
 .image {
   object-fit: contain;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.8));
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
   transition: transform 0.5s ease;
+}
+
+:global(.dark) .image {
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.8));
 }
 
 .card:hover .image {
@@ -50,8 +59,12 @@
   letter-spacing: -0.025em;
   font-style: italic;
   transform: skewX(-6deg);
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
   transition: color 0.3s ease;
+}
+
+:global(.dark) .name {
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
 }
 
 @media (min-width: 768px) {

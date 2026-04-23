@@ -12,8 +12,8 @@
 }
 
 .formationBox {
-  background: rgba(255, 255, 255, 0.01);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 2rem;
   padding: 2rem;
   position: relative;
@@ -32,7 +32,7 @@
   left: 0;
   width: 100%;
   height: 4px;
-  background: linear-gradient(to right, rgba(99, 102, 241, 0.5), transparent);
+  background: linear-gradient(to right, var(--primary), transparent);
   opacity: 0.3;
 }
 
@@ -46,20 +46,20 @@
 .headerIconWrapper {
   padding: 0.5rem;
   border-radius: 0.5rem;
-  background: rgba(99, 102, 241, 0.1);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  background: var(--primary-opacity);
+  border: 1px solid var(--primary);
 }
 
 .headerIcon {
   width: 1rem;
   height: 1rem;
-  color: #818cf8;
+  color: var(--primary);
 }
 
 .boxTitle {
   font-size: 0.875rem;
   font-weight: 900;
-  color: #fff;
+  color: var(--foreground);
   text-transform: uppercase;
   letter-spacing: 0.2em;
 }
@@ -86,8 +86,8 @@
 }
 
 .petBox {
-  background: rgba(255, 255, 255, 0.01);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 2rem;
   padding: 1.5rem;
 }
@@ -111,21 +111,25 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+  background: var(--background);
   padding: 0.5rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
   transition: border-color 0.3s ease;
 }
 
+:global(.dark) .supportPet {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
 .supportPet:hover {
-  border-color: rgba(99, 102, 241, 0.3);
+  border-color: var(--primary);
 }
 
 .noteBox {
   flex: 1;
-  background: rgba(99, 102, 241, 0.02);
-  border: 1px solid rgba(99, 102, 241, 0.1);
+  background: var(--muted);
+  border: 1px solid var(--border);
   border-radius: 2rem;
   padding: 2rem;
   display: flex;
@@ -141,12 +145,12 @@
   right: -0.5rem;
   width: 2.5rem;
   height: 2.5rem;
-  color: rgba(99, 102, 241, 0.05);
+  color: var(--primary-opacity);
   transform: rotate(12deg);
 }
 
 .noteText {
-  color: rgba(199, 210, 254, 0.8);
+  color: var(--muted-foreground);
   font-size: 0.875rem;
   line-height: 1.625;
   font-style: italic;
@@ -171,8 +175,8 @@
 
 .heroEquipmentCard {
   position: relative;
-  background: #0d0d10;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 2.5rem;
   padding: 1.5rem;
   overflow: hidden;
@@ -180,7 +184,7 @@
 }
 
 .heroEquipmentCard:hover {
-  border-color: rgba(245, 158, 11, 0.2);
+  border-color: var(--primary-opacity);
 }
 
 .equipmentGlow {
@@ -189,11 +193,16 @@
   right: 0;
   width: 8rem;
   height: 8rem;
-  background: rgba(245, 158, 11, 0.05);
+  background: var(--primary-opacity);
   filter: blur(48px);
   border-radius: 9999px;
   opacity: 0;
   transition: opacity 0.3s ease;
+  display: none;
+}
+
+:global(.dark) .equipmentGlow {
+  display: block;
 }
 
 .heroEquipmentCard:hover .equipmentGlow {
@@ -218,7 +227,7 @@
 .portraitAccent {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(245, 158, 11, 0.1), transparent);
+  background: linear-gradient(to bottom, var(--primary-opacity), transparent);
   border-radius: 9999px;
   filter: blur(16px);
   opacity: 0;
@@ -243,7 +252,7 @@
 .heroName {
   font-size: 1rem;
   font-weight: 900;
-  color: #fff;
+  color: var(--foreground);
   text-transform: uppercase;
   letter-spacing: -0.025em;
   line-height: 1;
@@ -252,7 +261,7 @@
 .heroNameBar {
   width: 2.5rem;
   height: 2px;
-  background: rgba(245, 158, 11, 0.3);
+  background: var(--primary-opacity);
   border-radius: 9999px;
   margin-top: 0.75rem;
 }
@@ -273,18 +282,18 @@
   position: relative;
   aspect-ratio: 1 / 1;
   border-radius: 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--background);
   box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
 
-.itemFilledWeapon { border-color: rgba(239, 68, 68, 0.2); }
-.itemFilledArmor { border-color: rgba(59, 130, 246, 0.2); }
-.itemFilledAccessory { border-color: rgba(245, 158, 11, 0.2); }
+.itemFilledWeapon { border-color: rgba(239, 68, 68, 0.3); }
+.itemFilledArmor { border-color: rgba(59, 130, 246, 0.3); }
+.itemFilledAccessory { border-color: rgba(245, 158, 11, 0.3); }
 
 .itemImage {
   object-fit: contain;
@@ -301,11 +310,11 @@
   position: relative;
   aspect-ratio: 1 / 1;
   border-radius: 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--background);
   overflow: hidden;
 }
 
@@ -318,18 +327,18 @@
   width: 4px;
   height: 4px;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--border);
 }
 
 .itemNote {
   margin-top: 1.5rem;
   padding-top: 1.25rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--border);
 }
 
 .itemNoteText {
   font-size: 10px;
-  color: #9ca3af;
+  color: var(--muted-foreground);
   font-style: italic;
   line-height: 1.625;
   text-align: center;
@@ -337,7 +346,7 @@
 }
 
 .heroEquipmentCard:hover .itemNoteText {
-  color: rgba(254, 243, 199, 0.6);
+  color: var(--primary);
 }
 
 /* Rotation Tab */
@@ -346,8 +355,8 @@
 }
 
 .rotationContent {
-  background: #0d0d10;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 2.5rem;
   padding: 2rem;
 }
@@ -384,11 +393,16 @@
 .skillGlow {
   position: absolute;
   inset: -0.5rem;
-  background: rgba(168, 85, 247, 0.1);
+  background: var(--primary-opacity);
   border-radius: 2rem;
   filter: blur(8px);
   opacity: 0;
   transition: opacity 0.3s ease;
+  display: none;
+}
+
+:global(.dark) .skillGlow {
+  display: block;
 }
 
 .skillWrapper:hover .skillGlow {
@@ -401,10 +415,14 @@
   height: 5rem;
   border-radius: 2rem;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.05);
-  background: #000;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 2px solid var(--border);
+  background: var(--background);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
   transition: all 0.5s ease;
+}
+
+:global(.dark) .skillIcon {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 @media (min-width: 640px) {
@@ -415,7 +433,7 @@
 }
 
 .skillWrapper:hover .skillIcon {
-  border-color: rgba(168, 85, 247, 0.4);
+  border-color: var(--primary);
   transform: scale(1.05);
 }
 
@@ -426,29 +444,29 @@
   width: 2rem;
   height: 2rem;
   border-radius: 9999px;
-  background: #fff;
-  color: #000;
+  background: var(--foreground);
+  color: var(--background);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 10px;
   font-weight: 900;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  border: 4px solid #0d0d10;
+  border: 4px solid var(--card);
 }
 
 .skillLabel {
   margin-top: 1rem;
   font-size: 10px;
   font-weight: 900;
-  color: #6b7280;
+  color: var(--muted-foreground);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   transition: color 0.3s ease;
 }
 
 .skillWrapper:hover .skillLabel {
-  color: #c084fc;
+  color: var(--primary);
 }
 
 .skillConnector {
@@ -460,7 +478,7 @@
     display: block;
     width: 3rem;
     height: 1px;
-    background: linear-gradient(to right, rgba(168, 85, 247, 0.2), transparent);
+    background: linear-gradient(to right, var(--primary-opacity), transparent);
   }
 }
 
@@ -473,8 +491,8 @@
 }
 
 .primaryTargets {
-  background: rgba(244, 63, 94, 0.05);
-  border: 1px solid rgba(244, 63, 94, 0.1);
+  background: var(--muted);
+  border: 1px solid var(--border);
   border-radius: 2rem;
   padding: 2rem;
 }
@@ -489,8 +507,8 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--background);
+  border: 1px solid var(--border);
   padding-right: 1rem;
   border-radius: 0.75rem;
   overflow: hidden;
@@ -500,13 +518,13 @@
   position: relative;
   width: 2.5rem;
   height: 2.5rem;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid var(--border);
 }
 
 .targetName {
   font-size: 10px;
   font-weight: 900;
-  color: #d1d5db;
+  color: var(--muted-foreground);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -523,20 +541,21 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--muted);
   border-radius: 2.5rem;
-  border: 1px dashed rgba(255, 255, 255, 0.05);
+  border: 1px dashed var(--border);
 }
 
 .emptyCounterIcon {
   width: 3rem;
   height: 3rem;
-  color: #1f2937;
+  color: var(--muted-foreground);
+  opacity: 0.2;
   margin-bottom: 1rem;
 }
 
 .emptyCounterText {
-  color: #4b5563;
+  color: var(--muted-foreground);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;

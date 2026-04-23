@@ -6,26 +6,34 @@
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background-color: rgba(0, 0, 0, 0.95);
+  background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(24px);
   animation: fadeIn 0.3s ease;
+}
+
+:global(.dark) .overlay {
+  background-color: rgba(0, 0, 0, 0.95);
 }
 
 .modal {
   width: 100%;
   max-width: 56rem;
-  background-color: #0a0a0a;
-  border: 1px solid rgba(255, 215, 0, 0.1);
+  background-color: var(--card);
+  border: 1px solid var(--border);
   border-radius: 4rem;
   overflow: hidden;
-  box-shadow: 0 0 150px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 0 150px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
 }
 
+:global(.dark) .modal {
+  box-shadow: 0 0 150px rgba(0, 0, 0, 0.9);
+}
+
 .header {
   padding: 2.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -34,7 +42,7 @@
 .title {
   font-size: 1.875rem;
   font-weight: 900;
-  color: #fff;
+  color: var(--foreground);
   text-transform: uppercase;
   font-style: italic;
   letter-spacing: -0.05em;
@@ -42,16 +50,17 @@
 
 .btnClose {
   padding: 1rem;
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--muted);
   border-radius: 1.25rem;
-  color: #fff;
+  color: var(--foreground);
   transition: all 0.2s;
   border: none;
   cursor: pointer;
 }
 
 .btnClose:hover {
-  background-color: #ef4444;
+  background-color: var(--destructive);
+  color: #fff;
 }
 
 .content {
@@ -70,7 +79,7 @@
 /* Custom Scrollbar */
 .content::-webkit-scrollbar { width: 4px; }
 .content::-webkit-scrollbar-track { background: transparent; }
-.content::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 9999px; }
+.content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 9999px; }
 
 .itemButton {
   display: flex;
@@ -94,13 +103,17 @@
   width: 100%;
   border-radius: 1.25rem;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--border);
   transition: border-color 0.2s;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
+}
+
+:global(.dark) .itemPortrait {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 .itemButton:hover .itemPortrait {
-  border-color: #FFD700;
+  border-color: var(--primary);
 }
 
 @keyframes fadeIn {

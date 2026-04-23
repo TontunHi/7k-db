@@ -3,10 +3,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #070707;
+  background-color: var(--background);
   position: relative;
   padding: 1rem;
   overflow: hidden;
+  animation: fadeIn 0.3s ease;
 }
 
 @media (min-width: 768px) {
@@ -30,6 +31,11 @@
   inset: 0;
   z-index: 0;
   opacity: 0.2;
+  display: none;
+}
+
+:global(.dark) .backgroundEffects {
+  display: block;
 }
 
 .glow {
@@ -39,7 +45,7 @@
   transform: translate(-50%, -50%);
   width: 800px;
   height: 800px;
-  background-color: rgba(255, 215, 0, 0.3);
+  background-color: var(--primary-opacity);
   filter: blur(150px);
   border-radius: 9999px;
 }
@@ -60,7 +66,7 @@
 .livePreviewLabel {
   text-align: center;
   font-size: 10px;
-  color: #4b5563;
+  color: var(--muted-foreground);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5em;
@@ -69,8 +75,12 @@
 
 .cardContainer {
   padding: 0.5rem;
-  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.1), transparent);
+  background: linear-gradient(to bottom right, var(--primary-opacity), transparent);
   border-radius: 40px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+}
+
+:global(.dark) .cardContainer {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
@@ -95,24 +105,25 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 1.5rem;
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: var(--card);
+  border: 1px solid var(--border);
   border-radius: 1rem;
   font-size: 0.875rem;
   font-weight: 900;
-  color: #fff;
+  color: var(--foreground);
   transition: all 0.2s;
   backdrop-filter: blur(12px);
   text-transform: uppercase;
   letter-spacing: 0.1em;
+  cursor: pointer;
 }
 
 .btnCopy:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--muted);
 }
 
 .copyIcon {
-  color: #FFD700;
+  color: var(--primary);
 }
 
 .btnDownload {
@@ -120,14 +131,14 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1.25rem 2rem;
-  background-color: #FFD700;
-  color: #000;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
   border-radius: 1rem;
   font-size: 0.875rem;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  box-shadow: 0 20px 50px rgba(255, 215, 0, 0.25);
+  box-shadow: 0 20px 50px var(--primary-opacity);
   transition: transform 0.2s, box-shadow 0.2s;
   border: none;
   cursor: pointer;
@@ -151,10 +162,10 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 1.5rem;
-  background-color: #FFD700;
-  color: #000;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
   border-radius: 1.5rem;
-  box-shadow: 0 10px 40px rgba(255, 215, 0, 0.4);
+  box-shadow: 0 10px 40px var(--primary-opacity);
   font-weight: 900;
   text-transform: uppercase;
   font-size: 10px;

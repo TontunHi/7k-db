@@ -45,9 +45,9 @@ export default function DungeonTeamSet({ set, index, heroImageMap }) {
                             customClasses={{
                                 container: "grid grid-cols-5 gap-3 pb-6 max-w-full",
                                 emptyRender: () => (
-                                    <div className="absolute inset-0 flex items-center justify-center text-gray-700 text-xs text-center p-1">Empty</div>
+                                    <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/30 text-xs text-center p-1">Empty</div>
                                 ),
-                                cardString: "bg-black border-2 border-gray-800 aspect-[3/4] rounded-lg overflow-hidden transition-all duration-300"
+                                cardString: "bg-card border border-border aspect-[3/4] rounded-lg overflow-hidden transition-all duration-300"
                             }}
                         />
 
@@ -79,11 +79,11 @@ export default function DungeonTeamSet({ set, index, heroImageMap }) {
                                 petFile={set.pet_file} 
                                 hideLabel={true}
                                 customClasses={{
-                                    wrapper: clsx(
-                                        "w-24 h-24 border-2 bg-gray-900/50 shadow-xl hover:scale-105 transition-transform relative z-10",
+                                       wrapper: clsx(
+                                        "w-24 h-24 border-2 bg-muted/50 shadow-xl hover:scale-105 transition-transform relative z-10",
                                         set.aura === 'blue' ? "border-blue-500 shadow-blue-500/10" : 
                                         set.aura === 'red' ? "border-red-500 shadow-red-500/10" : 
-                                        "border-[#FFD700]/20 shadow-[#FFD700]/5"
+                                        "border-primary/20 shadow-primary/5"
                                     )
                                 }}
                             />

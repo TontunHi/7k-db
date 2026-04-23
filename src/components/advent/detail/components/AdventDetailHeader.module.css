@@ -13,14 +13,14 @@
   transition: color 0.3s ease;
   margin-bottom: 1.5rem;
   backdrop-filter: blur(4px);
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--muted);
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  border: 1px solid rgba(31, 41, 55, 0.5);
+  border: 1px solid var(--border);
 }
 
 .backLink:hover {
-  color: #a78bfa;
+  color: var(--primary);
 }
 
 .content {
@@ -42,9 +42,14 @@
   aspect-ratio: 2 / 3;
   border-radius: 1rem;
   overflow: hidden;
-  border: 1px solid rgba(139, 92, 246, 0.1);
-  background: linear-gradient(to bottom right, #1a1a1a, #000);
+  border: 1px solid var(--border);
+  background: var(--card);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+}
+
+:global(.dark) .imageWrapper {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border-color: rgba(139, 92, 246, 0.1);
 }
 
 @media (min-width: 768px) {
@@ -75,7 +80,7 @@
 .emptyIcon {
   width: 6rem;
   height: 6rem;
-  color: #374151;
+  color: var(--muted-foreground);
 }
 
 .info {
@@ -98,11 +103,11 @@
 .badgeIcon {
   width: 2.5rem;
   height: 2.5rem;
-  color: #a78bfa;
+  color: var(--primary);
 }
 
 .badgeText {
-  color: #a78bfa;
+  color: var(--primary);
   font-size: 0.875rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -117,6 +122,10 @@
   letter-spacing: -0.025em;
   font-style: italic;
   transform: skewX(-3deg);
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+:global(.dark) .title {
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
 }
 
@@ -131,8 +140,8 @@
 .underline {
   height: 0.25rem;
   width: 8rem;
-  background: linear-gradient(to right, #8b5cf6, #a855f7);
+  background: linear-gradient(to right, var(--primary), color-mix(in srgb, var(--primary), white 20%));
   margin-top: 1rem;
   transform: skewX(-12deg);
-  box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 15px var(--primary-opacity);
 }

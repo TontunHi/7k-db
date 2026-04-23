@@ -34,6 +34,11 @@
   background-color: var(--primary);
   opacity: 0.2;
   filter: blur(100px);
+  display: none;
+}
+
+:global(.dark) .topGlow {
+  display: block;
 }
 
 .bottomGlow {
@@ -43,8 +48,13 @@
   height: 500px;
   width: 500px;
   border-radius: 9999px;
-  background-color: rgba(120, 53, 15, 0.2); /* yellow-900/20 */
+  background-color: color-mix(in srgb, var(--primary), transparent 80%);
   filter: blur(120px);
+  display: none;
+}
+
+:global(.dark) .bottomGlow {
+  display: block;
 }
 
 .content {

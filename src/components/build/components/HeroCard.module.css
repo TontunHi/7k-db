@@ -11,7 +11,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 4 / 5;
-  background: linear-gradient(to bottom right, #1a1a1a, #000);
+  background: var(--card);
   border-radius: 0.5rem;
   border: 1px solid var(--border);
   overflow: hidden;
@@ -22,7 +22,11 @@
 .cardWrapper:hover .card {
   transform: scale(1.05) translateY(-0.25rem);
   border-color: var(--primary);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.2);
+}
+
+:global(.dark) .cardWrapper:hover .card {
+  box-shadow: 0 0 20px color-mix(in srgb, var(--primary), transparent 70%);
 }
 
 .heroImage {
@@ -40,6 +44,11 @@
   background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 50%);
   opacity: 0.6;
   transition: opacity 0.3s ease;
+  display: none;
+}
+
+:global(.dark) .overlay {
+  display: block;
 }
 
 .cardWrapper:hover .overlay {
@@ -88,12 +97,16 @@
   position: absolute;
   inset: -100%;
   top: 0;
-  display: block;
+  display: none;
   height: 100%;
   width: 50%;
   transform: skewX(-12deg);
   background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
   pointer-events: none;
+}
+
+:global(.dark) .shine {
+  display: block;
 }
 
 .cardWrapper:hover .shine {

@@ -32,9 +32,14 @@
   height: 400px;
   width: 400px;
   border-radius: 9999px;
-  background-color: #7f1d1d; /* red-900 */
+  background-color: var(--primary);
   opacity: 0.15;
   filter: blur(120px);
+  display: none;
+}
+
+:global(.dark) .topGlow {
+  display: block;
 }
 
 .bottomGlow {
@@ -44,9 +49,14 @@
   height: 500px;
   width: 500px;
   border-radius: 9999px;
-  background-color: #7c2d12; /* orange-900 */
+  background-color: color-mix(in srgb, var(--primary), #ef4444 50%);
   opacity: 0.15;
   filter: blur(120px);
+  display: none;
+}
+
+:global(.dark) .bottomGlow {
+  display: block;
 }
 
 .content {

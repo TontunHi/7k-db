@@ -26,6 +26,10 @@
   text-transform: uppercase;
   font-style: italic;
   transform: skewX(-6deg);
+  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.1));
+}
+
+:global(.dark) .title {
   filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.8));
 }
 
@@ -50,7 +54,7 @@
   width: 12rem; /* 48 */
   height: 4px;
   background: linear-gradient(to right, var(--primary), #FFA500);
-  box-shadow: 0 0 15px var(--primary);
+  box-shadow: 0 0 15px var(--primary-opacity);
   transition: all 0.3s ease;
 }
 

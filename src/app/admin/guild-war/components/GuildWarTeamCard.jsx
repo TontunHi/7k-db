@@ -59,7 +59,7 @@ export default function GuildWarTeamCard({
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => setIsMinimized(!isMinimized)}
-                        className="p-2 text-muted-foreground hover:text-white transition-colors"
+                        className="p-2 text-muted-foreground hover:text-foreground transition-colors"
                     >
                         {isMinimized ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
                     </button>
@@ -205,7 +205,7 @@ export default function GuildWarTeamCard({
                                         />
                                         <div 
                                             onClick={() => onOpenSkillPicker(null, sidx)}
-                                            className={clsx(styles.skillButton, step.skill && styles.skillButtonActive)}
+                                            className={clsx(styles.skillButton, "group", step.skill && styles.skillButtonActive)}
                                         >
                                             {skillPath ? <SafeImage src={skillPath} alt="" fill sizes="100px" className="object-cover" /> : <Plus size={16} />}
                                             {step.skill && (
@@ -214,7 +214,7 @@ export default function GuildWarTeamCard({
                                                         e.stopPropagation();
                                                         onUpdate('skill_rotation', team.skill_rotation.filter((_, i) => i !== sidx))
                                                     }}
-                                                    className="absolute -top-1 -right-1 p-1 bg-red-600/80 text-white rounded-lg opacity-0 hover:opacity-100 transition-opacity z-10"
+                                                    className="absolute -top-1 -right-1 p-1 bg-red-600/80 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10"
                                                 >
                                                     <X size={10} />
                                                 </button>
@@ -241,7 +241,7 @@ export default function GuildWarTeamCard({
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <ShieldAlert size={24} className="text-rose-500" />
-                                <h3 className="text-sm font-black text-white uppercase tracking-widest">Incursion Response</h3>
+                                <h3 className="text-sm font-black text-foreground uppercase tracking-widest">Incursion Response</h3>
                             </div>
                             <button
                                 onClick={() => {

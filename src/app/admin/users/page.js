@@ -1,4 +1,4 @@
-import UserManagementUI from "@/components/admin/UserManagementUI"
+import UserManagementView from "./components/UserManagementView"
 import { getUsers } from "@/lib/user-actions"
 import { getAdminUser, requireAdmin } from "@/lib/auth-guard"
 
@@ -16,6 +16,6 @@ export default async function UsersPage() {
     const currentUser = await getAdminUser()
 
     return (
-        <UserManagementUI initialUsers={users} currentUser={currentUser} />
+        <UserManagementView initialUsers={users} currentUser={currentUser} />
     )
 }

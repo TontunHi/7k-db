@@ -1,11 +1,15 @@
 .set {
   position: relative;
-  background: linear-gradient(to bottom, #111, #000);
-  border: 1px solid rgba(31, 41, 55, 1);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 1rem;
   overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
+}
+
+:global(.dark) .set {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 .topLine {
@@ -14,15 +18,15 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(to right, #7c3aed, #d946ef);
+  background: linear-gradient(to right, var(--primary), color-mix(in srgb, var(--primary), white 20%));
 }
 
 .header {
   display: flex;
   flex-direction: column;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid rgba(31, 41, 55, 0.8);
-  background: rgba(17, 24, 39, 0.4);
+  border-bottom: 1px solid var(--border);
+  background: var(--muted);
   gap: 1rem;
 }
 
@@ -44,14 +48,13 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.75rem;
-  background: rgba(139, 92, 246, 0.2);
+  background: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #a78bfa;
+  color: var(--primary-foreground);
   font-weight: 800;
   font-size: 1.125rem;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .teamTitle {
@@ -105,20 +108,20 @@
 .labelIcon {
   width: 1rem;
   height: 1rem;
-  color: #a78bfa;
+  color: var(--primary);
 }
 
 .labelText {
   font-size: 0.875rem;
   font-weight: 700;
-  color: #a78bfa;
+  color: var(--primary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .formationText {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--muted-foreground);
 }
 
 .gridAndPet {
@@ -143,8 +146,8 @@
 .noteSection {
   margin-top: 2rem;
   padding: 1.25rem;
-  background: linear-gradient(to right, #111, rgba(31, 41, 55, 0.5), #111);
-  border: 1px solid rgba(31, 41, 55, 0.8);
+  background: var(--muted);
+  border: 1px solid var(--border);
   border-radius: 0.75rem;
   position: relative;
   overflow: hidden;
@@ -156,7 +159,7 @@
   top: 0;
   bottom: 0;
   width: 4px;
-  background: rgba(139, 92, 246, 0.5);
+  background: var(--primary);
 }
 
 .noteHeader {
@@ -169,7 +172,7 @@
 .noteBadge {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #9ca3af;
+  color: var(--muted-foreground);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -177,8 +180,8 @@
 .expandButton {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #a78bfa;
-  background: rgba(139, 92, 246, 0.1);
+  color: var(--primary);
+  background: var(--primary-opacity);
   border: none;
   padding: 0.375rem 0.75rem;
   border-radius: 0.375rem;
@@ -187,8 +190,8 @@
 }
 
 .expandButton:hover {
-  background: rgba(139, 92, 246, 0.2);
-  color: #c4b5fd;
+  background: var(--primary-opacity);
+  filter: brightness(1.1);
 }
 
 .noteContent {
@@ -201,7 +204,7 @@
   opacity: 1;
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(31, 41, 55, 0.6);
+  border-top: 1px solid var(--border);
 }
 
 .noteCollapsed {
@@ -211,7 +214,7 @@
 
 .noteText {
   overflow: hidden;
-  color: #d1d5db;
+  color: var(--foreground);
   font-size: 0.875rem;
   line-height: 1.6;
   white-space: pre-wrap;

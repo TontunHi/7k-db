@@ -51,7 +51,7 @@ export default function GuildWarCounterCard({
                         <h4 className={styles.counterName}>{ct.team_name || `Counter Intel ${ctIdx + 1}`}</h4>
                         <div className="flex items-center gap-2 mt-1">
                             {(ct.heroes || []).filter(h => h).map((hero, i) => (
-                                <div key={i} className="relative w-6 h-6 rounded-md border border-white/10 overflow-hidden bg-black/40 shadow-sm">
+                                <div key={i} className="relative w-6 h-6 rounded-md border border-border overflow-hidden bg-muted shadow-sm">
                                     <SafeImage src={`/heroes/${hero}`} alt="" fill sizes="50px" className="object-cover" />
                                 </div>
                             ))}
@@ -73,7 +73,7 @@ export default function GuildWarCounterCard({
 
             {/* Content */}
             {!isCollapsed && (
-                <div className="p-6 border-t border-white/5 space-y-8 animate-in slide-in-from-top-4 duration-300">
+                <div className="p-6 border-t border-border space-y-8 animate-in slide-in-from-top-4 duration-300">
                     <div className="space-y-6">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest pl-1">Configuration Name</label>
@@ -81,7 +81,7 @@ export default function GuildWarCounterCard({
                                 type="text"
                                 value={ct.team_name || ''}
                                 onChange={(e) => onUpdate({ team_name: e.target.value })}
-                                className="w-full bg-black/60 border border-white/5 rounded-2xl px-5 py-3 text-white focus:border-red-500/40 transition-all outline-none font-bold"
+                                className="w-full bg-background border border-border rounded-2xl px-5 py-3 text-foreground focus:border-red-500/40 transition-all outline-none font-bold"
                                 placeholder="Anti-Defense, Magic Burst..."
                             />
                         </div>

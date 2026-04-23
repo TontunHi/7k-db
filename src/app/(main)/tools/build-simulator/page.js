@@ -15,7 +15,7 @@ function SimulatorContent() {
     const initialHero = heroFilename ? { filename: heroFilename, name: heroFilename.split('.')[0] } : null
 
     return (
-        <div className="bg-[#050505]">
+        <div>
             <BuildSimulator 
                 initialHero={initialHero} 
                 onBack={() => router.back()}
@@ -26,7 +26,7 @@ function SimulatorContent() {
 
 export default function SimulatorPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center text-white font-black uppercase tracking-widest italic animate-pulse">Loading Simulator...</div>}>
+        <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center text-foreground font-black uppercase tracking-widest italic animate-pulse">Loading Simulator...</div>}>
             <SimulatorContent />
         </Suspense>
     )

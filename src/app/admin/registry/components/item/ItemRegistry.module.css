@@ -1,0 +1,409 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.actionsHeader {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.registerButton {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.5rem;
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    border: none;
+    border-radius: 1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.registerButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 215, 0, 0.2);
+}
+
+/* Table Card */
+.tableCard {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.tableWrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.th {
+    padding: 1.25rem 1.5rem;
+    font-size: 10px;
+    font-weight: 900;
+    color: var(--muted-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid var(--border);
+    background-color: rgba(255, 255, 255, 0.01);
+}
+
+.tr {
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid var(--border);
+}
+
+.tr:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.td {
+    padding: 1rem 1.5rem;
+    vertical-align: middle;
+}
+
+/* Item Cell */
+.itemCell {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.itemImageWrapper {
+    position: relative;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background-color: var(--background);
+    flex-shrink: 0;
+}
+
+.itemName {
+    font-size: 0.9375rem;
+    font-weight: 800;
+    color: var(--foreground);
+    letter-spacing: -0.01em;
+}
+
+/* Badges */
+.badgeContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin-top: 0.25rem;
+}
+
+.badge {
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 9px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.badgeType {
+    background-color: var(--accent);
+    color: var(--muted-foreground);
+    border: 1px solid var(--border);
+}
+
+.badgePhysical {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.badgeMagic {
+    background-color: rgba(168, 85, 247, 0.1);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.badgeSet {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--foreground);
+    border: 1px solid var(--border);
+}
+
+/* Stats */
+.statsContainer {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.statItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 800;
+    color: var(--foreground);
+}
+
+.statLabel {
+    font-size: 9px;
+    font-weight: 900;
+    color: var(--muted-foreground);
+    text-transform: uppercase;
+    background-color: var(--accent);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+}
+
+/* Actions */
+.actionsCell {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.actionButton {
+    padding: 0.625rem;
+    background-color: var(--accent);
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.actionButton:hover {
+    background-color: var(--foreground);
+    color: var(--background);
+    border-color: var(--foreground);
+    transform: translateY(-2px);
+}
+
+.deleteButton:hover {
+    background-color: #ef4444;
+    border-color: #ef4444;
+    color: white;
+}
+
+.icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+.emptyRow {
+    padding: 4rem;
+    text-align: center;
+    color: var(--muted-foreground);
+    font-style: italic;
+    font-weight: 700;
+}
+
+/* Modal */
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.modalContent {
+    background-color: var(--card);
+    width: 100%;
+    max-width: 36rem;
+    border-radius: 2rem;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+}
+
+.modalHeader {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.modalTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: var(--foreground);
+    text-transform: uppercase;
+    font-style: italic;
+    letter-spacing: -0.02em;
+}
+
+.closeButton {
+    padding: 0.5rem;
+    background: transparent;
+    border: none;
+    color: var(--muted-foreground);
+    cursor: pointer;
+}
+
+.form {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.fieldGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--muted-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding-left: 0.25rem;
+}
+
+.gridRow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1.25rem;
+}
+
+.input, .select {
+    width: 100%;
+    background-color: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: var(--foreground);
+    font-size: 0.875rem;
+    font-weight: 700;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.input:focus, .select:focus {
+    border-color: var(--primary);
+    background-color: var(--accent);
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    padding: 1rem;
+    background-color: var(--accent);
+    border-radius: 1rem;
+    border: 1px solid var(--border);
+}
+
+.statLabelMini {
+    font-size: 9px;
+    font-weight: 900;
+    color: var(--muted-foreground);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 0.25rem;
+}
+
+.statInput {
+    text-align: center;
+    padding: 0.5rem !important;
+}
+
+/* Preview */
+.previewBox {
+    padding: 1.25rem;
+    background-color: var(--accent);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.previewLabel {
+    font-size: 10px;
+    font-weight: 900;
+    color: var(--muted-foreground);
+    text-transform: uppercase;
+}
+
+.previewImageWrapper {
+    position: relative;
+    width: 6rem;
+    height: 6rem;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 2px solid var(--primary);
+    background-color: var(--background);
+}
+
+.formActions {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.cancelButton {
+    padding: 0.875rem;
+    background-color: var(--accent);
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
+    border-radius: 1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.submitButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.875rem;
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    border: none;
+    border-radius: 1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-style: italic;
+    cursor: pointer;
+}
+
+.submitButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

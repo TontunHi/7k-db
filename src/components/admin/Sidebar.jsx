@@ -9,6 +9,8 @@ import { clsx } from "clsx"
 import { NAV_SECTIONS } from "@/app/admin/constants"
 import styles from "./Sidebar.module.css"
 
+import { ThemeToggle } from "@/components/shared/ThemeToggle"
+
 /**
  * SidebarContent - The actual menu content
  */
@@ -18,13 +20,16 @@ const SidebarContent = ({ setIsOpen, pathname, filteredSections, user }) => (
             <Link href="/admin" className={styles.logoText}>
                 7K Admin
             </Link>
-            <button 
-                onClick={() => setIsOpen(false)} 
-                className={clsx(styles.menuButton, "md:hidden")}
-                aria-label="Close menu"
-            >
-                <X size={18} />
-            </button>
+            <div className="flex items-center gap-2">
+                <ThemeToggle />
+                <button 
+                    onClick={() => setIsOpen(false)} 
+                    className={clsx(styles.menuButton, "md:hidden")}
+                    aria-label="Close menu"
+                >
+                    <X size={18} />
+                </button>
+            </div>
         </div>
 
         <nav className={styles.nav}>

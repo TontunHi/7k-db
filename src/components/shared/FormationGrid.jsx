@@ -44,7 +44,7 @@ export default function FormationGrid({
                             ? (isFront 
                                 ? "border-sky-500/40 bg-sky-950/20 shadow-[0_0_15px_rgba(14,165,233,0.1)] hover:border-sky-400 hover:shadow-[0_0_25px_rgba(14,165,233,0.25)]" 
                                 : "border-rose-600/40 bg-rose-950/20 shadow-[0_0_15px_rgba(225,29,72,0.1)] hover:border-rose-500 hover:shadow-[0_0_25px_rgba(225,29,72,0.25)]")
-                            : "border-gray-800/40 border-dashed bg-black/40",
+                            : "border-border/40 border-dashed bg-muted/40",
                         customClasses.cardString
                     )
 
@@ -62,7 +62,7 @@ export default function FormationGrid({
                                         sizes="(max-width: 768px) 20vw, 10vw"
                                         className={cn("object-cover transition-all duration-500 group-hover/link:scale-110", customClasses.image)} 
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
+                                    {/* Removed gradient overlay for clear hero images */}
                                     
                                     {/* Inset border glow */}
                                     <div className={cn(
@@ -78,7 +78,7 @@ export default function FormationGrid({
                                 ? customClasses.emptyRender({ isFront }) 
                                 : (
                                     <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                                        <div className={cn("w-1.5 h-1.5 rounded-full", isFront ? "bg-sky-500" : "bg-gray-600")} />
+                                        <div className={cn("w-1.5 h-1.5 rounded-full", isFront ? "bg-sky-500" : "bg-muted-foreground")} />
                                     </div>
                                 )
                         )}

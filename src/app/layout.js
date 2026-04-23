@@ -44,12 +44,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${prompt.variable} font-sans antialiased bg-white dark:bg-black text-gray-900 dark:text-gray-100 min-h-screen flex flex-col`}
+        className={`${inter.variable} ${prompt.variable} font-sans antialiased bg-background text-foreground min-h-screen flex flex-col`}
       >
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          forcedTheme="dark"
           disableTransitionOnChange
         >
           <Suspense fallback={null}>
