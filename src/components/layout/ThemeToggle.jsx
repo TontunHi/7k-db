@@ -10,7 +10,13 @@ export default function ThemeToggle({ className }) {
     const [mounted, setMounted] = useState(false)
 
     // Avoid hydration mismatch
-    useEffect(() => setMounted(true), [])
+    useEffect(() => {
+        const handle = requestAnimationFrame(() => {
+            setMounted(true)
+        })
+        return () => cancelAnimationFrame(handle)
+    }, [])
+
     if (!mounted) return <div className="w-[72px] h-8 rounded-full bg-white/5 animate-pulse" />
 
     const isDark = resolvedTheme === "dark"

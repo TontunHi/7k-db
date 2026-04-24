@@ -30,18 +30,15 @@
 ---
 
 ## 📋 5. Current Progress & Roadmap (สถานะการทำงาน)
-*(AI และ User สามารถมาอัปเดต Checkbox ตรงนี้ได้เพื่อความต่อเนื่อง)*
 
 ### 🟢 To Do (สิ่งที่ต้องทำ)
-- [x] Refactor หน้า `/arena` (แยก CSS Modules และจัด Layout ใหม่)
-- [x] Refactor หน้า `/advent` (ปรับปรุง UI Card บอส)
-- [x] Refactor หน้า `/tierlist` (ปรับปรุงตารางจัดอันดับให้รองรับ Mobile ได้ดีขึ้น)
-- [x] ปรับปรุง UI ของระบบ Admin (ถ้ามี)
+- [ ] รอรับคำสั่งจากผู้ใช้...
 
 ### 🟡 In Progress (กำลังทำ)
 - [ ] รอรับคำสั่งจากผู้ใช้...
 
 ### 🔴 Completed (เสร็จแล้ว)
 - [x] ตั้งค่า AI_BRIEF.md สำหรับการทำงานต่อเนื่อง
-- [x] Refactor หน้า Home (`/`) - ปรับปรุง UI/UX ให้เป็นสไตล์ Professional Gaming Database
-- [x] Refactor หน้า Hero Builds (`/build`) - ปรับปรุงการแสดงผลการ์ดและระบบ Filter ให้ดู High-End
+- [x] แก้ไขช่องโหว่ความปลอดภัย (npm audit fix --force) - Found 0 vulnerabilities
+- [x] Refactor หน้า Hero Builds (`/build`) - เพิ่ม High-end Golden Glow Interaction & UI Revamp (Minimal Style)
+- [x] Refactor หน้า Home (`/`), `/arena`, `/advent`, `/tierlist` และระบบ Admin เรียบร้อยแล้ว

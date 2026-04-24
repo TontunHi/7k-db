@@ -24,18 +24,24 @@ export function useMessagesManager() {
     const [actionLoading, setActionLoading] = useState(null)
 
     const loadData = async () => {
-        setLoading(true)
-        const [msgData, settingData] = await Promise.all([
-            getMessages(),
-            getSetting('contact_form_enabled', 'true')
-        ])
-        setMessages(msgData)
-        setIsEnabled(settingData === 'true')
-        setLoading(false)
+        try {
+            const [msgData, settingData] = await Promise.all([
+                getMessages(),
+                getSetting('contact_form_enabled', 'true')
+            ])
+            setMessages(msgData)
+            setIsEnabled(settingData === 'true')
+        } finally {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
-        loadData()
+        let isMounted = true
+        if (isMounted) {
+            loadData()
+        }
+        return () => { isMounted = false }
     }, [])
 
     const handleToggle = async () => {

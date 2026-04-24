@@ -283,7 +283,7 @@ export default function GuildWarTeamCard({ team, heroImageMap, index }) {
                                             <div className="flex-1 bg-indigo-500/[0.02] border border-indigo-500/10 rounded-[2rem] p-8 flex flex-col justify-center relative overflow-hidden">
                                                 <Info size={40} className="absolute -bottom-2 -right-2 text-indigo-500/5 rotate-12" />
                                                 <p className="text-indigo-200/80 text-sm leading-relaxed italic relative z-10 text-center">
-                                                    "{team.note}"
+                                                    &quot;{team.note}&quot;
                                                 </p>
                                             </div>
                                         )}

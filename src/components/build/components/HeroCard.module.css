@@ -2,9 +2,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card {
@@ -12,95 +11,56 @@
   width: 100%;
   aspect-ratio: 4 / 5;
   background: var(--surface);
-  border-radius: 0.75rem;
+  border-radius: 1rem;
   border: 1px solid var(--border);
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.5);
 }
 
-.cardWrapper:hover .card {
-  transform: translateY(-8px);
-  border-color: var(--primary);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 0 15px color-mix(in srgb, var(--primary), transparent 80%);
-}
-
-.heroImage {
-  object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.cardWrapper:hover .heroImage {
-  transform: scale(1.1);
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 40%);
-  opacity: 0.8;
-  transition: opacity 0.3s ease;
-}
-
-.cardWrapper:hover .overlay {
-  opacity: 0.4;
-}
-
+/* Badges */
 .badgeWrapper {
   position: absolute;
   top: 0.75rem;
   left: 0.75rem;
-  z-index: 20;
+  z-index: 30;
 }
 
 .newBadge {
   position: relative;
   background: var(--primary);
-  color: var(--background);
-  font-size: 10px;
-  font-weight: 800;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem;
+  color: #000;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.5rem;
   text-transform: uppercase;
-  letter-spacing: 0.025em;
-  box-shadow: 0 0 10px color-mix(in srgb, var(--primary), transparent 50%);
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.badgeGlow {
-  position: absolute;
-  inset: -2px;
-  background: var(--primary);
-  filter: blur(8px);
-  opacity: 0.3;
-  border-radius: 0.375rem;
-  z-index: -1;
-  animation: pulse 2s infinite ease-in-out;
-}
-
+/* High-end Shine Effect */
 .shine {
   position: absolute;
   inset: 0;
-  transform: translateX(-100%) skewX(-15deg);
+  transform: translateX(-150%) skewX(-20deg);
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.1),
+    rgba(255, 215, 0, 0.15),
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 215, 0, 0.15),
     transparent
   );
   pointer-events: none;
-  z-index: 10;
+  z-index: 25;
 }
 
 .cardWrapper:hover .shine {
-  animation: shine 0.8s ease-in-out forwards;
+  animation: shine-sweep 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.1); }
-}
-
-@keyframes shine {
-  0% { transform: translateX(-150%) skewX(-15deg); }
-  100% { transform: translateX(150%) skewX(-15deg); }
+@keyframes shine-sweep {
+  0% { transform: translateX(-150%) skewX(-20deg); }
+  100% { transform: translateX(150%) skewX(-20deg); }
 }

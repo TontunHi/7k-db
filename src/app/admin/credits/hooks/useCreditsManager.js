@@ -20,14 +20,20 @@ export function useCreditsManager() {
     const [newItem, setNewItem] = useState({ platform: 'youtube', name: '', link: '' })
 
     const loadData = async () => {
-        setLoading(true)
-        const data = await getGlobalCredits()
-        setCredits(data)
-        setLoading(false)
+        try {
+            const data = await getGlobalCredits()
+            setCredits(data)
+        } finally {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
-        loadData()
+        let isMounted = true
+        if (isMounted) {
+            loadData()
+        }
+        return () => { isMounted = false }
     }, [])
 
     const handleAdd = async () => {

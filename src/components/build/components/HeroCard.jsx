@@ -8,7 +8,7 @@ export default function HeroCard({ hero, onClick }) {
             className={styles.cardWrapper}
         >
             <div className={styles.card}>
-                {/* Image */}
+                {/* Hero Image */}
                 <SafeImage
                     src={`/heroes/${hero.filename}${hero.filename?.endsWith('.webp') ? '' : '.webp'}`}
                     alt={hero.name}
@@ -17,22 +17,20 @@ export default function HeroCard({ hero, onClick }) {
                     sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
                 />
 
-                {/* Overlay Gradient */}
+                {/* Aesthetic Overlays */}
                 <div className={styles.overlay} />
+                <div className={styles.shine} />
 
                 {/* NEW Badge */}
                 {hero.is_new_hero && (
                     <div className={styles.badgeWrapper}>
                         <div className={styles.newBadge}>
-                            <div className={styles.badgeGlow} />
-                            NEW HERO
+                            NEW
                         </div>
                     </div>
                 )}
-
-                {/* Shine Effect */}
-                <div className={styles.shine} />
             </div>
         </div>
     )
 }
+

@@ -65,7 +65,7 @@ export default function ContributorPopup() {
                         
                         <div className="text-xs text-muted-foreground font-medium leading-relaxed space-y-2">
                             <p>
-                                Are you a Seven Knights expert? We're looking for contributors to help manage and update Hero Builds and Tierlists.
+                                Are you a Seven Knights expert? We&apos;re looking for contributors to help manage and update Hero Builds and Tierlists.
                             </p>
                             <p className="text-muted-foreground/60">
                                 เรากำลังตามหาผู้เชี่ยวชาญ 7K! หากคุณมีความรู้และอยากช่วยอัปเดตข้อมูลบนเว็บนี้ ติดต่อเรามาได้เลยครับ

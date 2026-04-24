@@ -79,7 +79,7 @@ export default function FloatingContactWidget({ enabled }) {
                                 <CheckCircle2 className="w-8 h-8 text-green-500" />
                             </div>
                             <h4 className="font-bold text-foreground mb-2">Message Sent!</h4>
-                            <p className="text-xs text-muted-foreground mb-6">We'll get back to you as soon as possible.</p>
+                            <p className="text-xs text-muted-foreground mb-6">We&apos;ll get back to you as soon as possible.</p>
                             <button 
                                 onClick={() => setStatus('idle')}
                                 className="text-xs font-bold uppercase text-primary hover:text-primary/80"

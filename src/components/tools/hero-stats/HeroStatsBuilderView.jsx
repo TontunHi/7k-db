@@ -38,12 +38,14 @@ export default function HeroStatsBuilderView({ heroes = [], items = [] }) {
 
     useEffect(() => {
         const saved = localStorage.getItem("hero-build-state-v5")
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved)
-                if (parsed.hero) {
-                    const hero = heroes.find(h => h.filename === parsed.hero.filename)
-                    if (hero) {
+        if (!saved) return
+
+        try {
+            const parsed = JSON.parse(saved)
+            if (parsed?.hero) {
+                const hero = heroes.find(h => h.filename === parsed.hero.filename)
+                if (hero) {
+                    requestAnimationFrame(() => {
                         setSelectedHero(hero)
                         setHeroStats(parsed.stats || {})
                         setEquippedItems(parsed.equipped || {
@@ -53,11 +55,11 @@ export default function HeroStatsBuilderView({ heroes = [], items = [] }) {
                             Armor2: getInitialItemState('Armor2')
                         })
                         setIsSelectionMode(false)
-                    }
+                    })
                 }
-            } catch (e) {
-                console.error("Failed to load saved build", e)
             }
+        } catch (e) {
+            console.error("Failed to load saved build", e)
         }
     }, [heroes])
 
