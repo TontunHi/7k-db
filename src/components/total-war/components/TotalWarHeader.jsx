@@ -1,23 +1,35 @@
-import { Swords } from 'lucide-react'
 import styles from './TotalWarHeader.module.css'
 
-export default function TotalWarHeader() {
+export default function TotalWarHeader({ lastUpdated }) {
     return (
         <div className={styles.header}>
-            <div className={styles.badge}>
-                <Swords className={styles.icon} />
+            {/* Advanced Decorative Elements */}
+            <div className={styles.headerGlow} />
+            <div className={styles.tacticalGrid} />
+            <div className={styles.horizontalLines} />
+            <div className={styles.movingScan} />
+            
+            {/* Particle Elements */}
+            <div className={styles.particles}>
+                {[...Array(6)].map((_, i) => (
+                    <div key={i} className={styles.particle} />
+                ))}
             </div>
             
-            <div className={styles.titleWrapper}>
-                <h1 className={styles.title}>
-                    <span className={styles.gradientText}>TOTAL WAR</span>
+            <div className={styles.titleContainer}>
+                <h1 className={styles.title} data-text="TOTAL WAR">
+                    TOTAL WAR
                 </h1>
-                <div className={styles.bar} />
             </div>
-            
-            <p className={styles.subtitle}>
-                Select a tier to view recommended teams and skill rotations
-            </p>
+
+            {lastUpdated && (
+                <div className={styles.updateBadge}>
+                    <div className={styles.pulse} />
+                    <span className={styles.updateText}>Last Update :</span>
+                    <div className={styles.divider} />
+                    <span className={styles.updateDate}>{lastUpdated}</span>
+                </div>
+            )}
         </div>
     )
 }

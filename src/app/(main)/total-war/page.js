@@ -1,4 +1,5 @@
 import { getAllSetCounts } from '@/lib/total-war-actions'
+import { getLastUpdate } from '@/lib/log-actions'
 import TotalWarView from '@/components/total-war/TotalWarView'
 
 export const dynamic = 'force-dynamic'
@@ -10,7 +11,8 @@ export const metadata = {
 
 export default async function TotalWarPage() {
     const setCounts = await getAllSetCounts()
+    const lastUpdated = await getLastUpdate('TOTAL_WAR')
 
-    return <TotalWarView setCounts={setCounts} />
+    return <TotalWarView setCounts={setCounts} lastUpdated={lastUpdated} />
 }
 

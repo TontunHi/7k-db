@@ -1,5 +1,5 @@
 import { requireAdmin } from "@/lib/auth-guard"
-import { getReachStats, getTopHeroBuilds, getClickStats, getExitPages } from "@/lib/analytics-actions"
+import { getReachStats, getTopHeroBuilds, getClickStats, getExitPages, getViewTrendData } from "@/lib/analytics-actions"
 import AnalyticsDashboardView from "./components/AnalyticsDashboardView"
 
 export const metadata = {
@@ -10,14 +10,15 @@ export const metadata = {
 export default async function AnalyticsDashboard() {
   await requireAdmin()
   
-  const [reach, growth, conversion, exits] = await Promise.all([
+  const [reach, growth, conversion, exits, trend] = await Promise.all([
     getReachStats(),
     getTopHeroBuilds(),
     getClickStats(),
-    getExitPages()
+    getExitPages(),
+    getViewTrendData()
   ])
 
-  const data = { reach, growth, conversion, exits }
+  const data = { reach, growth, conversion, exits, trend }
 
   return (
     <AnalyticsDashboardView data={data} />

@@ -20,10 +20,7 @@ export default function CastleRushCard({ boss }) {
             </div>
 
             <div className={styles.content}>
-                <div className={styles.badge}>
-                    <Crown className={styles.badgeIcon} />
-                    <span className={styles.badgeText}>Castle Rush</span>
-                </div>
+
                 <h3 className={styles.name}>
                     {boss.name}
                 </h3>

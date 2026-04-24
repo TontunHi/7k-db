@@ -7,6 +7,10 @@ import styles from './ArenaTeamCard.module.css'
 export default function ArenaTeamCard({ set, index, heroImageMap }) {
     return (
         <div className={styles.card}>
+            <div className={styles.scanline} />
+            <div className={styles.sweep} />
+            <div className={styles.cardGlow} />
+            
             {/* Team Header */}
             <div className={styles.header}>
                 <div className={styles.headerInfo}>
@@ -14,7 +18,7 @@ export default function ArenaTeamCard({ set, index, heroImageMap }) {
                         {index + 1}
                     </div>
                     <div className={styles.titleGroup}>
-                        <span className={styles.tagline}>Arena Formation</span>
+
                         <h3 className={styles.teamName}>
                             {set.team_name || `Arena Team ${index + 1}`}
                         </h3>

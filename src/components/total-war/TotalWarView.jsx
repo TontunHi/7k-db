@@ -3,7 +3,7 @@ import TotalWarCard from './components/TotalWarCard'
 import styles from './TotalWarView.module.css'
 import { TIER_CONFIG } from '@/lib/total-war-config'
 
-export default function TotalWarView({ setCounts }) {
+export default function TotalWarView({ setCounts, lastUpdated }) {
     return (
         <div className={styles.page}>
             {/* Background Effects */}
@@ -15,7 +15,7 @@ export default function TotalWarView({ setCounts }) {
 
             <div className={styles.content}>
                 {/* Header */}
-                <TotalWarHeader />
+                <TotalWarHeader lastUpdated={lastUpdated} />
 
                 {/* Tier Grid */}
                 <div className={styles.grid}>

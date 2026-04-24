@@ -139,3 +139,25 @@ export async function getFilteredPageViews(filters) {
      return [];
   }
 }
+
+// New: View Trend Stats (Last 30 Days)
+export async function getViewTrendData() {
+  try {
+    const [rows] = await pool.query(`
+      SELECT DATE(created_at) as date, COUNT(*) as views
+      FROM analytics_views
+      WHERE event_type = "pageview" 
+        AND page_path NOT LIKE '/admin%'
+        AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+      GROUP BY DATE(created_at)
+      ORDER BY date ASC
+    `);
+    return rows.map(r => ({
+      date: r.date.toISOString().split('T')[0],
+      views: r.views
+    }));
+  } catch (error) {
+    console.error('[Analytics] Error getting trend data:', error);
+    return [];
+  }
+}

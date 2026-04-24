@@ -10,6 +10,14 @@
   animation: fadeIn 0.3s ease;
 }
 
+@media (min-width: 1024px) {
+  .preview {
+    position: sticky;
+    top: 64px; /* Navbar height */
+    height: calc(100vh - 64px);
+  }
+}
+
 @media (min-width: 768px) {
   .preview {
     padding: 3rem;

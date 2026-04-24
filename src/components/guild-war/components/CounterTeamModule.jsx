@@ -42,28 +42,9 @@ export default function CounterTeamModule({ ct, heroImageMap, accentColor = '#f4
 
                     {/* Info */}
                     <div className={styles.info}>
-                        {ct.formation && (
-                            <span className={styles.formationBadge} style={{ 
-                                backgroundColor: `${accentColor}1a`, 
-                                color: accentColor, 
-                                borderColor: `${accentColor}33` 
-                            }}>
-                                {ct.formation}
-                            </span>
-                        )}
                         <h5 className={styles.teamName}>
                             {ct.team_name || 'Counter Team'}
                         </h5>
-                        {ct.pet_file && (
-                            <div className={styles.petMini}>
-                                <SafeImage 
-                                    src={ct.pet_file.startsWith('/') ? ct.pet_file : `/pets/${ct.pet_file}`} 
-                                    alt="" 
-                                    fill 
-                                    className={styles.miniPetImage} 
-                                />
-                            </div>
-                        )}
                     </div>
 
                     {/* Chevron */}
@@ -199,7 +180,12 @@ export default function CounterTeamModule({ ct, heroImageMap, accentColor = '#f4
                                                         </span>
                                                     </div>
                                                     {!isLast && (
-                                                        <div className={styles.rotationConnector} />
+                                                        <div className={styles.rotationConnector}>
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground/40">
+                                                                <path d="M5 12h14"></path>
+                                                                <path d="m12 5 7 7-7 7"></path>
+                                                            </svg>
+                                                        </div>
                                                     )}
                                                 </div>
                                             )

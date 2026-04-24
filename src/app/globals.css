@@ -64,8 +64,8 @@
   --popover-foreground: oklch(0.15 0.02 85);
 
   /* LUXURY GOLD Primary */
-  --primary: #FFD700;
-  /* Pure Gold */
+  --primary: #D4AF37;
+  /* Darker Gold for Light Mode readability */
   --primary-foreground: #000000;
   /* Distinct Black */
 

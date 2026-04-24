@@ -4,22 +4,23 @@ import styles from './ArenaHeader.module.css'
 export default function ArenaHeader({ lastUpdated }) {
     return (
         <div className={styles.header}>
-            <div className={styles.badge}>
-                <Swords className={styles.badgeIcon} />
-                <span className={styles.badgeText}>Competitive Meta</span>
+            <div className={styles.headerGlow} />
+            <div className={styles.tacticalGrid} />
+            <div className={styles.horizontalLines} />
+            
+            <div className={styles.titleContainer}>
+                <h1 className={styles.title}>
+                    ARENA
+                </h1>
+                <div className={styles.titleShadow}>ARENA</div>
             </div>
             
-            <h1 className={styles.title}>
-                ARENA EXPEDITION
-            </h1>
-            
-            <p className={styles.subtitle}>
-                Discover the most effective formations and rotations for Arena dominance.
-            </p>
-
             {lastUpdated && (
-                <div className={styles.lastUpdated}>
-                    LAST UPDATE: {lastUpdated}
+                <div className={styles.metaStatus}>
+                    <div className={styles.statusPulse} />
+                    <span className={styles.statusText}>Last Update :</span>
+                    <div className={styles.statusDivider} />
+                    <span className={styles.dateText}>{lastUpdated}</span>
                 </div>
             )}
         </div>

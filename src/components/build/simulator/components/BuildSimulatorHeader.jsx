@@ -1,15 +1,13 @@
-import styles from './GuildWarHeader.module.css'
+import styles from './BuildSimulatorHeader.module.css'
 
-export default function GuildWarHeader({ lastUpdated }) {
+export default function BuildSimulatorHeader({ lastUpdated }) {
     return (
         <div className={styles.header}>
-            {/* Advanced Decorative Elements */}
             <div className={styles.headerGlow} />
             <div className={styles.tacticalGrid} />
             <div className={styles.horizontalLines} />
             <div className={styles.movingScan} />
             
-            {/* Particle Elements */}
             <div className={styles.particles}>
                 {[...Array(6)].map((_, i) => (
                     <div key={i} className={styles.particle} />
@@ -18,7 +16,7 @@ export default function GuildWarHeader({ lastUpdated }) {
             
             <div className={styles.titleContainer}>
                 <h1 className={styles.title}>
-                    GUILD WAR
+                    BUILD SIMULATOR
                 </h1>
             </div>
 

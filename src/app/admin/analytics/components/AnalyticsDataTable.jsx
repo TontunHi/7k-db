@@ -3,14 +3,9 @@
 import styles from "./AnalyticsDataTable.module.css"
 import { clsx } from "clsx"
 
-/**
- * AnalyticsDataTable - Reusable table component for analytics rankings.
- */
 export default function AnalyticsDataTable({ 
     title, 
     icon: Icon, 
-    iconBgClass = "bg-blue-500/20", 
-    iconColorClass = "text-blue-400",
     headers = ["Page Path", "Views"],
     data = [],
     renderRow
@@ -18,10 +13,12 @@ export default function AnalyticsDataTable({
     return (
         <div className={styles.card}>
             <header className={styles.header}>
-                <div className={clsx(styles.iconBox, iconBgClass)}>
-                    <Icon className={clsx("w-4 h-4", iconColorClass)} />
+                <div className={styles.headerLeft}>
+                    <div className={styles.iconBox}>
+                        <Icon className={styles.icon} />
+                    </div>
+                    <h2 className={styles.title}>{title}</h2>
                 </div>
-                <h2 className={styles.title}>{title}</h2>
             </header>
             
             <div className={styles.tableWrapper}>
@@ -30,7 +27,7 @@ export default function AnalyticsDataTable({
                         <thead>
                             <tr>
                                 {headers.map((h, i) => (
-                                    <th key={i} className={clsx(styles.th, i === headers.length - 1 && "text-right")}>
+                                    <th key={i} className={clsx(styles.th, i === headers.length - 1 && styles.textRight)}>
                                         {h}
                                     </th>
                                 ))}

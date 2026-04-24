@@ -1,66 +1,198 @@
-/* ===== Total War Header (Module Standard) ===== */
+/* ===== Total War Header (Enhanced Tactical Variant) ===== */
 .header {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 4rem 1.25rem 4rem;
+  padding: 4.5rem 1.25rem 5rem;
   position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 100%, rgba(245, 158, 11, 0.1), transparent 80%);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.1);
 }
 
-/* Badge */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.625rem;
+.headerGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50rem;
+  height: 25rem;
+  background: radial-gradient(ellipse at center, rgba(245, 158, 11, 0.15), transparent 70%);
+  filter: blur(100px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.tacticalGrid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(245, 158, 11, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(245, 158, 11, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+  mask-image: radial-gradient(circle at 50% 50%, black, transparent 90%);
+  opacity: 0.15;
+  z-index: 0;
+}
+
+.horizontalLines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(245, 158, 11, 0.03) 2px, rgba(245, 158, 11, 0.03) 4px);
+  mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+  pointer-events: none;
+}
+
+.movingScan {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, rgba(245, 158, 11, 0.05), transparent);
+  animation: scanning 8s linear infinite;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Particles Effect */
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #f59e0b;
+  border-radius: 50%;
+  opacity: 0.4;
+  box-shadow: 0 0 10px #f59e0b;
+}
+
+.particle:nth-child(1) { top: 20%; left: 10%; animation: float 12s infinite linear; }
+.particle:nth-child(2) { top: 60%; left: 85%; animation: float 15s infinite linear reverse; }
+.particle:nth-child(3) { top: 80%; left: 20%; animation: float 18s infinite linear; }
+.particle:nth-child(4) { top: 15%; left: 75%; animation: float 14s infinite linear reverse; }
+.particle:nth-child(5) { top: 40%; left: 5%; animation: float 20s infinite linear; }
+.particle:nth-child(6) { top: 70%; left: 90%; animation: float 16s infinite linear reverse; }
+
+/* Title Styling */
+.titleContainer {
+  position: relative;
+  z-index: 10;
   margin-bottom: 1.5rem;
-  padding: 0.5rem 1.25rem;
-  border-radius: 9999px;
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  backdrop-filter: blur(8px);
 }
 
-.badgeIcon {
-  width: 1rem;
-  height: 1rem;
-  color: #f59e0b;
-}
-
-.badgeText {
-  color: #f59e0b;
-  font-size: 0.65rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-}
-
-/* Title */
 .title {
-  font-size: clamp(2.5rem, 8vw, 5.5rem);
-  font-weight: 900;
+  font-size: clamp(2.5rem, 10vw, 5rem);
+  font-weight: 950;
   color: var(--foreground);
   text-transform: uppercase;
-  letter-spacing: -0.04em;
-  line-height: 0.9;
+  letter-spacing: -0.05em;
+  line-height: 0.85;
   font-style: italic;
-  transform: skewX(-5deg);
-  margin-bottom: 1.5rem;
-  background: linear-gradient(to bottom, var(--foreground) 60%, color-mix(in srgb, var(--foreground), transparent 40%));
+  transform: skewX(-10deg);
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(to bottom, var(--foreground) 60%, color-mix(in srgb, var(--foreground), transparent 50%));
   -webkit-background-clip: text;
   background-clip: text;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+  text-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(245, 158, 11, 0.2);
+  animation: tacticalEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-:global(.dark) .title {
-  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5));
+/* Update Badge */
+.updateBadge {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1.5rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 1rem;
+  backdrop-filter: blur(16px);
+  animation: fadeIn 1.2s ease-out 0.5s both;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
 }
 
-/* Subtitle */
-.subtitle {
-  font-size: 1rem;
+.pulse {
+  width: 8px;
+  height: 8px;
+  background: #f59e0b;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 0 10px #f59e0b;
+}
+
+.pulse::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 1px solid #f59e0b;
+  border-radius: 50%;
+  animation: statusPulse 2s infinite;
+}
+
+.updateText {
+  font-size: 0.7rem;
+  font-weight: 900;
+  color: #f59e0b;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(245, 158, 11, 0.4);
+}
+
+.updateDate {
+  font-size: 0.7rem;
+  font-weight: 800;
   color: var(--muted-foreground);
-  max-width: 32rem;
-  line-height: 1.6;
-  margin: 0 auto;
+  opacity: 0.9;
+  letter-spacing: 0.05em;
+}
+
+/* Animations */
+@keyframes scanning {
+  0% { top: -100%; }
+  100% { top: 100%; }
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0); opacity: 0; }
+  20% { opacity: 0.5; }
+  80% { opacity: 0.5; }
+  100% { transform: translate(100px, -100px); opacity: 0; }
+}
+
+@keyframes tacticalEntrance {
+  0% { opacity: 0; transform: scale(1.1) translateY(30px) skewX(-10deg); filter: blur(15px); }
+  100% { opacity: 1; transform: scale(1) translateY(0) skewX(-10deg); filter: blur(0); }
+}
+
+@keyframes statusPulse {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .header { padding: 4rem 1rem; }
+  .title { font-size: 3.5rem; }
 }

@@ -15,7 +15,7 @@ export default function GuildWarTeamCard({ team, heroImageMap, index }) {
     const tabs = [
         { id: 'overview', label: 'Overview', icon: Layout, color: '#818cf8', bg: 'rgba(99, 102, 241, 0.1)' },
         { id: 'equipment', label: 'Equipment', icon: Briefcase, color: '#fbbf24', bg: 'rgba(245, 158, 11, 0.1)' },
-        { id: 'skills', label: 'Rotation', icon: Zap, color: '#c084fc', bg: 'rgba(168, 85, 247, 0.1)' },
+        { id: 'skills', label: 'Skill Rotation', icon: Zap, color: '#c084fc', bg: 'rgba(168, 85, 247, 0.1)' },
         { id: 'counters', label: 'Counters', icon: ShieldAlert, color: '#fb7185', bg: 'rgba(244, 63, 94, 0.1)', count: team.counter_teams?.length || 0 },
     ]
 
@@ -69,22 +69,10 @@ export default function GuildWarTeamCard({ team, heroImageMap, index }) {
                                                 {team.type}
                                             </span>
                                         )}
-                                        {team.formation && (
-                                            <span className={styles.formationBadge}>
-                                                {team.formation}
-                                            </span>
-                                        )}
                                     </div>
                                     <h3 className={styles.teamName}>
                                         {team.team_name || 'Unnamed Formation'}
                                     </h3>
-                                    <div className={styles.badgeGroup}>
-                                        {team.pet_file && (
-                                            <div className={styles.petMini}>
-                                                <SafeImage src={team.pet_file.startsWith('/') ? team.pet_file : `/pets/${team.pet_file}`} alt="" fill className={styles.miniPetImage} />
-                                            </div>
-                                        )}
-                                    </div>
                                 </div>
 
                                 <div className={styles.expandAction}>
@@ -104,11 +92,6 @@ export default function GuildWarTeamCard({ team, heroImageMap, index }) {
                                             team.type === 'attacker' ? styles.attacker : styles.defender
                                         )}>
                                             {team.type}
-                                        </span>
-                                    )}
-                                    {team.formation && (
-                                        <span className={styles.formationBadge}>
-                                            {team.formation}
                                         </span>
                                     )}
                                 </div>

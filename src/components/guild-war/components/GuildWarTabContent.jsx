@@ -58,7 +58,7 @@ export default function GuildWarTabContent({ activeTab, team, heroImageMap }) {
                             <div className={styles.headerIconWrapper}>
                                 <PawPrint className={styles.headerIcon} />
                             </div>
-                            <h4 className={styles.boxTitle}>Pet Setup</h4>
+                            <h4 className={styles.boxTitle}>Pet</h4>
                         </div>
                         
                         <div className={styles.petContent}>
@@ -177,7 +177,12 @@ export default function GuildWarTabContent({ activeTab, team, heroImageMap }) {
                                         </span>
                                     </div>
                                     {!isLast && (
-                                        <div className={styles.skillConnector} />
+                                        <div className={styles.skillConnector}>
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground/40">
+                                                <path d="M5 12h14"></path>
+                                                <path d="m12 5 7 7-7 7"></path>
+                                            </svg>
+                                        </div>
                                     )}
                                 </div>
                             )

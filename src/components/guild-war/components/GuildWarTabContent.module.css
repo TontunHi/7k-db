@@ -108,8 +108,8 @@
 
 .supportPet {
   position: relative;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
   border-radius: 0.75rem;
   border: 1px solid var(--border);
   background: var(--background);

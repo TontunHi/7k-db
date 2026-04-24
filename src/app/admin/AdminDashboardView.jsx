@@ -97,14 +97,7 @@ export default function AdminDashboardView({ user, stats, recentLogs }) {
                 <div className="space-y-10">
                     <ActivityFeed logs={recentLogs} />
 
-                    <div className={styles.banner}>
-                        <h4 className={styles.bannerTitle}>
-                            <Globe size={12} /> Global Deployment
-                        </h4>
-                        <p className={styles.bannerText}>
-                            All modifications made in this Command Center are pushed instantly to the production database.
-                        </p>
-                    </div>
+
                 </div>
             </div>
         </div>

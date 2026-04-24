@@ -45,12 +45,27 @@ export function useAnalyticsFilter() {
         setFilters(prev => ({ ...prev, [key]: value }))
     }
 
+    const setRange = (days) => {
+        const end = new Date()
+        const start = new Date()
+        start.setDate(end.getDate() - days)
+        
+        const formatDate = (date) => date.toISOString().split('T')[0]
+        
+        setFilters(prev => ({
+            ...prev,
+            startDate: formatDate(start),
+            endDate: formatDate(end)
+        }))
+    }
+
     return {
         data,
         loading,
         filters,
         handleApplyFilters,
         clearFilters,
-        updateFilter
+        updateFilter,
+        setRange
     }
 }

@@ -13,13 +13,7 @@ export default function StageHeader({ mode, modeLabel }) {
                 <div className={clsx(styles.underline, isNightmare ? styles.redUnderline : styles.goldUnderline)} />
             </div>
 
-            <p className={styles.subtitle}>
-                Optimized team compositions for <strong className={styles.highlight}>efficient clearing</strong>.
-                <br />
-                Dominate the <span className={clsx(styles.modeName, isNightmare ? styles.modeNightmare : styles.modeStage)}>
-                    {modeLabel}
-                </span> with these guides.
-            </p>
+
         </div>
     )
 }

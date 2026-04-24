@@ -21,16 +21,8 @@ export default async function HomePage() {
                 {/* Hero Header */}
                 <HeroSection />
 
-                <div className={styles.mainGrid}>
-                    {/* Main Content: Features & Credits */}
-                    <div className={styles.leftColumn}>
-                        <FeaturesGrid />
-                    </div>
-
-                    {/* Sidebar: Updates & Partner */}
-                    <div className={styles.rightColumn}>
-                        <UpdateSidebar />
-                    </div>
+                <div className={styles.contentWrapper}>
+                    <FeaturesGrid />
                 </div>
             </div>
         </div>

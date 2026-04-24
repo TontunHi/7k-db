@@ -9,9 +9,7 @@ export default function BuildHeader() {
                 </h1>
                 <div className={styles.underline} />
             </div>
-            <p className={styles.subtitle}>
-                Explore optimal equipment and stats for every hero.
-            </p>
+
         </div>
     )
 }

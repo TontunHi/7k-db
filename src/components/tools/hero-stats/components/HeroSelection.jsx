@@ -1,6 +1,6 @@
-'use client'
 import { Search } from 'lucide-react'
 import SafeImage from '@/components/shared/SafeImage'
+import HeroStatsHeader from './HeroStatsHeader'
 import styles from './HeroSelection.module.css'
 
 export default function HeroSelection({ heroes, search, setSearch, onSelect }) {
@@ -11,15 +11,8 @@ export default function HeroSelection({ heroes, search, setSearch, onSelect }) {
 
     return (
         <div className={styles.heroSelection}>
+            <HeroStatsHeader />
             <div className={styles.container}>
-                <div className={styles.header}>
-                    <h1 className={styles.title}>
-                        Choose Your <span className={styles.titleAccent}>Hero</span>
-                    </h1>
-                    <p className={styles.subtitle}>
-                        Select a hero from the pool to initiate high-performance build analysis and simulation
-                    </p>
-                </div>
 
                 <div className={styles.pickerBox}>
                     <div className={styles.searchWrapper}>

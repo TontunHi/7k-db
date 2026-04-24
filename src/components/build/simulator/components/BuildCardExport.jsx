@@ -181,8 +181,8 @@ const BuildCardExport = forwardRef(({ hero, build, skills }, ref) => {
             </div>
 
             <div className={styles.footer}>
-                <p className={styles.footerText}>Designed at 7k-db.com</p>
                 <div className={styles.footerLine} />
+                <p className={styles.footerText}>Designed at 7k-db.com</p>
             </div>
         </div>
     )

@@ -5,9 +5,7 @@ export default function AdventHeader() {
     return (
         <div className={styles.header}>
             <div className={styles.titleWrapper}>
-                <div className={styles.iconWrapper}>
-                    <Compass className={styles.icon} />
-                </div>
+
                 <h1 className={styles.title}>
                     <span className={styles.violetText}>ADVENT</span>
                 </h1>

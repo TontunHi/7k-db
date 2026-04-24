@@ -11,6 +11,7 @@ import {
 import AnalyticsStatCard from "./AnalyticsStatCard"
 import AnalyticsDataTable from "./AnalyticsDataTable"
 import AnalyticsFilterTable from "./AnalyticsFilterTable/AnalyticsFilterTable"
+import AnalyticsTrendChart from "./AnalyticsTrendChart"
 import styles from "../analytics.module.css"
 import { clsx } from "clsx"
 
@@ -21,26 +22,30 @@ export default function AnalyticsDashboardView({ data }) {
     const { reach, growth, conversion, exits } = data
 
     return (
-        <div className={styles.container}>
-            {/* Header Section */}
-            <header className={styles.headerCard}>
-                <div className={styles.gridOverlay} />
-                <div className={styles.glow} />
-                
-                <div className={styles.headerContent}>
-                    <div className={styles.iconBox}>
-                        <BarChart3 className={styles.icon} />
+        <div className={styles.page}>
+            <div className={styles.background}>
+                <div className={styles.gridPattern} />
+                <div className={styles.topGlow} />
+                <div className={styles.bottomGlow} />
+            </div>
+
+            <div className={styles.content}>
+                {/* Header Section */}
+                <header className={styles.header}>
+                    <div className={styles.headerContent}>
+                        <div className={styles.iconBox}>
+                            <BarChart3 className={styles.icon} />
+                        </div>
+                        <div>
+                            <h1 className={styles.title}>
+                                Internal <span className={styles.titleAccent}>Analytics</span>
+                            </h1>
+                            <p className={styles.subtitle}>
+                                Privacy-first internal metrics to measure your success.
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <h1 className={styles.title}>
-                            Internal <span className={styles.titleAccent}>Analytics</span>
-                        </h1>
-                        <p className={styles.subtitle}>
-                            Privacy-first internal metrics to measure your success.
-                        </p>
-                    </div>
-                </div>
-            </header>
+                </header>
 
             {/* KPI Stat Cards */}
             <div className={styles.kpiGrid}>
@@ -69,6 +74,9 @@ export default function AnalyticsDashboardView({ data }) {
                     variant="emerald" 
                 />
             </div>
+
+            {/* Trend Visualization */}
+            <AnalyticsTrendChart data={data.trend} />
 
             {/* Ranking Tables */}
             <div className={styles.tablesGrid}>
@@ -121,6 +129,7 @@ export default function AnalyticsDashboardView({ data }) {
 
             {/* Custom Filter Log */}
             <AnalyticsFilterTable />
+            </div>
         </div>
     )
 }

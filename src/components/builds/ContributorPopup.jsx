@@ -34,7 +34,7 @@ export default function ContributorPopup() {
     if (!isVisible) return null
 
     return (
-        <div className={`fixed bottom-6 right-6 z-50 max-w-sm transition-all duration-500 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
+        <div className={`fixed bottom-6 right-6 z-[60] max-w-sm transition-all duration-500 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
             isClosing 
                 ? "translate-y-10 opacity-0 scale-95" 
                 : "translate-y-0 opacity-100 scale-100"

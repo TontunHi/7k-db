@@ -15,47 +15,66 @@ export default function AnalyticsFilterTable() {
         filters,
         handleApplyFilters,
         clearFilters,
-        updateFilter
+        updateFilter,
+        setRange
     } = useAnalyticsFilter()
 
     return (
         <div className={styles.card}>
             {/* Header & Filter Controls */}
             <div className={styles.header}>
-                <div className={styles.titleGroup}>
-                    <div className={styles.iconBox}>
-                        <Filter className="w-4 h-4 text-blue-400" />
+                <div className={styles.headerTop}>
+                    <div className={styles.titleGroup}>
+                        <div className={styles.iconBox}>
+                            <Filter className="w-4 h-4 text-primary" />
+                        </div>
+                        <div>
+                            <h2 className={styles.title}>Custom Page Views Log</h2>
+                            <p className={styles.subtitle}>Filter analytics by date range and page path</p>
+                        </div>
                     </div>
-                    <h2 className={styles.title}>Custom Page Views Log</h2>
+
+                    <div className={styles.rangeButtons}>
+                        <button type="button" onClick={() => setRange(0)} className={styles.rangeBtn}>Today</button>
+                        <button type="button" onClick={() => setRange(7)} className={styles.rangeBtn}>Last 7 Days</button>
+                        <button type="button" onClick={() => setRange(30)} className={styles.rangeBtn}>Last 30 Days</button>
+                    </div>
                 </div>
 
                 <form onSubmit={handleApplyFilters} className={styles.filterForm}>
-                    <div className={styles.inputGroup}>
-                        <Search className={styles.searchIcon} />
-                        <input
-                            type="text"
-                            placeholder="Filter by Page Path..."
-                            className={styles.input}
-                            value={filters.pagePath}
-                            onChange={(e) => updateFilter("pagePath", e.target.value)}
-                        />
-                    </div>
-                    
-                    <div className={clsx(styles.inputGroup, styles.dateRange)}>
-                        <Calendar className={styles.calendarIcon} />
-                        <input
-                            type="date"
-                            className={styles.input}
-                            value={filters.startDate}
-                            onChange={(e) => updateFilter("startDate", e.target.value)}
-                        />
-                        <span className={styles.separator}>-</span>
-                        <input
-                            type="date"
-                            className={styles.input}
-                            value={filters.endDate}
-                            onChange={(e) => updateFilter("endDate", e.target.value)}
-                        />
+                    <div className={styles.inputGrid}>
+                        <div className={styles.inputGroup}>
+                            <Search className={styles.searchIcon} />
+                            <input
+                                type="text"
+                                placeholder="Filter by Page Path..."
+                                className={styles.input}
+                                value={filters.pagePath}
+                                onChange={(e) => updateFilter("pagePath", e.target.value)}
+                            />
+                        </div>
+                        
+                        <div className={styles.dateSelector}>
+                            <div className={styles.inputGroup}>
+                                <Calendar className={styles.calendarIcon} />
+                                <input
+                                    type="date"
+                                    className={styles.input}
+                                    value={filters.startDate}
+                                    onChange={(e) => updateFilter("startDate", e.target.value)}
+                                />
+                            </div>
+                            <span className={styles.separator}>to</span>
+                            <div className={styles.inputGroup}>
+                                <Calendar className={styles.calendarIcon} />
+                                <input
+                                    type="date"
+                                    className={styles.input}
+                                    value={filters.endDate}
+                                    onChange={(e) => updateFilter("endDate", e.target.value)}
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     <div className={styles.buttonGroup}>
