@@ -25,7 +25,7 @@ export default function Navbar() {
             name: "PVE Mode",
             href: "#",
             children: [
-                { name: "Stage", href: "/stages" },
+                // { name: "Stage", href: "/stages" },
                 { name: "Dungeons", href: "/dungeon" },
                 { name: "Raids", href: "/raid" },
                 { name: "Castle Rush", href: "/castle-rush" },

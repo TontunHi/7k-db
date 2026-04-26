@@ -1,6 +1,6 @@
 "use client"
 
-import { Trash2, Zap, Video, Plus } from "lucide-react"
+import { Trash2, Zap, Video, Plus, ScrollText, ChevronDown, ChevronUp } from "lucide-react"
 import TeamBuilder from "@/components/admin/TeamBuilder"
 import SafeImage from "@/components/shared/SafeImage"
 import { clsx } from "clsx"
@@ -14,6 +14,7 @@ export default function DungeonTeamSet({
     index, 
     assets, 
     skillErrors,
+    isCollapsed,
     onTeamUpdate, 
     onSetUpdate, 
     onDelete, 
@@ -21,6 +22,7 @@ export default function DungeonTeamSet({
     onDeleteSlot, 
     onUpdateSlotLabel,
     onOpenSkillPicker,
+    onToggleCollapse,
     onSkillError 
 }) {
     
@@ -30,133 +32,167 @@ export default function DungeonTeamSet({
         return `/skills/${folderName}/${skillNumber}.webp`
     }
 
+    const hasHeroes = set.heroes?.some(h => h !== null)
+
     return (
         <div className={clsx(styles.teamSet, set._dirty && styles.teamSetDirty)}>
             <div className={styles.setHead}>
-                <div className="flex items-center gap-3">
-                    <div className={styles.setIndex}>{index + 1}</div>
-                    <h3 className="font-bold uppercase tracking-tight">Deployment {index + 1}</h3>
-                    {set._dirty && <span className="px-2 py-0.5 bg-primary/20 text-primary text-[10px] font-black rounded uppercase">Unsaved Intel</span>}
-                </div>
-                <button
-                    onClick={() => onDelete(index)}
-                    className="text-muted-foreground hover:text-red-500 transition-colors p-2 hover:bg-red-500/10 rounded-lg"
-                    title="Remove team set"
-                >
-                    <Trash2 size={18} />
-                </button>
-            </div>
-
-            <div className={styles.setBody}>
-                {/* Team Builder Core */}
-                <TeamBuilder
-                    team={{
-                        index: index + 1,
-                        formation: set.formation,
-                        pet_file: set.pet_file,
-                        aura: set.aura,
-                        heroes: set.heroes
-                    }}
-                    index={index}
-                    heroesList={assets.heroes}
-                    petsList={assets.pets}
-                    formations={assets.formations}
-                    onUpdate={(teamData) => onTeamUpdate(index, teamData)}
-                />
-
-                {/* Skill Rotation Section */}
-                <div className={styles.rotationSection}>
-                    <label className={styles.sectionLabel}>
-                        <Zap size={14} className="text-primary" /> Skill Rotation Sequence
-                    </label>
-
-                    <div className={styles.rotationGrid}>
-                        {(set.skill_rotation || []).map((slot, slotIdx) => {
-                            const [hIdx, sNum] = (slot.skill || '').split('-').map(Number)
-                            const heroFile = set.heroes?.[hIdx]
-                            const skillPath = slot.skill ? getSkillImagePath(heroFile, sNum) : null
-                            const errKey = `slot-${set.id}-${slotIdx}`
-                            const hasError = skillErrors[errKey]
-                            const hasHeroes = set.heroes?.some(h => h !== null)
-
-                            return (
-                                <div key={slotIdx} className={styles.slot}>
-                                    <input
-                                        type="text"
-                                        value={slot.label || ''}
-                                        onChange={(e) => onUpdateSlotLabel(index, slotIdx, e.target.value)}
-                                        placeholder="..."
-                                        className={styles.slotLabelInput}
-                                    />
-                                    <div className="relative">
-                                        <button
-                                            onClick={() => onOpenSkillPicker({ setIdx: index, slotIdx })}
-                                            disabled={!hasHeroes}
-                                            className={clsx(
-                                                styles.skillBtn,
-                                                slot.skill && styles.skillBtnActive
-                                            )}
-                                        >
-                                            {slot.skill && heroFile && skillPath && !hasError ? (
-                                                <SafeImage
-                                                    src={skillPath}
-                                                    alt=""
-                                                    fill
-                                                    className="object-cover"
-                                                    onError={() => onSkillError(errKey)}
-                                                />
-                                            ) : (
-                                                <Plus size={16} className="text-muted-foreground" />
-                                            )}
-                                        </button>
-                                        <button
-                                            onClick={() => onDeleteSlot(index, slotIdx)}
-                                            className={styles.removeSlotBtn}
-                                        >
-                                            ✕
-                                        </button>
-                                    </div>
-                                </div>
-                            )
-                        })}
-
-                        <button
-                            onClick={() => onAddSlot(index)}
-                            disabled={!set.heroes?.some(h => h !== null)}
-                            className={styles.addSlotBtn}
-                            title="Add skill slot"
-                        >
-                            <Plus size={20} />
-                        </button>
-                    </div>
-                </div>
-
-                {/* Meta Data */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                        <label className={styles.sectionLabel}>
-                            <Video size={14} /> Tactical Briefing (Video URL)
-                        </label>
+                <div className="flex items-center gap-4 flex-1">
+                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => onToggleCollapse(set.id)}>
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-black text-sm">
+                            {index + 1}
+                        </div>
                         <input
-                            type="url"
-                            value={set.video_url || ''}
-                            onChange={(e) => onSetUpdate(index, 'video_url', e.target.value)}
-                            placeholder="https://youtube.com/watch?v=..."
-                            className="w-full bg-background border border-border rounded-xl px-4 py-3 font-bold text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                            type="text"
+                            value={set.team_name || ''}
+                            onChange={(e) => onSetUpdate(index, 'team_name', e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
+                            placeholder={`Squad ${index + 1}`}
+                            className={styles.setNameInput}
                         />
                     </div>
+                    {set._dirty && <span className="px-2 py-0.5 bg-primary/20 text-primary text-[10px] font-black rounded uppercase">Unsaved Intel</span>}
+                    
+                    {isCollapsed && (
+                        <div className="flex items-center gap-1.5 ml-4 animate-in fade-in slide-in-from-left-2">
+                            {set.heroes.map((hero, hIdx) => hero && (
+                                <div key={hIdx} className="relative w-7 h-7 rounded-md overflow-hidden border border-border">
+                                    <SafeImage src={`/heroes/${hero}`} alt="" fill className="object-cover" />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
 
-                    <div className="space-y-2">
-                        <label className={styles.sectionLabel}>Setup Intelligence (Notes)</label>
-                        <textarea
-                            value={set.note || ''}
-                            onChange={(e) => onSetUpdate(index, 'note', e.target.value)}
-                            placeholder="Add specific timings or requirements..."
-                            className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary focus:outline-none resize-none h-full min-h-[50px]"
-                        />
-                    </div>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => onToggleCollapse(set.id)}
+                        className="text-muted-foreground hover:text-primary p-2 hover:bg-accent rounded-lg transition-colors"
+                    >
+                        {isCollapsed ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
+                    </button>
+                    <button
+                        onClick={() => onDelete(index)}
+                        className="text-muted-foreground hover:text-red-500 transition-colors p-2 hover:bg-red-500/10 rounded-lg"
+                        title="Remove squad"
+                    >
+                        <Trash2 size={18} />
+                    </button>
                 </div>
             </div>
+
+            {!isCollapsed && (
+                <div className={styles.setBody}>
+                    <TeamBuilder
+                        team={{
+                            index: index + 1,
+                            formation: set.formation,
+                            pet_file: set.pet_file,
+                            aura: set.aura,
+                            heroes: set.heroes
+                        }}
+                        index={index}
+                        heroesList={assets.heroes}
+                        petsList={assets.pets}
+                        formations={assets.formations}
+                        onUpdate={(teamData) => onTeamUpdate(index, teamData)}
+                    />
+
+                    {/* Skill Rotation */}
+                    <div className={styles.rotationSection}>
+                        <label className={styles.sectionLabel}>
+                            <Zap size={14} className="text-primary" /> Skill Rotation Intel
+                        </label>
+
+                        <div className={styles.rotationGrid}>
+                            {(set.skill_rotation || []).map((slot, slotIdx) => {
+                                const [hIdx, sNum] = (slot.skill || '').split('-').map(Number)
+                                const heroFile = set.heroes?.[hIdx]
+                                const skillPath = slot.skill ? getSkillImagePath(heroFile, sNum) : null
+                                const errKey = `slot-${set.id}-${slotIdx}`
+                                const hasError = skillErrors[errKey]
+
+                                return (
+                                    <div key={slotIdx} className={styles.slot}>
+                                        <input
+                                            type="text"
+                                            value={slot.label || ''}
+                                            onChange={(e) => onUpdateSlotLabel(index, slotIdx, e.target.value)}
+                                            placeholder="..."
+                                            className={styles.slotLabelInput}
+                                        />
+                                        <div className="relative">
+                                            <button
+                                                onClick={() => onOpenSkillPicker({ setIdx: index, slotIdx })}
+                                                disabled={!hasHeroes}
+                                                className={clsx(
+                                                    styles.skillBtn,
+                                                    slot.skill && styles.skillBtnActive
+                                                )}
+                                            >
+                                                {slot.skill && heroFile && skillPath && !hasError ? (
+                                                    <SafeImage
+                                                        src={skillPath}
+                                                        alt=""
+                                                        fill
+                                                        className="object-cover"
+                                                        onError={() => onSkillError(errKey)}
+                                                    />
+                                                ) : (
+                                                    <Plus size={16} className="text-muted-foreground opacity-30" />
+                                                )}
+                                            </button>
+                                            <button
+                                                onClick={() => onDeleteSlot(index, slotIdx)}
+                                                className={styles.removeSlotBtn}
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+
+                            <button
+                                onClick={() => onAddSlot(index)}
+                                disabled={!hasHeroes}
+                                className={styles.addSlotBtn}
+                                title="Add rotation slot"
+                            >
+                                <Plus size={20} />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Meta Data */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div className="space-y-3">
+                            <label className={styles.sectionLabel}>
+                                <Video size={14} /> Tactical Briefing (Video URL)
+                            </label>
+                            <input
+                                type="url"
+                                value={set.video_url || ''}
+                                onChange={(e) => onSetUpdate(index, 'video_url', e.target.value)}
+                                placeholder="https://youtube.com/watch?v=..."
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 font-bold text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                            />
+                        </div>
+
+                        <div className="space-y-3">
+                            <label className={styles.sectionLabel}>
+                                <ScrollText size={14} /> Strategic Intel (Notes)
+                            </label>
+                            <textarea
+                                value={set.note || ''}
+                                onChange={(e) => onSetUpdate(index, 'note', e.target.value)}
+                                placeholder="Add specific timings or sector-specific requirements..."
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary focus:outline-none resize-none h-full min-h-[100px]"
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

@@ -45,7 +45,7 @@ export default function CastleRushSkillPicker({
                         
                         const heroSlug = heroFile.replace(/\.[^/.]+$/, "")
                         const heroName = heroSlug.replace(/^(l\+\+|l\+|l|r|uc|c)_/i, '').replace(/_/g, ' ')
-                        const skills = skillsMap?.[heroSlug] || ["4", "3", "2", "1"]
+                        const skills = [...(skillsMap?.[heroSlug] || ["1", "2", "3", "4"])].sort((a, b) => (parseInt(b) || 0) - (parseInt(a) || 0))
 
                         return (
                             <div key={heroIdx} className={styles.heroRow}>

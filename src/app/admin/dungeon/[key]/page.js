@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, use } from 'react'
-import { getDungeonInfo, getSetsByDungeon } from '@/lib/dungeon-actions'
+import { getDungeonInfo, getSetsByDungeon, getDungeons } from '@/lib/dungeon-actions'
 import { getAllHeroes, getPets, getFormations, getHeroSkillsMap } from '@/lib/stage-actions'
 import { Loader2 } from 'lucide-react'
 import DungeonEditorView from '../components/DungeonEditorView'
@@ -14,6 +14,7 @@ export default function DungeonDetailPage({ params }) {
 
     const [loading, setLoading] = useState(true)
     const [dungeon, setDungeon] = useState(null)
+    const [allDungeons, setAllDungeons] = useState([])
     const [sets, setSets] = useState([])
     const [assets, setAssets] = useState({
         heroes: [],
@@ -26,8 +27,9 @@ export default function DungeonDetailPage({ params }) {
         async function loadData() {
             setLoading(true)
             try {
-                const [dungeonInfo, setsData, heroesData, petsData, formationsData, skillsData] = await Promise.all([
+                const [dungeonInfo, dungeonsList, setsData, heroesData, petsData, formationsData, skillsData] = await Promise.all([
                     getDungeonInfo(dungeonKey),
+                    getDungeons(),
                     getSetsByDungeon(dungeonKey),
                     getAllHeroes(),
                     getPets(),
@@ -36,6 +38,7 @@ export default function DungeonDetailPage({ params }) {
                 ])
                 
                 setDungeon(dungeonInfo)
+                setAllDungeons(dungeonsList)
                 setSets(setsData)
                 setAssets({
                     heroes: heroesData,
@@ -75,6 +78,7 @@ export default function DungeonDetailPage({ params }) {
             dungeonKey={dungeonKey}
             initialDungeon={dungeon}
             initialSets={sets}
+            allDungeons={allDungeons}
             assets={assets}
         />
     )

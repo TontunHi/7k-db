@@ -26,38 +26,52 @@ const UPDATES = [
 
 export default function WebsiteUpdates() {
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
+        <div className="w-full relative px-1">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4 px-1">
                 <div className="flex items-center gap-2">
-                    <div className="w-1 h-5 bg-gradient-to-b from-cyan-400 to-blue-600 rounded-full" />
-                    <h2 className="text-sm font-black uppercase tracking-widest text-gray-300">
-                        Update Website
+                    <div className="w-1 h-4 bg-gradient-to-b from-cyan-400 to-blue-600 rounded-full shadow-[0_0_8px_rgba(34,211,238,0.4)]" />
+                    <h2 className="text-[11px] font-black uppercase tracking-[0.15em] text-white/90">
+                        Site Patch Notes
                     </h2>
                 </div>
-                <Terminal className="w-4 h-4 text-cyan-500/50" />
+                <Terminal className="w-3.5 h-3.5 text-cyan-500/30" />
             </div>
 
-            <div className="space-y-8">
+            <div className="space-y-6">
                 {UPDATES.map((group) => (
                     <div key={group.date} className="relative">
                         {/* Date Header */}
-                        <div className="flex items-center gap-3 mb-4">
-                            <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">{group.date}</span>
-                            <div className="h-px flex-1 bg-white/5" />
+                        <div className="flex items-center gap-3 mb-3">
+                            <span className="text-[9px] font-black text-cyan-500/80 uppercase tracking-widest">
+                                {group.date}
+                            </span>
+                            <div className="h-px flex-1 bg-cyan-500/10" />
                         </div>
 
+                        {/* Vertical Connector */}
+                        <div className="absolute left-[19px] top-8 bottom-0 w-px bg-cyan-500/10" />
+
                         {/* Items */}
-                        <div className="space-y-5">
+                        <div className="space-y-3">
                             {group.items.map((item, iIdx) => (
-                                <div key={iIdx} className="group flex items-start gap-4">
-                                    <div className="mt-0.5 w-6 h-6 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:border-cyan-500/50 transition-colors">
-                                        <item.icon className="w-3.5 h-3.5 text-cyan-400" />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-[8px] font-black uppercase tracking-wider text-cyan-500/70">{item.category}</span>
+                                <div key={iIdx} className="group relative flex items-start gap-3">
+                                    {/* Timeline Node */}
+                                    <div className="relative z-10 shrink-0">
+                                        <div className="w-6 h-6 rounded-lg bg-black/60 backdrop-blur-sm border border-white/5 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:border-cyan-500/30 shadow-sm">
+                                            <item.icon className="w-3 h-3 text-cyan-400/80" />
                                         </div>
-                                        <p className="text-[11px] font-medium text-gray-400 leading-snug group-hover:text-gray-200 transition-colors">
+                                    </div>
+
+                                    {/* Content Area */}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="mb-0.5">
+                                            <span className="text-[8px] font-black uppercase tracking-wider text-cyan-500/60 py-px px-1.5 rounded-sm bg-cyan-500/5 border border-cyan-500/10">
+                                                {item.category}
+                                            </span>
+                                        </div>
+                                        
+                                        <p className="text-[11px] font-medium text-gray-500 leading-snug group-hover:text-gray-300 transition-colors group-hover:translate-x-1 transition-transform duration-200">
                                             {item.text}
                                         </p>
                                     </div>

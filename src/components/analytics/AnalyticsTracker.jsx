@@ -14,7 +14,19 @@ function generateSessionId() {
 }
 
 export function trackCustomPageView(path) {
-  if (typeof window === 'undefined' || path?.startsWith('/admin')) return;
+  if (typeof window === 'undefined') return;
+  
+  // Skip if we are in development mode or localhost
+  if (process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost') {
+    return;
+  }
+
+  // Skip if developer has manually opted out
+  if (window.localStorage.getItem('skip_analytics') === 'true') {
+    return;
+  }
+
+  if (path?.startsWith('/admin')) return;
   const sid = generateSessionId();
 
   fetch('/api/analytics/track', {
@@ -31,6 +43,16 @@ export function trackCustomPageView(path) {
 export function trackOutboundClick(url, linkId = 'generic_link') {
   if (typeof window === 'undefined') return;
   
+  // Skip if we are in development mode or localhost
+  if (process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost') {
+    return;
+  }
+
+  // Skip if developer has manually opted out
+  if (window.localStorage.getItem('skip_analytics') === 'true') {
+    return;
+  }
+
   // Skip if we are on an admin page
   if (window.location.pathname.startsWith('/admin')) return;
 
@@ -55,6 +77,18 @@ export default function AnalyticsTracker() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    // Skip if we are in development mode or localhost
+    if (process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost') {
+      return;
+    }
+
+    // Skip if developer has manually opted out
+    if (window.localStorage.getItem('skip_analytics') === 'true') {
+      return;
+    }
+
     if (!pathname || pathname.startsWith('/admin')) return;
     
     const sid = generateSessionId();

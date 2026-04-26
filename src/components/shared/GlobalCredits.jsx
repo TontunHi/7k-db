@@ -43,8 +43,7 @@ export default function GlobalCredits() {
     if (credits.length === 0) return null
 
     return (
-        <section className="relative mt-20 pt-20 border-t border-border overflow-hidden">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+        <section className="relative overflow-hidden w-full h-full">
             
             <div className="text-center mb-12">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-[0.2em] mb-4">

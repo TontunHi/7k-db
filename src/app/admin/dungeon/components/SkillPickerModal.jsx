@@ -22,16 +22,16 @@ export default function SkillPickerModal({
 
     return (
         <div className={styles.modalOverlay} onClick={onClose}>
-            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-                <div className={styles.modalHead}>
+            <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                <header className={styles.modalHeader}>
                     <div>
                         <h3 className="text-xl font-black uppercase">Tactical Skill Intel</h3>
                         <p className="text-xs text-muted-foreground font-bold tracking-wider">SELECT ACTION FOR SLOT {slotIdx + 1}</p>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-accent rounded-full transition-colors">
-                        <X size={20} />
+                        <X size={20} className="text-foreground" />
                     </button>
-                </div>
+                </header>
 
                 <div className={styles.modalBody}>
                     {teamHeroes.map((heroFile, heroIdx) => {
@@ -46,18 +46,18 @@ export default function SkillPickerModal({
                         const actualFile = heroData?.filename || heroFile
 
                         const heroSlug = heroFile.replace(/\.[^/.]+$/, "")
-                        const skills = skillsMap?.[heroSlug] || ["4", "3", "2", "1"]
+                        const skills = [...(skillsMap?.[heroSlug] || ["1", "2", "3", "4"])].sort((a, b) => (parseInt(b) || 0) - (parseInt(a) || 0))
 
                         return (
                             <div key={heroIdx} className={styles.heroRow}>
-                                <div className={styles.heroLabel}>
-                                    <div className={styles.heroIcon}>
+                                <div className="flex items-center gap-2">
+                                    <div className="relative w-8 h-8 rounded-md overflow-hidden border border-border shrink-0">
                                         <SafeImage src={`/heroes/${actualFile}`} alt={heroName} fill className="object-cover" />
                                     </div>
-                                    <span className="uppercase italic">{heroName}</span>
+                                    <span className="text-xs font-black uppercase italic text-foreground">{heroName}</span>
                                 </div>
                                 
-                                <div className={styles.skillGrid}>
+                                <div className={styles.heroSkills}>
                                     {skills.map(skillName => {
                                         const skillKey = `${heroIdx}-${skillName}`
                                         const skillPath = `/skills/${heroSlug}/${skillName}.webp`

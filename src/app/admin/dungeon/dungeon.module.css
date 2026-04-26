@@ -22,7 +22,6 @@
   font-size: 2.5rem;
   font-weight: 900;
   text-transform: uppercase;
-  font-style: italic;
   letter-spacing: -0.02em;
   color: var(--foreground);
 }
@@ -30,139 +29,119 @@
 .subtitle {
   font-size: 0.875rem;
   color: var(--muted-foreground);
-  margin-top: 0.5rem;
 }
 
-/* Dungeon Grid */
+/* Grid */
 .grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(1, 1fr);
   gap: 1.5rem;
 }
 
 @media (min-width: 768px) {
-  .grid { grid-template-columns: repeat(2, 1fr); }
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .dungeonCard {
   position: relative;
-  height: 12rem;
-  border-radius: 1.5rem;
+  aspect-ratio: 3168/514;
+  border-radius: 1.25rem;
   overflow: hidden;
   border: 1px solid var(--border);
   background-color: #000;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
 }
 
 .dungeonCard:hover {
-  transform: translateY(-4px);
   border-color: var(--primary);
-  box-shadow: 0 20px 40px -12px rgba(255, 215, 0, 0.2);
+  box-shadow: 0 0 30px color-mix(in srgb, var(--primary), transparent 80%);
 }
 
 .bgImage {
   object-fit: cover;
-  opacity: 0.5;
-  transition: all 0.5s ease;
+  opacity: 0.8;
+  transition: transform 0.5s ease;
 }
 
 .dungeonCard:hover .bgImage {
   transform: scale(1.05);
-  opacity: 0.7;
 }
 
 .overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, rgba(0,0,0,0.9) 20%, transparent 100%);
+  background: linear-gradient(to top, #000 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
   z-index: 1;
 }
 
 .cardContent {
-  position: relative;
-  z-index: 2;
-  height: 100%;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.dungeonName {
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: #fff;
-  line-height: 1.2;
-  max-width: 70%;
-  transition: color 0.3s ease;
-}
-
-.dungeonCard:hover .dungeonName {
-  color: var(--primary);
-}
-
-.accentBar {
-  width: 3rem;
-  height: 0.25rem;
-  background-color: var(--primary);
-  border-radius: 1rem;
-  margin-top: 1rem;
-  transition: width 0.4s ease;
-}
-
-.dungeonCard:hover .accentBar {
-  width: 5rem;
-}
-
-.setCount {
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-  background-color: #22c55e;
-  color: #fff;
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.625rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-/* Editor Styling */
-.editorHeader {
-  position: sticky;
-  top: 1rem;
-  z-index: 30;
-  background-color: rgba(var(--background-rgb), 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
-  border-radius: 1.5rem;
-  padding: 1rem 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.heroSection {
-  position: relative;
-  height: 20rem;
-  border-radius: 2rem;
-  overflow: hidden;
-  border: 1px solid var(--border);
-}
-
-.heroContent {
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
-  padding: 2rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
-.actionRow {
+.bossName {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+}
+
+.setBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  background-color: #10b981;
+  color: #fff;
+  padding: 0.25rem 0.75rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Editor Layout */
+.editorLayout {
+  display: flex;
+  gap: 2rem;
+}
+
+.sidebar {
+  width: 18rem;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sidebarCard {
+  position: relative;
+  aspect-ratio: 3168/514;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: linear-gradient(to bottom, #111, #000);
+}
+
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.editorHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -170,61 +149,40 @@
   background-color: var(--card);
   border: 1px solid var(--border);
   border-radius: 1.5rem;
-}
-
-.addBtn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
-  background-color: var(--accent);
-  color: var(--foreground);
-  border: 1px solid var(--border);
-  border-radius: 1rem;
-  font-size: 0.875rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  transition: all 0.2s ease;
-}
-
-.addBtn:hover {
-  background-color: var(--border);
-  border-color: var(--muted-foreground);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
 }
 
 /* Team Set Card */
 .teamSet {
-  background-color: var(--card);
+  background-color: rgba(var(--card-rgb), 0.3);
   border: 1px solid var(--border);
-  border-radius: 1.5rem;
+  border-radius: 1.25rem;
   overflow: hidden;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .teamSetDirty {
-  border-color: rgba(255, 215, 0, 0.4);
+  border-color: color-mix(in srgb, var(--primary), transparent 60%);
 }
 
 .setHead {
   padding: 1rem 1.5rem;
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: color-mix(in srgb, var(--background), transparent 40%);
   border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.setIndex {
-  width: 2rem;
-  height: 2rem;
-  background-color: var(--primary);
-  color: #000;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  font-size: 0.875rem;
+.setNameInput {
+  background-color: transparent;
+  border: none;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #fff;
+  outline: none;
+  width: 200px;
 }
 
 .setBody {
@@ -234,7 +192,7 @@
   gap: 2rem;
 }
 
-/* Skill Rotation Builder */
+/* Rotation Section */
 .rotationSection {
   display: flex;
   flex-direction: column;
@@ -245,28 +203,29 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.625rem;
-  font-weight: 900;
+  font-size: 0.75rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
   color: var(--muted-foreground);
 }
 
 .rotationGrid {
   background-color: rgba(0, 0, 0, 0.2);
   border: 1px solid var(--border);
-  border-radius: 1.25rem;
-  padding: 1.25rem;
+  border-radius: 1rem;
+  padding: 1rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  align-items: flex-end;
+  gap: 0.5rem;
 }
 
+/* Slots */
 .slot {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.25rem;
   position: relative;
 }
 
@@ -274,62 +233,57 @@
   width: 3.5rem;
   background-color: transparent;
   border: none;
-  font-size: 0.625rem;
-  font-weight: 900;
-  color: var(--primary);
   text-align: center;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--primary);
   outline: none;
 }
 
 .skillBtn {
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 0.75rem;
-  border: 2px solid var(--border);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  border: 2px dashed var(--border);
   background-color: var(--background);
+  position: relative;
   overflow: hidden;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
 }
 
 .skillBtnActive {
-  border-color: var(--primary);
-}
-
-.skillBtn:hover:not(:disabled) {
-  border-color: var(--primary);
-  transform: scale(1.05);
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--primary), transparent 50%);
 }
 
 .removeSlotBtn {
   position: absolute;
-  top: 1.2rem;
+  top: 1rem;
   right: -0.25rem;
-  width: 1rem;
-  height: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
   background-color: #ef4444;
   color: #fff;
   border-radius: 50%;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
-  font-size: 0.5rem;
+  font-size: 0.625rem;
   z-index: 10;
-  opacity: 0;
-  transition: opacity 0.2s ease;
 }
 
 .slot:hover .removeSlotBtn {
-  opacity: 1;
+  display: flex;
 }
 
 .addSlotBtn {
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
   border: 2px dashed var(--border);
-  border-radius: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -337,42 +291,44 @@
   transition: all 0.2s ease;
 }
 
-.addSlotBtn:hover:not(:disabled) {
+.addSlotBtn:not(:disabled):hover {
   border-color: var(--primary);
   color: var(--primary);
+  background-color: color-mix(in srgb, var(--primary), transparent 95%);
 }
 
-/* Skill Picker Modal */
+/* Modal */
 .modalOverlay {
   position: fixed;
   inset: 0;
-  z-index: 100;
-  background-color: rgba(0,0,0,0.85);
-  backdrop-filter: blur(8px);
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
-}
-
-.modal {
-  width: 100%;
-  max-width: 40rem;
-  background-color: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 2rem;
-  overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.modalHead {
   padding: 1.5rem;
-  background-color: rgba(255, 255, 255, 0.03);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modalContent {
+  background-color: #0c0c0c;
+  width: 100%;
+  max-width: 32rem;
+  border-radius: 2rem;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 20px color-mix(in srgb, var(--primary), transparent 90%);
+  animation: modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modalHeader {
+  padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-color: rgba(255,255,255,0.02);
 }
 
 .modalBody {
@@ -381,63 +337,65 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .heroRow {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
 }
 
-.heroLabel {
-  display: flex;
-  align-items: center;
+.heroRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.heroSkills {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.75rem;
-  font-size: 0.875rem;
-  font-weight: 800;
-  color: var(--foreground);
-}
-
-.heroIcon {
-  position: relative;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  border: 1px solid var(--border);
-}
-
-.skillGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  padding-left: 3.25rem;
 }
 
 .skillPickBtn {
-  width: 4rem;
-  height: 4rem;
-  border-radius: 0.875rem;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 0.75rem;
   border: 2px solid var(--border);
-  background-color: var(--background);
-  position: relative;
   overflow: hidden;
-  transition: all 0.2s ease;
+  position: relative;
+  background-color: var(--background);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .skillPickBtn:hover {
   border-color: var(--primary);
-  transform: scale(1.1);
-  z-index: 5;
-}
-
-@keyframes modalIn {
-  from { opacity: 0; transform: scale(0.9) translateY(20px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--primary), transparent 80%);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .editorLayout {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+  }
 }

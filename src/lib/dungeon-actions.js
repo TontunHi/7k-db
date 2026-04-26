@@ -73,11 +73,12 @@ export async function createSet(data) {
         const nextIndex = countResult[0].next_index
 
         const [result] = await pool.query(
-            `INSERT INTO dungeon_sets (dungeon_key, set_index, formation, pet_file, aura, heroes_json, skill_rotation, video_url, note)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO dungeon_sets (dungeon_key, set_index, team_name, formation, pet_file, aura, heroes_json, skill_rotation, video_url, note)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 validatedData.dungeon_key, 
                 nextIndex, 
+                validatedData.team_name || null,
                 validatedData.formation, 
                 validatedData.pet_file || null, 
                 validatedData.aura || null,
@@ -89,7 +90,8 @@ export async function createSet(data) {
         )
 
         const dungeonName = DUNGEON_ORDER.find(d => d.key === validatedData.dungeon_key)?.name || validatedData.dungeon_key;
-        await logSiteUpdate('DUNGEON', dungeonName, 'CREATE', `Added new strategy for ${dungeonName}`);
+        const teamLabel = validatedData.team_name ? ` "${validatedData.team_name}"` : ''
+        await logSiteUpdate('DUNGEON', dungeonName, 'CREATE', `Added team${teamLabel} for ${dungeonName}`);
 
         revalidatePath('/admin/dungeon')
         revalidatePath(`/admin/dungeon/${validatedData.dungeon_key}`)
@@ -113,9 +115,10 @@ export async function updateSet(id, data) {
     try {
         await pool.query(
             `UPDATE dungeon_sets 
-             SET formation = ?, pet_file = ?, aura = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
+             SET team_name = ?, formation = ?, pet_file = ?, aura = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
              WHERE id = ?`,
             [
+                validatedData.team_name || null,
                 validatedData.formation, 
                 validatedData.pet_file || null, 
                 validatedData.aura || null,
@@ -130,7 +133,8 @@ export async function updateSet(id, data) {
         const [rows] = await pool.query('SELECT dungeon_key FROM dungeon_sets WHERE id = ?', [id]);
         if (rows.length > 0) {
             const dungeonName = DUNGEON_ORDER.find(d => d.key === rows[0].dungeon_key)?.name || 'Dungeon';
-            await logSiteUpdate('DUNGEON', dungeonName, 'UPDATE', `Updated strategy for ${dungeonName}`);
+            const teamLabel = validatedData.team_name ? ` "${validatedData.team_name}"` : ''
+            await logSiteUpdate('DUNGEON', dungeonName, 'UPDATE', `Updated team${teamLabel} for ${dungeonName}`);
         }
 
         revalidatePath('/admin/dungeon')

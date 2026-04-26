@@ -1,5 +1,5 @@
 import { clsx } from 'clsx'
-import { Video, ExternalLink } from 'lucide-react'
+import { Video, ExternalLink, ScrollText } from 'lucide-react'
 import FormationGrid from '@/components/shared/FormationGrid'
 import PetDisplay from '@/components/shared/PetDisplay'
 import SkillSequence from '@/components/shared/SkillSequence'
@@ -13,7 +13,9 @@ export default function DungeonTeamSet({ set, index, heroImageMap }) {
                 <div className={styles.headerInfo}>
                     <div className={styles.number}>{index + 1}</div>
                     <div>
-                        <h3 className={styles.teamTitle}>Team {index + 1}</h3>
+                        <h3 className={styles.teamTitle}>
+                            {set.team_name || `Squad ${index + 1}`}
+                        </h3>
                         <p className={styles.formationText}>
                             Formation: {set.formation?.replace('-', ' - ')}
                         </p>
@@ -43,25 +45,13 @@ export default function DungeonTeamSet({ set, index, heroImageMap }) {
                             heroes={set.heroes} 
                             heroImageMap={heroImageMap}
                             customClasses={{
-                                container: "grid grid-cols-5 gap-3 pb-6 max-w-full",
+                                container: "grid grid-cols-5 gap-2 md:gap-3 pb-6 max-w-full",
                                 emptyRender: () => (
                                     <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/30 text-xs text-center p-1">Empty</div>
                                 ),
                                 cardString: "bg-card border border-border aspect-[3/4] rounded-lg overflow-hidden transition-all duration-300"
                             }}
                         />
-
-                        {/* Skill Rotation */}
-                        {set.skill_rotation?.length > 0 && (
-                            <div className={styles.skillSection}>
-                                <SkillSequence 
-                                    skillRotation={set.skill_rotation} 
-                                    heroes={set.heroes} 
-                                    heroImageMap={heroImageMap}
-                                    accentColor="var(--primary)"
-                                />
-                            </div>
-                        )}
                     </div>
 
                     {/* Pet & Aura */}
@@ -79,8 +69,8 @@ export default function DungeonTeamSet({ set, index, heroImageMap }) {
                                 petFile={set.pet_file} 
                                 hideLabel={true}
                                 customClasses={{
-                                       wrapper: clsx(
-                                        "w-24 h-24 border-2 bg-muted/50 shadow-xl hover:scale-105 transition-transform relative z-10",
+                                    wrapper: clsx(
+                                        "w-20 h-20 border-2 bg-muted/50 shadow-xl hover:scale-105 transition-transform relative z-10",
                                         set.aura === 'blue' ? "border-blue-500 shadow-blue-500/10" : 
                                         set.aura === 'red' ? "border-red-500 shadow-red-500/10" : 
                                         "border-primary/20 shadow-primary/5"
@@ -101,6 +91,17 @@ export default function DungeonTeamSet({ set, index, heroImageMap }) {
                         </div>
                     </div>
                 </div>
+
+                {/* Skill Rotation */}
+                <SkillSequence 
+                    skillRotation={set.skill_rotation} 
+                    heroes={set.heroes} 
+                    heroImageMap={heroImageMap}
+                    customClasses={{
+                        container: "mt-6 space-y-3",
+                    }}
+                    accentColor="var(--primary)"
+                />
                 
                 {/* Mobile Video Button */}
                 {set.video_url && (
@@ -115,10 +116,21 @@ export default function DungeonTeamSet({ set, index, heroImageMap }) {
                     </a>
                 )}
 
-                {/* Note */}
+                {/* Note Section (Castle Rush Style) */}
                 {set.note && set.note.trim() !== "" && (
-                    <div className={styles.note}>
-                        <p className={styles.noteText}>&quot;{set.note}&quot;</p>
+                    <div className={styles.noteSection}>
+                        <div className={styles.noteGlow} />
+                        <div className={styles.noteContainer}>
+                            <div className={styles.noteHeader}>
+                                <div className={styles.noteIconWrapper}>
+                                    <ScrollText className={styles.noteIcon} />
+                                </div>
+                                <span className={styles.noteBadge}>Strategic Note</span>
+                            </div>
+                            <p className={styles.noteText}>
+                                {set.note}
+                            </p>
+                        </div>
                     </div>
                 )}
             </div>

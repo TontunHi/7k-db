@@ -1,3 +1,4 @@
+import { notFound } from 'next/navigation'
 import { getStages, getStageById } from '@/lib/stage-actions'
 import PublicStageView from '@/components/stages/PublicStageView'
 import { getHeroImageMap } from '@/lib/hero-utils-server'
@@ -10,6 +11,7 @@ export const metadata = {
 }
 
 export default async function StagesPage() {
+    notFound()
     const stages = await getStages('stage')
     const nightmares = await getStages('nightmare')
 

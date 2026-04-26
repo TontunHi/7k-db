@@ -8,7 +8,7 @@ import styles from './FeaturesGrid.module.css'
 const ALL_FEATURES = [
     { title: "Hero Builds", description: "Stat & Gear recommendations for every hero", iconName: "Sword", href: "/build" },
     { title: "Meta Tier List", description: "See dominating heroes", iconName: "Trophy", href: "/tierlist" },
-    { title: "Stage Guides", description: "Detailed walkthroughs", iconName: "Map", href: "/stages" },
+    // { title: "Stage Guides", description: "Detailed walkthroughs", iconName: "Map", href: "/stages" },
     { title: "Dungeons", description: "Team comps for all difficulties", iconName: "Landmark", href: "/dungeon" },
     { title: "Raid", description: "Boss mechanics & strategies", iconName: "Skull", href: "/raid" },
     { title: "Advent", description: "Advent Expedition guides", iconName: "Compass", href: "/advent/ae_god_of_destruction" },
@@ -37,24 +37,20 @@ export default function FeaturesGrid() {
                 ))}
             </div>
 
-            {/* RECENT UPDATES */}
-            <div className={styles.updatesSection}>
-                <div className={styles.surfaceHeader}>
-                    <h3 className={styles.surfaceTitle}>
-                        <Zap className={styles.surfaceIcon} />
-                        Recent Updates
-                    </h3>
-                    <div className={styles.liveIndicator}>Live</div>
+            {/* BOTTOM SECTION: UPDATES & CREDITS */}
+            <div className={styles.bottomSection}>
+                {/* RECENT UPDATES */}
+                <div className={styles.updatesSection}>
+                    <div className={styles.updatesContent}>
+                        <Suspense fallback={<div className={styles.skeleton} />}>
+                            <RecentUpdates />
+                        </Suspense>
+                    </div>
                 </div>
-                <div className={styles.updatesContent}>
-                    <Suspense fallback={<div className={styles.skeleton} />}>
-                        <RecentUpdates />
-                    </Suspense>
-                </div>
-            </div>
 
-            <div className={styles.creditsWrapper}>
-                <GlobalCredits />
+                <div className={styles.creditsWrapper}>
+                    <GlobalCredits />
+                </div>
             </div>
         </section>
     )

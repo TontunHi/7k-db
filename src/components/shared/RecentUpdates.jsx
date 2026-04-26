@@ -20,34 +20,37 @@ export default async function RecentUpdates() {
     const updates = await getRecentUpdates(10)
 
     return (
-        <div className="w-full">
-            {/* Header omitted for brevity in targetContent, but I'll replace the loop below */}
-            <div className="flex items-center justify-between mb-4">
+        <div className="w-full relative px-1">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4 px-1">
                 <div className="flex items-center gap-2">
-                    <div className="w-1 h-5 bg-gradient-to-b from-[#FFD700] to-orange-500 rounded-full" />
-                    <h2 className="text-sm font-black uppercase tracking-widest text-gray-300">
-                        Recent Updates
+                    <div className="w-1 h-4 bg-gradient-to-b from-[#FFD700] to-orange-500 rounded-full shadow-[0_0_8px_rgba(255,215,0,0.4)]" />
+                    <h2 className="text-[11px] font-black uppercase tracking-[0.15em] text-white/90">
+                        Live Intel
                     </h2>
                 </div>
-                <div className="flex items-center gap-1.5 text-gray-600">
-                    <RefreshCw className="w-3 h-3" />
-                    <span className="text-[10px] font-mono uppercase tracking-wider">Live</span>
-                    <span className="relative flex h-2 w-2">
+                <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-md bg-green-500/5 border border-green-500/10">
+                    <span className="relative flex h-1.5 w-1.5">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
                     </span>
+                    <span className="text-[8px] font-bold uppercase tracking-widest text-green-500/80">Live</span>
                 </div>
             </div>
 
+            {/* Vertical Line Connector */}
+            <div className="absolute left-[19px] top-10 bottom-2 w-px bg-gradient-to-b from-primary/20 via-primary/5 to-transparent" />
+
             {/* Update list */}
             {updates.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-8 text-gray-700 gap-2">
-                    <Clock className="w-6 h-6" />
-                    <p className="text-xs font-mono">No updates yet</p>
+                <div className="py-6 text-center text-gray-700 border border-dashed border-white/5 rounded-xl">
+                    <p className="text-[10px] font-mono uppercase tracking-widest">No updates</p>
                 </div>
             ) : (
-                <div className="space-y-1">
-                    {updates.map((update, idx) => {
+                <div className="space-y-4">
+                    {updates
+                        .filter(update => update.content_type !== 'STAGE')
+                        .map((update) => {
                         const cfg = CONTENT_CONFIG[update.content_type] || CONTENT_CONFIG.HERO
                         const Icon = cfg.icon
 
@@ -55,38 +58,41 @@ export default async function RecentUpdates() {
                             <Link
                                 key={update.id}
                                 href={cfg.href}
-                                className="group flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors duration-200"
+                                className="group relative flex items-start gap-3 transition-all duration-200"
                             >
-                                {/* Icon dot */}
-                                <div
-                                    className="mt-0.5 w-6 h-6 rounded-md flex items-center justify-center shrink-0 transition-transform group-hover:scale-110"
-                                    style={{ backgroundColor: cfg.color + '22', border: `1px solid ${cfg.color}44` }}
-                                >
-                                    <Icon className="w-3.5 h-3.5" style={{ color: cfg.color }} />
-                                </div>
-
-                                {/* Message */}
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-xs text-gray-300 leading-snug truncate group-hover:text-white transition-colors">
-                                        {update.message}
-                                    </p>
-                                    <div className="flex items-center gap-2 mt-0.5">
-                                        <span
-                                            className="text-[9px] font-bold uppercase tracking-wider"
-                                            style={{ color: cfg.color + 'aa' }}
-                                        >
-                                            {cfg.label}
-                                        </span>
-                                        <span className="text-[9px] text-gray-700 font-mono">
-                                            {update.display_time}
-                                        </span>
+                                {/* Timeline Node */}
+                                <div className="relative z-10 shrink-0 mt-0.5">
+                                    <div 
+                                        className="w-6 h-6 rounded-lg flex items-center justify-center transition-all duration-300 shadow-sm border border-white/5 group-hover:scale-110 bg-black/60 backdrop-blur-sm"
+                                        style={{ 
+                                            boxShadow: `0 0 10px ${cfg.color}22`,
+                                            borderColor: `${cfg.color}33`
+                                        }}
+                                    >
+                                        <Icon className="w-3 h-3" style={{ color: cfg.color }} />
                                     </div>
                                 </div>
 
-                                {/* Date badge */}
-                                <span className="shrink-0 text-[9px] font-mono text-gray-700 mt-1 group-hover:text-gray-500 transition-colors">
-                                    {update.display_date}
-                                </span>
+                                {/* Content Area */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between gap-2 mb-0.5">
+                                        <span
+                                            className="text-[8px] font-black uppercase tracking-wider py-px px-1.5 rounded-sm bg-white/5"
+                                            style={{ color: cfg.color, border: `1px solid ${cfg.color}22` }}
+                                        >
+                                            {cfg.label}
+                                        </span>
+                                        <div className="flex items-center gap-1 text-[8px] font-mono text-gray-600 group-hover:text-gray-400 transition-colors">
+                                            {update.display_time}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="relative group-hover:translate-x-1 transition-transform duration-200">
+                                        <p className="text-[11px] text-gray-400 leading-snug font-medium group-hover:text-white transition-colors truncate">
+                                            {update.message}
+                                        </p>
+                                    </div>
+                                </div>
                             </Link>
                         )
                     })}

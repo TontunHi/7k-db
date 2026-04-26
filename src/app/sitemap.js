@@ -14,7 +14,6 @@ export default async function sitemap() {
     '/arena',
     '/guild-war',
     '/dungeon',
-    '/stages',
     '/about',
     '/privacy',
     '/contact',
