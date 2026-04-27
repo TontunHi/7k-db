@@ -1,98 +1,90 @@
-<div align="center">
+# 7k-db
 
-# 🗡️ 7k-db
+Seven Knights Rebirth database, strategy guide, and admin dashboard built with
+Next.js App Router.
 
-### The Ultimate Seven Knights Database & Admin Dashboard
+## Features
 
-[![Next.js](https://img.shields.io/badge/Next.js-15+-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.0+-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
-[![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?style=for-the-badge&logo=mysql)](https://www.mysql.com/)
-[![Lucide Icons](https://img.shields.io/badge/Lucide_Icons-Premium-FFD700?style=for-the-badge&logo=lucide)](https://lucide.dev/)
+- Admin dashboard for game content, users, permissions, assets, and credits
+- Hero builds, tier lists, stages, raids, dungeons, castle rush, advent, arena,
+  guild war, and total war content
+- Public tools for tier list creation and build/stat simulation
+- MySQL-backed data model with manual migration scripts
+- Asset registry for heroes, pets, skills, items, and guide images
 
-**7k-db** is a production-grade web application designed to manage and display complex game data for Seven Knights. It features a powerful, secure Admin Dashboard and a high-performance frontend for players.
+## Tech Stack
 
-</div>
+- Next.js 16
+- React 19
+- Tailwind CSS 4
+- MySQL via `mysql2`
+- Server Actions and App Router route handlers
+- Vitest for focused unit tests
 
----
+## Setup
 
-## ✨ Key Features
-
-- 🛡️ **Advanced Admin Dashboard**: Secure management of heroes, pets, and skills.
-- 🧪 **Build Manager**: Create and share hero builds with detailed stat breakdowns.
-- 🏆 **Tierlist System**: Fully customizable tierlists with dynamic ranking logic.
-- ⚔️ **Content Guides**: Specialized sections for Arena, Raids, Guild War, and Total War.
-- 🚀 **Manual Migrations**: Robust database versioning and schema management.
-- ⚡ **Optimized Performance**: Next.js 15+ standalone mode with Turbopack support.
-
----
-
-## 🛠️ Tech Stack
-
-- **Core**: [Next.js](https://nextjs.org/) (App Router)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **State/Logic**: [React Hooks](https://reactjs.org/) & [Lucide React](https://lucide.dev/)
-- **Database**: [MySQL](https://www.mysql.com/)
-- **Backend Logic**: [Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations)
-
----
-
-## 🚀 Quick Start
-
-### 1. Installation
-
-Clone the repository and install dependencies:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-### 2. Environment Setup
-
-Create a `.env` file in the root directory:
+Create a `.env` file:
 
 ```env
-DB_HOST=your_host
-DB_USER=your_user
-DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=
 DB_NAME=7k-db
-ADMIN_PASSWORD=your_admin_password
-SESSION_SECRET=your_long_random_string
+SESSION_SECRET=replace_with_a_long_random_secret
+ADMIN_USER=admin
+ADMIN_PASSWORD=replace_with_a_strong_password_or_bcrypt_hash
+ANALYTICS_SALT=replace_with_a_long_random_salt
 ```
 
-### 3. Database Setup
-
-Initialize your database schema:
+Run migrations:
 
 ```bash
 node scripts/migrate.mjs
 ```
 
-### 4. Development
-
-Run the development server:
+Start development:
 
 ```bash
 npm run dev
 ```
 
----
+## Scripts
 
-## 📦 Deployment
+```bash
+npm run lint
+npm test
+npm run build
+node scripts/migrate.mjs
+node scripts/sync-admin.mjs
+node scripts/sync-registry.mjs
+```
 
-This project is optimized for manual deployment (No GitHub Actions required).
+## Deployment Notes
 
-1. **Build**: `npm run build`
-2. **Start**: `npm start`
+Build and start the production server:
 
-> [!TIP]
-> For production hosting, we recommend using **PM2** to manage your node process.
->
-> ```bash
-> pm2 start npm --name "7k-db" -- start
-> ```
+```bash
+npm run build
+npm start
+```
 
----
+Use a process manager such as PM2 on a server deployment:
 
-## 📄 License
+```bash
+pm2 start npm --name "7k-db" -- start
+```
+
+Uploads are written under `public/` by the asset API. Make sure the production
+process has write permission for the allowed asset folders if asset management is
+enabled.
+
+## License
 
 Custom License - All Rights Reserved.

@@ -20,13 +20,9 @@ export function useTierlistEditor(initialCategory = "PVE") {
 
     const dragRef = useRef(null)
     const categoryRef = useRef(category)
+    const fetchRef = useRef(null)
 
-    useEffect(() => {
-        categoryRef.current = category
-        fetchData()
-    }, [category])
-
-    async function fetchData() {
+    const fetchData = useCallback(async () => {
         setLoading(true)
         try {
             const data = await getTierlistData(category)
@@ -37,7 +33,16 @@ export function useTierlistEditor(initialCategory = "PVE") {
         } finally {
             setLoading(false)
         }
-    }
+    }, [category])
+
+    useEffect(() => {
+        categoryRef.current = category
+        fetchData()
+    }, [category, fetchData])
+
+    useEffect(() => {
+        fetchRef.current = fetchData
+    }, [fetchData])
 
     // ── Drag & Drop Logic ──────────────────────────────────────────
 
@@ -120,7 +125,7 @@ export function useTierlistEditor(initialCategory = "PVE") {
                         rank: cell.dataset.rank,
                         type: cell.dataset.type,
                     })
-                    fetchData()
+                    fetchRef.current?.()
                     toast.success("Position deployed")
                 } catch (err) {
                     toast.error("Deployment failed")
@@ -128,7 +133,7 @@ export function useTierlistEditor(initialCategory = "PVE") {
             } else if (pool && d.source === "grid") {
                 try {
                     await removeTierlistEntry(d.heroFilename, categoryRef.current)
-                    fetchData()
+                    fetchRef.current?.()
                     toast.success("Hero returned to reserve")
                 } catch (err) {
                     toast.error("Cleanup failed")
@@ -138,7 +143,7 @@ export function useTierlistEditor(initialCategory = "PVE") {
 
         document.addEventListener("mousemove", onMouseMove)
         document.addEventListener("mouseup", onMouseUp)
-    }, [category])
+    }, [])
 
     // ── Modal Actions ──────────────────────────────────────────────
 

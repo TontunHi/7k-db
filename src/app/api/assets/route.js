@@ -1,106 +1,113 @@
 import { NextResponse } from 'next/server'
 import { promises as fs } from 'fs'
 import path from 'path'
-import { cookies } from 'next/headers'
-import { validateSession } from '@/lib/session'
+import { requireAdmin } from '@/lib/auth-guard'
+import {
+    ALLOWED_ASSET_TYPES,
+    assertAllowedAssetFile,
+    assertPathInside,
+    sanitizeAssetFilename,
+    sanitizeAssetSubfolder,
+} from '@/lib/asset-validation'
 
-const ALLOWED_TYPES = ['heroes', 'pets', 'skills', 'about_website', 'advent_expedition', 'castle_rush', 'dungeon', 'formation', 'items', 'logo_tiers', 'raid', 'total_war']
+const PUBLIC_DIR = path.join(/*turbopackIgnore: true*/ process.cwd(), 'public')
 
-async function isAuthenticated() {
-    const cookieStore = await cookies()
-    const token = cookieStore.get("admin_session")?.value
-    return await validateSession(token)
-}
-
-function sanitizePath(str) {
-    if (!str) return ''
-    // Remove null bytes, control characters, and directory traversal sequences
-    return str.replace(/\0/g, '').replace(/\.\.\//g, '').replace(/\.\.\\/g, '').replace(/[<>:"|?*]/g, '')
+async function authorizeAssets() {
+    try {
+        await requireAdmin('MANAGE_ASSETS')
+        return null
+    } catch (error) {
+        const status = error.message?.startsWith('Forbidden') ? 403 : 401
+        return NextResponse.json({ error: error.message || 'Unauthorized' }, { status })
+    }
 }
 
 export async function POST(request) {
-    if (!(await isAuthenticated())) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const authError = await authorizeAssets()
+    if (authError) return authError
 
     try {
         const formData = await request.formData()
         const targetType = formData.get('type')
         const file = formData.get('file')
 
-        if (!targetType || !file || !ALLOWED_TYPES.includes(targetType)) {
+        if (!targetType || !file || !ALLOWED_ASSET_TYPES.includes(targetType)) {
             return NextResponse.json({ error: 'Invalid type or missing file' }, { status: 400 })
         }
         
-        const subfolder = sanitizePath(formData.get('subfolder'))
-        const publicDir = path.join(process.cwd(), 'public')
-        let targetDir = path.join(publicDir, targetType)
+        const subfolder = sanitizeAssetSubfolder(formData.get('subfolder'))
+        const urlSubfolder = subfolder.split(path.sep).join('/')
+        let targetDir = path.join(PUBLIC_DIR, targetType)
         
         if (subfolder) {
             targetDir = path.join(targetDir, subfolder)
         }
 
-        // Final Path check to prevent traversal
-        const resolvedPath = path.resolve(targetDir)
-        if (!resolvedPath.startsWith(path.resolve(publicDir))) {
-             return NextResponse.json({ error: 'Illegal path' }, { status: 400 })
-        }
+        const resolvedPath = assertPathInside(PUBLIC_DIR, targetDir)
 
         await fs.mkdir(resolvedPath, { recursive: true })
 
+        const filename = sanitizeAssetFilename(file.name)
+        assertAllowedAssetFile(file, filename)
+
         const arrayBuffer = await file.arrayBuffer()
         const buffer = Buffer.from(arrayBuffer)
-        
-        const filename = sanitizePath(file.name).toLowerCase()
+
         const filePath = path.join(resolvedPath, filename)
+        const resolvedFilePath = assertPathInside(resolvedPath, filePath)
         
-        await fs.writeFile(filePath, buffer)
+        await fs.writeFile(resolvedFilePath, buffer, { flag: 'wx' })
 
         return NextResponse.json({ 
             success: true, 
             filename, 
-            path: `/${targetType}${subfolder ? `/${subfolder}` : ''}/${filename}` 
+            path: `/${targetType}${urlSubfolder ? `/${urlSubfolder}` : ''}/${filename}`
         })
     } catch (error) {
         console.error('File upload error:', error)
+        if (error.code === 'EEXIST') {
+            return NextResponse.json({ error: 'File already exists' }, { status: 409 })
+        }
+        if (['Illegal path', 'Missing file', 'Unsupported file extension', 'Unsupported file type', 'File is too large'].includes(error.message)) {
+            return NextResponse.json({ error: error.message }, { status: 400 })
+        }
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
 }
 
 export async function DELETE(request) {
-    if (!(await isAuthenticated())) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const authError = await authorizeAssets()
+    if (authError) return authError
 
     try {
         const { searchParams } = new URL(request.url)
         const targetType = searchParams.get('type')
-        const filename = sanitizePath(searchParams.get('filename'))
-        const subfolder = sanitizePath(searchParams.get('subfolder'))
+        const filename = sanitizeAssetFilename(searchParams.get('filename'))
+        const subfolder = sanitizeAssetSubfolder(searchParams.get('subfolder'))
 
-        if (!targetType || !filename || !ALLOWED_TYPES.includes(targetType)) {
+        if (!targetType || !filename || !ALLOWED_ASSET_TYPES.includes(targetType)) {
             return NextResponse.json({ error: 'Invalid type or missing filename' }, { status: 400 })
         }
 
-        const publicDir = path.join(process.cwd(), 'public')
-        let targetDir = path.join(publicDir, targetType)
+        let targetDir = path.join(PUBLIC_DIR, targetType)
         if (subfolder) {
             targetDir = path.join(targetDir, subfolder)
         }
 
         const filePath = path.join(targetDir, filename)
-        const resolvedPath = path.resolve(filePath)
-        
-        // Ensure path is within public and is actually a file
-        if (!resolvedPath.startsWith(path.resolve(publicDir))) {
-            return NextResponse.json({ error: 'Illegal path' }, { status: 400 })
-        }
+        const resolvedPath = assertPathInside(PUBLIC_DIR, filePath)
         
         await fs.unlink(resolvedPath)
 
         return NextResponse.json({ success: true, deleted: filename })
     } catch (error) {
         console.error('File delete error:', error)
+        if (error.code === 'ENOENT') {
+            return NextResponse.json({ error: 'File not found' }, { status: 404 })
+        }
+        if (error.message === 'Illegal path') {
+            return NextResponse.json({ error: error.message }, { status: 400 })
+        }
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
 }

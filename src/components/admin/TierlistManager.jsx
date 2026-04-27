@@ -35,11 +35,7 @@ export default function TierlistManager({ heroes }) {
     const categoryRef = useRef(category)
     const fetchRef = useRef(null)
 
-    useEffect(() => { categoryRef.current = category }, [category])
-
-    useEffect(() => { fetchData() }, [category])
-
-    async function fetchData() {
+    const fetchData = useCallback(async () => {
         setLoading(true)
         try {
             const data = await getTierlistData(category)
@@ -49,8 +45,13 @@ export default function TierlistManager({ heroes }) {
         } finally {
             setLoading(false)
         }
-    }
-    fetchRef.current = fetchData
+    }, [category])
+
+    useEffect(() => { categoryRef.current = category }, [category])
+
+    useEffect(() => { fetchData() }, [fetchData])
+
+    useEffect(() => { fetchRef.current = fetchData }, [fetchData])
 
     // Only show heroes NOT yet assigned in this category
     const poolHeroes = heroes.filter(h => !tierData.some(t => t.heroFilename === h.filename))

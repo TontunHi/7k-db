@@ -1,4 +1,5 @@
 'use client'
+/* eslint-disable @next/next/no-img-element */
 import { forwardRef } from 'react'
 import { Sword, Wand2, Plus, Sparkles, Info } from 'lucide-react'
 import { clsx } from 'clsx'
