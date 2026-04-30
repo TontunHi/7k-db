@@ -126,7 +126,7 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
         setSets(updated)
     }
 
-    const handleSkillSelect = (setIdx, slotIdx, skillKey) => {
+    const handleSelectSkillForSlot = (setIdx, slotIdx, skillKey) => {
         setSets(prev => {
             const next = [...prev]
             if (!next[setIdx]) return prev

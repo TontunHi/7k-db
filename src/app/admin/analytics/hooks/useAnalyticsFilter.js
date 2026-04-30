@@ -8,22 +8,38 @@ import { getFilteredPageViews } from "@/lib/analytics-actions"
  */
 export function useAnalyticsFilter() {
     const [data, setData] = useState([])
+    const [total, setTotal] = useState(0)
     const [loading, setLoading] = useState(true)
+    const [loadingMore, setLoadingMore] = useState(false)
     const [filters, setFilters] = useState({
         startDate: "",
         endDate: "",
-        pagePath: ""
+        pagePath: "",
+        limit: 100,
+        offset: 0
     })
 
-    const fetchData = async () => {
-        setLoading(true)
+    const fetchData = async (isLoadMore = false) => {
+        if (isLoadMore) setLoadingMore(true)
+        else setLoading(true)
+
         try {
-            const result = await getFilteredPageViews(filters)
-            setData(result)
+            const result = await getFilteredPageViews({
+                ...filters,
+                offset: isLoadMore ? data.length : 0
+            })
+            
+            if (isLoadMore) {
+                setData(prev => [...prev, ...result.data])
+            } else {
+                setData(result.data)
+            }
+            setTotal(result.total)
         } catch (err) {
             console.error("[ANALYTICS_FILTER_ERROR]", err)
         } finally {
             setLoading(false)
+            setLoadingMore(false)
         }
     }
 
@@ -38,7 +54,7 @@ export function useAnalyticsFilter() {
     }
 
     const clearFilters = () => {
-        setFilters({ startDate: "", endDate: "", pagePath: "" })
+        setFilters({ startDate: "", endDate: "", pagePath: "", limit: 100, offset: 0 })
     }
 
     const updateFilter = (key, value) => {
@@ -59,13 +75,22 @@ export function useAnalyticsFilter() {
         }))
     }
 
+    const loadMore = () => {
+        if (data.length < total && !loadingMore) {
+            fetchData(true)
+        }
+    }
+
     return {
         data,
+        total,
         loading,
+        loadingMore,
         filters,
         handleApplyFilters,
         clearFilters,
         updateFilter,
-        setRange
+        setRange,
+        loadMore
     }
 }

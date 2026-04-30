@@ -106,55 +106,76 @@ export async function getExitPages() {
   }
 }
 
-// Custom Filtered Page Views
+// Custom Filtered Page Views with Pagination
 export async function getFilteredPageViews(filters) {
-  const { startDate, endDate, pagePath } = filters || {};
+  const { startDate, endDate, pagePath, limit = 100, offset = 0 } = filters || {};
   
-  let query = `SELECT page_path, COUNT(*) as views, COUNT(DISTINCT ip_hash) as unique_visitors 
-               FROM analytics_views 
-               WHERE event_type = "pageview" AND page_path NOT LIKE '/admin%'`;
+  let countQuery = `SELECT COUNT(DISTINCT page_path) as total 
+                    FROM analytics_views 
+                    WHERE event_type = "pageview" AND page_path NOT LIKE '/admin%'`;
+  
+  let dataQuery = `SELECT page_path, COUNT(*) as views, COUNT(DISTINCT ip_hash) as unique_visitors 
+                   FROM analytics_views 
+                   WHERE event_type = "pageview" AND page_path NOT LIKE '/admin%'`;
+  
   const params = [];
+  const countParams = [];
   
+  let whereClause = '';
   if (startDate) {
-     query += ` AND created_at >= ?`;
+     whereClause += ` AND created_at >= ?`;
      params.push(`${startDate} 00:00:00`);
+     countParams.push(`${startDate} 00:00:00`);
   }
   if (endDate) {
-     query += ` AND created_at <= ?`;
+     whereClause += ` AND created_at <= ?`;
      params.push(`${endDate} 23:59:59`);
+     countParams.push(`${endDate} 23:59:59`);
   }
   if (pagePath) {
-     query += ` AND page_path LIKE ?`;
+     whereClause += ` AND page_path LIKE ?`;
      params.push(`%${pagePath}%`);
+     countParams.push(`%${pagePath}%`);
   }
   
-  query += ` GROUP BY page_path ORDER BY views DESC LIMIT 50`;
+  dataQuery += whereClause + ` GROUP BY page_path ORDER BY views DESC LIMIT ? OFFSET ?`;
+  params.push(Number(limit), Number(offset));
+  
+  countQuery += whereClause;
   
   try {
-     const [rows] = await pool.query(query, params);
-     // Next.js actions need serializable results. Row counts are simple objects.
-     return rows.map(r => ({ ...r }));
+     const [rows] = await pool.query(dataQuery, params);
+     const [countResult] = await pool.query(countQuery, countParams);
+     
+     return {
+        data: rows.map(r => ({ ...r })),
+        total: countResult[0].total
+     };
   } catch (error) {
      console.error('[Analytics] Error in getFilteredPageViews:', error);
-     return [];
+     return { data: [], total: 0 };
   }
 }
 
-// New: View Trend Stats (Last 30 Days)
+// New: View Trend Stats (Last 60 Days)
 export async function getViewTrendData() {
   try {
     const [rows] = await pool.query(`
-      SELECT DATE(created_at) as date, COUNT(*) as views
+      SELECT 
+        DATE(created_at) as date, 
+        COUNT(*) as views,
+        COUNT(DISTINCT ip_hash) as visitors
       FROM analytics_views
       WHERE event_type = "pageview" 
         AND page_path NOT LIKE '/admin%'
-        AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        AND created_at >= DATE_SUB(NOW(), INTERVAL 60 DAY)
       GROUP BY DATE(created_at)
       ORDER BY date ASC
     `);
     return rows.map(r => ({
       date: r.date.toISOString().split('T')[0],
-      views: r.views
+      views: r.views,
+      visitors: r.visitors
     }));
   } catch (error) {
     console.error('[Analytics] Error getting trend data:', error);

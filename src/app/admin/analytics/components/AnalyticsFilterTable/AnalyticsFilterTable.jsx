@@ -11,12 +11,15 @@ import { clsx } from "clsx"
 export default function AnalyticsFilterTable() {
     const {
         data,
+        total,
         loading,
+        loadingMore,
         filters,
         handleApplyFilters,
         clearFilters,
         updateFilter,
-        setRange
+        setRange,
+        loadMore
     } = useAnalyticsFilter()
 
     return (
@@ -30,7 +33,7 @@ export default function AnalyticsFilterTable() {
                         </div>
                         <div>
                             <h2 className={styles.title}>Custom Page Views Log</h2>
-                            <p className={styles.subtitle}>Filter analytics by date range and page path</p>
+                            <p className={styles.subtitle}>Showing {data.length} of {total} paths</p>
                         </div>
                     </div>
 
@@ -107,7 +110,7 @@ export default function AnalyticsFilterTable() {
                         </tr>
                     </thead>
                     <tbody className="relative">
-                        {loading ? (
+                        {loading && !loadingMore ? (
                             <tr>
                                 <td colSpan="3" className={styles.loadingState}>
                                     <div className={styles.loaderWrapper}>
@@ -117,13 +120,28 @@ export default function AnalyticsFilterTable() {
                                 </td>
                             </tr>
                         ) : data.length > 0 ? (
-                            data.map((item, idx) => (
-                                <tr key={idx} className={styles.tr}>
-                                    <td className={clsx(styles.td, styles.pathCell)}>{item.page_path}</td>
-                                    <td className={clsx(styles.td, styles.valueCell)}>{item.unique_visitors.toLocaleString()}</td>
-                                    <td className={clsx(styles.td, styles.valueCellBold)}>{item.views.toLocaleString()}</td>
-                                </tr>
-                            ))
+                            <>
+                                {data.map((item, idx) => (
+                                    <tr key={idx} className={styles.tr}>
+                                        <td className={clsx(styles.td, styles.pathCell)}>{item.page_path}</td>
+                                        <td className={clsx(styles.td, styles.valueCell)}>{item.unique_visitors.toLocaleString()}</td>
+                                        <td className={clsx(styles.td, styles.valueCellBold)}>{item.views.toLocaleString()}</td>
+                                    </tr>
+                                ))}
+                                {data.length < total && (
+                                    <tr>
+                                        <td colSpan="3" className="py-4">
+                                            <button 
+                                                onClick={loadMore} 
+                                                disabled={loadingMore}
+                                                className={styles.loadMoreBtn}
+                                            >
+                                                {loadingMore ? <Loader2 className="w-4 h-4 animate-spin" /> : `Load More (${total - data.length} remaining)`}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                )}
+                            </>
                         ) : (
                             <tr>
                                 <td colSpan="3" className={styles.emptyState}>
