@@ -85,20 +85,6 @@ export default function AnalyticsDashboardView({ data }) {
                         variant="purple" 
                         description="Distinct tactical operatives"
                     />
-                    <AnalyticsStatCard 
-                        label="Ad / Link Clicks" 
-                        value={conversion.totalClicks.toLocaleString()} 
-                        icon={MousePointerClick} 
-                        variant="amber" 
-                        description="Outbound conversion events"
-                    />
-                    <AnalyticsStatCard 
-                        label="Estimated CTR" 
-                        value={`${conversion.ctr}%`} 
-                        icon={TrendingUp} 
-                        variant="emerald" 
-                        description="Efficiency of link placement"
-                    />
                 </div>
 
                 {/* Main Insight Section */}
@@ -189,26 +175,6 @@ export default function AnalyticsDashboardView({ data }) {
                                         }}
                                     />
                                 </div>
-                            </div>
-
-                            {/* Click Breakdown Table */}
-                            <div>
-                                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground px-2 mb-4">Conversion Intel</h3>
-                                <AnalyticsDataTable 
-                                    title="Click Conversion Breakdown"
-                                    icon={MousePointer2}
-                                    iconBgClass="bg-amber-500/20"
-                                    iconColorClass="text-amber-400"
-                                    headers={["Link ID", "Destination URL", "Clicks"]}
-                                    data={conversion.clicksByLink}
-                                    renderRow={(item, s) => (
-                                        <>
-                                            <td className={clsx(s.td, s.accentAmber)}>{item.link_id || 'N/A'}</td>
-                                            <td className={clsx(s.td, s.mono)}>{item.link_url}</td>
-                                            <td className={s.valueCell}>{item.clicks.toLocaleString()}</td>
-                                        </>
-                                    )}
-                                />
                             </div>
                         </section>
                     </div>

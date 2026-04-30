@@ -33,7 +33,7 @@
   font-style: italic;
   text-transform: uppercase;
   letter-spacing: -0.04em;
-  color: #fff;
+  color: var(--foreground);
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -73,7 +73,7 @@
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.25em;
-  color: rgba(255, 255, 255, 0.2);
+  color: color-mix(in srgb, var(--foreground), transparent 40%);
   margin-bottom: 0.75rem;
 }
 
@@ -85,7 +85,7 @@
   border-radius: 1rem;
   font-size: 0.8125rem;
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--muted-foreground);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -94,14 +94,14 @@
 }
 
 .navLink:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.03);
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground), transparent 97%);
   transform: translateX(4px);
 }
 
 .navLinkActive {
   background: linear-gradient(to right, rgba(220, 38, 38, 0.15), transparent);
-  color: #fff;
+  color: var(--primary);
   border-left: 3px solid #dc2626;
   border-radius: 0 1rem 1rem 0;
   margin-left: -1rem;
@@ -119,14 +119,14 @@
 .footer {
   padding: 1.5rem;
   border-top: 1px solid rgba(220, 38, 38, 0.1);
-  background: rgba(0, 0, 0, 0.2);
+  background: color-mix(in srgb, var(--foreground), transparent 97%);
 }
 
 .userBadge {
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: color-mix(in srgb, var(--foreground), transparent 98%);
+  border: 1px solid var(--border);
   border-radius: 1.25rem;
 }
 
@@ -134,7 +134,7 @@
   font-size: 0.5rem;
   font-weight: 900;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.3);
+  color: color-mix(in srgb, var(--foreground), transparent 40%);
   letter-spacing: 0.2em;
   margin-bottom: 0.25rem;
 }
@@ -142,7 +142,7 @@
 .userName {
   font-size: 0.875rem;
   font-weight: 900;
-  color: #fff;
+  color: var(--foreground);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -166,7 +166,7 @@
   background: rgba(220, 38, 38, 0.1);
   border: 1px solid rgba(220, 38, 38, 0.2);
   border-radius: 1rem;
-  color: #fff;
+  color: var(--foreground);
   font-size: 0.75rem;
   font-weight: 900;
   text-transform: uppercase;

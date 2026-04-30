@@ -10,6 +10,9 @@ const RAID_ORDER = [
     { key: 'destroyer_gaze', name: 'Destroyer Gaze', image: '/raid/1_Destroyer_Gaze.webp' },
     { key: 'ox_king', name: 'Ox King', image: '/raid/2_Ox_King.webp' },
     { key: 'iron_devourer', name: 'Iron Devourer', image: '/raid/3_Iron_Devourer.webp' },
+    { key: 'calistra', name: 'Calistra', image: '/raid/4_Calistra.webp' },
+    { key: 'astra', name: 'Astra', image: '/raid/5_Astra.webp' },
+    { key: 'leonid', name: 'Leonid', image: '/raid/6_Leonid.webp' },
 ]
 
 export async function getRaids() {

@@ -96,7 +96,6 @@
   color: var(--muted-foreground);
   max-width: 32rem;
   line-height: 1.6;
-  opacity: 0.8;
 }
 
 .highlight {
@@ -119,7 +118,7 @@
   overflow: hidden;
   padding: 1.5rem;
   border-radius: 1.75rem;
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: color-mix(in srgb, var(--foreground), transparent 97%);
   border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -128,7 +127,7 @@
 }
 
 .statCard:hover {
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: color-mix(in srgb, var(--foreground), transparent 94%);
   border-color: rgba(220, 38, 38, 0.3);
   transform: translateY(-4px);
   box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.4);
@@ -147,7 +146,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.05);
+  background: color-mix(in srgb, var(--foreground), transparent 95%);
   border: 1px solid var(--border);
   transition: all 0.3s ease;
 }
@@ -280,7 +279,7 @@
   gap: 1.25rem;
   padding: 1.5rem;
   border-radius: 1.5rem;
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: color-mix(in srgb, var(--foreground), transparent 97%);
   border: 1px solid var(--border);
   transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   text-decoration: none;
@@ -289,7 +288,7 @@
 
 .toolCard:hover {
   border-color: rgba(220, 38, 38, 0.3);
-  background-color: rgba(220, 38, 38, 0.05);
+  background-color: color-mix(in srgb, var(--primary), transparent 95%);
   transform: translateX(6px);
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4);
 }
@@ -297,13 +296,12 @@
 .toolIconWrapper {
   padding: 1rem;
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: color-mix(in srgb, var(--foreground), transparent 95%);
   border: 1px solid var(--border);
   transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #fff;
+  color: var(--foreground);
 }
 
 .toolCard:hover .toolIconWrapper {
@@ -329,7 +327,6 @@
   color: var(--muted-foreground);
   font-weight: 500;
   line-height: 1.4;
-  opacity: 0.7;
 }
 
 .toolArrow {
@@ -372,7 +369,7 @@
 .systemLabel {
   font-size: 0.65rem;
   font-weight: 900;
-  color: rgba(255, 255, 255, 0.3);
+  color: color-mix(in srgb, var(--foreground), transparent 40%);
   text-transform: uppercase;
   letter-spacing: 0.4em;
   text-align: center;
@@ -413,8 +410,7 @@
 
 .systemIcon {
   opacity: 0.4;
-  transition: all 0.3s ease;
-  color: #fff;
+  color: var(--foreground);
 }
 
 .systemLink:hover .systemIcon {
@@ -433,7 +429,7 @@
 }
 
 .systemLink:hover .systemText {
-  color: #fff;
+  color: var(--primary);
 }
 
 /* Global Deployment Banner */
@@ -513,7 +509,7 @@
 .viewAllLink {
   font-size: 0.625rem;
   font-weight: 900;
-  color: rgba(255, 255, 255, 0.3);
+  color: color-mix(in srgb, var(--foreground), transparent 40%);
   text-transform: uppercase;
   letter-spacing: 0.2em;
   text-decoration: none;
@@ -592,7 +588,7 @@
 .logMeta {
   font-size: 0.625rem;
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.3);
+  color: color-mix(in srgb, var(--foreground), transparent 40%);
   text-transform: uppercase;
   display: flex;
   align-items: center;
@@ -609,7 +605,7 @@
 
 .logAction {
   font-weight: 900;
-  color: #fff;
+  color: var(--foreground);
   text-transform: capitalize;
 }
 
@@ -626,6 +622,5 @@
   text-align: center;
   padding: 3rem 0;
   letter-spacing: 0.2em;
-  opacity: 0.4;
 }
 

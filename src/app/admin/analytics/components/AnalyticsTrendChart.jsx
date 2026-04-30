@@ -23,29 +23,7 @@ export default function AnalyticsTrendChart({ data = [], title = "Tactical Engag
     }, [chartData])
 
     const maxVal = Math.max(stats.maxViews, stats.maxVisitors) || 1
-    const padMax = maxVal * 1.1 // Add some padding on top
-
-    // Generate SVG path for Views
-    const viewsPath = useMemo(() => {
-        if (chartData.length < 2) return ""
-        const points = chartData.map((d, i) => {
-            const x = (i / (chartData.length - 1)) * 100
-            const y = 100 - ((d.views || 0) / padMax) * 100
-            return `${x},${y}`
-        })
-        return `M ${points.join(" L ")}`
-    }, [chartData, padMax])
-
-    // Generate SVG path for Area (Views)
-    const viewsAreaPath = useMemo(() => {
-        if (chartData.length < 2) return ""
-        const points = chartData.map((d, i) => {
-            const x = (i / (chartData.length - 1)) * 100
-            const y = 100 - ((d.views || 0) / padMax) * 100
-            return `${x},${y}`
-        })
-        return `M 0,100 L ${points.join(" L ")} L 100,100 Z`
-    }, [chartData, padMax])
+    const padMax = maxVal * 1.1
 
     return (
         <div className={styles.chartCard}>
@@ -81,85 +59,61 @@ export default function AnalyticsTrendChart({ data = [], title = "Tactical Engag
                         <div className={styles.gridLine} />
                     </div>
 
-                    <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 100">
-                        {/* Area Gradient */}
-                        <defs>
-                            <linearGradient id="viewsGradient" x1="0" x2="0" y1="0" y2="1">
-                                <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.3" />
-                                <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
-                            </linearGradient>
-                        </defs>
-
-                        {/* Views Area */}
-                        <path d={viewsAreaPath} fill="url(#viewsGradient)" className="transition-all duration-500" />
-
-                        {/* Views Line */}
-                        <path 
-                            d={viewsPath} 
-                            fill="none" 
-                            stroke="var(--primary)" 
-                            strokeWidth="1.5" 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round"
-                            className="transition-all duration-500"
-                            style={{ filter: 'drop-shadow(0 0 8px var(--primary-opacity))' }}
-                        />
-
-                        {/* Interactive Vertical Line */}
-                        {hoverIndex !== null && (
-                            <line 
-                                x1={(hoverIndex / (chartData.length - 1)) * 100} 
-                                x2={(hoverIndex / (chartData.length - 1)) * 100} 
-                                y1="0" 
-                                y2="100" 
-                                stroke="var(--border)" 
-                                strokeWidth="0.5" 
-                                strokeDasharray="2,2" 
-                            />
-                        )}
-
-                        {/* Markers for Visitors */}
+                    <div className="flex items-end h-full w-full gap-[2px] px-2 relative z-10">
                         {chartData.map((d, i) => {
-                            const x = (i / (chartData.length - 1)) * 100
-                            const y = 100 - ((d.visitors || 0) / padMax) * 100
+                            const viewsHeight = (d.views / padMax) * 100
+                            const visitorsHeight = (d.visitors / padMax) * 100
+                            
                             return (
-                                <circle 
-                                    key={`v-${i}`}
-                                    cx={x} 
-                                    cy={y} 
-                                    r="1.2" 
-                                    fill="#ec4899" 
-                                    className="transition-all duration-500"
-                                    style={{ filter: 'drop-shadow(0 0 4px rgba(236, 72, 153, 0.6))' }}
-                                />
+                                <div 
+                                    key={i} 
+                                    className="flex-1 h-full flex items-end justify-center gap-[1px] group relative"
+                                    onMouseEnter={() => setHoverIndex(i)}
+                                    onMouseLeave={() => setHoverIndex(null)}
+                                >
+                                    {/* Views Bar */}
+                                    <div 
+                                        className="w-full bg-primary/80 group-hover:bg-primary transition-all duration-300 rounded-t-[2px]"
+                                        style={{ height: `${viewsHeight}%` }}
+                                    >
+                                        <div className="absolute inset-0 bg-primary opacity-20 blur-[4px] -z-10 group-hover:opacity-40 transition-opacity" />
+                                    </div>
+
+                                    {/* Visitors Bar */}
+                                    <div 
+                                        className="w-full bg-pink-500/80 group-hover:bg-pink-500 transition-all duration-300 rounded-t-[2px]"
+                                        style={{ height: `${visitorsHeight}%` }}
+                                    >
+                                        <div className="absolute inset-0 bg-pink-500 opacity-20 blur-[4px] -z-10 group-hover:opacity-40 transition-opacity" />
+                                    </div>
+
+                                    {/* Tooltip */}
+                                    {hoverIndex === i && (
+                                        <div className={styles.tooltip}>
+                                            <div className="text-[10px] font-black uppercase text-muted-foreground mb-2 pb-1 border-b border-border/50">
+                                                {d.date}
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <div className="flex items-center justify-between gap-6">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                                                        <span className="text-[10px] font-bold text-foreground/70">Views</span>
+                                                    </div>
+                                                    <span className="font-mono text-xs font-black">{d.views.toLocaleString()}</span>
+                                                </div>
+                                                <div className="flex items-center justify-between gap-6">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-pink-500" />
+                                                        <span className="text-[10px] font-bold text-foreground/70">Visitors</span>
+                                                    </div>
+                                                    <span className="font-mono text-xs font-black text-pink-500">{d.visitors.toLocaleString()}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             )
                         })}
-                    </svg>
-
-                    {/* Interaction Layer */}
-                    <div className="absolute inset-0 flex">
-                        {chartData.map((d, i) => (
-                            <div 
-                                key={i} 
-                                className="flex-1 h-full cursor-crosshair group relative"
-                                onMouseEnter={() => setHoverIndex(i)}
-                                onMouseLeave={() => setHoverIndex(null)}
-                            >
-                                {hoverIndex === i && (
-                                    <div className={styles.tooltip}>
-                                        <div className="text-[10px] font-black uppercase text-muted-foreground mb-1">{d.date}</div>
-                                        <div className="flex items-center justify-between gap-4">
-                                            <span className="text-primary font-bold">Views:</span>
-                                            <span className="font-mono">{d.views.toLocaleString()}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between gap-4">
-                                            <span className="text-pink-500 font-bold">Visitors:</span>
-                                            <span className="font-mono">{d.visitors.toLocaleString()}</span>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
                     </div>
 
                     {/* X-Axis Labels */}
