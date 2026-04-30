@@ -25,7 +25,7 @@ export default async function RecentUpdates() {
             <div className="flex items-center justify-between mb-4 px-1">
                 <div className="flex items-center gap-2">
                     <div className="w-1 h-4 bg-gradient-to-b from-[#FFD700] to-orange-500 rounded-full shadow-[0_0_8px_rgba(255,215,0,0.4)]" />
-                    <h2 className="text-[11px] font-black uppercase tracking-[0.15em] text-white/90">
+                    <h2 className="text-[11px] font-black uppercase tracking-[0.15em] text-foreground/90">
                         Live Intel
                     </h2>
                 </div>
@@ -43,7 +43,7 @@ export default async function RecentUpdates() {
 
             {/* Update list */}
             {updates.length === 0 ? (
-                <div className="py-6 text-center text-gray-700 border border-dashed border-white/5 rounded-xl">
+                <div className="py-6 text-center text-muted-foreground border border-dashed border-border/20 rounded-xl">
                     <p className="text-[10px] font-mono uppercase tracking-widest">No updates</p>
                 </div>
             ) : (
@@ -82,13 +82,13 @@ export default async function RecentUpdates() {
                                         >
                                             {cfg.label}
                                         </span>
-                                        <div className="flex items-center gap-1 text-[8px] font-mono text-gray-600 group-hover:text-gray-400 transition-colors">
+                                        <div className="flex items-center gap-1 text-[8px] font-mono text-muted-foreground/60 group-hover:text-muted-foreground transition-colors">
                                             {update.display_time}
                                         </div>
                                     </div>
                                     
                                     <div className="relative group-hover:translate-x-1 transition-transform duration-200">
-                                        <p className="text-[11px] text-gray-400 leading-snug font-medium group-hover:text-white transition-colors truncate">
+                                        <p className="text-[11px] text-muted-foreground leading-snug font-medium group-hover:text-foreground transition-colors truncate">
                                             {update.message}
                                         </p>
                                     </div>

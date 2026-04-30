@@ -20,7 +20,7 @@ export default async function AdminDashboard() {
     // 2. Data Fetching
     const [stats, recentLogs] = await Promise.all([
         getDashboardStats(),
-        getRecentUpdates(6)
+        getRecentUpdates(15)
     ])
 
     // 3. Render View (Client Component)

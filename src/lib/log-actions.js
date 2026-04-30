@@ -109,19 +109,36 @@ export async function getLastUpdate(contentType) {
     return new Date(ts * 1000).toLocaleDateString('en-US', { day: '2-digit', month: 'short' })
 }
 
-/** Log a site update */
+/** Log a site update with consolidation logic to prevent clutter */
 export async function logSiteUpdate(contentType, targetName, actionType, message) {
-    // This is often called from other server actions which already check requireAdmin
-    // But we fetch the user here to record who did it.
     await initDB()
     const user = await getAdminUser()
     const adminName = user?.username || 'System'
 
     try {
-        await pool.query(
-            'INSERT INTO site_updates (content_type, target_name, action_type, message, admin_name) VALUES (?, ?, ?, ?, ?)',
-            [contentType, targetName, actionType, message, adminName]
+        // Consolidation logic: Check if a similar log exists within the last 15 minutes
+        const [existing] = await pool.query(
+            `SELECT id FROM site_updates 
+             WHERE content_type = ? AND target_name = ? AND action_type = ? 
+             AND created_at > DATE_SUB(NOW(), INTERVAL 15 MINUTE)
+             ORDER BY created_at DESC LIMIT 1`,
+            [contentType, targetName, actionType]
         )
+
+        if (existing.length > 0) {
+            // Update existing log
+            await pool.query(
+                'UPDATE site_updates SET message = ?, created_at = NOW(), admin_name = ? WHERE id = ?',
+                [message, adminName, existing[0].id]
+            )
+        } else {
+            // Create new log
+            await pool.query(
+                'INSERT INTO site_updates (content_type, target_name, action_type, message, admin_name) VALUES (?, ?, ?, ?, ?)',
+                [contentType, targetName, actionType, message, adminName]
+            )
+        }
+
         revalidatePath('/')
         return { success: true }
     } catch (error) {
@@ -129,3 +146,4 @@ export async function logSiteUpdate(contentType, targetName, actionType, message
         return { success: false, error: error.message }
     }
 }
+
