@@ -11,7 +11,7 @@ const ALL_FEATURES = [
     // { title: "Stage Guides", description: "Detailed walkthroughs", iconName: "Map", href: "/stages" },
     { title: "Dungeons", description: "Team comps for all difficulties", iconName: "Landmark", href: "/dungeon" },
     { title: "Raid", description: "Boss mechanics & strategies", iconName: "Skull", href: "/raid" },
-    { title: "Advent", description: "Advent Expedition guides", iconName: "Compass", href: "/advent/ae_god_of_destruction" },
+    { title: "Advent", description: "Advent Expedition guides", iconName: "Compass", href: "/advent" },
     { title: "Arena", description: "Top PVP teams", iconName: "Swords", href: "/arena" },
     { title: "Total War", description: "Total War formations", iconName: "Trophy", href: "/total-war" },
     { title: "Guild War", description: "Guild War teams", iconName: "Skull", href: "/guild-war" },

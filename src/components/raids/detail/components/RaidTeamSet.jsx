@@ -24,7 +24,7 @@ export default function RaidTeamSet({ set, index, heroImageMap, skillsMap }) {
                         className={styles.videoLink}
                     >
                         <Video className="w-4 h-4" />
-                        Field Recording
+                        Video
                         <ExternalLink className="w-3.5 h-3.5 opacity-50" />
                     </a>
                 )}

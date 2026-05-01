@@ -4,7 +4,8 @@
   min-height: 100vh;
   width: 100%;
   background-color: var(--background);
-  overflow: hidden;
+  /* Use overflow-x: hidden instead of overflow: hidden to prevent vertical clipping of tooltips */
+  overflow-x: hidden;
   padding-bottom: 6rem;
 }
 

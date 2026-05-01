@@ -79,11 +79,11 @@ export default function TotalWarTeamSet({ set, setIdx, tier, heroImageMap }) {
                                                     heroes={team.heroes} 
                                                     heroImageMap={heroImageMap}
                                                     customClasses={{
-                                                        container: "grid grid-cols-5 gap-2 md:gap-3 pb-6 max-w-full",
+                                                        container: "grid grid-cols-5 gap-3 md:gap-4 pb-6 w-full max-w-[450px] mx-auto",
                                                         emptyRender: () => (
-                                                            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/30 text-xs">Empty</div>
+                                                            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/30 text-[10px]">Empty</div>
                                                         ),
-                                                        cardString: "bg-card border-2 border-border aspect-[3/4] rounded-lg overflow-hidden transition-all duration-300 shadow-inner"
+                                                        cardString: "bg-slate-900/40 border-slate-700/50 aspect-[3/4] rounded-xl transition-all duration-300 shadow-2xl"
                                                     }}
                                                 />
                                             </div>

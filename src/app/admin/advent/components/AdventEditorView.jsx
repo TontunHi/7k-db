@@ -7,6 +7,7 @@ import { ArrowLeft, Plus, Save, Loader2, Compass } from 'lucide-react'
 import { createSet, updateSet, deleteSet as deleteSetAction, getSetsByBoss } from '@/lib/advent-actions'
 import AdventTeamSet from './AdventTeamSet'
 import AdventSkillPicker from './AdventSkillPicker'
+import AdventHeroBuildPicker from './AdventHeroBuildPicker'
 import { clsx } from 'clsx'
 import { toast } from 'sonner'
 import styles from '../advent.module.css'
@@ -19,6 +20,7 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
     const [saving, setSaving] = useState(false)
     const [skillErrors, setSkillErrors] = useState({})
     const [skillPicker, setSkillPicker] = useState(null)
+    const [buildPicker, setBuildPicker] = useState(null)
     const [collapsedSets, setCollapsedSets] = useState(new Set(initialSets.map(s => s.id)))
 
     const handleAddSet = () => {
@@ -32,6 +34,7 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
             pet_file: '',
             heroes: [null, null, null, null, null],
             skill_rotation: [],
+            hero_builds: {},
             video_url: '',
             note: '',
             _isNew: true,
@@ -56,6 +59,19 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
             heroes: teamData.heroes,
             _dirty: true 
         }
+        setSets(updated)
+    }
+
+    const handleUpdateHeroBuild = (setIdx, heroIdx, buildData) => {
+        const updated = [...sets]
+        const currentSet = updated[setIdx]
+        const newHeroBuilds = { ...(currentSet.hero_builds || {}) }
+        if (buildData) {
+            newHeroBuilds[heroIdx] = buildData
+        } else {
+            delete newHeroBuilds[heroIdx] // Clear build if null
+        }
+        updated[setIdx] = { ...currentSet, hero_builds: newHeroBuilds, _dirty: true }
         setSets(updated)
     }
 
@@ -88,6 +104,7 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
                     pet_file: set.pet_file,
                     heroes: set.heroes,
                     skill_rotation: set.skill_rotation,
+                    hero_builds: set.hero_builds || {},
                     video_url: set.video_url,
                     note: set.note
                 }
@@ -262,6 +279,7 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
                                                     onOpenSkillPicker={setSkillPicker}
                                                     onToggleCollapse={toggleCollapse}
                                                     onSkillError={(key) => setSkillErrors(prev => ({ ...prev, [key]: true }))}
+                                                    onOpenBuildPicker={(heroIdx) => setBuildPicker({ setIdx: originalIdx, heroIdx })}
                                                 />
                                             )
                                         })}
@@ -284,6 +302,21 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
                 onClose={() => setSkillPicker(null)}
                 onSkillError={(key) => setSkillErrors(prev => ({ ...prev, [key]: true }))}
             />
+
+            {/* Hero Build Picker */}
+            {buildPicker && (
+                <AdventHeroBuildPicker
+                    isOpen={!!buildPicker}
+                    onClose={() => setBuildPicker(null)}
+                    heroFile={sets[buildPicker.setIdx]?.heroes?.[buildPicker.heroIdx]}
+                    initialBuild={sets[buildPicker.setIdx]?.hero_builds?.[buildPicker.heroIdx] || null}
+                    items={assets.items}
+                    onSave={(buildData) => {
+                        handleUpdateHeroBuild(buildPicker.setIdx, buildPicker.heroIdx, buildData)
+                        setBuildPicker(null)
+                    }}
+                />
+            )}
         </div>
     )
 }

@@ -153,3 +153,52 @@
   pointer-events: none;
   z-index: 5;
 }
+
+/* Banner Hero Portraits — mobile only hidden */
+.bannerPortraits {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .bannerPortraits {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    height: 100%;
+  }
+}
+
+/* Team info — full width on mobile */
+.bannerInfo {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem 1.5rem;
+  gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .bannerInfo {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 180px;
+    padding: 0 1.5rem;
+  }
+}
+
+/* Formation grid — larger on mobile */
+.formationGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .formationGrid {
+    gap: 1.25rem;
+    max-width: 650px;
+  }
+}

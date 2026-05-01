@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from 'react'
 import { getBossInfo, getSetsByBoss, getBosses } from '@/lib/advent-actions'
 import { getAllHeroes, getPets, getFormations, getHeroSkillsMap } from '@/lib/stage-actions'
+import { getFilteredItems } from '@/lib/build-db'
 import { Loader2 } from 'lucide-react'
 import AdventEditorView from '../components/AdventEditorView'
 
@@ -27,14 +28,17 @@ export default function AdventBossDetailPage({ params }) {
         async function loadData() {
             setLoading(true)
             try {
-                const [bossInfo, setsData, heroesData, petsData, formationsData, allBossesData, skillsData] = await Promise.all([
+                const [bossInfo, setsData, heroesData, petsData, formationsData, allBossesData, skillsData, weapons, armors, accessories] = await Promise.all([
                     getBossInfo(bossKey),
                     getSetsByBoss(bossKey),
                     getAllHeroes(),
                     getPets(),
                     getFormations(),
                     getBosses(),
-                    getHeroSkillsMap()
+                    getHeroSkillsMap(),
+                    getFilteredItems('weapon'),
+                    getFilteredItems('armor'),
+                    getFilteredItems('accessory')
                 ])
                 
                 setBoss(bossInfo)
@@ -44,7 +48,8 @@ export default function AdventBossDetailPage({ params }) {
                     heroes: heroesData,
                     pets: petsData,
                     formations: formationsData,
-                    skills: skillsData
+                    skills: skillsData,
+                    items: { weapons, armors, accessories }
                 })
             } catch (err) {
                 console.error("[ADVENT_LOAD_ERROR]", err)

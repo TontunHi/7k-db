@@ -50,6 +50,7 @@ export async function getSetsByBoss(bossKey) {
             ...row,
             heroes: parseJSON(row.heroes_json),
             skill_rotation: parseJSON(row.skill_rotation),
+            hero_builds: parseJSON(row.hero_builds_json),
         }
     })
 }
@@ -75,12 +76,12 @@ export async function createSet(data) {
 
         const [result] = await pool.query(
             `INSERT INTO advent_expedition_sets 
-             (boss_key, phase, set_index, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+             (boss_key, phase, set_index, team_name, formation, pet_file, heroes_json, skill_rotation, hero_builds_json, video_url, note)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 validatedData.boss_key, validatedData.phase || 'Phase 1', nextIndex, validatedData.team_name || null,
                 validatedData.formation, validatedData.pet_file || null, JSON.stringify(validatedData.heroes), JSON.stringify(validatedData.skill_rotation),
-                validatedData.video_url, validatedData.note
+                JSON.stringify(validatedData.hero_builds || {}), validatedData.video_url, validatedData.note
             ]
         )
 
@@ -110,12 +111,12 @@ export async function updateSet(id, data) {
         await pool.query(
             `UPDATE advent_expedition_sets 
              SET phase = ?, team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?,
-                 video_url = ?, note = ?
+                 hero_builds_json = ?, video_url = ?, note = ?
              WHERE id = ?`,
             [
                 validatedData.phase || 'Phase 1', validatedData.team_name || null,
                 validatedData.formation, validatedData.pet_file || null, JSON.stringify(validatedData.heroes), JSON.stringify(validatedData.skill_rotation),
-                validatedData.video_url, validatedData.note, id
+                JSON.stringify(validatedData.hero_builds || {}), validatedData.video_url, validatedData.note, id
             ]
         )
 

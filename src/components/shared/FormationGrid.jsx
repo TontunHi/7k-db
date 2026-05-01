@@ -48,7 +48,7 @@ export default function FormationGrid({
                         customClasses.cardString
                     )
 
-                return (
+                const cardNode = (
                     <div key={i} className={cardClasses}>
                         {heroFile ? (
                             <>
@@ -84,6 +84,8 @@ export default function FormationGrid({
                         )}
                     </div>
                 )
+
+                return customClasses.renderWrapper ? customClasses.renderWrapper(cardNode, i, heroFile) : cardNode
             })}
         </div>
     )

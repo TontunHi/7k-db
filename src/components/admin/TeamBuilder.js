@@ -90,7 +90,8 @@ export default function TeamBuilder({
     onUpdate,
     onRemove,
     maxHeroes = 5,
-    className
+    className,
+    renderHeroAction
 }) {
     // team: { index, formation, pet_file, heroes: [file1, file2...] }
     // heroesList: [{ filename, name, grade }]
@@ -245,6 +246,7 @@ export default function TeamBuilder({
                                                 className="object-cover transition-transform duration-500 group-hover:scale-110"
                                                 sizes="(max-width: 768px) 30vw, 20vw"
                                             />
+                                            {renderHeroAction && renderHeroAction(i, heroFile)}
                                             {/* Remove Button */}
                                             <button
                                                 className="absolute top-2 right-2 p-1.5 bg-black/80 text-white rounded-lg opacity-0 group-hover:opacity-100 hover:bg-rose-600 transition-all z-30 border border-white/10 backdrop-blur-md"

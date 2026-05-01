@@ -62,9 +62,15 @@
 }
 
 .team {
-  padding: 2.5rem;
+  padding: 1.5rem;
   border-bottom: 1px solid var(--border);
   transition: background-color 0.3s ease;
+}
+
+@media (min-width: 640px) {
+  .team {
+    padding: 2.5rem;
+  }
 }
 
 .team:last-child {
@@ -158,7 +164,13 @@
 
 .gridArea {
   flex: 1;
-  max-width: 100%;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .gridArea {
+    max-width: 450px;
+  }
 }
 
 .note {

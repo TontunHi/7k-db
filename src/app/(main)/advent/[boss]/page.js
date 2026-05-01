@@ -35,7 +35,10 @@ export default async function AdventBossPage({ params }) {
             : (set.heroes_json || set.heroes || []),
         skill_rotation: typeof set.skill_rotation === 'string'
             ? JSON.parse(set.skill_rotation)
-            : (set.skill_rotation || [])
+            : (set.skill_rotation || []),
+        hero_builds: typeof set.hero_builds_json === 'string'
+            ? JSON.parse(set.hero_builds_json)
+            : (set.hero_builds_json || set.hero_builds || {})
     }))
 
     return (

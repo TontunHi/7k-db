@@ -246,6 +246,14 @@ async function runMigrations() {
             if (check.length === 0) { await connection.query(`ALTER TABLE advent_expedition_sets ADD COLUMN team_name VARCHAR(100) AFTER set_index`); }
         } catch (e) {}
 
+        try {
+            const [check] = await connection.query('SHOW COLUMNS FROM advent_expedition_sets LIKE "hero_builds_json"');
+            if (check.length === 0) { 
+                console.log("[Migration] Adding hero_builds_json to advent_expedition_sets...");
+                await connection.query(`ALTER TABLE advent_expedition_sets ADD COLUMN hero_builds_json JSON AFTER heroes_json`); 
+            }
+        } catch (e) { console.warn("[Migration] Could not add hero_builds_json:", e.message); }
+
         await connection.query(`
           CREATE TABLE IF NOT EXISTS arena_teams (
             id INT AUTO_INCREMENT PRIMARY KEY,

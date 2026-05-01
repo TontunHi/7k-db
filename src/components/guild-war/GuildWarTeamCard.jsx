@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils'
 import SafeImage from '@/components/shared/SafeImage'
 import FormationGrid from '@/components/shared/FormationGrid'
 import PetDisplay from '@/components/shared/PetDisplay'
+import styles from '../GuildWarView.module.css'
 import { resolveHeroImage } from '@/lib/hero-utils'
 import { getSkillImagePath, getSlotType, getStaggerClass } from '@/lib/formation-utils'
 
@@ -53,28 +54,27 @@ export default function GuildWarTeamCard({ team, heroImageMap, index }) {
                             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
                             
                             <div className="flex items-stretch min-h-[96px]">
-                                {/* Hero Portraits — full height, side by side */}
-                                <div className="flex-1 flex items-center">
+                                {/* Hero Portraits — hidden on mobile via CSS module */}
+                                <div className={styles.bannerPortraits}>
                                     {(team.heroes || []).filter(h => h).map((hero, i, arr) => (
                                         <div 
                                             key={i} 
-                                            className="relative flex-1 min-w-0" 
+                                            className="relative h-full flex-1 min-w-0" 
                                             style={{ maxWidth: `${100 / Math.max(arr.length, 3)}%` }}
                                         >
-                                            <div className="relative w-full h-24 overflow-hidden">
-                                                <SafeImage src={`/heroes/${hero}`} alt="" fill className="object-cover object-[center_30%] scale-110" />
-                                                {/* Gradient overlay — fade right to blend into card content */}
+                                            <div className="relative w-full h-full min-h-[120px] overflow-hidden">
+                                                <SafeImage src={`/heroes/${hero}`} alt="" fill className="object-cover object-[center_20%] scale-110" />
                                                 {i === arr.length - 1 && (
                                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0a0a0c]" />
                                                 )}
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c]/60 to-transparent" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c]/80 via-transparent to-transparent" />
                                             </div>
                                         </div>
                                     ))}
                                 </div>
 
-                                {/* Team info — right side */}
-                                <div className="flex-shrink-0 w-auto flex flex-col justify-center px-6 gap-2 min-w-[180px]">
+                                {/* Team info — CSS module responsive */}
+                                <div className={styles.bannerInfo}>
                                     <div className="flex items-center gap-2">
                                         {team.type && team.type !== 'general' && (
                                             <span className={cn(
@@ -213,33 +213,33 @@ export default function GuildWarTeamCard({ team, heroImageMap, index }) {
                                             <h4 className="text-sm font-black text-white uppercase tracking-[0.2em]">Formation</h4>
                                         </div>
                                         
-                                            <div className="relative py-10 px-4 flex items-center justify-center min-h-[280px]">
-                                                <div className="grid grid-cols-5 gap-2 sm:gap-4 max-w-[450px] w-full">
-                                                    {[0, 1, 2, 3, 4].map(slotIdx => {
-                                                        const heroFile = team.heroes?.[slotIdx]
-                                                        const type = getSlotType(team.formation, slotIdx)
-                                                        const isFront = type === 'front'
-                                                        const stagger = getStaggerClass(team.formation, slotIdx)
-                                                        
-                                                        return (
-                                                            <div key={slotIdx} className={cn(
-                                                                "relative aspect-[3/4] transition-all duration-500",
-                                                                stagger,
-                                                                heroFile 
-                                                                    ? (isFront ? "rounded-2xl border border-sky-500/30 bg-sky-500/10 shadow-lg shadow-sky-500/5 overflow-hidden" : "rounded-2xl border border-rose-500/30 bg-rose-500/10 shadow-lg shadow-rose-500/5 overflow-hidden")
-                                                                    : "opacity-0 pointer-events-none"
-                                                            )}>
-                                                                {heroFile && (
-                                                                    <div className="relative flex-1 w-full h-full">
-                                                                        <SafeImage src={`/heroes/${heroFile}`} alt="" fill className="object-cover" />
-                                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        )
-                                                    })}
-                                                </div>
+                                        <div className="relative py-6 sm:py-10 px-0 sm:px-4 flex items-center justify-center min-h-[220px] sm:min-h-[320px]">
+                                            <div className={styles.formationGrid}>
+                                                {[0, 1, 2, 3, 4].map(slotIdx => {
+                                                    const heroFile = team.heroes?.[slotIdx]
+                                                    const type = getSlotType(team.formation, slotIdx)
+                                                    const isFront = type === 'front'
+                                                    const stagger = getStaggerClass(team.formation, slotIdx)
+                                                    
+                                                    return (
+                                                        <div key={slotIdx} className={cn(
+                                                            "relative aspect-[3/4] transition-all duration-500",
+                                                            stagger,
+                                                            heroFile 
+                                                                ? (isFront ? "rounded-2xl border border-sky-500/30 bg-sky-500/10 shadow-2xl overflow-hidden" : "rounded-2xl border border-rose-500/30 bg-rose-500/10 shadow-2xl overflow-hidden")
+                                                                : "opacity-0 pointer-events-none"
+                                                        )}>
+                                                            {heroFile && (
+                                                                <div className="relative flex-1 w-full h-full">
+                                                                    <SafeImage src={`/heroes/${heroFile}`} alt="" fill className="object-cover" />
+                                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )
+                                                })}
                                             </div>
+                                        </div>
                                     </div>
 
                                     {/* Side Info Panel */}
@@ -305,7 +305,7 @@ export default function GuildWarTeamCard({ team, heroImageMap, index }) {
                                                 <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 blur-3xl rounded-full opacity-0 group-hover/hcard:opacity-100 transition-opacity" />
                                                 
                                                 <div className="flex flex-col items-center text-center mb-6">
-                                                    <div className="relative w-28 h-28 mb-4">
+                                                    <div className="relative w-32 h-32 sm:w-40 sm:h-40 mb-4">
                                                         <div className="absolute inset-0 bg-gradient-to-b from-amber-500/10 to-transparent rounded-full blur-xl opacity-0 group-hover/hcard:opacity-100 transition-opacity" />
                                                         <SafeImage src={`/heroes/${heroFile}`} alt={heroName} fill className="object-contain relative z-10 group-hover/hcard:scale-110 transition-transform duration-700" />
                                                     </div>
@@ -452,7 +452,7 @@ function CounterTeamModule({ ct, heroImageMap }) {
                 
                 <div className="flex items-stretch min-h-[80px]">
                     {/* Hero Portraits */}
-                    <div className="flex-1 flex items-center">
+                    <div className="hidden md:flex flex-1 items-center">
                         {(ct.heroes || []).filter(h => h).map((hero, i, arr) => (
                             <div
                                 key={i}
@@ -471,7 +471,7 @@ function CounterTeamModule({ ct, heroImageMap }) {
                     </div>
 
                     {/* Counter info */}
-                    <div className="flex-shrink-0 flex flex-col justify-center px-5 gap-1.5 min-w-[160px]">
+                    <div className="flex-1 md:flex-shrink-0 w-full md:w-auto flex flex-col justify-center px-5 py-4 md:py-0 gap-1.5 min-w-[160px]">
                         {ct.formation && (
                             <span className="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 self-start">
                                 {ct.formation}

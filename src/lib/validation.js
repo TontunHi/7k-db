@@ -68,6 +68,7 @@ export const AdventSetSchema = z.object({
   pet_file: z.string().optional().nullable(),
   heroes: TeamHeroesSchema,
   skill_rotation: SkillRotationSchema,
+  hero_builds: z.record(z.string(), z.any()).optional().nullable(),
   video_url: z.string().url().or(z.string().length(0)).nullable(),
   note: z.string().max(1000).optional().nullable()
 })

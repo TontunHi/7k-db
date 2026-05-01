@@ -47,13 +47,17 @@ export default function ArenaTeamCard({ set, index, heroImageMap }) {
                             formation={set.formation} 
                             heroes={set.heroes} 
                             heroImageMap={heroImageMap} 
+                            customClasses={{
+                                container: "grid grid-cols-5 gap-3 pb-2 w-full max-w-[450px]",
+                                cardString: "bg-slate-900/40 border-slate-700/50 aspect-[3/4] rounded-xl shadow-2xl"
+                            }}
                         />
                     </div>
 
-                    <div className={styles.divider} />
-
                     <div className={styles.petArea}>
-                        <PetDisplay petFile={set.pet_file} hideLabel={true} />
+                        <div className={styles.petBox}>
+                            <PetDisplay petFile={set.pet_file} hideLabel={true} />
+                        </div>
                     </div>
                 </div>
 
