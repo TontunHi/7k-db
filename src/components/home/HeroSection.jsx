@@ -13,11 +13,7 @@ export default function HeroSection() {
                 <div className={styles.underline} />
             </div>
 
-            <p className={styles.description}>
-                The ultimate database for heroes, builds, and strategies.
-                <br />
-                <span className={styles.highlight}>Built by fans, for fans.</span>
-            </p>
+
         </header>
     )
 }

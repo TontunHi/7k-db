@@ -53,9 +53,7 @@ export default function GlobalCredits() {
                 <h2 className="text-3xl md:text-4xl font-black text-foreground italic uppercase tracking-tight transform -skew-x-6">
                     Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-amber-500">Data Sources</span>
                 </h2>
-                <p className="text-muted-foreground text-sm mt-3 font-light max-w-xl mx-auto">
-                    This database is built upon the collective knowledge of the Seven Knights community. Huge thanks to these amazing creators and contributors.
-                </p>
+
             </div>
 
             <div className="flex flex-wrap justify-center gap-4 px-4">

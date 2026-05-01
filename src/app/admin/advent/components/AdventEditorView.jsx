@@ -221,7 +221,7 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
                         </div>
                     </header>
 
-                    <div className="space-y-6">
+                    <div className="space-y-12">
                         {sets.length === 0 && (
                             <div className="text-center py-20 border-2 border-dashed border-border rounded-3xl bg-card/30">
                                 <Compass size={48} className="mx-auto mb-4 text-muted-foreground opacity-20" />
@@ -229,25 +229,46 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
                             </div>
                         )}
 
-                        {sets.map((set, idx) => (
-                            <AdventTeamSet
-                                key={set.id}
-                                set={set}
-                                index={idx}
-                                assets={assets}
-                                skillErrors={skillErrors}
-                                isCollapsed={collapsedSets.has(set.id)}
-                                onTeamUpdate={handleTeamUpdate}
-                                onSetUpdate={handleUpdateSet}
-                                onDelete={handleDeleteSet}
-                                onAddSlot={handleAddSlot}
-                                onDeleteSlot={handleDeleteSlot}
-                                onUpdateSlotLabel={handleUpdateSlotLabel}
-                                onOpenSkillPicker={setSkillPicker}
-                                onToggleCollapse={toggleCollapse}
-                                onSkillError={(key) => setSkillErrors(prev => ({ ...prev, [key]: true }))}
-                            />
-                        ))}
+                        {['Phase 1', 'Phase 2'].map(phase => {
+                            const phaseSets = sets.filter(s => (s.phase || 'Phase 1') === phase)
+                            if (phaseSets.length === 0) return null
+
+                            return (
+                                <div key={phase} className="space-y-4">
+                                    <div className="flex items-center gap-4 px-2">
+                                        <h3 className="text-lg font-black italic uppercase text-violet-400 tracking-wider">
+                                            {phase} Operations
+                                        </h3>
+                                        <div className="flex-1 h-px bg-gradient-to-r from-violet-500/50 to-transparent" />
+                                    </div>
+                                    
+                                    <div className="space-y-6">
+                                        {phaseSets.map((set) => {
+                                            const originalIdx = sets.findIndex(s => s.id === set.id)
+                                            return (
+                                                <AdventTeamSet
+                                                    key={set.id}
+                                                    set={set}
+                                                    index={originalIdx}
+                                                    assets={assets}
+                                                    skillErrors={skillErrors}
+                                                    isCollapsed={collapsedSets.has(set.id)}
+                                                    onTeamUpdate={handleTeamUpdate}
+                                                    onSetUpdate={handleUpdateSet}
+                                                    onDelete={handleDeleteSet}
+                                                    onAddSlot={handleAddSlot}
+                                                    onDeleteSlot={handleDeleteSlot}
+                                                    onUpdateSlotLabel={handleUpdateSlotLabel}
+                                                    onOpenSkillPicker={setSkillPicker}
+                                                    onToggleCollapse={toggleCollapse}
+                                                    onSkillError={(key) => setSkillErrors(prev => ({ ...prev, [key]: true }))}
+                                                />
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                            )
+                        })}
                     </div>
                 </main>
             </div>

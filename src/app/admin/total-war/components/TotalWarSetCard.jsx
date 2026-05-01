@@ -25,7 +25,7 @@ export default function TotalWarSetCard({
     onOpenSkillPicker,
     onSkillError 
 }) {
-    const [isCollapsed, setIsCollapsed] = useState(false)
+    const [isCollapsed, setIsCollapsed] = useState(true)
     const canAddTeam = (set.teams?.length || 0) < tierCfg.maxTeams
 
     return (
