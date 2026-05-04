@@ -1,23 +1,19 @@
 "use client"
 
-import { 
-    Plus, Loader2, ArrowLeft, 
-    Youtube, Link as LinkIcon 
-} from 'lucide-react'
 import { TiktokIcon, DiscordIcon } from '@/components/shared/BrandIcons'
-import { Facebook } from 'lucide-react'
 import Link from 'next/link'
 import { useCreditsManager } from '../hooks/useCreditsManager'
 import CreditRow from './CreditRow'
 import styles from '../credits.module.css'
 import { clsx } from 'clsx'
+import { Marker, ActionLabel } from '@/app/admin/components/AdminEditorial'
 
 const PLATFORMS = [
-    { id: 'youtube', name: 'YouTube', icon: Youtube, color: 'text-[#FF0000]' },
+    { id: 'youtube', name: 'YouTube', icon: null, color: 'text-[#FF0000]' },
     { id: 'tiktok', name: 'TikTok', icon: TiktokIcon, color: 'text-white' },
-    { id: 'facebook', name: 'Facebook', icon: Facebook, color: 'text-[#1877F2]' },
+    { id: 'facebook', name: 'Facebook', icon: null, color: 'text-[#1877F2]' },
     { id: 'discord', name: 'Discord', icon: DiscordIcon, color: 'text-[#5865F2]' },
-    { id: 'other', name: 'Other', icon: LinkIcon, color: 'text-gray-400' },
+    { id: 'other', name: 'Other', icon: null, color: 'text-gray-400' },
 ]
 
 export default function CreditsDashboardView() {
@@ -36,8 +32,11 @@ export default function CreditsDashboardView() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <Loader2 className={clsx(styles.loader, "w-8 h-8 text-[#FFD700]")} />
+            <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+                <div className="w-12 h-1 bg-primary/20 relative overflow-hidden rounded-full">
+                    <div className="absolute inset-y-0 left-0 bg-primary animate-[loading_1.5s_infinite]" style={{ width: '40%' }} />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-widest opacity-50 animate-pulse">Synchronizing Registry</span>
             </div>
         )
     }
@@ -48,21 +47,24 @@ export default function CreditsDashboardView() {
             <header className={styles.header}>
                 <div className={styles.headerTitleGroup}>
                     <Link href="/admin" className={styles.backButton}>
-                        <ArrowLeft className="w-6 h-6" />
+                        <ActionLabel label="ABORT" />
                     </Link>
-                    <h1 className={styles.title}>
-                        Manage <span className={styles.accent}>Credits</span>
-                    </h1>
+                    <div className="flex items-center gap-4">
+                        <Marker color="bg-primary" className="w-2 h-10" />
+                        <h1 className={styles.title}>
+                            MANAGE <span className={styles.accent}>CREDITS</span>
+                        </h1>
+                    </div>
                 </div>
             </header>
 
             {/* Add Form */}
             <div className={styles.formCard}>
-                <h2 className={styles.formTitle}>
-                    <Plus className={styles.plusIcon} />
-                    Add Source / Attribution
-                </h2>
-                <div className={clsx(styles.formGrid, "mt-6")}>
+                <div className="flex items-center gap-3 mb-6">
+                    <Marker color="bg-primary" />
+                    <h2 className="text-xs font-black uppercase tracking-widest opacity-80">Add Source / Attribution</h2>
+                </div>
+                <div className={clsx(styles.formGrid)}>
                     <div className={clsx(styles.fieldGroup, "md:col-span-3")}>
                         <label className={styles.label}>Platform</label>
                         <select 
@@ -78,7 +80,7 @@ export default function CreditsDashboardView() {
                     <div className={clsx(styles.fieldGroup, "md:col-span-3")}>
                         <label className={styles.label}>Creator Name</label>
                         <input 
-                            type="text"
+                            type="text" 
                             placeholder="e.g. SevenKnightsThai"
                             value={newItem.name}
                             onChange={(e) => updateNewItem('name', e.target.value)}
@@ -99,10 +101,9 @@ export default function CreditsDashboardView() {
                         <button 
                             onClick={handleAdd}
                             disabled={saving || !newItem.name || !newItem.link}
-                            className={styles.submitButton}
+                            className={clsx(styles.submitButton, "flex items-center justify-center")}
                         >
-                            {saving ? <Loader2 className={clsx(styles.loader, "w-4 h-4")} /> : <Plus className="w-4 h-4" />}
-                            Add
+                            <ActionLabel label={saving ? "ADDING..." : "ADD_SOURCE"} color="text-black" />
                         </button>
                     </div>
                 </div>
@@ -110,10 +111,14 @@ export default function CreditsDashboardView() {
 
             {/* List */}
             <div className={styles.listContainer}>
-                <h3 className={styles.listHeader}>Existing attributions ({credits.length})</h3>
+                <div className="flex items-center gap-3 mb-6">
+                    <Marker color="bg-muted" />
+                    <h3 className="text-xs font-black uppercase tracking-widest opacity-50">Existing attributions ({credits.length})</h3>
+                </div>
                 {credits.length === 0 ? (
                     <div className={styles.emptyState}>
-                        <p>No attributions added yet.</p>
+                        <div className="text-[3rem] font-black opacity-5 italic mb-2">NO_CREDITS</div>
+                        <p className="text-[10px] font-black uppercase tracking-widest opacity-50">No attributions added yet.</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 gap-4">

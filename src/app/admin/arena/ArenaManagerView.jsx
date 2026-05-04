@@ -1,21 +1,21 @@
 "use client"
 
 import { useState } from "react"
-import { Plus, Save, Loader2, ShieldAlert } from "lucide-react"
+import { ActionLabel, Marker } from "../components/AdminEditorial"
 import { 
     createArenaTeam, 
     updateArenaTeam, 
     deleteArenaTeam as deleteArenaAction,
     reorderArenaTeams
 } from "@/lib/arena-actions"
+
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core"
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import styles from "./arena.module.css"
 import ArenaTeamSet from "./components/ArenaTeamSet"
 import ArenaSkillPicker from "./components/ArenaSkillPicker"
 import { clsx } from "clsx"
 import { toast } from "sonner"
-import styles from "./arena.module.css"
-
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core"
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable"
 
 /**
  * ArenaManagerView - Orchestrator for Arena squad management
@@ -194,11 +194,9 @@ export default function ArenaManagerView({ initialTeams, assets }) {
             <div className={styles.headerCard}>
                 <div className={styles.headerGlow} />
                 <div className={styles.titleSection}>
-                    <div className={styles.iconWrapper}>
-                        <ShieldAlert size={32} className="text-amber-500" />
-                    </div>
+                    <Marker color="bg-amber-500" className="w-2 h-12" />
                     <div>
-                        <h1 className={styles.title}>Arena Commander</h1>
+                        <h1 className={styles.title}>ARENA COMMANDER</h1>
                         <p className={styles.subtitle}>Configure elite squads and tactical rotations for public Arena matchmaking.</p>
                     </div>
                 </div>
@@ -208,8 +206,7 @@ export default function ArenaManagerView({ initialTeams, assets }) {
                         onClick={handleAddTeam}
                         className="flex items-center gap-2 px-5 py-3 bg-white/5 text-foreground rounded-xl text-xs font-black uppercase tracking-widest hover:bg-white/10 transition-all border border-border shadow-xl"
                     >
-                        <Plus size={18} />
-                        <span>Deploy Squad</span>
+                        <ActionLabel label="DEPLOY SQUAD" />
                     </button>
                     <button
                         onClick={handleSaveAll}
@@ -221,8 +218,7 @@ export default function ArenaManagerView({ initialTeams, assets }) {
                                 : "bg-muted text-muted-foreground cursor-not-allowed opacity-50"
                         )}
                     >
-                        {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                        Sync Data
+                        <ActionLabel label={saving ? "EXECUTING..." : "SYNC DATA"} color={hasDirty ? "text-black" : "text-muted-foreground"} />
                     </button>
                 </div>
             </div>
@@ -232,9 +228,11 @@ export default function ArenaManagerView({ initialTeams, assets }) {
                 <div className={styles.teamList}>
                     {teams.length === 0 && (
                         <div className={styles.emptyState}>
-                            <ShieldAlert size={48} className="text-muted-foreground opacity-20" />
-                            <p className="text-muted-foreground font-bold italic">No combat squads currently deployed.</p>
-                            <button onClick={handleAddTeam} className="text-amber-500 font-black uppercase text-xs tracking-widest py-2 px-4 rounded-lg bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all">Initialize First Squad</button>
+                            <div className="text-[4rem] font-black opacity-5 italic mb-4">NO_COMBAT_DATA</div>
+                            <p className="text-muted-foreground font-black italic uppercase text-[10px] tracking-widest mb-4">No combat squads currently deployed.</p>
+                            <button onClick={handleAddTeam} className="bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all px-4 py-2 rounded-xl">
+                                <ActionLabel label="INITIALIZE FIRST SQUAD" color="text-amber-500" />
+                            </button>
                         </div>
                     )}
 

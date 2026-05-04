@@ -1,7 +1,6 @@
 "use client"
 
 import Image from "next/image"
-import { Edit, Trash2, Sparkles } from "lucide-react"
 import styles from "./builds.module.css"
 
 /**
@@ -9,43 +8,42 @@ import styles from "./builds.module.css"
  */
 export default function HeroCard({ hero, onEdit, onDelete }) {
     return (
-        <div className={styles.heroCard} onClick={() => onEdit(hero)}>
+        <div className={`${styles.heroCard} group border border-white/5 hover:border-[#FFD700]/30 transition-all duration-500 shadow-2xl`} onClick={() => onEdit(hero)}>
             <div className={styles.imageWrapper}>
                 <Image
                     src={`/heroes/${hero.filename}`}
                     alt={hero.name}
                     fill
-                    className={styles.heroImage}
+                    className={`${styles.heroImage} grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700`}
                     sizes="(max-width: 768px) 50vw, (max-width: 1200px) 20vw, 15vw"
                 />
 
-                {/* New Hero Indicator */}
+                {/* NEW Badge */}
                 {hero.is_new_hero && (
-                    <div className={styles.newBadge}>
-                        <Sparkles size={10} />
-                        <span>New</span>
+                    <div className="absolute top-2.5 left-2.5 z-10 px-2.5 py-1 bg-[#FFD700] text-black text-[10px] font-black uppercase tracking-[0.2em] rounded shadow-[0_0_15px_rgba(255,215,0,0.5)]">
+                        NEW_HERO
                     </div>
                 )}
 
                 {/* Hover Overlay */}
-                <div className={styles.overlay}>
-                    <div className={styles.editBtn}>
-                        <Edit size={14} />
-                        <span>Edit Build</span>
+                <div className={clsx(styles.overlay, "bg-black/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300")}>
+                    <div className="px-5 py-2.5 bg-black/90 border border-[#FFD700] rounded-sm transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 shadow-[0_0_20px_rgba(255,215,0,0.2)]">
+                        <span className="text-[#FFD700] text-[11px] font-black uppercase tracking-[0.2em]">
+                            EDIT_INTEL
+                        </span>
                     </div>
                 </div>
             </div>
 
-            {/* Actions */}
+            {/* Delete Button */}
             <button
                 onClick={(e) => {
                     e.stopPropagation()
                     onDelete(hero.filename)
                 }}
-                className={styles.deleteBtn}
-                title="Delete Hero"
+                className="absolute top-2.5 right-2.5 z-20 px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-[10px] font-black uppercase tracking-widest rounded-sm opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300 shadow-xl border border-red-400/50"
             >
-                <Trash2 size={16} />
+                DEL
             </button>
         </div>
     )

@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import NextImage from "next/image"
-import { Skull } from "lucide-react"
+import { Marker, SystemBadge } from "../components/AdminEditorial"
 import styles from "./raid.module.css"
 
 /**
@@ -13,10 +13,9 @@ export default function RaidManagerView({ raids = [] }) {
         <div className={styles.container}>
             <header className={styles.header}>
                 <div className={styles.titleWrapper}>
-                    <Skull className="w-10 h-10 text-[#ef4444]" />
-                    <h1 className={styles.title}>Raid Protocols</h1>
+                    <Marker color="bg-red-600" className="w-2 h-10" />
+                    <h1 className={styles.title}>RAID</h1>
                 </div>
-                <p className={styles.subtitle}>Deploy tactical lineups and optimal skill rotations for high-level Raid encounters.</p>
             </header>
 
             <div className={styles.grid}>
@@ -26,10 +25,12 @@ export default function RaidManagerView({ raids = [] }) {
                         href={`/admin/raid/${raid.key}`}
                         className={styles.raidCard}
                     >
-                        {/* Set Count Badge */}
+                        {/* Set Count Badge - High Contrast Floating */}
                         {raid.setCount > 0 && (
-                            <div className={styles.setBadge}>
-                                {raid.setCount} {raid.setCount === 1 ? 'Squad' : 'Squads'}
+                            <div className="absolute top-4 right-4 z-20">
+                                <div className="bg-red-600 text-white px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-600/30">
+                                    {raid.setCount} SQUADS
+                                </div>
                             </div>
                         )}
 
@@ -42,13 +43,9 @@ export default function RaidManagerView({ raids = [] }) {
                         <div className={styles.overlay} />
 
                         <div className={styles.cardContent}>
-                            <h3 className={styles.raidName}>
+                            <h3 className="text-2xl md:text-3xl font-black text-white italic tracking-tighter drop-shadow-2xl uppercase">
                                 {raid.name}
                             </h3>
-                            <div className="flex items-center gap-2">
-                                <Skull size={14} className="text-red-500" />
-                                <span className="text-[10px] font-black uppercase text-red-500/80 tracking-widest">Tactical Management</span>
-                            </div>
                         </div>
                     </Link>
                 ))}

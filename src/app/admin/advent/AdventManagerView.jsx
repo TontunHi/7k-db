@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import NextImage from "next/image"
-import { Compass } from "lucide-react"
+import { Marker, SystemBadge } from "../components/AdminEditorial"
 import styles from "./advent.module.css"
 
 /**
@@ -13,10 +13,9 @@ export default function AdventManagerView({ bosses = [] }) {
         <div className={styles.container}>
             <header className={styles.header}>
                 <div className={styles.titleWrapper}>
-                    <Compass className="w-10 h-10 text-violet-400" />
-                    <h1 className={styles.title}>Advent Expedition</h1>
+                    <Marker color="bg-violet-500" className="w-2 h-10" />
+                    <h1 className={styles.title}>ADVENT</h1>
                 </div>
-                <p className={styles.subtitle}>Manage tactical deployment strategies for Advent Expedition bosses.</p>
             </header>
 
             <div className={styles.grid}>
@@ -26,10 +25,12 @@ export default function AdventManagerView({ bosses = [] }) {
                         href={`/admin/advent/${boss.key}`}
                         className={styles.bossCard}
                     >
-                        {/* Set Count Badge */}
+                        {/* Set Count Badge - High Contrast Floating */}
                         {boss.setCount > 0 && (
-                            <div className={styles.setBadge}>
-                                {boss.setCount} {boss.setCount === 1 ? 'Set' : 'Sets'}
+                            <div className="absolute top-4 right-4 z-20">
+                                <div className="bg-violet-600 text-white px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest shadow-lg shadow-violet-600/30">
+                                    {boss.setCount} SQUADS
+                                </div>
                             </div>
                         )}
 
@@ -45,16 +46,10 @@ export default function AdventManagerView({ bosses = [] }) {
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                                <Compass className="w-16 h-16 text-gray-700 opacity-20" />
+                                <div className="text-4xl font-black opacity-5 italic">IMG_MISSING</div>
                             </div>
                         )}
                         <div className={styles.overlay} />
-
-                        <div className={styles.cardContent}>
-                            <h3 className={styles.bossName}>
-                                {boss.name}
-                            </h3>
-                        </div>
                     </Link>
                 ))}
             </div>

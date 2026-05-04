@@ -3,7 +3,6 @@
 import { useState, useEffect, use } from 'react'
 import { getDungeonInfo, getSetsByDungeon, getDungeons } from '@/lib/dungeon-actions'
 import { getAllHeroes, getPets, getFormations, getHeroSkillsMap } from '@/lib/stage-actions'
-import { Loader2 } from 'lucide-react'
 import DungeonEditorView from '../components/DungeonEditorView'
 
 /**
@@ -58,7 +57,7 @@ export default function DungeonDetailPage({ params }) {
     if (loading) {
         return (
             <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
-                <Loader2 className="w-10 h-10 animate-spin text-primary" />
+                <div className="text-[4rem] font-black italic opacity-10 animate-pulse tracking-tighter">DATA_FETCH</div>
                 <p className="text-xs font-black text-muted-foreground uppercase tracking-widest animate-pulse">Accessing Sector Data...</p>
             </div>
         )

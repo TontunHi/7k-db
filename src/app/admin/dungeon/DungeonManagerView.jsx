@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import NextImage from "next/image"
-import { Landmark } from "lucide-react"
+import { Marker, SystemBadge } from "@/app/admin/components/AdminEditorial"
 import styles from "./dungeon.module.css"
 
 /**
@@ -13,10 +13,9 @@ export default function DungeonManagerView({ dungeons = [] }) {
         <div className={styles.container}>
             <header className={styles.header}>
                 <div className={styles.titleWrapper}>
-                    <Landmark className="w-10 h-10 text-[#FFD700]" />
-                    <h1 className={styles.title}>Dungeon Intel</h1>
+                    <Marker color="bg-[#FFD700]" className="w-2 h-10" />
+                    <h1 className={styles.title}>Dungeon Intelligence</h1>
                 </div>
-                <p className={styles.subtitle}>Configure team lineups and skill rotations for particle farming dungeons.</p>
             </header>
 
             <div className={styles.grid}>
@@ -26,10 +25,12 @@ export default function DungeonManagerView({ dungeons = [] }) {
                         href={`/admin/dungeon/${dungeon.key}`}
                         className={styles.dungeonCard}
                     >
-                        {/* Status Badge */}
+                        {/* Status Badge - Floating High Contrast */}
                         {dungeon.setCount > 0 && (
-                            <div className={styles.setCount}>
-                                {dungeon.setCount} {dungeon.setCount === 1 ? 'Setup' : 'Setups'}
+                            <div className="absolute top-4 right-4 z-20">
+                                <div className="bg-emerald-600 text-white px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-600/30">
+                                    {dungeon.setCount} SQUADS
+                                </div>
                             </div>
                         )}
 
@@ -40,13 +41,6 @@ export default function DungeonManagerView({ dungeons = [] }) {
                             className={styles.bgImage}
                         />
                         <div className={styles.overlay} />
-
-                        <div className={styles.cardContent}>
-                            <h3 className={styles.dungeonName}>
-                                {dungeon.name}
-                            </h3>
-                            <div className={styles.accentBar} />
-                        </div>
                     </Link>
                 ))}
             </div>

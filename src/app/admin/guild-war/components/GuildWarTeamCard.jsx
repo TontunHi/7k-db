@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Trash2, ChevronDown, ChevronUp, Swords, Box, Zap, Layout, Plus, X, ShieldAlert, Pencil } from "lucide-react"
+import { Marker, ActionLabel, SectionHeader } from "../../components/AdminEditorial"
 import SafeImage from "@/components/shared/SafeImage"
 import TeamBuilder from "@/components/admin/TeamBuilder"
 import GuildWarCounterCard from "./GuildWarCounterCard"
@@ -44,9 +44,8 @@ export default function GuildWarTeamCard({
             {/* Header */}
             <div className={styles.cardHeader}>
                 <div className={styles.headerLeft}>
-                    <div className={styles.indexBadge}>{index + 1}</div>
+                    <div className={styles.indexBadge}>0{index + 1}</div>
                     <div className="flex items-center gap-2 flex-1">
-                        <Pencil size={14} className="text-muted-foreground" />
                         <input
                             type="text"
                             value={team.team_name || ''}
@@ -56,18 +55,18 @@ export default function GuildWarTeamCard({
                         />
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-4">
                     <button
                         onClick={() => setIsMinimized(!isMinimized)}
-                        className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+                        className="px-2 py-1 text-muted-foreground hover:text-foreground transition-colors"
                     >
-                        {isMinimized ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
+                        <ActionLabel label={isMinimized ? "EXPAND" : "COLLAPSE"} size="text-[9px]" />
                     </button>
                     <button
                         onClick={onDelete}
-                        className="p-2 text-muted-foreground hover:text-red-500 transition-colors"
+                        className="px-2 py-1 text-muted-foreground hover:text-red-500 transition-colors"
                     >
-                        <Trash2 size={20} />
+                        <ActionLabel label="DECOMMISSION" size="text-[9px]" />
                     </button>
                 </div>
             </div>
@@ -94,10 +93,7 @@ export default function GuildWarTeamCard({
                     {/* Equipment Build */}
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>
-                            <div className={styles.sectionIcon}>
-                                <Box size={20} />
-                            </div>
-                            <h4 className={styles.sectionLabel}>Tactical Loadout</h4>
+                            <SectionHeader title="Tactical Loadout" markerColor="bg-blue-500" />
                         </div>
 
                         <div className={styles.itemsGrid}>
@@ -112,77 +108,74 @@ export default function GuildWarTeamCard({
                                             <div className={styles.heroPortrait}>
                                                 {heroFile ? (
                                                     <SafeImage src={`/heroes/${heroFile}`} alt="" fill sizes="100px" className="object-contain" />
-                                                ) : <Layout size={24} className="opacity-10" />}
-                                            </div>
-                                            <h4 className={styles.heroName}>{heroName}</h4>
-                                        </div>
+                                                ) : <span className="text-[10px] font-black opacity-20">VOID</span>}
+                                             </div>
+                                             <h4 className={styles.heroName}>{heroName}</h4>
+                                         </div>
 
-                                        <div className={styles.gearGrid}>
-                                            {['weapon', 'armor'].map(gearType => (
-                                                <div key={gearType} className="relative group">
-                                                    <div 
-                                                        onClick={() => heroFile && onOpenItemPicker(null, heroIdx, gearType)}
-                                                        className={styles.gearSlot}
-                                                    >
-                                                        {itemSet[gearType] ? (
-                                                            <SafeImage src={`/items/${gearType}/${itemSet[gearType]}`} alt="" fill sizes="100px" className="object-contain p-2" />
-                                                        ) : <Plus size={20} className="opacity-10" />}
-                                                    </div>
-                                                    {itemSet[gearType] && (
-                                                        <button 
-                                                            onClick={(e) => { e.stopPropagation(); handleItemUpdate(heroIdx, gearType, '') }}
-                                                            className="absolute -top-2 -right-2 w-5 h-5 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-500 transition-colors z-10"
-                                                        >
-                                                            <X size={10} />
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
+                                         <div className={styles.gearGrid}>
+                                             {['weapon', 'armor'].map(gearType => (
+                                                 <div key={gearType} className="relative group">
+                                                     <div 
+                                                         onClick={() => heroFile && onOpenItemPicker(null, heroIdx, gearType)}
+                                                         className={styles.gearSlot}
+                                                     >
+                                                         {itemSet[gearType] ? (
+                                                             <SafeImage src={`/items/${gearType}/${itemSet[gearType]}`} alt="" fill sizes="100px" className="object-contain p-2" />
+                                                         ) : <span className="text-[8px] font-black opacity-20 uppercase tracking-tighter">{gearType.slice(0,3)}</span>}
+                                                     </div>
+                                                     {itemSet[gearType] && (
+                                                         <button 
+                                                             onClick={(e) => { e.stopPropagation(); handleItemUpdate(heroIdx, gearType, '') }}
+                                                             className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-500 transition-colors z-10"
+                                                         >
+                                                             <span className="text-[8px] font-black">×</span>
+                                                         </button>
+                                                     )}
+                                                 </div>
+                                             ))}
+                                         </div>
 
-                                        <div className={styles.accRow}>
-                                            {[0, 1, 2].map(aIdx => (
-                                                <div key={aIdx} className="relative group">
-                                                    <div 
-                                                        onClick={() => heroFile && onOpenItemPicker(null, heroIdx, 'accessories', aIdx)}
-                                                        className={styles.accSlot}
-                                                    >
-                                                        {itemSet.accessories?.[aIdx] ? (
-                                                            <SafeImage src={`/items/accessory/${itemSet.accessories[aIdx]}`} alt="" fill sizes="60px" className="object-contain p-2" />
-                                                        ) : <Plus size={14} className="opacity-10" />}
-                                                    </div>
-                                                    {itemSet.accessories?.[aIdx] && (
-                                                        <button 
-                                                            onClick={(e) => { e.stopPropagation(); handleItemUpdate(heroIdx, 'accessories', null, aIdx) }}
-                                                            className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-500 transition-colors z-10"
-                                                        >
-                                                            <X size={8} />
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
+                                         <div className={styles.accRow}>
+                                             {[0, 1, 2].map(aIdx => (
+                                                 <div key={aIdx} className="relative group">
+                                                     <div 
+                                                         onClick={() => heroFile && onOpenItemPicker(null, heroIdx, 'accessories', aIdx)}
+                                                         className={styles.accSlot}
+                                                     >
+                                                         {itemSet.accessories?.[aIdx] ? (
+                                                             <SafeImage src={`/items/accessory/${itemSet.accessories[aIdx]}`} alt="" fill sizes="60px" className="object-contain p-2" />
+                                                         ) : <span className="text-[7px] font-black opacity-20">ACC</span>}
+                                                     </div>
+                                                     {itemSet.accessories?.[aIdx] && (
+                                                         <button 
+                                                             onClick={(e) => { e.stopPropagation(); handleItemUpdate(heroIdx, 'accessories', null, aIdx) }}
+                                                             className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-500 transition-colors z-10"
+                                                         >
+                                                             <span className="text-[7px] font-black">×</span>
+                                                         </button>
+                                                     )}
+                                                 </div>
+                                             ))}
+                                         </div>
 
-                                        <textarea
-                                            value={itemSet.note || ''}
-                                            onChange={(e) => handleItemUpdate(heroIdx, 'note', e.target.value)}
-                                            placeholder="Spec notes..."
-                                            className={styles.buildNote}
-                                            rows={2}
-                                        />
-                                    </div>
-                                )
-                            })}
-                        </div>
+                                         <textarea
+                                             value={itemSet.note || ''}
+                                             onChange={(e) => handleItemUpdate(heroIdx, 'note', e.target.value)}
+                                             placeholder="Spec notes..."
+                                             className={styles.buildNote}
+                                             rows={2}
+                                         />
+                                     </div>
+                                 )
+                             })}
+                         </div>
                     </div>
 
                     {/* Skill Rotation */}
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>
-                            <div className={styles.sectionIcon}>
-                                <Zap size={20} />
-                            </div>
-                            <h4 className={styles.sectionLabel}>Execution Protocol</h4>
+                            <SectionHeader title="Execution Protocol" markerColor="bg-amber-500" />
                         </div>
 
                         <div className={styles.rotationTrack}>
@@ -208,7 +201,7 @@ export default function GuildWarTeamCard({
                                             className={clsx(styles.skillButton, "group", step.skill && styles.skillButtonActive)}
                                         >
                                             <div className="absolute inset-0 overflow-hidden rounded-[1.125rem] flex items-center justify-center">
-                                                {skillPath ? <SafeImage src={skillPath} alt="" fill sizes="100px" className="object-cover" /> : <Plus size={16} />}
+                                                {skillPath ? <SafeImage src={skillPath} alt="" fill sizes="100px" className="object-cover" /> : <span className="text-[10px] font-black opacity-10">ADD</span>}
                                             </div>
                                             <button 
                                                 onClick={(e) => {
@@ -217,7 +210,7 @@ export default function GuildWarTeamCard({
                                                 }}
                                                 className="absolute -top-1 -right-1 p-1 bg-red-600/80 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10"
                                             >
-                                                <X size={10} />
+                                                <span className="text-[8px] font-black px-1">×</span>
                                             </button>
                                         </div>
                                     </div>
@@ -231,7 +224,7 @@ export default function GuildWarTeamCard({
                                 }}
                                 className={clsx(styles.skillButton, "border-dashed opacity-40 hover:opacity-100")}
                             >
-                                <Plus size={20} />
+                                <span className="text-[10px] font-black">+ STEP</span>
                             </button>
                         </div>
                     </div>
@@ -239,10 +232,7 @@ export default function GuildWarTeamCard({
                     {/* Counter Strategies */}
                     <div className={styles.counterSection}>
                         <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <ShieldAlert size={24} className="text-rose-500" />
-                                <h3 className="text-sm font-black text-foreground uppercase tracking-widest">Incursion Response</h3>
-                            </div>
+                            <SectionHeader title="Incursion Response" markerColor="bg-rose-500" />
                             <button
                                 onClick={() => {
                                     const counters = [...(team.counter_teams || [])]
@@ -259,7 +249,7 @@ export default function GuildWarTeamCard({
                                 }}
                                 className={styles.btnSecondary}
                             >
-                                <Plus size={14} /> Add Counter Intel
+                                <ActionLabel label="ADD COUNTER INTEL" size="text-[9px]" />
                             </button>
                         </div>
 

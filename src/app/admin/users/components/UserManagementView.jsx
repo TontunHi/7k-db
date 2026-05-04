@@ -1,11 +1,11 @@
 "use client"
 
-import { Plus, Search, Filter, User as UserIcon } from "lucide-react"
 import { useUserManagement } from "../hooks/useUserManagement"
 import UserCard from "./UserCard"
 import UserModal from "./UserModal"
 import styles from "../users.module.css"
 import { clsx } from "clsx"
+import { ActionLabel, Marker } from "@/app/admin/components/AdminEditorial"
 
 const PERMISSION_GROUPS = [
     {
@@ -69,33 +69,30 @@ export default function UserManagementView({ initialUsers, currentUser }) {
                 <div className={styles.glowOverlay} />
                 <div className={styles.headerTitleGroup}>
                     <div className={styles.titleRow}>
-                        <div className={styles.titleAccent} />
+                        <Marker color="bg-primary" className="w-2 h-10" />
                         <h1 className={styles.title}>
-                            Team <span className={styles.titleGradient}>Access</span>
+                            TEAM <span className={styles.titleGradient}>ACCESS</span>
                         </h1>
                     </div>
                     <p className={styles.subtitle}>Administrative privileges and account controls</p>
                 </div>
                 <button onClick={openCreateModal} className={styles.createButton}>
-                    <Plus className="w-5 h-5" />
-                    Create New Admin
+                    <ActionLabel label="CREATE_NEW_ADMIN" color="text-black" />
                 </button>
             </header>
 
             {/* Toolbar */}
             <div className={styles.toolbar}>
                 <div className={styles.searchWrapper}>
-                    <Search className={styles.searchIcon} />
                     <input 
                         type="text" 
-                        placeholder="Search by username..."
+                        placeholder="SEARCH_BY_USERNAME..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className={styles.searchInput}
                     />
                 </div>
                 <nav className={styles.filterGroup}>
-                    <Filter className={styles.filterIcon} />
                     {['ALL', 'SUPER_ADMIN', 'ADMIN'].map(role => (
                         <button
                             key={role}
@@ -115,9 +112,8 @@ export default function UserManagementView({ initialUsers, currentUser }) {
             <div className={styles.userGrid}>
                 {filteredUsers.length === 0 ? (
                     <div className={clsx(styles.userCard, "col-span-full py-20 flex flex-col items-center justify-center")}>
-                        <UserIcon className={styles.emptyIcon} />
-                        <h3 className="text-xl font-bold text-white uppercase tracking-wider mb-1">No personnel found</h3>
-                        <p className="text-sm text-gray-500">Try adjusting your search query or filters above.</p>
+                        <div className="text-[4rem] font-black opacity-5 italic mb-4">NO_PERSONNEL</div>
+                        <p className="text-[10px] font-black uppercase tracking-widest opacity-50">Try adjusting your search query or filters above.</p>
                     </div>
                 ) : filteredUsers.map(user => (
                     <UserCard 

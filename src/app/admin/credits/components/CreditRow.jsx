@@ -1,10 +1,8 @@
 "use client"
 
-import { 
-    Save, X, Edit2, Trash2, Link as LinkIcon 
-} from 'lucide-react'
 import styles from '../credits.module.css'
 import { clsx } from 'clsx'
+import { ActionLabel, Marker } from '@/app/admin/components/AdminEditorial'
 
 export default function CreditRow({ 
     item, 
@@ -51,13 +49,13 @@ export default function CreditRow({
                             })}
                             className={clsx(styles.actionButton, styles.saveBtn)}
                         >
-                            <Save size={20} className="mx-auto" />
+                            <ActionLabel label="SAVE" color="text-black" />
                         </button>
                         <button 
                             onClick={onCancel}
                             className={clsx(styles.actionButton, styles.cancelBtn)}
                         >
-                            <X size={20} className="mx-auto" />
+                            <ActionLabel label="CLOSE" color="text-white" />
                         </button>
                     </div>
                 </div>
@@ -72,12 +70,16 @@ export default function CreditRow({
         <div className={styles.creditRow}>
             <div className={styles.creditInfo}>
                 <div className={styles.platformIconBox}>
-                    <Icon className={clsx("w-6 h-6", platform.color)} />
+                    {Icon ? (
+                        <Icon className={clsx("w-6 h-6", platform.color)} />
+                    ) : (
+                        <div className={clsx("w-6 h-6 border-2 border-current rounded", platform.color)} />
+                    )}
                 </div>
                 <div>
                     <h4 className={styles.creatorName}>{item.name}</h4>
                     <p className={styles.creatorLink}>
-                        <LinkIcon className="w-3 h-3" />
+                        <span className="text-[10px] font-black opacity-30 mr-2 uppercase">Link</span>
                         {item.link}
                     </p>
                 </div>
@@ -87,13 +89,13 @@ export default function CreditRow({
                     onClick={() => onEdit(item.id)}
                     className={clsx(styles.actionButton, styles.editBtn)}
                 >
-                    <Edit2 size={20} />
+                    <ActionLabel label="EDIT" size="text-[9px]" />
                 </button>
                 <button 
                     onClick={() => onDelete(item.id)}
                     className={clsx(styles.actionButton, styles.deleteBtn)}
                 >
-                    <Trash2 size={20} />
+                    <ActionLabel label="DELETE" size="text-[9px]" color="text-red-500" />
                 </button>
             </div>
         </div>

@@ -2,9 +2,9 @@
 
 import Link from "next/link"
 import NextImage from "next/image"
-import { Swords } from "lucide-react"
 import { TIER_CONFIG } from "@/lib/total-war-config"
 import styles from "./total-war.module.css"
+import { Marker, SystemBadge } from "../components/AdminEditorial"
 
 /**
  * TotalWarManagerView - Dashboard for Total War tier selection
@@ -14,8 +14,8 @@ export default function TotalWarManagerView({ setCounts = {} }) {
         <div className={styles.container}>
             <header className={styles.header}>
                 <div className={styles.titleWrapper}>
-                    <Swords className="w-10 h-10 text-red-500" />
-                    <h1 className={styles.title}>Total War</h1>
+                    <Marker color="bg-red-600" className="w-2 h-10" />
+                    <h1 className={styles.title}>TOTAL WAR</h1>
                 </div>
                 <p className={styles.subtitle}>Configure multi-team deployment strategies across different difficulty tiers.</p>
             </header>
@@ -32,7 +32,7 @@ export default function TotalWarManagerView({ setCounts = {} }) {
                         >
                             {/* Set count badge */}
                             <div className={styles.setBadge}>
-                                {count} {count === 1 ? 'Set' : 'Sets'}
+                                <SystemBadge label={`${count} ACTIVE SETS`} color="bg-red-600" />
                             </div>
 
                             <div className={styles.tierLogo}>
@@ -49,13 +49,14 @@ export default function TotalWarManagerView({ setCounts = {} }) {
                                     {tier.label}
                                 </h2>
                                 <p className={styles.tierMeta}>
-                                    {tier.maxTeams} teams / set
+                                    {tier.maxTeams} TEAMS / DEPLOYMENT
                                 </p>
                             </div>
 
                             <div 
                                 className={styles.tierLine} 
                                 style={{ background: `linear-gradient(to right, transparent, ${tier.accent}, transparent)` }} 
+                                aria-hidden="true"
                             />
                         </Link>
                     )

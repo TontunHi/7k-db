@@ -3,10 +3,10 @@
 import Link from "next/link"
 import { useState } from "react"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, LogOut, Menu, X } from "lucide-react"
 import { logout } from "@/lib/actions"
 import { clsx } from "clsx"
 import { NAV_SECTIONS } from "@/app/admin/constants"
+import { Marker } from "@/app/admin/components/AdminEditorial"
 import styles from "./Sidebar.module.css"
 
 import { ThemeToggle } from "@/components/shared/ThemeToggle"
@@ -18,7 +18,7 @@ const SidebarContent = ({ setIsOpen, pathname, filteredSections, user }) => (
     <>
         <div className={styles.header}>
             <Link href="/admin" className={styles.logoText}>
-                7K Admin
+                7K <span className="text-primary italic">ADM</span>
             </Link>
             <div className="flex items-center gap-2">
                 <ThemeToggle />
@@ -27,7 +27,7 @@ const SidebarContent = ({ setIsOpen, pathname, filteredSections, user }) => (
                     className={clsx(styles.menuButton, "md:hidden")}
                     aria-label="Close menu"
                 >
-                    <X size={18} />
+                    <span className="text-[10px] font-black uppercase tracking-tighter border border-border px-1.5 py-0.5 rounded">CLOSE</span>
                 </button>
             </div>
         </div>
@@ -42,13 +42,13 @@ const SidebarContent = ({ setIsOpen, pathname, filteredSections, user }) => (
                         pathname === "/admin" && styles.navLinkActive
                     )}
                 >
-                    <LayoutDashboard size={18} />
-                    <span>Dashboard</span>
+                    <div className={clsx("w-1.5 h-1.5 rounded-full", pathname === "/admin" ? "bg-primary" : "bg-muted")} />
+                    <span className="uppercase tracking-widest font-black text-[11px]">Command Center</span>
                 </Link>
             </div>
 
             {filteredSections.map((section) => (
-                <div key={section.title} className="space-y-2">
+                <div key={section.title} className="space-y-3 pt-4">
                     <h3 className={styles.sectionTitle}>{section.title}</h3>
                     <div className="space-y-1">
                         {section.items.map((item) => {
@@ -63,8 +63,8 @@ const SidebarContent = ({ setIsOpen, pathname, filteredSections, user }) => (
                                         isActive && styles.navLinkActive
                                     )}
                                 >
-                                    <item.icon size={16} className={!isActive ? item.color : undefined} />
-                                    <span>{item.name}</span>
+                                    <Marker color={isActive ? "bg-primary" : item.color} className="opacity-60" />
+                                    <span className="uppercase tracking-wider font-bold text-[10px]">{item.name}</span>
                                 </Link>
                             )
                         })}
@@ -75,14 +75,13 @@ const SidebarContent = ({ setIsOpen, pathname, filteredSections, user }) => (
 
         <div className={styles.footer}>
             <div className={styles.userBadge}>
-                <p className={styles.userLabel}>Authorized Admin</p>
+                <p className={styles.userLabel}>Authorized Ops</p>
                 <p className={styles.userName}>{user?.username || 'Admin'}</p>
                 <p className={styles.userRole}>{user?.role?.replace('_', ' ')}</p>
             </div>
             <form action={logout}>
                 <button type="submit" className={styles.logoutBtn}>
-                    <LogOut size={16} />
-                    <span>Sign Out</span>
+                    <span className="uppercase tracking-widest font-black text-[10px] text-red-500">SIGN OUT</span>
                 </button>
             </form>
         </div>

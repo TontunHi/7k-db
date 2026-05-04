@@ -1,12 +1,9 @@
 "use client"
 
-import { 
-    Mail, Trash2, CheckCircle, Clock, 
-    ShieldCheck, Eye, Loader2 
-} from 'lucide-react'
 import { format } from 'date-fns'
 import styles from '../messages.module.css'
 import { clsx } from 'clsx'
+import { Marker, ActionLabel, SystemBadge } from '@/app/admin/components/AdminEditorial'
 
 export default function MessageCard({ 
     msg, 
@@ -29,7 +26,7 @@ export default function MessageCard({
                             {isUnread && <span className={styles.unreadDot} />}
                         </h3>
                         <p className={styles.senderEmail}>
-                            <Mail className="w-3 h-3" />
+                            <span className="text-[10px] font-black opacity-30 mr-2 uppercase italic">Email</span>
                             {msg.email}
                         </p>
                     </div>
@@ -37,7 +34,6 @@ export default function MessageCard({
                 <div className={styles.timeBox}>
                     <p className={styles.timeLabel}>Received</p>
                     <p className={styles.timeValue}>
-                        <Clock className="w-3 h-3" />
                         {format(new Date(msg.created_at), 'MMM d, yyyy · HH:mm')}
                     </p>
                 </div>
@@ -45,7 +41,10 @@ export default function MessageCard({
 
             <div className={styles.messageBody}>
                 {msg.subject && (
-                    <p className={styles.subject}>Subject: {msg.subject}</p>
+                    <div className="flex items-center gap-2 mb-2">
+                        <Marker color="bg-primary" className="w-1 h-3" />
+                        <p className={styles.subject}>Subject: {msg.subject}</p>
+                    </div>
                 )}
                 <p className={styles.text}>
                     {msg.message}
@@ -54,8 +53,8 @@ export default function MessageCard({
 
             <div className={styles.cardFooter}>
                 <div className={styles.metaInfo}>
-                    <ShieldCheck className="w-3 h-3" />
-                    IP: {msg.ip_address}
+                    <span className="text-[10px] font-black opacity-30 mr-2 uppercase italic">Origin_IP</span>
+                    {msg.ip_address}
                 </div>
                 <div className={styles.actionGroup}>
                     {isUnread ? (
@@ -64,13 +63,11 @@ export default function MessageCard({
                             disabled={isActionLoading}
                             className={styles.markReadBtn}
                         >
-                            <Eye className="w-3.5 h-3.5" />
-                            Mark as Read
+                            <ActionLabel label="MARK READ" size="text-[9px]" />
                         </button>
                     ) : (
                         <div className={styles.seenBadge}>
-                            <CheckCircle className="w-3.5 h-3.5" />
-                            Seen
+                            <SystemBadge label="SEEN" color="bg-emerald-500" />
                         </div>
                     )}
                     <button 
@@ -78,7 +75,7 @@ export default function MessageCard({
                         disabled={isActionLoading}
                         className={styles.deleteBtn}
                     >
-                        {isActionLoading ? <Loader2 className={clsx(styles.loader, "w-4 h-4")} /> : <Trash2 className="w-4 h-4" />}
+                        <ActionLabel label={isActionLoading ? "..." : "DELETE"} size="text-[9px]" color="text-red-500" />
                     </button>
                 </div>
             </div>

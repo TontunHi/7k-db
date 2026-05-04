@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import NextImage from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, Plus, Save, Loader2, Landmark } from 'lucide-react'
+import { Marker, ActionLabel } from '@/app/admin/components/AdminEditorial'
 import { createSet, updateSet, deleteSet as deleteSetAction, getSetsByDungeon, getDungeons } from '@/lib/dungeon-actions'
 import DungeonTeamSet from './DungeonTeamSet'
 import SkillPickerModal from './SkillPickerModal'
@@ -159,8 +159,7 @@ export default function DungeonEditorView({ dungeonKey, initialDungeon, initialS
                 {/* Sidebar Protocol */}
                 <aside className={styles.sidebar}>
                     <Link href="/admin/dungeon" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors w-fit group mb-4">
-                        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                        <span className="font-bold uppercase text-xs tracking-widest">Abort to Command Center</span>
+                        <ActionLabel label="BACK" color="text-muted-foreground" className="group-hover:text-primary" />
                     </Link>
 
                     <div className={styles.sidebarCard}>
@@ -191,22 +190,20 @@ export default function DungeonEditorView({ dungeonKey, initialDungeon, initialS
                     <header className={styles.editorHeader}>
                         <h1 className="text-xl font-black italic uppercase">Squad Configuration</h1>
                         <div className="flex items-center gap-3">
-                            <button onClick={handleAddSet} className="flex items-center gap-2 px-4 py-2.5 bg-accent text-foreground rounded-xl text-xs font-black uppercase tracking-widest hover:bg-border transition-colors border border-border shadow-xl">
-                                <Plus size={18} />
-                                <span>Add Squad</span>
+                            <button onClick={handleAddSet} className="px-4 py-2.5 bg-accent text-foreground rounded-xl text-xs font-black uppercase tracking-widest hover:bg-border transition-colors border border-border shadow-xl">
+                                <ActionLabel label="ADD_SQUAD" color="text-foreground" />
                             </button>
                             <button
                                 onClick={handleSaveAll}
                                 disabled={!hasDirty || saving}
                                 className={clsx(
-                                    "flex items-center gap-2 px-6 py-2.5 rounded-xl font-black uppercase text-xs tracking-widest transition-all shadow-xl",
+                                    "px-6 py-2.5 rounded-xl font-black uppercase text-xs tracking-widest transition-all shadow-xl",
                                     hasDirty 
                                         ? "bg-primary text-black hover:brightness-110 shadow-primary/20" 
                                         : "bg-muted text-muted-foreground cursor-not-allowed opacity-50"
                                 )}
                             >
-                                {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                                Sync Intel
+                                <ActionLabel label={saving ? "SYNCING..." : "SYNC_INTEL"} color={hasDirty ? "text-black" : "text-muted-foreground"} />
                             </button>
                         </div>
                     </header>
@@ -214,8 +211,8 @@ export default function DungeonEditorView({ dungeonKey, initialDungeon, initialS
                     <div className="space-y-6">
                         {sets.length === 0 && (
                             <div className="text-center py-20 border-2 border-dashed border-border rounded-3xl bg-card/30">
-                                <Landmark size={48} className="mx-auto mb-4 text-muted-foreground opacity-20" />
-                                <p className="text-muted-foreground italic">No tactical squads deployed in this sector.</p>
+                                <div className="text-[4rem] font-black italic opacity-5 mb-4">NO_SQUADS</div>
+                                <p className="text-muted-foreground italic uppercase text-[10px] tracking-widest">No tactical squads deployed in this sector.</p>
                             </div>
                         )}
 

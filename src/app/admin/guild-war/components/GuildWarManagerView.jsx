@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Swords, Plus, Save, Loader2, ShieldAlert } from "lucide-react"
+import { SectionHeader, SystemBadge, Marker, ActionLabel } from "../../components/AdminEditorial"
 import { 
     getGuildWarTeams, 
     createGuildWarTeam, 
@@ -35,6 +35,7 @@ export default function GuildWarManagerView({ initialTeams, initialHeroes, initi
     const [itemPicker, setItemPicker] = useState(null) // { counterIdx, heroIdx, type, accIdx }
     const [activeTeamIdx, setActiveTeamIdx] = useState(null)
     const [skillErrors, setSkillErrors] = useState({})
+    
     const handleAddTeam = () => {
         const newTeam = {
             id: `new-${Date.now()}`,
@@ -199,27 +200,23 @@ export default function GuildWarManagerView({ initialTeams, initialHeroes, initi
             <header className={styles.headerCard}>
                 <div className={styles.headerGlow} />
                 <div className={styles.titleSection}>
-                    <div className={styles.iconWrapper}>
-                        <Swords size={32} className="text-red-600" />
-                    </div>
+                    <Marker color="bg-primary" className="w-2 h-12" />
                     <div>
-                        <h1 className={styles.title}>Guild War Management</h1>
-                        <p className={styles.subtitle}>Manage defense teams and counter-strategies for Guild War operations.</p>
+                        <h1 className={styles.title}>GUILD WAR COMMAND</h1>
+                        <p className={styles.subtitle}>Defense team orchestration and tactical counter-squad configurations.</p>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-4 relative z-10">
                     <button onClick={handleAddTeam} className={styles.btnSecondary}>
-                        <Plus size={18} />
-                        <span>Add Team</span>
+                        <ActionLabel label="ADD SQUAD" />
                     </button>
                     <button 
                         onClick={handleSaveAll}
                         disabled={!hasDirty || saving}
                         className={styles.btnPrimary}
                     >
-                        {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                        <span>Save Changes</span>
+                        <ActionLabel label={saving ? "SAVING..." : "COMMIT CHANGES"} color="text-primary-foreground" />
                     </button>
                 </div>
             </header>
@@ -228,9 +225,11 @@ export default function GuildWarManagerView({ initialTeams, initialHeroes, initi
             <div className={styles.teamList}>
                 {teams.length === 0 && (
                     <div className={styles.emptyState}>
-                        <ShieldAlert size={48} className="text-muted-foreground opacity-20" />
-                        <p className="text-muted-foreground font-black italic uppercase tracking-widest">No teams configured</p>
-                        <button onClick={handleAddTeam} className={styles.btnPrimary}>Create First Team</button>
+                        <div className="text-[4rem] font-black opacity-10 italic">EMPTY_OPS</div>
+                        <p className="text-muted-foreground font-black italic uppercase tracking-widest">No active squads configured</p>
+                        <button onClick={handleAddTeam} className={styles.btnPrimary}>
+                            <ActionLabel label="INITIALIZE FIRST SQUAD" color="text-primary-foreground" />
+                        </button>
                     </div>
                 )}
 
@@ -262,15 +261,14 @@ export default function GuildWarManagerView({ initialTeams, initialHeroes, initi
                 <div className={styles.actionBar}>
                     <div className={styles.saveHint}>
                         <div className={styles.dirtyIndicator} />
-                        <span>Unsaved Changes Detected</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest opacity-60">TACTICAL OVERRIDE DETECTED</span>
                     </div>
                     <button 
                         onClick={handleSaveAll}
                         disabled={saving}
                         className={styles.btnPrimary}
                     >
-                        {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                        <span>{saving ? 'Saving...' : 'Save All Changes'}</span>
+                        <ActionLabel label={saving ? 'EXECUTING SYNC...' : 'SYNCHRONIZE DATABASE'} color="text-primary-foreground" />
                     </button>
                 </div>
             )}

@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import NextImage from "next/image"
-import { Crown } from "lucide-react"
+import { Marker, SystemBadge } from "../components/AdminEditorial"
 import styles from "./castle-rush.module.css"
 
 /**
@@ -13,10 +13,9 @@ export default function CastleRushManagerView({ bosses = [] }) {
         <div className={styles.container}>
             <header className={styles.header}>
                 <div className={styles.titleWrapper}>
-                    <Crown className="w-10 h-10 text-amber-500" />
-                    <h1 className={styles.title}>Castle Rush</h1>
+                    <Marker color="bg-amber-500" className="w-2 h-10" />
+                    <h1 className={styles.title}>CASTLE RUSH</h1>
                 </div>
-                <p className={styles.subtitle}>Manage team recommendations and tactical rotations for daily Castle Rush boss encounters.</p>
             </header>
 
             <div className={styles.grid}>
@@ -26,10 +25,12 @@ export default function CastleRushManagerView({ bosses = [] }) {
                         href={`/admin/castle-rush/${boss.key}`}
                         className={styles.bossCard}
                     >
-                        {/* Set Count Badge */}
+                        {/* Set Count Badge - High Contrast Floating */}
                         {boss.setCount > 0 && (
-                            <div className={styles.setBadge}>
-                                {boss.setCount} {boss.setCount === 1 ? 'Set' : 'Sets'}
+                            <div className="absolute top-4 right-4 z-20">
+                                <div className="bg-amber-600 text-white px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest shadow-lg shadow-amber-600/30">
+                                    {boss.setCount} SQUADS
+                                </div>
                             </div>
                         )}
 
@@ -41,12 +42,6 @@ export default function CastleRushManagerView({ bosses = [] }) {
                             priority
                         />
                         <div className={styles.overlay} />
-
-                        <div className={styles.cardContent}>
-                            <h3 className={styles.bossName}>
-                                {boss.name}
-                            </h3>
-                        </div>
                     </Link>
                 ))}
             </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { Trash2, Zap, Video, Plus, ScrollText, ChevronDown, ChevronUp, GripVertical } from "lucide-react"
+import { ActionLabel, Marker, SystemBadge } from "../../components/AdminEditorial"
 import TeamBuilder from "@/components/admin/TeamBuilder"
 import SafeImage from "@/components/shared/SafeImage"
 import { clsx } from "clsx"
@@ -64,13 +64,13 @@ export default function CastleRushTeamSet({
                         <button 
                             {...attributes} 
                             {...listeners} 
-                            className="p-1 hover:bg-accent rounded cursor-grab active:cursor-grabbing text-muted-foreground transition-colors"
+                            className="px-2 py-1 hover:bg-accent rounded cursor-grab active:cursor-grabbing text-muted-foreground transition-colors text-[10px] font-black"
                         >
-                            <GripVertical size={18} />
+                            DRAG
                         </button>
                         <div className="flex items-center gap-2 cursor-pointer" onClick={() => onToggleCollapse(set.id)}>
-                            <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500 font-black text-sm">
-                                {index + 1}
+                            <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500 font-black text-sm italic">
+                                0{index + 1}
                             </div>
                         <input
                             type="text"
@@ -82,7 +82,7 @@ export default function CastleRushTeamSet({
                         />
                     </div>
                 </div>
-                    {set._dirty && <span className="px-2 py-0.5 bg-amber-500/20 text-amber-500 text-[10px] font-black rounded uppercase">Unsaved</span>}
+                    {set._dirty && <SystemBadge label="UNSAVED" color="bg-amber-500" />}
                     
                     {isCollapsed && (
                         <div className="flex items-center gap-1.5 ml-4 animate-in fade-in slide-in-from-left-2">
@@ -95,19 +95,18 @@ export default function CastleRushTeamSet({
                     )}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-4">
                     <button
                         onClick={() => onToggleCollapse(set.id)}
-                        className="text-muted-foreground hover:text-amber-500 p-2 hover:bg-accent rounded-lg transition-colors"
+                        className="text-muted-foreground hover:text-amber-500 px-2 py-1 transition-colors"
                     >
-                        {isCollapsed ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
+                        <ActionLabel label={isCollapsed ? "EXPAND" : "CLOSE"} size="text-[9px]" />
                     </button>
                     <button
                         onClick={() => onDelete(index)}
-                        className="text-muted-foreground hover:text-red-500 transition-colors p-2 hover:bg-red-500/10 rounded-lg"
-                        title="Remove team"
+                        className="text-muted-foreground hover:text-red-500 transition-colors px-2 py-1"
                     >
-                        <Trash2 size={18} />
+                        <ActionLabel label="REMOVE" size="text-[9px]" />
                     </button>
                 </div>
             </div>
@@ -131,9 +130,10 @@ export default function CastleRushTeamSet({
 
                     {/* Skill Rotation */}
                     <div className={styles.rotationSection}>
-                        <label className={styles.sectionLabel}>
-                            <Zap size={14} className="text-amber-500" /> Skill Rotation Intel
-                        </label>
+                        <div className="mb-4">
+                            <Marker color="bg-amber-500" />
+                            <span className="text-[10px] font-black uppercase tracking-widest ml-2 text-muted-foreground">Skill Rotation Intel</span>
+                        </div>
 
                         <div className={styles.rotationGrid}>
                             {(set.skill_rotation || []).map((slot, slotIdx) => {
@@ -170,14 +170,14 @@ export default function CastleRushTeamSet({
                                                         onError={() => onSkillError(errKey)}
                                                     />
                                                 ) : (
-                                                    <Plus size={16} className="text-muted-foreground opacity-30" />
+                                                    <span className="text-[10px] font-black opacity-10">ADD</span>
                                                 )}
                                             </button>
                                             <button
                                                 onClick={() => onDeleteSlot(index, slotIdx)}
                                                 className={styles.removeSlotBtn}
                                             >
-                                                ✕
+                                                ×
                                             </button>
                                         </div>
                                     </div>
@@ -190,7 +190,7 @@ export default function CastleRushTeamSet({
                                 className={styles.addSlotBtn}
                                 title="Add rotation slot"
                             >
-                                <Plus size={20} />
+                                <span className="text-[10px] font-black">+ STEP</span>
                             </button>
                         </div>
                     </div>
@@ -198,9 +198,10 @@ export default function CastleRushTeamSet({
                     {/* Meta Data */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <div className="space-y-3">
-                            <label className={styles.sectionLabel}>
-                                <Video size={14} /> Tactical Briefing (Video URL)
-                            </label>
+                            <div className="flex items-center gap-2 mb-2">
+                                <Marker color="bg-blue-500" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Tactical Briefing (URL)</span>
+                            </div>
                             <input
                                 type="url"
                                 value={set.video_url || ''}
@@ -211,9 +212,10 @@ export default function CastleRushTeamSet({
                         </div>
 
                         <div className="space-y-3">
-                            <label className={styles.sectionLabel}>
-                                <ScrollText size={14} /> Strategic Intel (Notes)
-                            </label>
+                            <div className="flex items-center gap-2 mb-2">
+                                <Marker color="bg-emerald-500" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Strategic Intel (Notes)</span>
+                            </div>
                             <textarea
                                 value={set.note || ''}
                                 onChange={(e) => onSetUpdate(index, 'note', e.target.value)}

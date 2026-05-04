@@ -1,10 +1,10 @@
 "use client"
 
-import { Crown } from "lucide-react"
 import { useBuildEditor } from "./hooks/useBuildEditor"
 import HeroCard from "./HeroCard"
 import BuildEditorModal from "@/components/admin/BuildEditorModal"
 import styles from "./builds.module.css"
+import { Marker } from "@/app/admin/components/AdminEditorial"
 
 /**
  * BuildManagerView - Main Dashboard for Builds Management
@@ -27,16 +27,14 @@ export default function BuildManagerView({ heroes = [] }) {
             <header className={styles.header}>
                 <div className={styles.headerLeft}>
                     <div className={styles.titleWrapper}>
-                        <div className={styles.iconBox}>
-                            <Crown size={20} />
-                        </div>
-                        <h1 className={styles.title}>Manage Builds</h1>
+                        <Marker color="bg-primary" className="w-2 h-10" />
+                        <h1 className={styles.title}>HERO BUILDS</h1>
                     </div>
                 </div>
 
                 <div className={styles.statsBox}>
                     <span className={styles.statsCount}>{heroes.length}</span>
-                    <span className={styles.statsLabel}>Total Heroes</span>
+                    <span className={styles.statsLabel}>Heroes</span>
                 </div>
             </header>
 

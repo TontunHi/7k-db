@@ -1,6 +1,6 @@
 "use client"
 
-import { X } from "lucide-react"
+import { ActionLabel } from "@/app/admin/components/AdminEditorial"
 import SafeImage from "@/components/shared/SafeImage"
 import styles from "../dungeon.module.css"
 
@@ -28,8 +28,8 @@ export default function SkillPickerModal({
                         <h3 className="text-xl font-black uppercase">Tactical Skill Intel</h3>
                         <p className="text-xs text-muted-foreground font-bold tracking-wider">SELECT ACTION FOR SLOT {slotIdx + 1}</p>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-accent rounded-full transition-colors">
-                        <X size={20} className="text-foreground" />
+                    <button onClick={onClose} className="px-3 py-1.5 hover:bg-accent rounded-xl transition-all text-[10px] font-black uppercase tracking-tighter text-muted-foreground hover:text-red-500">
+                        CLOSE
                     </button>
                 </header>
 

@@ -1,14 +1,11 @@
 "use client"
 
-import { 
-    Search, ArrowLeft, Loader2, MessageSquare, 
-    Globe, EyeOff 
-} from 'lucide-react'
 import Link from 'next/link'
 import { useMessagesManager } from '../hooks/useMessagesManager'
 import MessageCard from './MessageCard'
 import styles from '../messages.module.css'
 import { clsx } from 'clsx'
+import { ActionLabel, Marker, SystemBadge } from '@/app/admin/components/AdminEditorial'
 
 export default function MessagesDashboardView() {
     const {
@@ -28,8 +25,11 @@ export default function MessagesDashboardView() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <Loader2 className={clsx(styles.loader, "w-8 h-8 text-[#FFD700]")} />
+            <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+                <div className="w-12 h-1 bg-primary/20 relative overflow-hidden rounded-full">
+                    <div className="absolute inset-y-0 left-0 bg-primary animate-[loading_1.5s_infinite]" style={{ width: '40%' }} />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-widest opacity-50 animate-pulse">Scanning Transmission</span>
             </div>
         )
     }
@@ -40,20 +40,23 @@ export default function MessagesDashboardView() {
             <header className={styles.header}>
                 <div className={styles.headerTitleGroup}>
                     <Link href="/admin" className={styles.backButton}>
-                        <ArrowLeft className="w-6 h-6" />
+                        <ActionLabel label="ABORT" />
                     </Link>
-                    <div>
-                        <h1 className={styles.title}>
-                            User <span className={styles.accent}>Messages</span>
-                        </h1>
-                        <p className={styles.subtitle}>Manage incoming inquiries and site settings.</p>
+                    <div className="flex items-center gap-4">
+                        <Marker color="bg-primary" className="w-2 h-12" />
+                        <div>
+                            <h1 className={styles.title}>
+                                USER <span className={styles.accent}>MESSAGES</span>
+                            </h1>
+                            <p className={styles.subtitle}>Manage incoming inquiries and site settings.</p>
+                        </div>
                     </div>
                 </div>
 
                 {/* Status Toggle Card */}
                 <div className={styles.statusCard}>
                     <div className={clsx(styles.statusIconBox, isEnabled ? styles.statusOnline : styles.statusOffline)}>
-                        {isEnabled ? <Globe className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                        <span className="text-[10px] font-black">{isEnabled ? 'ON' : 'OFF'}</span>
                     </div>
                     <div className={styles.statusInfo}>
                         <p className={styles.statusLabel}>Contact Form Status</p>
@@ -71,10 +74,9 @@ export default function MessagesDashboardView() {
             {/* Controls */}
             <div className={styles.controlsGrid}>
                 <div className={styles.searchWrapper}>
-                    <Search className={styles.searchIcon} />
                     <input 
                         type="text"
-                        placeholder="Search by name, email, or message content..."
+                        placeholder="SEARCH_NAME_EMAIL_OR_CONTENT..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className={styles.searchInput}
@@ -95,9 +97,7 @@ export default function MessagesDashboardView() {
             <div className="space-y-4">
                 {messages.length === 0 ? (
                     <div className={styles.emptyState}>
-                        <div className={styles.emptyIconBox}>
-                            <MessageSquare className="w-8 h-8 text-gray-400" />
-                        </div>
+                        <div className="text-[4rem] font-black opacity-5 italic mb-4">NO_TRANSMISSIONS</div>
                         <p className={styles.emptyText}>No messages found matching your criteria.</p>
                     </div>
                 ) : (

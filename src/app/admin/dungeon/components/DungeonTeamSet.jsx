@@ -1,6 +1,6 @@
 "use client"
 
-import { Trash2, Zap, Video, Plus, ScrollText, ChevronDown, ChevronUp } from "lucide-react"
+import { Marker, ActionLabel } from "@/app/admin/components/AdminEditorial"
 import TeamBuilder from "@/components/admin/TeamBuilder"
 import SafeImage from "@/components/shared/SafeImage"
 import { clsx } from "clsx"
@@ -67,16 +67,16 @@ export default function DungeonTeamSet({
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => onToggleCollapse(set.id)}
-                        className="text-muted-foreground hover:text-primary p-2 hover:bg-accent rounded-lg transition-colors"
+                        className="text-muted-foreground hover:text-primary px-3 py-1.5 hover:bg-accent rounded-lg transition-all text-[10px] font-black uppercase tracking-tighter"
                     >
-                        {isCollapsed ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
+                        {isCollapsed ? "VIEW_INTEL" : "COLLAPSE"}
                     </button>
                     <button
                         onClick={() => onDelete(index)}
-                        className="text-muted-foreground hover:text-red-500 transition-colors p-2 hover:bg-red-500/10 rounded-lg"
+                        className="text-muted-foreground hover:text-red-500 transition-colors px-3 py-1.5 hover:bg-red-500/10 rounded-lg text-[10px] font-black uppercase tracking-tighter"
                         title="Remove squad"
                     >
-                        <Trash2 size={18} />
+                        REMOVE
                     </button>
                 </div>
             </div>
@@ -101,7 +101,7 @@ export default function DungeonTeamSet({
                     {/* Skill Rotation */}
                     <div className={styles.rotationSection}>
                         <label className={styles.sectionLabel}>
-                            <Zap size={14} className="text-primary" /> Skill Rotation Intel
+                            <Marker color="bg-primary" /> Skill Rotation Intel
                         </label>
 
                         <div className={styles.rotationGrid}>
@@ -139,7 +139,7 @@ export default function DungeonTeamSet({
                                                         onError={() => onSkillError(errKey)}
                                                     />
                                                 ) : (
-                                                    <Plus size={16} className="text-muted-foreground opacity-30" />
+                                                    <span className="text-muted-foreground opacity-30 text-xs">+</span>
                                                 )}
                                             </button>
                                             <button
@@ -159,7 +159,7 @@ export default function DungeonTeamSet({
                                 className={styles.addSlotBtn}
                                 title="Add rotation slot"
                             >
-                                <Plus size={20} />
+                                <ActionLabel label="+" color="text-muted-foreground" />
                             </button>
                         </div>
                     </div>
@@ -168,7 +168,7 @@ export default function DungeonTeamSet({
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <div className="space-y-3">
                             <label className={styles.sectionLabel}>
-                                <Video size={14} /> Tactical Briefing (Video URL)
+                                <Marker color="bg-red-500" /> Tactical Briefing (Video URL)
                             </label>
                             <input
                                 type="url"
@@ -181,7 +181,7 @@ export default function DungeonTeamSet({
 
                         <div className="space-y-3">
                             <label className={styles.sectionLabel}>
-                                <ScrollText size={14} /> Strategic Intel (Notes)
+                                <Marker color="bg-blue-500" /> Strategic Intel (Notes)
                             </label>
                             <textarea
                                 value={set.note || ''}

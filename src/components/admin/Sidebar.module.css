@@ -1,6 +1,6 @@
 .sidebar {
-  background: color-mix(in srgb, var(--card), transparent 5%);
-  border-right: 1px solid rgba(220, 38, 38, 0.2);
+  background: color-mix(in srgb, var(--card), transparent 2%);
+  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -13,14 +13,14 @@
 .backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: var(--overlay-dark);
   backdrop-filter: blur(8px);
   z-index: 45;
 }
 
 .header {
-  padding: 2rem 1.5rem;
-  border-bottom: 1px solid rgba(220, 38, 38, 0.1);
+  padding: 2.5rem 1.5rem;
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -28,11 +28,11 @@
 }
 
 .logoText {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 900;
   font-style: italic;
   text-transform: uppercase;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.06em;
   color: var(--foreground);
   text-decoration: none;
   display: flex;
@@ -40,107 +40,90 @@
   gap: 0.5rem;
 }
 
-.logoText::before {
-  content: "";
-  width: 4px;
-  height: 20px;
-  background: #dc2626;
-  border-radius: 9999px;
-  box-shadow: 0 0 10px #dc2626;
-}
-
 .nav {
   flex: 1;
-  padding: 1.5rem 1rem;
+  padding: 2rem 1rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2.5rem;
 }
 
 .nav::-webkit-scrollbar {
-  width: 4px;
+  width: 2px;
 }
 
 .nav::-webkit-scrollbar-thumb {
-  background: rgba(220, 38, 38, 0.2);
+  background: var(--primary-opacity);
   border-radius: 10px;
 }
 
 .sectionTitle {
   padding: 0 1rem;
-  font-size: 0.625rem;
-  font-weight: 900;
+  font-size: 0.5625rem;
+  font-weight: 950;
   text-transform: uppercase;
-  letter-spacing: 0.25em;
-  color: color-mix(in srgb, var(--foreground), transparent 40%);
-  margin-bottom: 0.75rem;
+  letter-spacing: 0.3em;
+  color: var(--muted-foreground);
+  margin-bottom: 1rem;
+  opacity: 0.6;
 }
 
 .navLink {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   padding: 0.75rem 1rem;
-  border-radius: 1rem;
-  font-size: 0.8125rem;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
   font-weight: 800;
   color: var(--muted-foreground);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
   transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   position: relative;
-  overflow: hidden;
 }
 
 .navLink:hover {
-  color: var(--foreground);
-  background: color-mix(in srgb, var(--foreground), transparent 97%);
+  color: var(--primary);
+  background: var(--primary-opacity);
   transform: translateX(4px);
 }
 
 .navLinkActive {
-  background: linear-gradient(to right, rgba(220, 38, 38, 0.15), transparent);
+  background: linear-gradient(to right, var(--primary-opacity), transparent);
   color: var(--primary);
-  border-left: 3px solid #dc2626;
-  border-radius: 0 1rem 1rem 0;
+  border-left: 2px solid var(--primary);
+  border-radius: 0 0.75rem 0.75rem 0;
   margin-left: -1rem;
   padding-left: 2rem;
 }
 
-.navLinkActive::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to right, rgba(220, 38, 38, 0.1), transparent);
-  opacity: 1;
-}
-
 .footer {
-  padding: 1.5rem;
-  border-top: 1px solid rgba(220, 38, 38, 0.1);
-  background: color-mix(in srgb, var(--foreground), transparent 97%);
+  padding: 2rem 1.5rem;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--card), transparent 40%);
 }
 
 .userBadge {
   margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: color-mix(in srgb, var(--foreground), transparent 98%);
+  padding: 1.25rem;
+  background: color-mix(in srgb, var(--background), transparent 30%);
   border: 1px solid var(--border);
-  border-radius: 1.25rem;
+  border-radius: 1rem;
 }
 
 .userLabel {
   font-size: 0.5rem;
-  font-weight: 900;
+  font-weight: 950;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--foreground), transparent 40%);
-  letter-spacing: 0.2em;
-  margin-bottom: 0.25rem;
+  color: var(--muted-foreground);
+  letter-spacing: 0.25em;
+  margin-bottom: 0.5rem;
 }
 
 .userName {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 900;
   color: var(--foreground);
   overflow: hidden;
@@ -149,36 +132,32 @@
 }
 
 .userRole {
-  font-size: 0.625rem;
-  font-weight: 800;
+  font-size: 0.5625rem;
+  font-weight: 900;
   text-transform: uppercase;
-  color: #dc2626;
-  letter-spacing: 0.1em;
+  color: var(--primary);
+  letter-spacing: 0.15em;
+  margin-top: 0.25rem;
 }
 
 .logoutBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
   width: 100%;
-  padding: 0.875rem;
-  background: rgba(220, 38, 38, 0.1);
-  border: 1px solid rgba(220, 38, 38, 0.2);
-  border-radius: 1rem;
-  color: var(--foreground);
-  font-size: 0.75rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  padding: 1rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
   transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .logoutBtn:hover {
-  background: #dc2626;
-  box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
-  transform: translateY(-2px);
+  background: var(--destructive);
+  border-color: var(--destructive);
+  color: var(--destructive-foreground);
+  box-shadow: var(--shadow-md);
 }
 
 @media (max-width: 767px) {

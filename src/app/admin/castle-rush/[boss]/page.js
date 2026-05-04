@@ -58,8 +58,10 @@ export default function BossDetailPage({ params }) {
     if (loading) {
         return (
             <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
-                <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
-                <p className="text-xs font-black text-muted-foreground uppercase tracking-widest animate-pulse">Synchronizing Tactical Data...</p>
+                <div className="w-16 h-1 bg-amber-500/20 relative overflow-hidden rounded-full">
+                    <div className="absolute inset-y-0 left-0 bg-amber-500 animate-[loading_1.5s_infinite]" style={{ width: '40%' }} />
+                </div>
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] animate-pulse">SYNCHRONIZING TACTICAL DATA</p>
             </div>
         )
     }

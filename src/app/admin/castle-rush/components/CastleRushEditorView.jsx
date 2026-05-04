@@ -3,13 +3,12 @@
 import { useState } from 'react'
 import NextImage from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, Plus, Save, Loader2, Crown } from 'lucide-react'
+import { ActionLabel, Marker, SectionHeader } from "../../components/AdminEditorial"
 import { createSet, updateSet, deleteSet as deleteSetAction, getSetsByBoss } from '@/lib/castle-rush-actions'
+import styles from '../castle-rush.module.css'
+import { clsx } from 'clsx'
 import CastleRushTeamSet from './CastleRushTeamSet'
 import CastleRushSkillPicker from './CastleRushSkillPicker'
-import { clsx } from 'clsx'
-import { toast } from 'sonner'
-import styles from '../castle-rush.module.css'
 
 import {
     DndContext,
@@ -205,8 +204,7 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
                 {/* Sidebar Protocol */}
                 <aside className={styles.sidebar}>
                     <Link href="/admin/castle-rush" className="flex items-center gap-2 text-muted-foreground hover:text-amber-500 transition-colors w-fit group mb-4">
-                        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                        <span className="font-bold uppercase text-xs tracking-widest">Abort to Command Center</span>
+                        <ActionLabel label="ABORT TO COMMAND" />
                     </Link>
 
                     <div className={styles.sidebarCard}>
@@ -235,11 +233,13 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
                 {/* Main Intel Stream */}
                 <main className={styles.mainContent}>
                     <header className={styles.editorHeader}>
-                        <h1 className="text-xl font-black italic uppercase">Squad Configuration</h1>
+                        <div className="flex items-center gap-3">
+                            <Marker color="bg-amber-500" />
+                            <h1 className="text-xl font-black italic uppercase">Squad Configuration</h1>
+                        </div>
                         <div className="flex items-center gap-3">
                             <button onClick={handleAddSet} className="flex items-center gap-2 px-4 py-2.5 bg-accent text-foreground rounded-xl text-xs font-black uppercase tracking-widest hover:bg-border transition-colors border border-border shadow-xl">
-                                <Plus size={18} />
-                                <span>Add Squad</span>
+                                <ActionLabel label="ADD SQUAD" />
                             </button>
                             <button
                                 onClick={handleSaveAll}
@@ -251,8 +251,7 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
                                         : "bg-muted text-muted-foreground cursor-not-allowed opacity-50"
                                 )}
                             >
-                                {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                                Sync Intel
+                                <ActionLabel label={saving ? "EXECUTING..." : "COMMIT INTEL"} color={hasDirty ? "text-black" : "text-muted-foreground"} />
                             </button>
                         </div>
                     </header>
@@ -260,8 +259,8 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
                     <div className="space-y-6">
                         {sets.length === 0 && (
                             <div className="text-center py-20 border-2 border-dashed border-border rounded-3xl bg-card/30">
-                                <Crown size={48} className="mx-auto mb-4 text-muted-foreground opacity-20" />
-                                <p className="text-muted-foreground italic">No tactical squads deployed in this sector.</p>
+                                <div className="text-[4rem] font-black opacity-5 italic mb-4">EMPTY_SECTOR</div>
+                                <p className="text-muted-foreground italic uppercase text-[10px] font-black tracking-widest">No tactical squads deployed in this sector.</p>
                             </div>
                         )}
 

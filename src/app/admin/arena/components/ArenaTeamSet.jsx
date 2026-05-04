@@ -1,12 +1,12 @@
 "use client"
 
-import { useSortable } from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
-import { Trash2, Zap, Video, Plus, ScrollText, GripVertical, ChevronDown, ChevronUp, Pencil } from "lucide-react"
+import { ActionLabel, Marker, SystemBadge } from "../../components/AdminEditorial"
 import TeamBuilder from "@/components/admin/TeamBuilder"
 import SafeImage from "@/components/shared/SafeImage"
 import { clsx } from "clsx"
 import styles from "../arena.module.css"
+import { useSortable } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 
 /**
  * ArenaTeamSet - Modular sortable component for an Arena squad
@@ -58,11 +58,11 @@ export default function ArenaTeamSet({
         >
             <div className={styles.cardHead}>
                 <div className={styles.teamMeta}>
-                    <div {...attributes} {...listeners} className={styles.dragHandle}>
-                        <GripVertical size={20} />
+                    <div {...attributes} {...listeners} className="px-2 py-1 hover:bg-accent rounded cursor-grab active:cursor-grabbing text-muted-foreground transition-colors text-[10px] font-black">
+                        DRAG
                     </div>
                     <div className={styles.indexBadge}>
-                        {index + 1}
+                        0{index + 1}
                     </div>
                     <div className="flex-1 min-w-0" onClick={() => onToggleMinimize(team.id)} style={{ cursor: 'pointer' }}>
                         <input
@@ -74,7 +74,7 @@ export default function ArenaTeamSet({
                             className={styles.teamNameInput}
                         />
                     </div>
-                    {team._dirty && <span className="px-2 py-0.5 bg-amber-500/20 text-amber-500 text-[10px] font-black rounded uppercase">Modified</span>}
+                    {team._dirty && <SystemBadge label="MODIFIED" color="bg-amber-500" />}
                     
                     {isMinimized && (
                         <div className="flex items-center gap-1.5 ml-4 animate-in fade-in slide-in-from-left-2">
@@ -87,19 +87,18 @@ export default function ArenaTeamSet({
                     )}
                 </div>
 
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-4">
                     <button
                         onClick={() => onToggleMinimize(team.id)}
-                        className="text-muted-foreground hover:text-amber-500 p-2 hover:bg-accent rounded-xl transition-colors"
+                        className="text-muted-foreground hover:text-amber-500 px-2 py-1 transition-colors"
                     >
-                        {isMinimized ? <Plus size={20} /> : <ChevronUp size={20} />}
+                        <ActionLabel label={isMinimized ? "EXPAND" : "CLOSE"} size="text-[9px]" />
                     </button>
                     <button
                         onClick={() => onDelete(index)}
-                        className="text-muted-foreground hover:text-red-500 transition-colors p-2 hover:bg-red-500/10 rounded-xl"
-                        title="Remove squad"
+                        className="text-muted-foreground hover:text-red-500 transition-colors px-2 py-1"
                     >
-                        <Trash2 size={18} />
+                        <ActionLabel label="REMOVE" size="text-[9px]" />
                     </button>
                 </div>
             </div>
@@ -123,9 +122,10 @@ export default function ArenaTeamSet({
 
                     {/* Skill Rotation */}
                     <div className={styles.rotationSection}>
-                        <label className={styles.sectionLabel}>
-                            <Zap size={14} className="text-amber-500" /> TACTICAL EXECUTION SEQUENCE
-                        </label>
+                        <div className="mb-4">
+                            <Marker color="bg-amber-500" />
+                            <span className="text-[10px] font-black uppercase tracking-widest ml-2 text-muted-foreground">Tactical Execution Sequence</span>
+                        </div>
 
                         <div className={styles.rotationGrid}>
                             {(team.skill_rotation || []).map((slot, slotIdx) => {
@@ -162,14 +162,14 @@ export default function ArenaTeamSet({
                                                         onError={() => onSkillError(errKey)}
                                                     />
                                                 ) : (
-                                                    <Plus size={16} className="text-muted-foreground opacity-30" />
+                                                    <span className="text-[10px] font-black opacity-10">ADD</span>
                                                 )}
                                             </button>
                                             <button
                                                 onClick={() => onDeleteSlot(index, slotIdx)}
                                                 className={styles.removeSlotBtn}
                                             >
-                                                ✕
+                                                ×
                                             </button>
                                         </div>
                                     </div>
@@ -184,7 +184,7 @@ export default function ArenaTeamSet({
                                     className={styles.addSlotBtn}
                                     title="Add tactical slot"
                                 >
-                                    <Plus size={20} />
+                                    <span className="text-[10px] font-black">+ STEP</span>
                                 </button>
                             </div>
                         </div>
@@ -193,9 +193,10 @@ export default function ArenaTeamSet({
                     {/* Meta Data */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <div className="space-y-3">
-                            <label className={styles.sectionLabel}>
-                                <Video size={14} className="text-purple-500" /> MISSION ARCHIVE (VIDEO URL)
-                            </label>
+                            <div className="flex items-center gap-2 mb-2">
+                                <Marker color="bg-purple-500" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Mission Archive (URL)</span>
+                            </div>
                             <input
                                 type="url"
                                 value={team.video_url || ''}
@@ -206,9 +207,10 @@ export default function ArenaTeamSet({
                         </div>
 
                         <div className="space-y-3">
-                            <label className={styles.sectionLabel}>
-                                <ScrollText size={14} className="text-blue-500" /> DEPLOYMENT NOTES
-                            </label>
+                            <div className="flex items-center gap-2 mb-2">
+                                <Marker color="bg-blue-500" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Deployment Notes</span>
+                            </div>
                             <textarea
                                 value={team.note || ''}
                                 onChange={(e) => onTeamUpdate(index, 'note', e.target.value)}

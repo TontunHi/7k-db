@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Loader2 } from "lucide-react"
 import { getGuildWarTeams, getItemFiles } from "@/lib/guild-war-actions"
 import { getAllHeroes, getPets, getFormations, getHeroSkillsMap } from "@/lib/stage-actions"
 import GuildWarManagerView from "./components/GuildWarManagerView"
@@ -62,7 +61,7 @@ export default function AdminGuildWarPage() {
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                <Loader2 className="w-10 h-10 animate-spin text-indigo-500" />
+                <div className="text-[3rem] font-black italic opacity-10 animate-pulse tracking-tighter">DATA_FETCH</div>
                 <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground animate-pulse">Initializing Strategic Command...</p>
             </div>
         )

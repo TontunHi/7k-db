@@ -1,8 +1,8 @@
 "use client"
 
-import { Shield, Edit2, Trash2, Calendar, Lock, Globe, AlertCircle } from "lucide-react"
 import { clsx } from "clsx"
 import styles from "../users.module.css"
+import { ActionLabel, Marker, SystemBadge } from "@/app/admin/components/AdminEditorial"
 
 export default function UserCard({ user, currentUser, allPermissions, onEdit, onDelete }) {
     const isSelf = user.id === currentUser?.id
@@ -18,24 +18,22 @@ export default function UserCard({ user, currentUser, allPermissions, onEdit, on
             <div className={styles.cardContent}>
                 <div className={styles.cardHeader}>
                     <div className={styles.userInfo}>
-                        <div className={clsx(styles.shieldIconBox, isSuper && styles.superShieldBox)}>
-                            <Shield className={clsx(styles.shieldIcon, isSuper && styles.superShieldIcon)} />
-                        </div>
+                        <Marker color={isSuper ? "bg-amber-500" : "bg-primary"} className="w-2 h-10" />
                         <div>
                             <div className={styles.nameRow}>
                                 <h3 className={styles.username}>{user.username}</h3>
                                 {isSelf && (
-                                    <span className={styles.selfBadge}>You</span>
+                                    <SystemBadge label="YOU" color="bg-primary" />
                                 )}
                             </div>
                             <div className={styles.metaRow}>
                                 <div className={styles.metaItem}>
-                                    <Calendar className={styles.metaIcon} />
+                                    <span className="text-[10px] font-black opacity-30 mr-2 uppercase italic">Joined</span>
                                     <span suppressHydrationWarning>{new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
                                 </div>
                                 <div className={styles.metaItem}>
-                                    <Lock className={styles.metaIcon} />
-                                    {isSuper ? 'Full Access' : `${user.permissions?.length || 0}/${allPermissions.length} Modules`}
+                                    <span className="text-[10px] font-black opacity-30 mr-2 uppercase italic">Access</span>
+                                    {isSuper ? 'FULL_PROTOCOL' : `${user.permissions?.length || 0}/${allPermissions.length} MODULES`}
                                 </div>
                             </div>
                         </div>
@@ -45,17 +43,15 @@ export default function UserCard({ user, currentUser, allPermissions, onEdit, on
                         <button 
                             onClick={() => onEdit(user)}
                             className={styles.actionButton}
-                            title="Edit user"
                         >
-                            <Edit2 size={18} />
+                            <ActionLabel label="EDIT" size="text-[9px]" />
                         </button>
                         {!isSelf && (
                             <button 
                                 onClick={() => onDelete(user.id)}
                                 className={clsx(styles.actionButton, styles.deleteButton)}
-                                title="Delete user"
                             >
-                                <Trash2 size={18} />
+                                <ActionLabel label="DELETE" size="text-[9px]" color="text-red-500" />
                             </button>
                         )}
                     </div>
@@ -63,12 +59,14 @@ export default function UserCard({ user, currentUser, allPermissions, onEdit, on
 
                 {/* Permissions View */}
                 <div className={styles.permissionsSection}>
-                    <h4 className={styles.permissionTitle}>Active Modules</h4>
+                    <div className="flex items-center gap-2 mb-3">
+                        <Marker color="bg-white/10" className="w-1 h-3" />
+                        <h4 className={styles.permissionTitle}>Active Modules</h4>
+                    </div>
                     <div className={styles.permissionGrid}>
                         {isSuper ? (
                             <div className={styles.fullAccessBadge}>
-                                <Globe className={styles.fullAccessIcon} />
-                                <span className={styles.fullAccessText}>All Admin Access Granted</span>
+                                <span className={styles.fullAccessText}>ALL_ADMIN_ACCESS_GRANTED</span>
                             </div>
                         ) : (
                             user.permissions?.length > 0 ? (
@@ -82,8 +80,7 @@ export default function UserCard({ user, currentUser, allPermissions, onEdit, on
                                 })
                             ) : (
                                 <div className={styles.noPermissions}>
-                                    <AlertCircle size={14} className="text-red-500/50" />
-                                    <span className={styles.noPermissionsText}>No Permissions Assigned</span>
+                                    <span className={styles.noPermissionsText}>NO_PERMISSIONS_ASSIGNED</span>
                                 </div>
                             )
                         )}

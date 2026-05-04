@@ -1,22 +1,20 @@
 "use client"
 
 import styles from "../admin-dashboard.module.css"
-import { Activity } from "lucide-react"
+import { Marker } from "./AdminEditorial"
 
-export default function StatCard({ label, value, icon: Icon, colorClass }) {
+export default function StatCard({ label, value, colorClass }) {
     return (
         <div className={styles.statCard}>
             <div className={styles.statHeader}>
-                <div className={`${styles.statIconBox} ${colorClass}`}>
-                    <Icon size={18} />
-                </div>
-                <Activity size={14} className={styles.statPulse} />
+                <Marker color={colorClass?.replace('text-', 'bg-')} />
+                <div className={styles.statGlow} />
             </div>
-            <div>
-                <div className={styles.statValue}>{value}</div>
+            <div className="relative z-10">
                 <div className={styles.statLabel}>{label}</div>
+                <div className={styles.statValue}>{value}</div>
             </div>
-            <div className={styles.statGlow} />
+            <div className={styles.statDecor}>0{Math.floor(Math.random() * 9) + 1}</div>
         </div>
     )
 }

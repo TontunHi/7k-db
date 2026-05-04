@@ -2,10 +2,10 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { Loader2, Plus, Trash, X, Save, Check, Grid, ChevronDown } from "lucide-react"
 import { clsx } from "clsx"
 import { toast } from "sonner"
 import SafeImage from "@/components/shared/SafeImage"
+import { Marker, ActionLabel } from "@/app/admin/components/AdminEditorial"
 
 // Predefined Options
 const WEAPON_MAIN_STATS = [
@@ -252,10 +252,8 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                 {/* Header */}
                 <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 md:p-5 border-b border-gray-800/60 bg-gradient-to-b from-[rgba(20,20,20,0.8)] to-transparent flex-shrink-0 gap-3">
                     <h2 className="text-lg md:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-yellow-200 flex items-center gap-3 tracking-tight">
-                        <div className="p-2 bg-[#FFD700]/10 rounded-xl border border-[#FFD700]/20">
-                            <Grid className="w-4 h-4 text-[#FFD700]" />
-                        </div>
-                        Edit Builds
+                        <Marker color="bg-[#FFD700]" className="w-1.5 h-6" />
+                        EDIT_BUILDS
                         <span className="text-gray-500 font-medium text-sm ml-1">{hero.name}</span>
                     </h2>
                     <div className="flex gap-2 flex-wrap items-center">
@@ -271,14 +269,13 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                         </label>
 
                         <button onClick={handleAddBuild} className="bg-gray-800/80 hover:bg-gray-700 text-white px-3 py-2 rounded-xl text-[10px] font-black flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 border border-gray-700/50 hover:border-gray-600 uppercase tracking-wider">
-                            <Plus className="w-3.5 h-3.5" /> Build
+                            <ActionLabel label="ADD_BUILD" color="text-white" />
                         </button>
                         <button onClick={handleSave} disabled={isSaving} className="bg-gradient-to-r from-[#FFD700] to-yellow-500 hover:from-yellow-400 hover:to-yellow-400 text-black font-black px-5 py-2 rounded-xl text-[10px] flex items-center gap-1.5 shadow-lg shadow-[#FFD700]/15 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 uppercase tracking-wider">
-                            {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-                            Save All
+                            <ActionLabel label={isSaving ? "SAVING..." : "SAVE_ALL"} color="text-black" />
                         </button>
-                        <button onClick={onClose} className="p-2 hover:bg-red-500/20 hover:text-red-400 rounded-xl text-gray-500 transition-all hover:scale-110 active:scale-95">
-                            <X className="w-5 h-5" />
+                        <button onClick={onClose} className="px-3 py-2 hover:bg-red-500/20 hover:text-red-400 rounded-xl text-gray-500 transition-all hover:scale-110 active:scale-95">
+                            <ActionLabel label="CLOSE" color="text-red-500" />
                         </button>
                     </div>
                 </div>
@@ -378,10 +375,10 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                             {/* Delete button */}
                             <button
                                 onClick={() => handleRemoveBuild(bIndex)}
-                                className="absolute top-4 right-4 text-red-500/60 hover:text-white bg-red-950/20 hover:bg-red-600 p-2.5 rounded-xl transition-all duration-200 border border-red-900/30 hover:border-red-500 z-10 hover:scale-110 active:scale-95 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]"
+                                className="absolute top-4 right-4 text-red-500/60 hover:text-white bg-red-950/20 hover:bg-red-600 px-3 py-2 rounded-xl transition-all duration-200 border border-red-900/30 hover:border-red-500 z-10 hover:scale-110 active:scale-95 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]"
                                 title="Delete Build"
                             >
-                                <Trash className="w-4 h-4" />
+                                <ActionLabel label="REMOVE" color="text-red-500" className="group-hover:text-white" />
                             </button>
 
                             {/* Top controls */}
@@ -397,7 +394,6 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                         >
                                             {["C0", "C1", "C2", "C3", "C4", "C5", "C6"].map(c => <option key={c} value={c}>{c}</option>)}
                                         </select>
-                                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-600 w-3.5 h-3.5" />
                                     </div>
                                 </div>
                                 <div className="flex-1">
@@ -497,7 +493,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                                             sizes="64px"
                                                         />
                                                     ) : (
-                                                        <Plus className="w-4 h-4 text-gray-800 group-hover/acc:text-[#FFD700]/60 transition-colors" />
+                                                        <ActionLabel label="+" size="text-sm" color="text-gray-800" className="group-hover/acc:text-[#FFD700]/60 transition-colors" />
                                                     )}
                                                 </div>
                                             )
@@ -545,7 +541,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                                                 sizes="64px"
                                                             />
                                                         ) : (
-                                                            <Plus className="w-3.5 h-3.5 text-gray-800 group-hover/ref:text-cyan-400/60 transition-colors" />
+                                                            <ActionLabel label="+" size="text-xs" color="text-gray-800" className="group-hover/ref:text-cyan-400/60 transition-colors" />
                                                         )}
                                                         {/* Bottom indicator */}
                                                         <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-400/30" />
@@ -628,10 +624,10 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                 border: "2px dashed rgba(50,50,50,0.4)",
                             }}
                         >
-                            <Grid className="w-10 h-10 text-gray-800 mx-auto mb-4" />
+                            <div className="text-[4rem] font-black opacity-5 italic mb-4">NO_DATA</div>
                             <p className="text-gray-600 font-bold uppercase tracking-widest text-xs mb-5">No builds yet</p>
                             <button onClick={handleAddBuild} className="bg-gradient-to-r from-[#FFD700] to-yellow-500 text-black px-6 py-2.5 rounded-xl font-black text-xs shadow-lg shadow-[#FFD700]/15 hover:scale-105 active:scale-95 transition-all uppercase tracking-wider">
-                                Create Primary Build
+                                <ActionLabel label="INITIALIZE PRIMARY BUILD" color="text-black" />
                             </button>
                         </div>
                     )}
@@ -654,7 +650,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
 
                             <div className="flex justify-between items-center p-4 md:p-5 border-b border-gray-800/50 flex-shrink-0">
                                 <h3 className="text-[#FFD700] font-black uppercase tracking-widest flex items-center gap-2.5 text-xs">
-                                    <Grid className="w-4 h-4" />
+                                    <Marker color="bg-[#FFD700]" />
                                     {selectorTarget.type === "accessories"
                                         ? "Select Accessory (Max 5)"
                                         : selectorTarget.type === "refining"
@@ -667,8 +663,8 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                             Confirm ({multiSelection.length})
                                         </button>
                                     )}
-                                    <button onClick={() => setSelectorOpen(false)} className="p-2 bg-gray-800/60 hover:bg-red-500/80 rounded-xl text-gray-500 hover:text-white transition-all hover:scale-110 active:scale-95">
-                                        <X className="w-4 h-4" />
+                                    <button onClick={() => setSelectorOpen(false)} className="px-3 py-2 bg-gray-800/60 hover:bg-red-500/80 rounded-xl text-gray-500 hover:text-white transition-all hover:scale-110 active:scale-95">
+                                        <ActionLabel label="CANCEL" color="text-red-500" className="hover:text-white" />
                                     </button>
                                 </div>
                             </div>
@@ -705,8 +701,8 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                                         sizes="64px"
                                                     />
                                                     {isSelected && (
-                                                        <div className="absolute top-1 right-1 bg-gradient-to-br from-[#FFD700] to-yellow-600 text-black w-4 h-4 rounded-full flex items-center justify-center shadow-lg z-10 border border-black">
-                                                            <Check className="w-2.5 h-2.5 stroke-[3]" />
+                                                        <div className="absolute top-1 right-1 bg-gradient-to-br from-[#FFD700] to-yellow-600 text-black w-4 h-4 rounded-full flex items-center justify-center shadow-lg z-10 border border-black text-[10px] font-black">
+                                                            OK
                                                         </div>
                                                     )}
                                                 </button>
@@ -771,7 +767,6 @@ function ItemCard({ item, type, stats, onClick, onStatChange }) {
                     >
                         {stats.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
-                    <ChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-700 w-3 h-3" />
                 </div>
             </div>
         </div>

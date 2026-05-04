@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Trash2, ChevronDown, Swords, Box, Zap, Layout, Plus, X } from "lucide-react"
+import { Marker, ActionLabel, SectionHeader } from "../../components/AdminEditorial"
 import SafeImage from "@/components/shared/SafeImage"
 import TeamBuilder from "@/components/admin/TeamBuilder"
 import { clsx } from "clsx"
@@ -44,9 +44,7 @@ export default function GuildWarCounterCard({
             {/* Header */}
             <div className={styles.counterHeader} onClick={() => setIsCollapsed(!isCollapsed)}>
                 <div className={styles.counterLeft}>
-                    <div className={styles.counterIcon}>
-                        <Swords size={20} />
-                    </div>
+                    <Marker color="bg-rose-500" className="h-8" />
                     <div>
                         <h4 className={styles.counterName}>{ct.team_name || `Counter Intel ${ctIdx + 1}`}</h4>
                         <div className="flex items-center gap-2 mt-1">
@@ -58,15 +56,15 @@ export default function GuildWarCounterCard({
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                     <button 
                         onClick={(e) => { e.stopPropagation(); onRemove(); }}
-                        className="p-2 text-muted-foreground hover:text-red-500 transition-colors"
+                        className="px-2 py-1 text-muted-foreground hover:text-red-500 transition-colors"
                     >
-                        <Trash2 size={16} />
+                        <ActionLabel label="REMOVE" size="text-[9px]" />
                     </button>
                     <div className={clsx("transition-transform duration-300", !isCollapsed && "rotate-180")}>
-                        <ChevronDown size={20} className="text-muted-foreground" />
+                        <ActionLabel label={isCollapsed ? "OPEN" : "CLOSE"} size="text-[9px]" />
                     </div>
                 </div>
             </div>
@@ -81,7 +79,7 @@ export default function GuildWarCounterCard({
                                 type="text"
                                 value={ct.team_name || ''}
                                 onChange={(e) => onUpdate({ team_name: e.target.value })}
-                                className="w-full bg-background border border-border rounded-2xl px-5 py-3 text-foreground focus:border-red-500/40 transition-all outline-none font-bold"
+                                className="w-full bg-background border border-border rounded-2xl px-5 py-3 text-foreground focus:border-rose-500/40 transition-all outline-none font-bold"
                                 placeholder="Anti-Defense, Magic Burst..."
                             />
                         </div>
@@ -107,10 +105,7 @@ export default function GuildWarCounterCard({
                     {/* Gear Setup */}
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>
-                            <div className={clsx(styles.sectionIcon, "bg-red-500/10 border-red-500/20")}>
-                                <Box size={16} className="text-red-500" />
-                            </div>
-                            <h4 className={styles.sectionLabel}>Tactical Gear</h4>
+                            <SectionHeader title="Tactical Gear" markerColor="bg-rose-500" />
                         </div>
 
                         <div className={styles.itemsGrid}>
@@ -125,7 +120,7 @@ export default function GuildWarCounterCard({
                                             <div className={styles.heroPortrait}>
                                                 {heroFile ? (
                                                     <SafeImage src={`/heroes/${heroFile}`} alt="" fill sizes="100px" className="object-contain" />
-                                                ) : <Layout size={24} className="opacity-10" />}
+                                                ) : <span className="text-[10px] font-black opacity-20">VOID</span>}
                                             </div>
                                             <h4 className={styles.heroName}>{heroName}</h4>
                                         </div>
@@ -139,14 +134,14 @@ export default function GuildWarCounterCard({
                                                     >
                                                         {itemSet[gearType] ? (
                                                             <SafeImage src={`/items/${gearType}/${itemSet[gearType]}`} alt="" fill sizes="100px" className="object-contain p-2" />
-                                                        ) : <Plus size={20} className="opacity-10" />}
+                                                        ) : <span className="text-[8px] font-black opacity-20 uppercase tracking-tighter">{gearType.slice(0,3)}</span>}
                                                     </div>
                                                     {itemSet[gearType] && (
                                                         <button 
                                                             onClick={(e) => { e.stopPropagation(); handleItemUpdate(heroIdx, gearType, '') }}
-                                                            className="absolute -top-2 -right-2 w-5 h-5 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-500 transition-colors z-10"
+                                                            className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-500 transition-colors z-10"
                                                         >
-                                                            <X size={10} />
+                                                            <span className="text-[8px] font-black">×</span>
                                                         </button>
                                                     )}
                                                 </div>
@@ -162,14 +157,14 @@ export default function GuildWarCounterCard({
                                                     >
                                                         {itemSet.accessories?.[aIdx] ? (
                                                             <SafeImage src={`/items/accessory/${itemSet.accessories[aIdx]}`} alt="" fill sizes="60px" className="object-contain p-2" />
-                                                        ) : <Plus size={14} className="opacity-10" />}
+                                                        ) : <span className="text-[7px] font-black opacity-20">ACC</span>}
                                                     </div>
                                                     {itemSet.accessories?.[aIdx] && (
                                                         <button 
                                                             onClick={(e) => { e.stopPropagation(); handleItemUpdate(heroIdx, 'accessories', null, aIdx) }}
-                                                            className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-500 transition-colors z-10"
+                                                            className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-500 transition-colors z-10"
                                                         >
-                                                            <X size={8} />
+                                                            <span className="text-[7px] font-black">×</span>
                                                         </button>
                                                     )}
                                                 </div>
@@ -192,10 +187,7 @@ export default function GuildWarCounterCard({
                     {/* Skill Rotation */}
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>
-                            <div className={clsx(styles.sectionIcon, "bg-indigo-500/10 border-indigo-500/20")}>
-                                <Zap size={16} className="text-indigo-400" />
-                            </div>
-                            <h4 className={styles.sectionLabel}>Execution Order</h4>
+                            <SectionHeader title="Execution Order" markerColor="bg-indigo-400" />
                         </div>
 
                         <div className={styles.rotationTrack}>
@@ -221,7 +213,7 @@ export default function GuildWarCounterCard({
                                             className={clsx(styles.skillButton, "group", step.skill && styles.skillButtonActive)}
                                         >
                                             <div className="absolute inset-0 overflow-hidden rounded-[1.125rem] flex items-center justify-center">
-                                                {skillPath ? <SafeImage src={skillPath} alt="" fill sizes="100px" className="object-cover" /> : <Plus size={16} />}
+                                                {skillPath ? <SafeImage src={skillPath} alt="" fill sizes="100px" className="object-cover" /> : <span className="text-[10px] font-black opacity-10">ADD</span>}
                                             </div>
                                             <button 
                                                 onClick={(e) => {
@@ -230,7 +222,7 @@ export default function GuildWarCounterCard({
                                                 }}
                                                 className="absolute -top-1 -right-1 p-1 bg-red-600/80 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10"
                                             >
-                                                <X size={10} />
+                                                <span className="text-[8px] font-black px-1">×</span>
                                             </button>
                                         </div>
                                     </div>
@@ -244,7 +236,7 @@ export default function GuildWarCounterCard({
                                 }}
                                 className={clsx(styles.skillButton, "border-dashed opacity-40 hover:opacity-100")}
                             >
-                                <Plus size={20} />
+                                <span className="text-[10px] font-black">+ STEP</span>
                             </button>
                         </div>
                     </div>
