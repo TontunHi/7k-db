@@ -45,7 +45,7 @@ export default function GuildWarSkillPicker({
                         
                         const heroSlug = heroFile.replace(/\.[^/.]+$/, "")
                         const heroName = heroSlug.replace(/^(l\+\+|l\+|l|r|uc|c)_/i, '').replace(/_/g, ' ')
-                        const skills = skillsMap?.[heroSlug] || ["4", "3", "2", "1"]
+                        const skills = (skillsMap?.[heroSlug] || ["4", "3", "2", "1"]).slice().sort((a, b) => b.localeCompare(a))
 
                         return (
                             <div key={heroIdx} className={styles.heroRow}>
