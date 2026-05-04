@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 
 const PLATFORMS = {
     youtube: { icon: Youtube, color: 'text-[#FF0000]', bg: 'bg-red-500/10', border: 'border-red-500/20' },
-    tiktok: { icon: TiktokIcon, color: 'text-white', bg: 'bg-[#0a0a0a]', border: 'border-white/10' },
+    tiktok: { icon: TiktokIcon, color: 'text-foreground', bg: 'bg-foreground/5', border: 'border-border' },
     facebook: { icon: Facebook, color: 'text-[#1877F2]', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
     discord: { icon: DiscordIcon, color: 'text-[#5865F2]', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20' },
     other: { icon: LinkIcon, color: 'text-muted-foreground', bg: 'bg-muted', border: 'border-border' },

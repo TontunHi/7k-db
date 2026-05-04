@@ -63,7 +63,7 @@ export default async function RecentUpdates() {
                                 {/* Timeline Node */}
                                 <div className="relative z-10 shrink-0 mt-0.5">
                                     <div 
-                                        className="w-6 h-6 rounded-lg flex items-center justify-center transition-all duration-300 shadow-sm border border-white/5 group-hover:scale-110 bg-black/60 backdrop-blur-sm"
+                                        className="w-6 h-6 rounded-lg flex items-center justify-center transition-all duration-300 shadow-sm border border-border group-hover:scale-110 bg-card/60 backdrop-blur-sm"
                                         style={{ 
                                             boxShadow: `0 0 10px ${cfg.color}22`,
                                             borderColor: `${cfg.color}33`
@@ -77,7 +77,7 @@ export default async function RecentUpdates() {
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between gap-2 mb-0.5">
                                         <span
-                                            className="text-[8px] font-black uppercase tracking-wider py-px px-1.5 rounded-sm bg-white/5"
+                                            className="text-[8px] font-black uppercase tracking-wider py-px px-1.5 rounded-sm bg-foreground/5 dark:bg-white/5"
                                             style={{ color: cfg.color, border: `1px solid ${cfg.color}22` }}
                                         >
                                             {cfg.label}

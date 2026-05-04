@@ -25,6 +25,19 @@
     background: rgba(35, 36, 37, 0.6);
 }
 
+:global(.light) .card {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+:global(.light) .card:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: var(--primary);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+
 .content {
     position: relative;
     z-index: 2;
@@ -69,6 +82,15 @@
     margin-bottom: 1.5rem;
 }
 
+:global(.light) .title {
+    color: var(--foreground);
+}
+
+:global(.light) .description {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+
 .footer {
     display: flex;
     align-items: center;
@@ -108,6 +130,15 @@
 .card:hover .border {
     border-color: rgba(255, 255, 255, 0.2);
 }
+
+:global(.light) .border {
+    border-color: rgba(0, 0, 0, 0.05);
+}
+
+:global(.light) .card:hover .border {
+    border-color: color-mix(in srgb, var(--primary), transparent 60%);
+}
+
 
 .bottomSection {
     margin-top: 4rem;
@@ -151,6 +182,19 @@
     justify-content: center;
     align-items: center;
 }
+
+:global(.light) .updatesSection,
+:global(.light) .creditsSection {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(0, 0, 0, 0.05);
+}
+
+:global(.light) .sectionTitle {
+    color: var(--primary);
+    text-shadow: none;
+    opacity: 1;
+}
+
 
 .skeleton {
     height: 300px;
