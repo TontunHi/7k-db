@@ -26,7 +26,7 @@ export default async function RecentUpdates() {
                 <div className="flex items-center gap-2">
                     <div className="w-1 h-4 bg-gradient-to-b from-[#FFD700] to-orange-500 rounded-full shadow-[0_0_8px_rgba(255,215,0,0.4)]" />
                     <h2 className="text-[11px] font-black uppercase tracking-[0.15em] text-foreground/90">
-                        Live Intel
+                        Update Note
                     </h2>
                 </div>
                 <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-md bg-green-500/5 border border-green-500/10">

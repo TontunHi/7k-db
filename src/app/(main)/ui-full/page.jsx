@@ -1,16 +1,14 @@
 import HeroSection from '@/components/home/HeroSection'
 import FeaturesGridPremium from '@/components/home/FeaturesGridPremium'
 import BackgroundEffects from '@/components/home/BackgroundEffects'
-import styles from './page.module.css'
-
-export const revalidate = 60;
+import styles from '../page.module.css'
 
 export const metadata = {
-    title: 'Home',
-    description: 'Welcome to the ultimate Seven Knights Rebirth database. Find hero builds, tier lists, and complete stage guides.',
+    title: 'Full UI Concept',
+    description: 'A comprehensive preview of the new Text-First UI concept.',
 };
 
-export default async function HomePage() {
+export default function UIFullPage() {
     return (
         <div className={styles.page}>
             {/* Background Layer */}
