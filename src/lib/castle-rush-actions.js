@@ -115,7 +115,7 @@ export async function updateSet(id, data) {
     try {
         await pool.query(
             `UPDATE castle_rush_sets 
-             SET team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
+             SET team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?, set_index = ?
              WHERE id = ?`,
             [
                 validatedData.team_name || null, 
@@ -125,6 +125,7 @@ export async function updateSet(id, data) {
                 JSON.stringify(validatedData.skill_rotation), 
                 validatedData.video_url, 
                 validatedData.note, 
+                data.set_index || 0,
                 id
             ]
         )

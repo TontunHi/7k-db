@@ -1,10 +1,12 @@
 "use client"
 
-import { Trash2, Zap, Video, Plus, ScrollText, ChevronDown, ChevronUp } from "lucide-react"
+import { Trash2, Zap, Video, Plus, ScrollText, ChevronDown, ChevronUp, GripVertical } from "lucide-react"
 import TeamBuilder from "@/components/admin/TeamBuilder"
 import SafeImage from "@/components/shared/SafeImage"
 import { clsx } from "clsx"
 import styles from "../castle-rush.module.css"
+import { useSortable } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 
 /**
  * CastleRushTeamSet - Modular component for a single team setup
@@ -25,7 +27,23 @@ export default function CastleRushTeamSet({
     onToggleCollapse,
     onSkillError 
 }) {
-    
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id: set.id })
+
+    const sortableStyle = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 50 : undefined,
+        position: 'relative',
+        opacity: isDragging ? 0.5 : 1
+    }
+
     function getSkillImagePath(heroFilename, skillNumber) {
         if (!heroFilename) return null
         const folderName = heroFilename.replace(/\.[^/.]+$/, '')
@@ -35,13 +53,25 @@ export default function CastleRushTeamSet({
     const hasHeroes = set.heroes?.some(h => h !== null)
 
     return (
-        <div className={clsx(styles.teamSet, set._dirty && styles.teamSetDirty)}>
+        <div 
+            ref={setNodeRef} 
+            style={sortableStyle}
+            className={clsx(styles.teamSet, set._dirty && styles.teamSetDirty, isDragging && "shadow-2xl")}
+        >
             <div className={styles.setHead}>
                 <div className="flex items-center gap-4 flex-1">
-                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => onToggleCollapse(set.id)}>
-                        <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500 font-black text-sm">
-                            {index + 1}
-                        </div>
+                    <div className="flex items-center gap-2 flex-1">
+                        <button 
+                            {...attributes} 
+                            {...listeners} 
+                            className="p-1 hover:bg-accent rounded cursor-grab active:cursor-grabbing text-muted-foreground transition-colors"
+                        >
+                            <GripVertical size={18} />
+                        </button>
+                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => onToggleCollapse(set.id)}>
+                            <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500 font-black text-sm">
+                                {index + 1}
+                            </div>
                         <input
                             type="text"
                             value={set.team_name || ''}
@@ -51,6 +81,7 @@ export default function CastleRushTeamSet({
                             className={styles.setNameInput}
                         />
                     </div>
+                </div>
                     {set._dirty && <span className="px-2 py-0.5 bg-amber-500/20 text-amber-500 text-[10px] font-black rounded uppercase">Unsaved</span>}
                     
                     {isCollapsed && (

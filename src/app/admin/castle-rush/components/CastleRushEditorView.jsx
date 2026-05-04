@@ -11,6 +11,22 @@ import { clsx } from 'clsx'
 import { toast } from 'sonner'
 import styles from '../castle-rush.module.css'
 
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core'
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
+
 /**
  * CastleRushEditorView - Orchestrator for Castle Rush team setups
  */
@@ -20,6 +36,38 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
     const [skillErrors, setSkillErrors] = useState({})
     const [skillPicker, setSkillPicker] = useState(null)
     const [collapsedSets, setCollapsedSets] = useState(new Set(initialSets.map(s => s.id)))
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    )
+
+    const handleDragEnd = (event) => {
+        const { active, over } = event
+
+        if (over && active.id !== over.id) {
+            setSets((items) => {
+                const oldIndex = items.findIndex((i) => i.id === active.id)
+                const newIndex = items.findIndex((i) => i.id === over.id)
+                
+                const newItems = arrayMove(items, oldIndex, newIndex)
+                
+                // Update set_index and mark all as dirty if order changed
+                return newItems.map((item, idx) => ({
+                    ...item,
+                    set_index: idx + 1,
+                    _dirty: true
+                }))
+            })
+            toast.info("Tactical order adjusted")
+        }
+    }
 
     const handleAddSet = () => {
         const newSet = {
@@ -87,7 +135,8 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
                     heroes: set.heroes,
                     skill_rotation: set.skill_rotation,
                     video_url: set.video_url,
-                    note: set.note
+                    note: set.note,
+                    set_index: set.set_index
                 }
 
                 if (set._isNew) {
@@ -216,25 +265,37 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
                             </div>
                         )}
 
-                        {sets.map((set, idx) => (
-                            <CastleRushTeamSet
-                                key={set.id}
-                                set={set}
-                                index={idx}
-                                assets={assets}
-                                skillErrors={skillErrors}
-                                isCollapsed={collapsedSets.has(set.id)}
-                                onTeamUpdate={handleTeamUpdate}
-                                onSetUpdate={handleUpdateSet}
-                                onDelete={handleDeleteSet}
-                                onAddSlot={handleAddSlot}
-                                onDeleteSlot={handleDeleteSlot}
-                                onUpdateSlotLabel={handleUpdateSlotLabel}
-                                onOpenSkillPicker={setSkillPicker}
-                                onToggleCollapse={toggleCollapse}
-                                onSkillError={(key) => setSkillErrors(prev => ({ ...prev, [key]: true }))}
-                            />
-                        ))}
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCenter}
+                            onDragEnd={handleDragEnd}
+                            modifiers={[restrictToVerticalAxis]}
+                        >
+                            <SortableContext
+                                items={sets.map(s => s.id)}
+                                strategy={verticalListSortingStrategy}
+                            >
+                                {sets.map((set, idx) => (
+                                    <CastleRushTeamSet
+                                        key={set.id}
+                                        set={set}
+                                        index={idx}
+                                        assets={assets}
+                                        skillErrors={skillErrors}
+                                        isCollapsed={collapsedSets.has(set.id)}
+                                        onTeamUpdate={handleTeamUpdate}
+                                        onSetUpdate={handleUpdateSet}
+                                        onDelete={handleDeleteSet}
+                                        onAddSlot={handleAddSlot}
+                                        onDeleteSlot={handleDeleteSlot}
+                                        onUpdateSlotLabel={handleUpdateSlotLabel}
+                                        onOpenSkillPicker={setSkillPicker}
+                                        onToggleCollapse={toggleCollapse}
+                                        onSkillError={(key) => setSkillErrors(prev => ({ ...prev, [key]: true }))}
+                                    />
+                                ))}
+                            </SortableContext>
+                        </DndContext>
                     </div>
                 </main>
             </div>

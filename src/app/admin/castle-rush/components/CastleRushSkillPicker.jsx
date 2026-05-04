@@ -31,7 +31,7 @@ export default function CastleRushSkillPicker({
             <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
                 <header className={styles.modalHeader}>
                     <div>
-                        <h3 className="text-xl font-black text-white">Select Action</h3>
+                        <h3 className="text-xl font-black text-foreground">Select Action</h3>
                         <p className="text-xs text-muted-foreground font-bold tracking-wider">CHOOSE SKILL FOR SLOT {slotIdx + 1}</p>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-red-500/10 hover:text-red-500 rounded-xl transition-colors">

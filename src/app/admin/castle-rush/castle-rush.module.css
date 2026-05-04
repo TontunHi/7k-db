@@ -146,7 +146,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  background-color: rgba(var(--card-rgb), 0.5);
+  background-color: color-mix(in srgb, var(--card), transparent 50%);
   border: 1px solid var(--border);
   border-radius: 1rem;
   backdrop-filter: blur(8px);
@@ -154,7 +154,7 @@
 
 /* Team Set Card */
 .teamSet {
-  background-color: rgba(var(--card-rgb), 0.3);
+  background-color: color-mix(in srgb, var(--card), transparent 70%);
   border: 1px solid var(--border);
   border-radius: 1.25rem;
   overflow: hidden;
@@ -167,7 +167,7 @@
 
 .setHead {
   padding: 1rem 1.5rem;
-  background-color: rgba(var(--background-rgb), 0.5);
+  background-color: color-mix(in srgb, var(--background), transparent 50%);
   border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
@@ -179,7 +179,7 @@
   border: none;
   font-size: 1.125rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--foreground);
   outline: none;
   width: 200px;
 }
@@ -209,7 +209,7 @@
 }
 
 .rotationGrid {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: color-mix(in srgb, var(--foreground), transparent 95%);
   border: 1px solid var(--border);
   border-radius: 1rem;
   padding: 1rem;
