@@ -207,7 +207,9 @@ export default function GuildWarTeamCard({
                                             onClick={() => onOpenSkillPicker(null, sidx)}
                                             className={clsx(styles.skillButton, "group", step.skill && styles.skillButtonActive)}
                                         >
-                                            {skillPath ? <SafeImage src={skillPath} alt="" fill sizes="100px" className="object-cover" /> : <Plus size={16} />}
+                                            <div className="absolute inset-0 overflow-hidden rounded-[1.125rem] flex items-center justify-center">
+                                                {skillPath ? <SafeImage src={skillPath} alt="" fill sizes="100px" className="object-cover" /> : <Plus size={16} />}
+                                            </div>
                                             <button 
                                                 onClick={(e) => {
                                                     e.stopPropagation();
