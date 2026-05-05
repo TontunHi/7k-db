@@ -117,6 +117,16 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
         toast.info("Build removed.")
     }
 
+    const moveBuild = (index, direction) => {
+        const newIndex = index + direction
+        if (newIndex < 0 || newIndex >= builds.length) return
+        const newBuilds = [...builds]
+        const temp = newBuilds[index]
+        newBuilds[index] = newBuilds[newIndex]
+        newBuilds[newIndex] = temp
+        setBuilds(newBuilds)
+    }
+
     const updateBuild = (index, field, value) => {
         const newBuilds = [...builds]
         newBuilds[index][field] = value
@@ -372,14 +382,35 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                 Build #{bIndex + 1}
                             </div>
 
-                            {/* Delete button */}
-                            <button
-                                onClick={() => handleRemoveBuild(bIndex)}
-                                className="absolute top-4 right-4 text-red-500/60 hover:text-white bg-red-950/20 hover:bg-red-600 px-3 py-2 rounded-xl transition-all duration-200 border border-red-900/30 hover:border-red-500 z-10 hover:scale-110 active:scale-95 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]"
-                                title="Delete Build"
-                            >
-                                <ActionLabel label="REMOVE" color="text-red-500" className="group-hover:text-white" />
-                            </button>
+                            {/* Action buttons (Move/Delete) */}
+                            <div className="absolute top-4 right-4 flex gap-2 z-10">
+                                <div className="flex bg-gray-900/60 rounded-xl border border-gray-800/80 overflow-hidden">
+                                    <button
+                                        onClick={() => moveBuild(bIndex, -1)}
+                                        disabled={bIndex === 0}
+                                        className="px-3 py-1.5 hover:bg-white/5 text-gray-400 disabled:opacity-20 transition-colors border-r border-gray-800"
+                                        title="Move Up"
+                                    >
+                                        <ActionLabel label="↑" color="text-inherit" />
+                                    </button>
+                                    <button
+                                        onClick={() => moveBuild(bIndex, 1)}
+                                        disabled={bIndex === builds.length - 1}
+                                        className="px-3 py-1.5 hover:bg-white/5 text-gray-400 disabled:opacity-20 transition-colors"
+                                        title="Move Down"
+                                    >
+                                        <ActionLabel label="↓" color="text-inherit" />
+                                    </button>
+                                </div>
+
+                                <button
+                                    onClick={() => handleRemoveBuild(bIndex)}
+                                    className="text-red-500/60 hover:text-white bg-red-950/20 hover:bg-red-600 px-3 py-2 rounded-xl transition-all duration-200 border border-red-900/30 hover:border-red-500 hover:scale-110 active:scale-95 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]"
+                                    title="Delete Build"
+                                >
+                                    <ActionLabel label="REMOVE" color="text-red-500" className="group-hover:text-white" />
+                                </button>
+                            </div>
 
                             {/* Top controls */}
                             <div className="flex flex-wrap gap-4 items-end mb-6 mt-6 pr-14 relative z-10">

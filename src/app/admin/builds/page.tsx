@@ -37,11 +37,19 @@ export default async function AdminBuildsPage() {
 
                 return {
                     ...details,
-                    is_new_hero: metadata[details.slug]?.is_new_hero || false
+                    is_new_hero: metadata[details.slug]?.is_new_hero || false,
+                    sort_order: metadata[details.slug]?.sort_order || 0
                 }
             })
             .filter(Boolean)
             .sort((a, b) => {
+                // Priority 0: Specified sort order
+                if (a.sort_order !== b.sort_order) {
+                    if (a.sort_order === 0) return 1
+                    if (b.sort_order === 0) return -1
+                    return a.sort_order - b.sort_order
+                }
+
                 // Priority 1: New Heroes first
                 if (a.is_new_hero !== b.is_new_hero) return b.is_new_hero ? 1 : -1
 

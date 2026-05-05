@@ -1,15 +1,21 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { useBuildEditor } from "./hooks/useBuildEditor"
 import HeroCard from "./HeroCard"
 import BuildEditorModal from "@/components/admin/BuildEditorModal"
 import styles from "./builds.module.css"
 import { Marker } from "@/app/admin/components/AdminEditorial"
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core"
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy } from "@dnd-kit/sortable"
+import { reorderHeroes } from "@/lib/build-db"
+import { toast } from "sonner"
 
 /**
  * BuildManagerView - Main Dashboard for Builds Management
  */
-export default function BuildManagerView({ heroes = [] }) {
+export default function BuildManagerView({ heroes: initialHeroes = [] }) {
+    const [heroes, setHeroes] = useState(initialHeroes)
     const {
         editorOpen,
         setEditorOpen,
@@ -20,6 +26,39 @@ export default function BuildManagerView({ heroes = [] }) {
         handleEdit,
         handleSave
     } = useBuildEditor(heroes)
+
+    // Update local state when props change
+    useEffect(() => {
+        setHeroes(initialHeroes)
+    }, [initialHeroes])
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    )
+
+    const handleDragEnd = async (event) => {
+        const { active, over } = event
+        if (over && active.id !== over.id) {
+            const oldIndex = heroes.findIndex(h => h.filename === active.id)
+            const newIndex = heroes.findIndex(h => h.filename === over.id)
+            
+            const newHeroes = arrayMove(heroes, oldIndex, newIndex)
+            setHeroes(newHeroes)
+
+            try {
+                const orderedSlugs = newHeroes.map(h => h.slug)
+                const result = await reorderHeroes(orderedSlugs)
+                if (result.success) {
+                    toast.success("Hero order synchronized")
+                } else {
+                    toast.error("Failed to sync order: " + result.error)
+                }
+            } catch (err) {
+                toast.error("Reordering failed")
+            }
+        }
+    }
 
     return (
         <div className={styles.container}>
@@ -39,16 +78,27 @@ export default function BuildManagerView({ heroes = [] }) {
             </header>
 
             {/* Grid */}
-            <div className={styles.grid}>
-                {heroes.map((hero) => (
-                    <HeroCard 
-                        key={hero.filename} 
-                        hero={hero} 
-                        onEdit={handleEdit} 
-                        onDelete={handleDelete} 
-                    />
-                ))}
-            </div>
+            <DndContext 
+                sensors={sensors} 
+                collisionDetection={closestCenter} 
+                onDragEnd={handleDragEnd}
+            >
+                <div className={styles.grid}>
+                    <SortableContext 
+                        items={heroes.map(h => h.filename)} 
+                        strategy={rectSortingStrategy}
+                    >
+                        {heroes.map((hero) => (
+                            <HeroCard 
+                                key={hero.filename} 
+                                hero={hero} 
+                                onEdit={handleEdit} 
+                                onDelete={handleDelete} 
+                            />
+                        ))}
+                    </SortableContext>
+                </div>
+            </DndContext>
 
             {/* Loading Overlay */}
             {isLoading && (

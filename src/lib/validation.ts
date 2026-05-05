@@ -143,7 +143,8 @@ export const HeroSchema = z.object({
   name: z.string().min(1).max(200),
   grade: z.string().max(10),
   skillPriority: z.array(z.string()).optional(),
-  is_new_hero: z.boolean().optional()
+  is_new_hero: z.boolean().optional(),
+  sort_order: z.number().int().optional()
 })
 
 export const BuildSchema = z.object({

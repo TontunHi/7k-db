@@ -49,11 +49,19 @@ export async function getHeroBuildList(): Promise<HeroListItem[]> {
                     grade: grade,
                     name: file.replace(/^(l\+\+|l\+|l|r)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " "),
                     is_new_hero: metadata[slug]?.is_new_hero || false,
-                    type: metadata[slug]?.type || null
+                    type: metadata[slug]?.type || null,
+                    sort_order: metadata[slug]?.sort_order || 0
                 }
             })
-            .filter((h): h is HeroListItem => h !== null)
+            .filter((h): h is HeroListItem & { sort_order: number } => h !== null)
             .sort((a, b) => {
+                // 0. sort_order (if specified)
+                if (a.sort_order !== b.sort_order) {
+                    if (a.sort_order === 0) return 1
+                    if (b.sort_order === 0) return -1
+                    return a.sort_order - b.sort_order
+                }
+
                 // 1. is_new_hero
                 if (a.is_new_hero !== b.is_new_hero) return b.is_new_hero ? 1 : -1
 

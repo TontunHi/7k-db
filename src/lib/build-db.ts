@@ -37,9 +37,9 @@ export async function getHeroData(filename: string) {
 
 export async function getHeroesMetadata() {
     await ensureDB()
-    const [rows] = await pool.query<({ filename: string; is_new_hero: number; type: string | null })[] & RowDataPacket[]>("SELECT filename, is_new_hero, type FROM heroes")
-    return rows.reduce((acc: Record<string, { is_new_hero: boolean; type: string | null }>, r) => {
-        acc[r.filename] = { is_new_hero: !!r.is_new_hero, type: r.type || null }
+    const [rows] = await pool.query<({ filename: string; is_new_hero: number; type: string | null; sort_order: number })[] & RowDataPacket[]>("SELECT filename, is_new_hero, type, sort_order FROM heroes")
+    return rows.reduce((acc: Record<string, { is_new_hero: boolean; type: string | null; sort_order: number }>, r) => {
+        acc[r.filename] = { is_new_hero: !!r.is_new_hero, type: r.type || null, sort_order: r.sort_order || 0 }
         return acc
     }, {})
 }
@@ -69,16 +69,21 @@ export async function saveHeroData(hero: HeroInput): Promise<ActionResponse> {
     
     // upsert
     await pool.query(`
-    INSERT INTO heroes (filename, name, grade, skill_priority, is_new_hero)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO heroes (filename, name, grade, skill_priority, is_new_hero, sort_order)
+    VALUES (?, ?, ?, ?, ?, ?)
     ON DUPLICATE KEY UPDATE 
-    name = VALUES(name), grade = VALUES(grade), skill_priority = VALUES(skill_priority), is_new_hero = VALUES(is_new_hero)
+    name = VALUES(name), 
+    grade = VALUES(grade), 
+    skill_priority = VALUES(skill_priority), 
+    is_new_hero = VALUES(is_new_hero),
+    sort_order = COALESCE(VALUES(sort_order), sort_order)
   `, [
         slug, 
         validatedHero.name, 
         validatedHero.grade, 
         JSON.stringify(validatedHero.skillPriority || []), 
-        validatedHero.is_new_hero ? 1 : 0
+        validatedHero.is_new_hero ? 1 : 0,
+        validatedHero.sort_order ?? 0
     ])
 
     // Log update
@@ -90,7 +95,7 @@ export async function saveHeroData(hero: HeroInput): Promise<ActionResponse> {
 export async function getHeroBuilds(heroFilename: string) {
     await ensureDB()
     const slug = heroFilename.replace(/\.[^/.]+$/, "")
-    const [rows] = await pool.query<RowDataPacket[]>("SELECT * FROM builds WHERE hero_filename = ?", [slug])
+    const [rows] = await pool.query<RowDataPacket[]>("SELECT * FROM builds WHERE hero_filename = ? ORDER BY build_index ASC", [slug])
     return rows.map(row => ({
         ...row,
         id: row.id,
@@ -124,10 +129,11 @@ export async function saveHeroBuilds(heroFilename: string, builds: BuildInput[])
         // Replace all builds strategy
         await connection.query("DELETE FROM builds WHERE hero_filename = ?", [slug])
 
-        for (const build of validatedBuilds) {
+        for (let i = 0; i < validatedBuilds.length; i++) {
+            const build = validatedBuilds[i]
             await connection.query(`
-        INSERT INTO builds (hero_filename, c_level, modes, note, weapons, armors, accessories, substats, min_stats)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO builds (hero_filename, c_level, modes, note, weapons, armors, accessories, substats, min_stats, build_index)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `, [
                 slug,
                 build.cLevel,
@@ -137,7 +143,8 @@ export async function saveHeroBuilds(heroFilename: string, builds: BuildInput[])
                 JSON.stringify(build.armors),
                 JSON.stringify(build.accessories),
                 JSON.stringify(build.substats),
-                JSON.stringify(build.minStats || {})
+                JSON.stringify(build.minStats || {}),
+                i + 1
             ])
         }
 
@@ -159,6 +166,29 @@ export async function saveHeroBuilds(heroFilename: string, builds: BuildInput[])
         return { success: false, error: error.message }
     } finally {
         connection.release()
+    }
+}
+
+export async function reorderHeroes(orderedSlugs: string[]): Promise<ActionResponse> {
+    await requireAdmin()
+    try {
+        await ensureDB()
+        // Update each hero's sort_order based on its position in the array
+        for (let i = 0; i < orderedSlugs.length; i++) {
+            await pool.query(
+                'UPDATE heroes SET sort_order = ? WHERE filename = ?',
+                [i + 1, orderedSlugs[i]]
+            )
+        }
+        
+        const { revalidatePath } = await import('next/cache')
+        revalidatePath('/admin/builds')
+        revalidatePath('/build')
+        
+        return { success: true }
+    } catch (error) {
+        console.error("Reorder Heroes Error:", error)
+        return { success: false, error: error.message }
     }
 }
 

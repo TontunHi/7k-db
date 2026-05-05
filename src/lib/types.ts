@@ -9,6 +9,7 @@ export interface Hero extends RowDataPacket {
   slug: string;
   skill_priority: string | any[] | null;
   is_new_hero: number;
+  sort_order: number;
 }
 
 export interface TotalWarSet extends RowDataPacket {
