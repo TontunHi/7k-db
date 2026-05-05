@@ -9,6 +9,7 @@ export interface HeroListItem {
     name: string;
     is_new_hero: boolean;
     type: string | null;
+    sort_order: number;
 }
 
 /**
