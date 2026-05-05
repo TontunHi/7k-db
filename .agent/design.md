@@ -9,9 +9,10 @@
 
 ## 🛠 2. Technical Rules
 - **Logic Integrity:** DO NOT modify Business Logic, API Actions, or State Management. Edit only JSX/Return blocks and styles.
-- **Tailwind CSS First:** Use Tailwind CSS 4 for all styling. Avoid unnecessary inline styles.
-- **Pure Theming:** Use CSS Variables or Tailwind Tokens for 100% Dark/Light mode support. No hardcoded hex codes.
-- **Mobile-First:** Ensure responsive perfection across all device sizes.
+- **CSS Modules First:** Use CSS Modules (`[name].module.css`) for all component styling. Place the CSS file in the same directory as the component.
+- **Theming & Variables:** Use CSS Variables from `globals.css` (e.g., `var(--bg-color)`) for 100% Dark/Light mode support. No hardcoded hex codes.
+- **Mobile-First:** Ensure responsive perfection using media queries within CSS Modules.
+- **Cleanup:** Avoid unused classes and ensure naming consistency (PascalCase for components, kebab-case for CSS classes).
 
 ## 🔄 3. Redesign Workflow
 1. **Audit:** Analyze current UI weaknesses (Hierarchy, spacing, readability).
