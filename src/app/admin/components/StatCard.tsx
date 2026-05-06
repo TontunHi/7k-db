@@ -4,24 +4,17 @@ import * as React from "react"
 import styles from "../admin-dashboard.module.css"
 import { Marker } from "./AdminEditorial"
 
-export default function StatCard({ label, value, colorClass }) {
-    const [decorId, setDecorId] = React.useState(0)
-    
-    React.useEffect(() => {
-        setDecorId(Math.floor(Math.random() * 9) + 1)
-    }, [])
-
+export default function StatCard({ label, value, colorClass = "bg-primary" }) {
     return (
         <div className={styles.statCard}>
-            <div className={styles.statHeader}>
-                <Marker color={colorClass?.replace('text-', 'bg-')} />
-                <div className={styles.statGlow} />
+            <div className="flex items-start justify-between">
+                <div className={styles.statInfo}>
+                    <div className={styles.statLabel}>{label}</div>
+                    <div className={styles.statValue}>{value}</div>
+                </div>
+                <Marker color={colorClass} className="h-8 w-1" />
             </div>
-            <div className="relative z-10">
-                <div className={styles.statLabel}>{label}</div>
-                <div className={styles.statValue}>{value}</div>
-            </div>
-            <div className={styles.statDecor}>0{decorId || 1}</div>
+            <div className={styles.statGlow} style={{ background: `var(--${colorClass.replace('bg-', '')})`, opacity: 0.03 }} />
         </div>
     )
 }

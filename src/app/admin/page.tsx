@@ -8,22 +8,17 @@ export const metadata = {
     description: "Manage all aspects of the 7K Database."
 }
 
-/**
- * AdminDashboard - Server Component
- * Responsible for authentication and data fetching.
- */
 export default async function AdminDashboard() {
-    // 1. Authentication & Guarding
+    // Auth Guard
     await requireAdmin()
     const user = await getAdminUser()
     
-    // 2. Data Fetching
+    // Fetch Data
     const [stats, recentLogs] = await Promise.all([
         getDashboardStats(),
         getRecentUpdates(15)
     ])
 
-    // 3. Render View (Client Component)
     return (
         <AdminDashboardView 
             user={user} 

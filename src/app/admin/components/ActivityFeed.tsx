@@ -1,6 +1,6 @@
 "use client"
 
-import styles from "../admin-dashboard.module.css"
+import v2Styles from "../admin-dashboard.module.css"
 import { ActionLabel } from "./AdminEditorial"
 import Link from "next/link"
 
@@ -13,47 +13,38 @@ const ACTION_COLORS = {
 
 export default function ActivityFeed({ logs = [] }) {
     return (
-        <div className={styles.activitySidebar}>
-            <div className={styles.activityHeader}>
-                <h2 className={styles.sidebarTitle}>Protocol Stream</h2>
-                <Link href="/admin/logs" className={styles.viewAllLink}>
-                    FULL LOG
+        <div className={v2Styles.activitySidebar}>
+            <div className={v2Styles.activityHeader}>
+                <h2 className={v2Styles.feedTitle}>ADMIN LOG</h2>
+                <Link href="/admin/logs" className={v2Styles.viewAllLink}>
+                    VIEW ALL
                 </Link>
             </div>
 
-            <div className={styles.activityCard}>
+            <div className={v2Styles.activityCard}>
                 {logs && logs.length > 0 ? (
-                    <div className={styles.activityList}>
+                    <div className={v2Styles.activityList}>
                         {logs.map((log, i) => {
                             const actionColor = ACTION_COLORS[log.action_type] || ACTION_COLORS.default
 
                             return (
-                                <div key={i} className={styles.logItem}>
-                                    <div className={styles.logIndicatorWrapper}>
-                                        <div className={`${styles.logDot} ${
-                                            log.action_type === 'create' ? styles.dotEmerald : 
-                                            log.action_type === 'delete' ? styles.dotRed : styles.dotBlue
+                                <div key={i} className={v2Styles.logItem}>
+                                    <div className={v2Styles.logIndicatorWrapper}>
+                                        <div className={`${v2Styles.logDot} ${
+                                            log.action_type === 'create' ? v2Styles.dotEmerald : 
+                                            log.action_type === 'delete' ? v2Styles.dotRed : v2Styles.dotBlue
                                         }`} />
-                                        {i !== logs.length - 1 && <div className={styles.logLine} />}
+                                        {i !== logs.length - 1 && <div className={v2Styles.logLine} />}
                                     </div>
-                                    <div className="flex-1 pb-6">
-                                        <div className={styles.logMeta}>
-                                            <div className="flex items-center gap-1.5">
-                                                <span>{log.display_time}</span>
-                                            </div>
-                                            <span className="opacity-30">•</span>
-                                            <span className="text-[9px] uppercase font-bold tracking-widest">{log.admin_name || 'System'}</span>
+                                    <div className="flex-1 pb-4">
+                                        <div className={v2Styles.logMeta}>
+                                            <span className="font-semibold">{log.admin_name || 'System'}</span>
+                                            <span className="opacity-40">{log.display_time}</span>
                                         </div>
-                                        <div className={styles.logContent}>
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <ActionLabel label={log.action_type} color={actionColor} size="text-[9px]" />
-                                            </div>
-                                            <span className={styles.logTarget}>{log.target_name}</span>
-                                            {log.message && (
-                                                <p className="text-[10px] text-muted-foreground mt-1 line-clamp-1 opacity-70 italic font-medium">
-                                                    {log.message}
-                                                </p>
-                                            )}
+                                        <div className={v2Styles.logContent}>
+                                            <span className={v2Styles.logTarget}>{log.target_name}</span>
+                                            <span className="mx-2 opacity-20">/</span>
+                                            <ActionLabel label={log.action_type} color={actionColor} size="text-[8px]" />
                                         </div>
                                     </div>
                                 </div>
@@ -61,7 +52,7 @@ export default function ActivityFeed({ logs = [] }) {
                         })}
                     </div>
                 ) : (
-                    <div className={styles.emptyLogs}>No active streams.</div>
+                    <div className={v2Styles.emptyLogs}>No active logs.</div>
                 )}
             </div>
         </div>

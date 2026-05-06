@@ -116,6 +116,5 @@ export async function validateSession(token: string): Promise<boolean> {
 /**
  * Backward compatibility helpers (no-op since we are stateless now)
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function deleteSession(token: string): Promise<void> { }
 export async function cleanupSessions(): Promise<void> { }

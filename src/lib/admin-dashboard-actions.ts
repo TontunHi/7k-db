@@ -1,7 +1,7 @@
 "use server"
 
 import pool, { initDB } from './db'
-import { getReachStats } from './analytics-actions'
+import { getReachStats, getTodayStats } from './analytics-actions'
 import { type RowDataPacket } from 'mysql2'
 
 export interface DashboardStats {
@@ -12,6 +12,8 @@ export interface DashboardStats {
     users: number;
     views: number;
     visitors: number;
+    viewsToday: number;
+    visitorsToday: number;
 }
 
 export async function getDashboardStats(): Promise<DashboardStats> {
@@ -32,7 +34,10 @@ export async function getDashboardStats(): Promise<DashboardStats> {
             pool.query<({ count: number })[] & RowDataPacket[]>("SELECT COUNT(*) as count FROM users")
         ])
 
-        const reach = await getReachStats()
+        const [reach, today] = await Promise.all([
+            getReachStats(),
+            getTodayStats()
+        ])
 
         return {
             builds: buildRows[0]?.count || 0,
@@ -41,7 +46,9 @@ export async function getDashboardStats(): Promise<DashboardStats> {
             stages: stageRows[0]?.count || 0,
             users: userRows[0]?.count || 0,
             views: reach.pv || 0,
-            visitors: reach.uv || 0
+            visitors: reach.uv || 0,
+            viewsToday: today.pv || 0,
+            visitorsToday: today.uv || 0
         }
     } catch (error) {
         console.error('Error fetching dashboard stats:', error)
@@ -52,7 +59,9 @@ export async function getDashboardStats(): Promise<DashboardStats> {
             stages: 0,
             users: 0,
             views: 0,
-            visitors: 0
+            visitors: 0,
+            viewsToday: 0,
+            visitorsToday: 0
         }
     }
 }

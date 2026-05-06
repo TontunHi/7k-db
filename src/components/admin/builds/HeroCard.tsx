@@ -58,8 +58,8 @@ export default function HeroCard({ hero, onEdit, onDelete }) {
 
                 {/* NEW Badge */}
                 {hero.is_new_hero && (
-                    <div className="absolute top-2.5 left-2.5 z-10 px-2.5 py-1 bg-[#FFD700] text-black text-[10px] font-black uppercase tracking-[0.2em] rounded shadow-[0_0_15px_rgba(255,215,0,0.5)]">
-                        NEW_HERO
+                    <div className="absolute top-2.5 left-2.5 z-10 px-2.5 py-1 bg-[#FFD700] text-black text-[10px] font-black tracking-wider rounded shadow-[0_0_15px_rgba(255,215,0,0.5)]">
+                        New Hero
                     </div>
                 )}
 
@@ -67,7 +67,7 @@ export default function HeroCard({ hero, onEdit, onDelete }) {
                 <div className={clsx(styles.overlay, "bg-black/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300")}>
                     <div className="px-5 py-2.5 bg-black/90 border border-[#FFD700] rounded-sm transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 shadow-[0_0_20px_rgba(255,215,0,0.2)]">
                         <span className="text-[#FFD700] text-[11px] font-black uppercase tracking-[0.2em]">
-                            EDIT_INTEL
+                            EDIT BUILD
                         </span>
                     </div>
                 </div>
@@ -79,9 +79,9 @@ export default function HeroCard({ hero, onEdit, onDelete }) {
                     e.stopPropagation()
                     onDelete(hero.filename)
                 }}
-                className="absolute top-2.5 right-2.5 z-20 px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-[10px] font-black uppercase tracking-widest rounded-sm opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300 shadow-xl border border-red-400/50"
+                className="absolute top-2.5 right-2.5 z-20 w-8 h-8 bg-red-600 hover:bg-red-500 text-white flex items-center justify-center rounded-sm opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300 shadow-xl border border-red-400/50"
             >
-                DEL
+                <span className="text-lg font-bold">×</span>
             </button>
         </div>
     )

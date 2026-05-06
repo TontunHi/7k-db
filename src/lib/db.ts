@@ -2,11 +2,8 @@ import mysql, { type Pool } from "mysql2/promise";
 import { env } from "./env";
 
 declare global {
-  // eslint-disable-next-line no-var
   var mysqlPool: Pool | undefined;
-  // eslint-disable-next-line no-var
   var dbInitialized: boolean | undefined;
-  // eslint-disable-next-line no-var
   var rbacInitialized: boolean | undefined;
 }
 

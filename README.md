@@ -1,9 +1,8 @@
+# 🛡️ 7K-DB: Seven Knights Rebirth Database
+
+7K-DB คือแพลตฟอร์มฐานข้อมูลและเครื่องมือวางแผนกลยุทธ์สำหรับเกม **Seven Knights Rebirth** ที่ถูกออกแบบมาเพื่อความรวดเร็ว แม่นยำ และใช้งานง่าย พัฒนาด้วยเทคโนโลยีเว็บยุคใหม่เพื่อรองรับข้อมูลเกมที่มีการอัปเดตตลอดเวลา
+
 <div align="center">
-
-# 7k-db
-
-Seven Knights Rebirth database, strategy guide, tooling suite, and admin
-dashboard built with Next.js App Router.
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-149ECA?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
@@ -12,178 +11,112 @@ dashboard built with Next.js App Router.
 
 </div>
 
-## Overview
+---
 
-`7k-db` is a production-focused web application for managing and publishing
-Seven Knights Rebirth data. It combines a public-facing guide site with an
-admin dashboard for content operations, asset management, analytics, and user
-permissions.
+## 🎮 Public Experience (ฟีเจอร์สำหรับผู้ใช้งาน)
 
-The app is designed for fast iteration on game content while keeping admin-only
-workflows protected behind signed sessions and role-based permissions.
+ฐานข้อมูลที่ครบวงจรเพื่อให้ผู้เล่นสามารถเข้าถึงข้อมูลเชิงลึกได้ทันที:
 
-## Highlights
+- **Hero Database & Builds:** ข้อมูล Hero ครบถ้วนพร้อมระบบแนะนำการใส่อุปกรณ์และอัปเกรดสกิล
+- **Strategy Guides:** คู่มือการผ่านด่าน PVE (Raid, Dungeon, Castle Rush, Advent Expedition)
+- **Competitive Meta:** ติดตาม Meta การจัดทีมสำหรับ Arena, Guild War และ Total War
+- **Tactical Tools:** 
+  - **Build Simulator:** จำลองการใส่อุปกรณ์และคำนวณ Stats
+  - **Tierlist Maker:** เครื่องมือสร้างตารางจัดอันดับ Hero ส่วนตัว
+  - **Hero Stats Builder:** วางแผนการอัปเกรดตัวละครล่วงหน้า
 
-- Public database and strategy pages for heroes, builds, tier lists, stages,
-  raids, dungeons, castle rush, advent expedition, arena, guild war, and total war
-- Admin dashboard for content management, user management, permissions, credits,
-  analytics, registry data, and asset uploads
-- Public tools for tier list creation, hero stat planning, and build simulation
-- MySQL-backed persistence with manual migration and synchronization scripts
-- Hardened asset upload path with file type, extension, size, path, and overwrite
-  protection
-- Focused unit tests for session token behavior and asset validation
+---
 
-## Tech Stack
+## 🛡️ Strategic Command (ฟีเจอร์สำหรับผู้ดูแลระบบ)
 
-| Layer | Tools |
+ระบบหลังบ้านดีไซน์ใหม่ที่เน้นความสบายตาและประสิทธิภาพการทำงาน (Admin Dashboard):
+
+- **Modern Dashboard:** หน้าสรุปผลแบบ Minimalist ติดตามสถิติ **Views Today** และ **Unique Users** แบบ Real-time
+- **Content Logistics:** จัดการข้อมูล Hero, Build, และด่านต่างๆ ผ่าน Interface ที่ใช้งานง่าย
+- **Asset Management:** ระบบอัปโหลดและจัดการรูปภาพ Hero/Items พร้อมระบบความปลอดภัยในการตรวจสอบไฟล์
+- **Admin Logs:** ระบบตรวจสอบประวัติการทำงานของผู้ดูแลระบบ (Who did what, and when)
+- **User Permissions:** ควบคุมสิทธิ์การเข้าถึงเมนูต่างๆ ตามบทบาท (Role-based Access Control)
+
+---
+
+### 🛠️ Tech Stack (เทคโนโลยีที่ใช้)
+
+| ส่วนงาน | เทคโนโลยี |
 | --- | --- |
-| Framework | Next.js 16 App Router |
-| UI | React 19, Tailwind CSS 4, CSS Modules |
-| Icons and UX | Lucide React, Sonner, next-themes |
-| Data | MySQL, mysql2 |
-| Auth | Signed HMAC session cookies, admin permissions |
-| Testing | Vitest |
-| Tooling | ESLint, npm scripts |
+| **Framework** | Next.js 16 (App Router), React 19 |
+| **Styling** | Tailwind CSS 4, CSS Modules (Component-level) |
+| **Database** | MySQL 8.0+ (mysql2) |
+| **Testing** | Vitest (Unit & Integration Testing) |
+| **Auth** | Secure HMAC Session Cookies |
+| **Icons** | Editorial Design System (Custom Markers & Labels) |
 
-## Project Structure
+---
 
-```text
-src/
-  app/                  App Router pages, layouts, API routes, metadata
-  components/           Public UI, admin UI, tools, layouts, shared components
-  lib/                  Server actions, database access, auth, validation helpers
-public/
-  heroes/               Hero images
-  skills/               Skill images
-  items/                Equipment and item images
-  ...                   Guide and mode-specific assets
-scripts/
-  migrate.mjs           Database schema migration
-  sync-admin.mjs        Admin account synchronization
-  sync-registry.mjs     Asset registry synchronization
-```
+## 🚀 Getting Started (การเริ่มต้นใช้งาน)
 
-## Requirements
+### 1. Requirements
+- Node.js (Compatible with Next.js 16)
+- MySQL 8+
+- npm / pnpm
 
-- Node.js compatible with Next.js 16
-- npm
-- MySQL 8 or compatible provider
-- Write access to `public/` asset folders if the asset manager is enabled in
-  production
-
-## Environment
-
-Create a `.env` file in the project root:
+### 2. Environment Setup
+สร้างไฟล์ `.env` ไว้ที่ Root ของโปรเจกต์:
 
 ```env
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=
+# Database Configuration
+DB_HOST=your_host
+DB_USER=your_user
+DB_PASSWORD=your_password
 DB_NAME=7k-db
-DB_SSL=false
 
-SESSION_SECRET=replace_with_a_long_random_secret
-ADMIN_USER=admin
-ADMIN_PASSWORD=replace_with_a_strong_password_or_bcrypt_hash
-ANALYTICS_SALT=replace_with_a_long_random_salt
+# Security
+SESSION_SECRET=your_long_random_secret
+ANALYTICS_SALT=your_analytics_salt
+
+# Initial Admin Setup
+ADMIN_USER=admin_username
+ADMIN_PASSWORD=admin_password
 ```
 
-For production, use strong random values for `SESSION_SECRET` and
-`ANALYTICS_SALT`. If the database provider requires TLS, set `DB_SSL=true`.
-
-## Getting Started
-
-Install dependencies:
-
+### 3. Installation & Deployment
 ```bash
+# ติดตั้ง Dependencies
 npm install
-```
 
-Run database migrations:
-
-```bash
+# รันระบบ Database Migration
 node scripts/migrate.mjs
-```
 
-Create or update the admin account from `.env`:
-
-```bash
+# ซิงค์ข้อมูลบัญชี Admin
 node scripts/sync-admin.mjs
-```
 
-Start the development server:
-
-```bash
+# เริ่มรันระบบในโหมดพัฒนา
 npm run dev
 ```
 
-By default, Next.js serves the app at:
+---
+
+## 🔒 Security & Integrity
+
+- **Data Safety:** ระบบมีการใช้การตรวจสอบสิทธิ์ในระดับ Server-side ทุกจุด เพื่อป้องกันการเข้าถึงหน้า Admin โดยไม่ได้รับอนุญาต
+- **Input Validation:** ใช้ TypeScript ในการตรวจสอบข้อมูลที่รับเข้าสู่ระบบทั้งหมด
+- **Privacy:** ระบบ Analytics ถูกออกแบบมาเพื่อเก็บสถิติการใช้งานโดยไม่ระบุตัวตน (Anonymous Tracking)
+- **Hardened Uploads:** การอัปโหลดไฟล์มีการจำกัดนามสกุล ขนาด และตรวจเช็คเส้นทางไฟล์เพื่อป้องกันการโจมตีผ่านไฟล์รูปภาพ
+
+---
+
+## 📂 Project Structure
 
 ```text
-http://localhost:3000
+src/
+  app/         # Routing, API, และ Layouts
+  components/  # UI Components (แยกส่วน Public และ Admin)
+  lib/         # Server Actions, Database Access, และ Auth
+  hooks/       # Custom React Hooks
+public/        # แหล่งเก็บ Assets (Heroes, Skills, Items)
+scripts/       # Scripts สำหรับดูแลระบบ Database และ Registry
 ```
 
-## Common Commands
+---
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Start the local development server |
-| `npm run lint` | Run ESLint |
-| `npm test` | Run Vitest unit tests |
-| `npm run build` | Create a production build |
-| `npm start` | Start the production server |
-| `node scripts/migrate.mjs` | Apply database migrations |
-| `node scripts/sync-admin.mjs` | Sync the admin account from environment values |
-| `node scripts/sync-registry.mjs` | Sync public assets into registry data |
-| `node scripts/hash.mjs <password>` | Generate a bcrypt hash for admin password setup |
-
-## Security Notes
-
-- Admin pages are protected by signed session cookies.
-- Session tokens include issued-at and expiry timestamps.
-- Asset API access requires the `MANAGE_ASSETS` permission or super admin role.
-- Asset uploads are limited to supported image formats and size-capped.
-- Local database artifacts such as `*.sqlite` and `*.db` are ignored by git.
-
-## Production Deployment
-
-Build the app:
-
-```bash
-npm run build
-```
-
-Start the app:
-
-```bash
-npm start
-```
-
-For a server deployment, run the app behind a process manager:
-
-```bash
-pm2 start npm --name "7k-db" -- start
-```
-
-Before deploying, confirm:
-
-- `.env` contains production database credentials
-- `SESSION_SECRET` and `ANALYTICS_SALT` are strong random values
-- migrations have been applied
-- the runtime user can write to allowed `public/` asset folders if uploads are used
-
-## Verification
-
-Recommended checks before pushing or deploying:
-
-```bash
-npm run lint
-npm test
-npm run build
-```
-
-## License
-
-Custom License - All Rights Reserved.
+**License:** Custom License - All Rights Reserved.  
+*พัฒนาด้วยความใส่ใจเพื่อชุมชน Seven Knights Rebirth*

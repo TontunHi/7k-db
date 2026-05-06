@@ -23,6 +23,26 @@ export async function getReachStats() {
   }
 }
 
+// Get Today's Stats
+export async function getTodayStats() {
+  try {
+    const [pvResult] = await pool.query<({ pv: number })[] & RowDataPacket[]>(
+      `SELECT COUNT(*) as pv FROM analytics_views WHERE event_type = "pageview" AND page_path NOT LIKE '/admin%' AND DATE(created_at) = CURDATE()`
+    );
+    const [uvResult] = await pool.query<({ uv: number })[] & RowDataPacket[]>(
+      `SELECT COUNT(DISTINCT ip_hash) as uv FROM analytics_views WHERE page_path NOT LIKE '/admin%' AND DATE(created_at) = CURDATE()`
+    );
+    
+    return {
+      pv: pvResult[0].pv || 0,
+      uv: uvResult[0].uv || 0,
+    };
+  } catch (error) {
+    console.error('[Analytics] Error getting today stats:', error);
+    return { pv: 0, uv: 0 };
+  }
+}
+
 // Growth Stats: Top 10 Hero Builds
 export async function getTopHeroBuilds() {
   try {
