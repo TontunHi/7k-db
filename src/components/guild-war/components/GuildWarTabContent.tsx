@@ -1,5 +1,5 @@
 'use client'
-import { LayoutGrid, PawPrint, Info, Box, Zap, Target, Shield } from 'lucide-react'
+import { LayoutGrid, PawPrint, Info, Box, Zap, Target, Shield, ArrowRight } from 'lucide-react'
 import SafeImage from '@/components/shared/SafeImage'
 import PetDisplay from '@/components/shared/PetDisplay'
 import { getSlotType, getStaggerClass, getSkillImagePath } from '@/lib/formation-utils'
@@ -178,10 +178,7 @@ export default function GuildWarTabContent({ activeTab, team, heroImageMap }) {
                                     </div>
                                     {!isLast && (
                                         <div className={styles.skillConnector}>
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground/40">
-                                                <path d="M5 12h14"></path>
-                                                <path d="m12 5 7 7-7 7"></path>
-                                            </svg>
+                                            <ArrowRight size={24} strokeWidth={2.5} />
                                         </div>
                                     )}
                                 </div>

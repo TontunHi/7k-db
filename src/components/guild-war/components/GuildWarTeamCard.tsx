@@ -61,7 +61,7 @@ export default function GuildWarTeamCard({ team, heroImageMap, index }) {
 
                                 <div className={styles.teamBrief}>
                                     <div className={styles.badgeGroup}>
-                                        {team.type && team.type !== 'general' && (
+                                        {team.type && team.type !== 'general' && team.type !== 'defender' && (
                                             <span className={clsx(
                                                 styles.typeBadge,
                                                 team.type === 'attacker' ? styles.attacker : styles.defender
@@ -86,7 +86,7 @@ export default function GuildWarTeamCard({ team, heroImageMap, index }) {
                         <div className={styles.expandedHeader}>
                             <div className={styles.teamTitleGroup}>
                                 <div className={styles.badgeGroup}>
-                                    {team.type && team.type !== 'general' && (
+                                    {team.type && team.type !== 'general' && team.type !== 'defender' && (
                                         <span className={clsx(
                                             styles.typeBadge,
                                             team.type === 'attacker' ? styles.attacker : styles.defender
