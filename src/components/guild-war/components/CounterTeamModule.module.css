@@ -468,22 +468,19 @@
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 2.5rem;
-  padding: 1.5rem;
-  overflow-x: auto;
+  padding: 2rem;
 }
 
-.rotationSequenceWrapper::-webkit-scrollbar {
-  display: none;
+@media (min-width: 640px) {
+  .rotationSequenceWrapper { padding: 3rem; }
 }
 
 .rotationSequence {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 1.5rem;
-  min-width: max-content;
-  min-height: 120px;
+  gap: 3rem;
 }
 
 @media (min-width: 640px) {
@@ -493,7 +490,7 @@
 .rotationStep {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 3rem;
 }
 
 @media (min-width: 640px) {
@@ -528,24 +525,24 @@
 
 .rotationSkillIconBox {
   position: relative;
-  width: 4rem;
-  height: 4rem;
-  border-radius: 1.5rem;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 2rem;
   overflow: hidden;
   border: 2px solid var(--border);
   background: var(--background);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
   transition: all 0.5s ease;
 }
 
 :global(.dark) .rotationSkillIconBox {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 @media (min-width: 640px) {
   .rotationSkillIconBox {
-    width: 5.5rem;
-    height: 5.5rem;
+    width: 6rem;
+    height: 6rem;
   }
 }
 
@@ -571,25 +568,25 @@
 
 .rotationSkillIndex {
   position: absolute;
-  bottom: -0.25rem;
-  right: -0.25rem;
-  width: 1.5rem;
-  height: 1.5rem;
+  top: -0.5rem;
+  right: -0.5rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 9999px;
   background: var(--foreground);
   color: var(--background);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 900;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  border: 2px solid var(--card);
+  border: 4px solid var(--card);
 }
 
 .rotationSkillLabel {
-  margin-top: 0.75rem;
-  font-size: 9px;
+  margin-top: 1rem;
+  font-size: 10px;
   font-weight: 900;
   color: var(--muted-foreground);
   text-transform: uppercase;
@@ -602,15 +599,23 @@
 }
 
 .rotationConnector {
-  display: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-foreground);
+  opacity: 0.3;
+  transition: all 0.3s ease;
 }
 
-@media (min-width: 640px) {
+.rotationStep:hover .rotationConnector {
+  opacity: 0.6;
+  color: var(--primary);
+  transform: translateX(4px);
+}
+
+@media (max-width: 639px) {
   .rotationConnector {
-    display: block;
-    width: 3rem;
-    height: 1px;
-    background: linear-gradient(to right, var(--primary-opacity), transparent);
+    display: none;
   }
 }
 

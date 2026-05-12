@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { ChevronDown, Zap } from 'lucide-react'
+import { ChevronDown, Zap, ArrowRight } from 'lucide-react'
 import SafeImage from '@/components/shared/SafeImage'
 import PetDisplay from '@/components/shared/PetDisplay'
 import { getSlotType, getStaggerClass, getSkillImagePath } from '@/lib/formation-utils'
@@ -170,7 +170,7 @@ export default function CounterTeamModule({ ct, heroImageMap, accentColor = '#f4
                                                     <div className={styles.rotationSkillWrapper}>
                                                         <div className={styles.rotationSkillGlow} />
                                                         <div className={styles.rotationSkillIconBox}>
-                                                            {sPath ? <SafeImage src={sPath} alt="" fill className={styles.rotationSkillImage} /> : <div className={styles.rotationSkillPlaceholder}>?</div>}
+                                                            {sPath ? <SafeImage src={sPath} alt="" fill className="object-cover" /> : <div className="w-full h-full flex items-center justify-center text-gray-800 text-2xl font-black">?</div>}
                                                         </div>
                                                         <div className={styles.rotationSkillIndex}>
                                                             {sIdx + 1}
@@ -181,10 +181,7 @@ export default function CounterTeamModule({ ct, heroImageMap, accentColor = '#f4
                                                     </div>
                                                     {!isLast && (
                                                         <div className={styles.rotationConnector}>
-                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground/40">
-                                                                <path d="M5 12h14"></path>
-                                                                <path d="m12 5 7 7-7 7"></path>
-                                                            </svg>
+                                                            <ArrowRight size={24} strokeWidth={2.5} />
                                                         </div>
                                                     )}
                                                 </div>
