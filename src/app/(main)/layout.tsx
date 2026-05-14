@@ -1,6 +1,7 @@
 import Navbar from "@/components/layout/Navbar"
 import Footer from "@/components/layout/Footer"
 import FloatingContactWidget from "@/components/layout/FloatingContactWidget"
+import SideDecoration from "@/components/layout/SideDecoration"
 import { isContactFormEnabled } from "@/lib/setting-actions"
 
 export const metadata = {
@@ -63,6 +64,7 @@ export default async function MainLayout({ children }) {
 
     return (
         <>
+            <SideDecoration />
             <Navbar />
             <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-8">
                 {children}

@@ -66,6 +66,7 @@ export default function ArenaTeamCard({ set, index, heroImageMap }) {
                     skillRotation={set.skill_rotation} 
                     heroes={set.heroes} 
                     heroImageMap={heroImageMap} 
+                    hideHeaderIcon={true}
                 />
 
                 {/* Strategy Note */}

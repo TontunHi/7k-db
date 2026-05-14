@@ -10,12 +10,12 @@ export default function SkillSequence({
     ...props
 }: any) {
     if (!skillRotation?.length) return null;
-    const { heroImageMap, accentColor = "var(--primary)" } = props;
+    const { heroImageMap, accentColor = "var(--primary)", hideHeaderIcon = false } = props;
 
     return (
         <div className={cn("space-y-2", customClasses.container)}>
             <div className="flex items-center gap-2 px-1">
-                <Zap className="w-3 h-3 text-primary" />
+                {!hideHeaderIcon && <Zap className="w-3 h-3 text-primary" />}
                 <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Skill Rotation</span>
             </div>
             
