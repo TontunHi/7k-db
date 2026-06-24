@@ -2,7 +2,7 @@
 import NextImage from "next/image"
 import { useState, useEffect } from "react"
 
-export default function SafeImage({ src, alt, fallback = "/heroes/placeholder.webp", ...props }) {
+export default function SafeImage({ src, alt, fallback = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=", ...props }) {
     const [hasError, setHasError] = useState(false)
 
     // Ensure we don't have double extensions like .webp.webp

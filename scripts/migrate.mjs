@@ -63,10 +63,87 @@ async function runMigrations() {
         await connection.query(`
           CREATE TABLE IF NOT EXISTS heroes (
             filename VARCHAR(255) PRIMARY KEY,
+            slug VARCHAR(255) NULL,
             name VARCHAR(255),
             grade VARCHAR(50),
             skill_priority JSON,
-            is_new_hero TINYINT(1) DEFAULT 0
+            is_new_hero TINYINT(1) DEFAULT 0,
+            type VARCHAR(50) NULL,
+            hero_group VARCHAR(100) NULL,
+            sort_order INT DEFAULT 0,
+            atk_phys INT DEFAULT 0,
+            atk_mag INT DEFAULT 0,
+            def INT DEFAULT 0,
+            hp INT DEFAULT 0,
+            speed INT DEFAULT 0,
+            crit_rate DOUBLE DEFAULT 0,
+            crit_dmg DOUBLE DEFAULT 150,
+            weak_hit DOUBLE DEFAULT 0,
+            block_rate DOUBLE DEFAULT 0,
+            dmg_red DOUBLE DEFAULT 0,
+            eff_hit DOUBLE DEFAULT 0,
+            eff_res DOUBLE DEFAULT 0
+          )
+        `);
+
+        // Check and add missing stats columns to heroes table
+        const columnsToAdd = [
+            { name: "type", type: "VARCHAR(50) NULL" },
+            { name: "hero_group", type: "VARCHAR(100) NULL" },
+            { name: "sort_order", type: "INT DEFAULT 0" },
+            { name: "atk_phys", type: "INT DEFAULT 0" },
+            { name: "atk_mag", type: "INT DEFAULT 0" },
+            { name: "def", type: "INT DEFAULT 0" },
+            { name: "hp", type: "INT DEFAULT 0" },
+            { name: "speed", type: "INT DEFAULT 0" },
+            { name: "crit_rate", type: "DOUBLE DEFAULT 0" },
+            { name: "crit_dmg", type: "DOUBLE DEFAULT 150" },
+            { name: "weak_hit", type: "DOUBLE DEFAULT 0" },
+            { name: "block_rate", type: "DOUBLE DEFAULT 0" },
+            { name: "dmg_red", type: "DOUBLE DEFAULT 0" },
+            { name: "eff_hit", type: "DOUBLE DEFAULT 0" },
+            { name: "eff_res", type: "DOUBLE DEFAULT 0" }
+        ];
+
+        for (const col of columnsToAdd) {
+            const [check] = await connection.query('SHOW COLUMNS FROM heroes LIKE ?', [col.name]);
+            if (check.length === 0) {
+                try {
+                    console.log(`[DB] Adding '${col.name}' column to heroes...`);
+                    await connection.query(`ALTER TABLE heroes ADD COLUMN ${col.name} ${col.type}`);
+                } catch (e) {
+                    console.warn(`[DB] Could not add column ${col.name}:`, e.message);
+                }
+            }
+        }
+
+        // ─── Pets & Items Tables ──────────────────────────────────────────────
+        await connection.query(`
+          CREATE TABLE IF NOT EXISTS pets (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(200) NOT NULL,
+            grade VARCHAR(50) NOT NULL,
+            atk_all INT NOT NULL,
+            def INT NOT NULL,
+            hp INT NOT NULL,
+            image VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          )
+        `);
+
+        await connection.query(`
+          CREATE TABLE IF NOT EXISTS items (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(200) NOT NULL,
+            grade VARCHAR(50) NOT NULL,
+            item_type ENUM('Weapon', 'Armor', 'Accessory') NOT NULL,
+            weapon_group VARCHAR(100) NULL,
+            item_set VARCHAR(100) NULL,
+            atk_all_perc INT DEFAULT 0,
+            def_perc INT DEFAULT 0,
+            hp_perc INT DEFAULT 0,
+            image VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
           )
         `);
 
@@ -112,6 +189,8 @@ async function runMigrations() {
             accessories JSON,
             substats JSON,
             min_stats JSON,
+            dedicated_stats JSON,
+            build_index INT NOT NULL DEFAULT 0,
             FOREIGN KEY (hero_filename) REFERENCES heroes(filename) ON DELETE CASCADE
           )
         `);
@@ -119,6 +198,16 @@ async function runMigrations() {
         try {
             const [check] = await connection.query(`SHOW COLUMNS FROM builds LIKE "min_stats"`);
             if (check.length === 0) { await connection.query(`ALTER TABLE builds ADD COLUMN min_stats JSON AFTER substats`); }
+        } catch (e) {}
+
+        try {
+            const [checkIndex] = await connection.query(`SHOW COLUMNS FROM builds LIKE "build_index"`);
+            if (checkIndex.length === 0) { await connection.query(`ALTER TABLE builds ADD COLUMN build_index INT NOT NULL DEFAULT 0`); }
+        } catch (e) {}
+
+        try {
+            const [checkDed] = await connection.query(`SHOW COLUMNS FROM builds LIKE "dedicated_stats"`);
+            if (checkDed.length === 0) { await connection.query(`ALTER TABLE builds ADD COLUMN dedicated_stats JSON AFTER min_stats`); }
         } catch (e) {}
 
         await connection.query(`

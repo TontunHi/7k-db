@@ -164,7 +164,8 @@ export const BuildSchema = z.object({
     refined: z.string().optional().nullable()
   })),
   substats: z.array(z.string()),
-  minStats: z.record(z.string(), z.string().or(z.number())).optional()
+  minStats: z.record(z.string(), z.string().or(z.number())).optional(),
+  dedicatedStats: z.array(z.string().nullable()).optional()
 })
 
 export const StageSetupSchema = z.object({

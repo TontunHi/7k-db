@@ -25,5 +25,9 @@ export const MIN_STATS_KEYS = [
   { key: "blockRate", label: "Block Rate", icon: "/about_website/icon_block_rate.webp", unit: "%" },
   { key: "damageReduction", label: "Damage Taken Reduction", icon: "/about_website/icon_damage_taken_reduction.webp", unit: "%" },
   { key: "effectHit", label: "Effect Hit Rate", icon: "/about_website/icon_effect_hit_rate.webp", unit: "%" },
-  { key: "effectResist", label: "Effect Resistance", icon: "/about_website/icon_effect_resistance.webp", unit: "%" }
+  { key: "effectResist", label: "Effect Resistance", icon: "/about_website/icon_effect_resistance.webp", unit: "%" },
+  { key: "damageAmplification", label: "Damage Amplification", icon: "/about_website/icon_dedicated_damage_amplification.webp", unit: "%" },
+  { key: "crush", label: "Crush", icon: "/about_website/icon_dedicated_crush.webp", unit: "%" },
+  { key: "resilience", label: "Resilience", icon: "/about_website/icon_dedicated_resilience.webp", unit: "%" },
+  { key: "rejuvenate", label: "Rejuvenate", icon: "/about_website/icon_dedicated_rejuvenate.webp", unit: "%" }
 ]

@@ -24,7 +24,8 @@ export default function HeroRegistry({ initialData }) {
         startEditing,
         cancelEditing,
         handleSave,
-        updateFormField
+        updateFormField,
+        handleInlineUpdate
     } = useHeroRegistry(initialData)
 
     return (
@@ -65,6 +66,7 @@ export default function HeroRegistry({ initialData }) {
                                     key={hero.filename} 
                                     hero={hero} 
                                     onEdit={startEditing} 
+                                    onInlineUpdate={handleInlineUpdate}
                                 />
                             ))}
                         </tbody>

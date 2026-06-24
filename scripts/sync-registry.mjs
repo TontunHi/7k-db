@@ -106,6 +106,93 @@ async function syncPets(connection) {
     }
 }
 
+async function syncItems(connection) {
+    console.log("\n[Items] Syncing from public/items...");
+    const baseItemsDir = path.join(process.cwd(), "public", "items");
+    const types = ["weapon", "armor", "accessory"];
+
+    const itemSets = [
+        "Vanguard", "Bounty Tracker", "Paladin", "Avenger", 
+        "Orchestrator", "Spellweaver", "Assassin", "Gatekeeper", "Guardian"
+    ];
+
+    for (const type of types) {
+        const typeDir = path.join(baseItemsDir, type);
+        if (!fs.existsSync(typeDir)) continue;
+
+        const files = fs.readdirSync(typeDir).filter(f => f.endsWith(".webp"));
+        const itemType = type.charAt(0).toUpperCase() + type.slice(1); // 'Weapon', 'Armor', 'Accessory'
+
+        for (const filename of files) {
+            const baseFilename = filename.replace(".webp", "");
+            
+            let name = "";
+            let grade = "l";
+            let set = null;
+            let weaponGroup = null;
+            let atk_all_perc = 0;
+            let def_perc = 0;
+            let hp_perc = 0;
+
+            if (type === "accessory") {
+                // Parse accessory: grade_name.webp
+                const parts = baseFilename.split('_');
+                const rawGrade = parts[0].toLowerCase();
+                grade = rawGrade === "un" ? "uc" : rawGrade; // Map 'un' to 'uc' (uncommon)
+                
+                name = parts.slice(1)
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+            } else {
+                // Parse weapon / armor: Brilliant_Name_Set.webp
+                grade = "l+";
+                
+                // Determine Set
+                let matchedSet = null;
+                let namePart = baseFilename;
+
+                for (const s of itemSets) {
+                    const snakeSet = s.replace(" ", "_");
+                    if (baseFilename.endsWith(snakeSet)) {
+                        matchedSet = s;
+                        namePart = baseFilename.substring(0, baseFilename.length - snakeSet.length - 1);
+                        break;
+                    }
+                }
+
+                set = matchedSet;
+                name = namePart.split('_')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+
+                if (type === "weapon") {
+                    atk_all_perc = 15;
+                    // Determine weapon group
+                    const nameLower = name.toLowerCase();
+                    if (nameLower.includes("orb") || nameLower.includes("staff") || nameLower.includes("scripture")) {
+                        weaponGroup = "Magic";
+                    } else {
+                        weaponGroup = "Physical";
+                    }
+                } else if (type === "armor") {
+                    def_perc = 15;
+                }
+            }
+
+            // Check if exists
+            const [existing] = await connection.query("SELECT id FROM items WHERE image = ? AND item_type = ?", [filename, itemType]);
+
+            if (existing.length === 0) {
+                console.log(`[Items] + Adding new item: ${name} (${grade.toUpperCase()}) - ${itemType}`);
+                await connection.query(
+                    "INSERT INTO items (name, grade, item_type, weapon_group, item_set, atk_all_perc, def_perc, hp_perc, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    [name, grade, itemType, weaponGroup, set, atk_all_perc, def_perc, hp_perc, filename]
+                );
+            }
+        }
+    }
+}
+
 async function main() {
     console.log("=== Registry Synchronization Tool ===");
     const connection = await pool.getConnection();
@@ -113,6 +200,7 @@ async function main() {
     try {
         await syncHeroes(connection);
         await syncPets(connection);
+        await syncItems(connection);
         console.log("\n[Success] Registry synchronization completed!");
     } catch (err) {
         console.error("\n[Error]", err.message);

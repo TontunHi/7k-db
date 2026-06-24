@@ -60,8 +60,39 @@ const MIN_STATS_KEYS = [
     { key: "blockRate", label: "Block Rate", icon: "/about_website/icon_block_rate.webp" },
     { key: "damageReduction", label: "Damage Taken Reduction", icon: "/about_website/icon_damage_taken_reduction.webp" },
     { key: "effectHit", label: "Effect Hit Rate", icon: "/about_website/icon_effect_hit_rate.webp" },
-    { key: "effectResist", label: "Effect Resistance", icon: "/about_website/icon_effect_resistance.webp" }
+    { key: "effectResist", label: "Effect Resistance", icon: "/about_website/icon_effect_resistance.webp" },
+    { key: "damageAmplification", label: "Damage Amplification", icon: "/about_website/icon_dedicated_damage_amplification.webp" },
+    { key: "crush", label: "Crush", icon: "/about_website/icon_dedicated_crush.webp" },
+    { key: "resilience", label: "Resilience", icon: "/about_website/icon_dedicated_resilience.webp" },
+    { key: "rejuvenate", label: "Rejuvenate", icon: "/about_website/icon_dedicated_rejuvenate.webp" }
 ]
+
+const DEDICATED_STATS_OPTIONS = [
+    "All Attack (%)",
+    "Defense (%)",
+    "HP (%)",
+    "Effect Hit Rate",
+    "Effect Resistance",
+    "Damage Amplification",
+    "Crush",
+    "Resilience",
+    "Rejuvenate"
+]
+
+function getDedicatedStatIcon(stat) {
+    switch (stat) {
+        case "All Attack (%)": return "/about_website/icon_physical_attack.webp";
+        case "Defense (%)": return "/about_website/icon_defense.webp";
+        case "HP (%)": return "/about_website/icon_hp.webp";
+        case "Effect Hit Rate": return "/about_website/icon_effect_hit_rate.webp";
+        case "Effect Resistance": return "/about_website/icon_effect_resistance.webp";
+        case "Damage Amplification": return "/about_website/icon_dedicated_damage_amplification.webp";
+        case "Crush": return "/about_website/icon_dedicated_crush.webp";
+        case "Resilience": return "/about_website/icon_dedicated_resilience.webp";
+        case "Rejuvenate": return "/about_website/icon_dedicated_rejuvenate.webp";
+        default: return null;
+    }
+}
 
 // ─── Section Label ───────────────────────────────────────────
 function SectionLabel({ children, color = "gold" }) {
@@ -82,7 +113,12 @@ function SectionLabel({ children, color = "gold" }) {
 }
 
 export default function BuildEditorModal({ hero, skills, weapons, armors, accessories, initialBuilds, initialSkillPriority, initialIsNewHero, onSave, onClose }) {
-    const [builds, setBuilds] = useState(initialBuilds || [])
+    const [builds, setBuilds] = useState(() =>
+        (initialBuilds || []).map(b => ({
+            ...b,
+            dedicatedStats: b.dedicatedStats || [null, null, null, null]
+        }))
+    )
     const [skillPriority, setSkillPriority] = useState(initialSkillPriority || [])
     const [isNewHero, setIsNewHero] = useState(initialIsNewHero ?? hero.is_new_hero ?? false)
     const [isSaving, setIsSaving] = useState(false)
@@ -102,7 +138,8 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
         armors: [{ image: "", stat: ARMOR_MAIN_STATS[0] }, { image: "", stat: ARMOR_MAIN_STATS[0] }],
         accessories: [],
         substats: [],
-        minStats: {}
+        minStats: {},
+        dedicatedStats: [null, null, null, null]
     }
 
     const handleAddBuild = () => {
@@ -171,6 +208,19 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
             newBuilds[buildIndex].substats = [...current, stat]
         }
         setBuilds(newBuilds)
+    }
+
+    const updateDedicatedStat = (buildIndex, slotIndex, value) => {
+        const newBuilds = [...builds]
+        const current = [...(newBuilds[buildIndex].dedicatedStats || [null, null, null, null])]
+        current[slotIndex] = value
+        newBuilds[buildIndex].dedicatedStats = current
+        setBuilds(newBuilds)
+    }
+
+    const openDedicatedSelector = (buildIndex, slotIndex) => {
+        setSelectorTarget({ buildIndex, type: "dedicated", itemIndex: slotIndex })
+        setSelectorOpen(true)
     }
 
     const openItemSelector = (items, buildIndex, type, itemIndex = null) => {
@@ -635,6 +685,52 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                 </div>
                             </div>
 
+                            {/* Dedicated Stats */}
+                            <div className="mt-6 pt-5 border-t border-gray-800/40 relative z-10">
+                                <SectionLabel color="blue">Dedicated Stats</SectionLabel>
+                                <div className="grid grid-cols-4 gap-3 mt-3">
+                                    {Array.from({ length: 4 }).map((_, i) => {
+                                        const stat = build.dedicatedStats?.[i]
+                                        const icon = stat ? getDedicatedStatIcon(stat) : null
+                                        return (
+                                            <div key={i} className="relative group/ded">
+                                                <button
+                                                    onClick={() => openDedicatedSelector(bIndex, i)}
+                                                    className={clsx(
+                                                        "w-full h-12 rounded-xl border flex items-center justify-center gap-2 relative overflow-hidden transition-all duration-300 cursor-pointer text-xs font-bold text-center px-3",
+                                                        stat
+                                                            ? "bg-black/50 border-gray-700/80 hover:border-[#FFD700]/50 hover:shadow-[0_0_10px_rgba(255,215,0,0.1)]"
+                                                            : "bg-black/20 border-gray-800/40 border-dashed hover:border-[#FFD700]/30 hover:bg-[#FFD700]/5"
+                                                    )}
+                                                >
+                                                    {stat ? (
+                                                        <>
+                                                            {icon && (
+                                                                <div className="w-5 h-5 relative flex-shrink-0 opacity-70 group-hover/ded:opacity-100 transition-opacity">
+                                                                    <SafeImage src={icon} fill alt="" className="object-contain" />
+                                                                </div>
+                                                            )}
+                                                            <span className="text-[9px] uppercase tracking-wider font-bold text-gray-300 group-hover/ded:text-[#FFD700] transition-colors truncate">{stat}</span>
+                                                        </>
+                                                    ) : (
+                                                        <span className="text-sm font-black text-gray-800 group-hover/ded:text-[#FFD700]/60 transition-colors">+</span>
+                                                    )}
+                                                </button>
+                                                {stat && (
+                                                    <button
+                                                        onClick={() => updateDedicatedStat(bIndex, i, null)}
+                                                        className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-950/80 border border-red-800 text-red-400 hover:bg-red-900 hover:text-white flex items-center justify-center text-[9px] font-black transition-all z-20"
+                                                        title="Clear stat"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+
                             {/* Note */}
                             <div className="mt-6 pt-5 border-t border-gray-800/40 relative z-10">
                                 <SectionLabel color="purple">Build Note</SectionLabel>
@@ -679,14 +775,16 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                             {/* Selector top accent */}
                             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#FFD700]/40 to-transparent z-10" />
 
-                            <div className="flex justify-between items-center p-4 md:p-5 border-b border-gray-800/50 flex-shrink-0">
+                             <div className="flex justify-between items-center p-4 md:p-5 border-b border-gray-800/50 flex-shrink-0">
                                 <h3 className="text-[#FFD700] font-black uppercase tracking-widest flex items-center gap-2.5 text-xs">
                                     <Marker color="bg-[#FFD700]" />
                                     {selectorTarget.type === "accessories"
                                         ? "Select Accessory (Max 5)"
                                         : selectorTarget.type === "refining"
                                             ? "Select Refining Accessory"
-                                            : "Select Equipment"}
+                                            : selectorTarget.type === "dedicated"
+                                                ? "Select Dedicated Stat"
+                                                : "Select Equipment"}
                                 </h3>
                                 <div className="flex gap-2 items-center">
                                     {selectorTarget.type === "accessories" && (
@@ -698,48 +796,73 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                         <ActionLabel label="CANCEL" color="text-red-500" className="hover:text-white" />
                                     </button>
                                 </div>
-                            </div>
+                             </div>
 
                             <div className="flex-1 overflow-y-auto p-4 md:p-5 custom-scrollbar">
-                                <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 gap-2.5">
-                                    {selectorItems
-                                        .filter(img => {
-                                            if (selectorTarget.type === "refining") {
-                                                const mainAcc = builds[selectorTarget.buildIndex].accessories[selectorTarget.itemIndex].image
-                                                return img !== mainAcc
-                                            }
-                                            return true
-                                        })
-                                        .map((img) => {
-                                            const isSelected = selectorTarget.type === "accessories" ? multiSelection.includes(img) : false
+                                {selectorTarget.type === "dedicated" ? (
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 w-full">
+                                        {DEDICATED_STATS_OPTIONS.map((opt) => {
+                                            const icon = getDedicatedStatIcon(opt);
                                             return (
                                                 <button
-                                                    key={img}
-                                                    onClick={() => handleSelectorClick(img)}
-                                                    className={clsx(
-                                                        "relative aspect-square rounded-xl overflow-hidden group/item transition-all duration-200",
-                                                        isSelected
-                                                            ? "border-2 border-[#FFD700] ring-2 ring-[#FFD700]/30 z-10 scale-105 shadow-[0_0_15px_rgba(255,215,0,0.2)]"
-                                                            : "border border-gray-800/60 hover:border-gray-600 hover:scale-105 hover:z-10 bg-black/50"
-                                                    )}
-                                                    title={img}
+                                                    key={opt}
+                                                    onClick={() => {
+                                                        updateDedicatedStat(selectorTarget.buildIndex, selectorTarget.itemIndex, opt);
+                                                        setSelectorOpen(false);
+                                                    }}
+                                                    className="bg-black/40 border border-gray-800 hover:border-[#FFD700] hover:bg-[#FFD700]/5 rounded-xl p-4 flex flex-col items-center justify-center gap-2.5 transition-all text-center min-h-[90px] group cursor-pointer"
                                                 >
-                                                    <Image
-                                                        src={`/items/${(selectorTarget.type === 'weapons' ? 'weapon' : selectorTarget.type === 'armors' ? 'armor' : 'accessory')}/${img}`}
-                                                        fill
-                                                        className="object-cover group-hover/item:scale-110 transition-transform duration-300"
-                                                        alt="item"
-                                                        sizes="64px"
-                                                    />
-                                                    {isSelected && (
-                                                        <div className="absolute top-1 right-1 bg-gradient-to-br from-[#FFD700] to-yellow-600 text-black w-4 h-4 rounded-full flex items-center justify-center shadow-lg z-10 border border-black text-[10px] font-black">
-                                                            OK
+                                                    {icon && (
+                                                        <div className="w-8 h-8 relative opacity-70 group-hover:opacity-100 transition-opacity">
+                                                            <SafeImage src={icon} fill alt="" className="object-contain" />
                                                         </div>
                                                     )}
+                                                    <span className="text-[9px] uppercase font-black tracking-wider text-gray-400 group-hover:text-white transition-colors">{opt}</span>
                                                 </button>
                                             )
                                         })}
-                                </div>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 gap-2.5">
+                                        {selectorItems
+                                            .filter(img => {
+                                                if (selectorTarget.type === "refining") {
+                                                    const mainAcc = builds[selectorTarget.buildIndex].accessories[selectorTarget.itemIndex].image
+                                                    return img !== mainAcc
+                                                }
+                                                return true
+                                            })
+                                            .map((img) => {
+                                                const isSelected = selectorTarget.type === "accessories" ? multiSelection.includes(img) : false
+                                                return (
+                                                    <button
+                                                        key={img}
+                                                        onClick={() => handleSelectorClick(img)}
+                                                        className={clsx(
+                                                            "relative aspect-square rounded-xl overflow-hidden group/item transition-all duration-200",
+                                                            isSelected
+                                                                ? "border-2 border-[#FFD700] ring-2 ring-[#FFD700]/30 z-10 scale-105 shadow-[0_0_15px_rgba(255,215,0,0.2)]"
+                                                                : "border border-gray-800/60 hover:border-gray-600 hover:scale-105 hover:z-10 bg-black/50"
+                                                        )}
+                                                        title={img}
+                                                    >
+                                                        <Image
+                                                            src={`/items/${(selectorTarget.type === 'weapons' ? 'weapon' : selectorTarget.type === 'armors' ? 'armor' : 'accessory')}/${img}`}
+                                                            fill
+                                                            className="object-cover group-hover/item:scale-110 transition-transform duration-300"
+                                                            alt="item"
+                                                            sizes="64px"
+                                                        />
+                                                        {isSelected && (
+                                                            <div className="absolute top-1 right-1 bg-gradient-to-br from-[#FFD700] to-yellow-600 text-black w-4 h-4 rounded-full flex items-center justify-center shadow-lg z-10 border border-black text-[10px] font-black">
+                                                                OK
+                                                            </div>
+                                                        )}
+                                                    </button>
+                                                )
+                                            })}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -77,6 +77,26 @@ export function useHeroRegistry(initialData) {
         setFormData(prev => ({ ...prev, [key]: value }))
     }
 
+    const handleInlineUpdate = async (filename: string, key: string, value: any) => {
+        // Optimistically update local state
+        setHeroes((prev: any[]) => prev.map(h => 
+            h.filename === filename 
+                ? { ...h, [key]: value } 
+                : h
+        ))
+        try {
+            const result = await updateHeroRegistry(filename, { [key]: value } as any)
+            if (result.success) {
+                toast.success("Updated hero registry field")
+            } else {
+                toast.error("Failed to update field")
+            }
+        } catch (err) {
+            console.error("[HERO_REGISTRY_INLINE_UPDATE_ERROR]", err)
+            toast.error("Failed to update field")
+        }
+    }
+
     return {
         heroes: filteredHeroes,
         totalCount: heroes.length,
@@ -88,6 +108,7 @@ export function useHeroRegistry(initialData) {
         startEditing,
         cancelEditing,
         handleSave,
-        updateFormField
+        updateFormField,
+        handleInlineUpdate
     }
 }

@@ -3,7 +3,7 @@
 import SafeImage from "../shared/SafeImage"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
 import { clsx } from "clsx"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import styles from "./BuildViewerModal.module.css"
 
 const MIN_STATS_KEYS = [
@@ -17,11 +17,49 @@ const MIN_STATS_KEYS = [
     { key: "blockRate", label: "Block Rate", icon: "/about_website/icon_block_rate.webp", unit: "%" },
     { key: "damageReduction", label: "Damage Taken Reduction", icon: "/about_website/icon_damage_taken_reduction.webp", unit: "%" },
     { key: "effectHit", label: "Effect Hit Rate", icon: "/about_website/icon_effect_hit_rate.webp", unit: "%" },
-    { key: "effectResist", label: "Effect Resistance", icon: "/about_website/icon_effect_resistance.webp", unit: "%" }
+    { key: "effectResist", label: "Effect Resistance", icon: "/about_website/icon_effect_resistance.webp", unit: "%" },
+    { key: "damageAmplification", label: "Damage Amplification", icon: "/about_website/icon_dedicated_damage_amplification.webp", unit: "%" },
+    { key: "crush", label: "Crush", icon: "/about_website/icon_dedicated_crush.webp", unit: "%" },
+    { key: "resilience", label: "Resilience", icon: "/about_website/icon_dedicated_resilience.webp", unit: "%" },
+    { key: "rejuvenate", label: "Rejuvenate", icon: "/about_website/icon_dedicated_rejuvenate.webp", unit: "%" }
 ]
+
+function getDedicatedStatIcon(stat) {
+    switch (stat) {
+        case "All Attack (%)": return "/about_website/icon_physical_attack.webp";
+        case "Defense (%)": return "/about_website/icon_defense.webp";
+        case "HP (%)": return "/about_website/icon_hp.webp";
+        case "Effect Hit Rate": return "/about_website/icon_effect_hit_rate.webp";
+        case "Effect Resistance": return "/about_website/icon_effect_resistance.webp";
+        case "Damage Amplification": return "/about_website/icon_dedicated_damage_amplification.webp";
+        case "Crush": return "/about_website/icon_dedicated_crush.webp";
+        case "Resilience": return "/about_website/icon_dedicated_resilience.webp";
+        case "Rejuvenate": return "/about_website/icon_dedicated_rejuvenate.webp";
+        default: return null;
+    }
+}
+
+const getSkillLabel = (skillPath) => {
+    const filename = skillPath.split('/').pop().split('.')[0]
+    if (filename === "4") return "Passive"
+    if (filename === "3") return "Skill 3"
+    if (filename === "2") return "Skill 2"
+    if (filename === "1") return "Skill 1"
+    return "Skill"
+}
 
 export default function BuildViewerModal({ hero, data, onClose }) {
     const [currentBuildIndex, setCurrentBuildIndex] = useState(0)
+    const [activeTab, setActiveTab] = useState("equipment")
+
+    useEffect(() => {
+        if (data && data.builds && data.builds[currentBuildIndex]) {
+            const build = data.builds[currentBuildIndex]
+            if (activeTab === "guide" && !build.note) {
+                setActiveTab("equipment")
+            }
+        }
+    }, [currentBuildIndex, data, activeTab])
 
     if (!data) return null
 
@@ -35,7 +73,7 @@ export default function BuildViewerModal({ hero, data, onClose }) {
         })
         .sort((a, b) => {
             const getNum = (s) => parseInt(s.split('/').pop().split('.')[0]) || 0
-            return getNum(b) - getNum(a)
+            return getNum(a) - getNum(b)
         })
 
     const getPriorityRank = (skillPath) => {
@@ -44,184 +82,286 @@ export default function BuildViewerModal({ hero, data, onClose }) {
         return index !== -1 ? index + 1 : null
     }
 
-    const goNext = () => setCurrentBuildIndex(prev => (prev === builds.length - 1 ? 0 : prev + 1))
-    const goPrev = () => setCurrentBuildIndex(prev => (prev === 0 ? builds.length - 1 : prev - 1))
+    const prioritizedSkills = sortedSkills
+        .filter(s => getPriorityRank(s) !== null)
+        .sort((a, b) => getPriorityRank(a)! - getPriorityRank(b)!)
+
+    const unprioritizedSkills = sortedSkills
+        .filter(s => getPriorityRank(s) === null)
+
+    const build = builds[currentBuildIndex]
+
+    const getModeBadgeClass = (mode) => {
+        const lower = mode.toLowerCase()
+        if (lower.includes("pvp")) return styles.badgePvp
+        if (lower.includes("pve")) return styles.badgePve
+        return styles.modeBadge
+    }
 
     return (
         <div className={styles.overlay}>
-            {/* Backdrop click */}
             <div className={styles.backdrop} onClick={onClose} />
 
-            {/* Main Container */}
             <div className={styles.modal}>
-                
-                {/* Close button */}
                 <button onClick={onClose} className={styles.closeButton} aria-label="Close">
-                    <X className="w-5 h-5" />
+                    <X className="w-4 h-4" />
                 </button>
 
-                {/* Content Wrapper */}
                 <div className={styles.contentWrapper}>
-                    
-                    {/* Compact Header Section */}
-                    <div className={styles.header}>
-                        <div className={styles.portrait}>
+                    {/* LEFT SIDEBAR: Hero Profile Identity */}
+                    <div className={styles.sidebar}>
+                        <div className={styles.portraitContainer}>
                             <SafeImage
                                 src={`/heroes/${hero.filename}${hero.filename?.endsWith('.webp') ? '' : '.webp'}`}
                                 fill
                                 className={styles.heroImage}
                                 alt={hero.name}
-                                sizes="64px"
+                                sizes="120px"
+                                priority
                             />
                         </div>
 
-                        <div className={styles.heroInfo}>
-                            <h2 className={styles.heroName}>{hero.name}</h2>
+                        <h2 className={styles.heroName}>{hero.name}</h2>
+                        
+                        {/* Active Modes Highlighted */}
+                        <div className={styles.modesRow}>
+                            {build && (
+                                <span className={styles.modeBadge} style={{ borderColor: '#d4af37', color: '#d4af37', background: 'rgba(212,175,55,0.05)' }}>
+                                    Level {build.cLevel}
+                                </span>
+                            )}
+                            {build?.mode?.map(m => (
+                                <span key={m} className={getModeBadgeClass(m)}>
+                                    {m}
+                                </span>
+                            ))}
+                        </div>
+
+                        {/* Skill Upgrade Priority Timeline */}
+                        <div className={styles.skillPriorityContainer}>
+                            <span className={styles.skillsTitle}>Skill Upgrade Priority</span>
                             <div className={styles.skillsRow}>
-                                {sortedSkills.map((s, i) => {
+                                {prioritizedSkills.map((s, i) => {
                                     const rank = getPriorityRank(s)
                                     return (
-                                        <div key={i} className={clsx(
-                                            styles.skillItem,
-                                            rank ? styles.skillItemActive : styles.skillItemInactive
-                                        )}>
-                                            <SafeImage src={`/skills/${s}`} fill alt="skill" sizes="32px" className="rounded-md" />
-                                            {rank && <div className={styles.skillPriority}>{rank}</div>}
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Build Content */}
-                    <div className={styles.buildContent}>
-                        {builds.length > 0 ? (
-                            <div>
-                                {(() => {
-                                    const build = builds[currentBuildIndex]
-                                    return (
-                                        <div key={currentBuildIndex} className={styles.buildWrapper}>
-                                            {/* Build Metadata */}
-                                            <div className={styles.metaRow}>
-                                                <span className={styles.cLevel}>
-                                                    Level {build.cLevel}
+                                        <div key={i} className={styles.skillPriorityItem}>
+                                            <div className={styles.skillIconBoxActive}>
+                                                <SafeImage src={`/skills/${s}`} fill alt="skill" sizes="36px" />
+                                            </div>
+                                            <div className={styles.skillMeta}>
+                                                <span className={styles.skillName} style={{ fontSize: '0.8rem' }}>
+                                                    {rank === 1 ? "1st Upgrade" : rank === 2 ? "2nd Upgrade" : rank === 3 ? "3rd Upgrade" : `${rank}th Upgrade`}
                                                 </span>
-                                                {build.mode.map(m => (
-                                                    <span key={m} className={styles.modeBadge}>
-                                                        {m}
-                                                    </span>
-                                                ))}
                                             </div>
-
-                                            {/* Equipment Grid */}
-                                            <div className={styles.equipmentGrid}>
-                                                {/* Gear Column */}
-                                                <div className={styles.section}>
-                                                    <SectionLabel>Combat Equipment</SectionLabel>
-                                                    <div className={styles.gearGrid}>
-                                                        <ViewerItemCard item={build.weapons[0]} type="Weapon" />
-                                                        <ViewerItemCard item={build.armors[0]} type="Armor" />
-                                                        <ViewerItemCard item={build.weapons[1]} type="Weapon" />
-                                                        <ViewerItemCard item={build.armors[1]} type="Armor" />
-                                                    </div>
-                                                    
-                                                    <SectionLabel>Accessory & Refining</SectionLabel>
-                                                    <div className={styles.accessoryList}>
-                                                        {build.accessories.map((acc, idx) => (
-                                                            <div key={idx} className={styles.accessoryItem}>
-                                                                <div className={styles.accessoryImg}>
-                                                                    <SafeImage 
-                                                                        src={`/items/accessory/${acc.image}`} 
-                                                                        fill 
-                                                                        className="object-cover" 
-                                                                        alt="acc" 
-                                                                        sizes="48px"
-                                                                    />
-                                                                </div>
-                                                                {acc.refined && (
-                                                                    <div className={styles.refinedImg}>
-                                                                        <SafeImage 
-                                                                            src={`/items/accessory/${acc.refined}`} 
-                                                                            fill 
-                                                                            className="object-cover" 
-                                                                            alt="refined" 
-                                                                            sizes="32px"
-                                                                        />
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-
-                                                {/* Stats Column */}
-                                                <div className={styles.section}>
-                                                    <SectionLabel>Minimum Stats Priority</SectionLabel>
-                                                    <div className={styles.statsBox}>
-                                                        {MIN_STATS_KEYS.filter(s => build.minStats[s.key]).map((s) => (
-                                                            <div key={s.key} className={styles.statRow}>
-                                                                <div className={styles.statLabelWrapper}>
-                                                                    <div className={styles.statIcon}>
-                                                                        <SafeImage src={s.icon} fill alt="" className="object-contain" />
-                                                                    </div>
-                                                                    <span className={styles.statLabel}>{s.label}</span>
-                                                                </div>
-                                                                <div className={styles.statValueWrapper}>
-                                                                    <span className={styles.statValue}>{build.minStats[s.key]}</span>
-                                                                    {s.unit && <span className={styles.statUnit}>{s.unit}</span>}
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-
-                                                    <SectionLabel>Substats Priority</SectionLabel>
-                                                    <div className={styles.substatsList}>
-                                                        {build.substats.map((sub, idx) => (
-                                                            <span key={idx} className={styles.substatBadge}>
-                                                                <span className={styles.substatRank}>{idx + 1}</span>
-                                                                {sub}
-                                                            </span>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Note */}
-                                            {build.note && (
-                                                <div className={styles.noteBox}>
-                                                    <div className={styles.noteAccent} />
-                                                    <h5 className={styles.noteTitle}>Tactical Note</h5>
-                                                    <p className={styles.noteText}>{build.note}</p>
-                                                </div>
+                                            {i < prioritizedSkills.length - 1 && (
+                                                <div className={styles.connectorArrow}>↓</div>
                                             )}
                                         </div>
                                     )
-                                })()}
+                                })}
+
+                                {prioritizedSkills.length === 0 && (
+                                    <div className="text-[10px] text-gray-500 italic py-2 text-center">No skill upgrade priority set</div>
+                                )}
+
+                                {unprioritizedSkills.length > 0 && (
+                                    <>
+                                        <span className={styles.unprioritizedHeader}>Base Skills</span>
+                                        <div className={styles.unprioritizedGrid}>
+                                            {unprioritizedSkills.map((s, i) => (
+                                                <div key={i} className={styles.unprioritizedIconBox} title={getSkillLabel(s)}>
+                                                    <SafeImage src={`/skills/${s}`} fill alt="skill" sizes="28px" />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
                             </div>
-                        ) : (
-                            <div className={styles.noBuilds}>No builds available.</div>
-                        )}
-                    </div>
-
-                </div>
-
-                {/* Pagination - Fixed at bottom */}
-                {builds.length > 1 && (
-                    <div className={styles.pagination}>
-                        <button onClick={goPrev} className={styles.navButton}><ChevronLeft className="w-4 h-4"/></button>
-                        <div className={styles.dotsRow}>
-                            {builds.map((_, idx) => (
-                                <button
-                                    key={idx}
-                                    onClick={() => setCurrentBuildIndex(idx)}
-                                    className={clsx(styles.dot, idx === currentBuildIndex ? styles.dotActive : styles.dotInactive)}
-                                />
-                            ))}
                         </div>
-                        <button onClick={goNext} className={styles.navButton}><ChevronRight className="w-4 h-4"/></button>
                     </div>
-                )}
+
+                    {/* RIGHT MAIN PANEL */}
+                    <div className={styles.mainPanel}>
+                        {/* Multiple Builds Prominent Selector Tab bar with cLevel included */}
+                        {builds.length > 1 && (
+                            <div className={styles.buildTabsContainer}>
+                                {builds.map((b, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => setCurrentBuildIndex(idx)}
+                                        className={clsx(
+                                            styles.buildTabButton,
+                                            idx === currentBuildIndex && styles.buildTabButtonActive
+                                        )}
+                                    >
+                                        <span className={styles.buildTabNumber}>BUILD {idx + 1} ({b.cLevel})</span>
+                                        <span className={styles.buildTabModes}>{b.mode.join(" / ")}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Tabs Bar */}
+                        <div className={styles.tabsContainer}>
+                            <button
+                                onClick={() => setActiveTab("equipment")}
+                                className={clsx(styles.tabButton, activeTab === "equipment" && styles.tabButtonActive)}
+                            >
+                                Equipment
+                            </button>
+                            <button
+                                onClick={() => setActiveTab("stats")}
+                                className={clsx(styles.tabButton, activeTab === "stats" && styles.tabButtonActive)}
+                            >
+                                Attributes
+                            </button>
+                            {build?.note && (
+                                <button
+                                    onClick={() => setActiveTab("guide")}
+                                    className={clsx(styles.tabButton, activeTab === "guide" && styles.tabButtonActive)}
+                                >
+                                    Note
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Tab Content */}
+                        <div className={styles.tabContent}>
+                            {build ? (
+                                <>
+                                    {/* TAB 1: EQUIPMENT */}
+                                    {activeTab === "equipment" && (
+                                        <div className="animate-in fade-in duration-300">
+                                            <SectionLabel>Combat Equipment</SectionLabel>
+                                            <div className={styles.gearGrid}>
+                                                <ViewerItemCard item={build.weapons[0]} type="Weapon" />
+                                                <ViewerItemCard item={build.armors[0]} type="Armor" />
+                                                <ViewerItemCard item={build.weapons[1]} type="Weapon" />
+                                                <ViewerItemCard item={build.armors[1]} type="Armor" />
+                                            </div>
+
+                                            <SectionLabel>Accessory & Refining</SectionLabel>
+                                            <div className={styles.accessoryList}>
+                                                {build.accessories.map((acc, idx) => (
+                                                    <div key={idx} className={styles.accessoryItem}>
+                                                        <div className={styles.accessoryImg}>
+                                                            <SafeImage
+                                                                src={`/items/accessory/${acc.image}`}
+                                                                fill
+                                                                className="object-cover"
+                                                                alt="acc"
+                                                                sizes="56px"
+                                                            />
+                                                        </div>
+                                                        <div className={styles.refinedContainer}>
+                                                            <span className={styles.refiningLabel}>Refining</span>
+                                                            {acc.refined ? (
+                                                                <div className={styles.refinedImg} title="Refining accessory effect">
+                                                                    <SafeImage
+                                                                        src={`/items/accessory/${acc.refined}`}
+                                                                        fill
+                                                                        className="object-cover"
+                                                                        alt="refined"
+                                                                        sizes="28px"
+                                                                    />
+                                                                </div>
+                                                            ) : (
+                                                                <span className={styles.emptyRefined}>None</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                                {build.accessories.length === 0 && (
+                                                    <div className="col-span-full py-8 text-center text-xs italic text-gray-500 uppercase tracking-wider">No accessories recommended</div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* TAB 2: ATTRIBUTES */}
+                                    {activeTab === "stats" && (
+                                        <div className="animate-in fade-in duration-300 space-y-5">
+                                            <div>
+                                                <SectionLabel>Minimum Stats Target</SectionLabel>
+                                                <div className={styles.statsBox}>
+                                                    {MIN_STATS_KEYS.filter(s => build.minStats?.[s.key]).map((s) => (
+                                                        <div key={s.key} className={styles.statRow}>
+                                                            <div className={styles.statLabelWrapper}>
+                                                                <div className={styles.statIcon}>
+                                                                    <SafeImage src={s.icon} fill alt="" className="object-contain" />
+                                                                </div>
+                                                                <span className={styles.statLabel}>{s.label}</span>
+                                                            </div>
+                                                            <div className={styles.statValueWrapper}>
+                                                                <span className={styles.statValue}>{build.minStats[s.key]}</span>
+                                                                {s.unit && <span className={styles.statUnit}>{s.unit}</span>}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                    {!MIN_STATS_KEYS.some(s => build.minStats?.[s.key]) && (
+                                                        <div className="col-span-full py-8 text-center text-xs italic text-gray-500 uppercase tracking-wider">No minimum stats set</div>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className={styles.statsViewGrid}>
+                                                <div>
+                                                    <SectionLabel>Substats Priority</SectionLabel>
+                                                    <div className={styles.substatsList}>
+                                                        {build.substats.map((sub, idx) => (
+                                                            <div key={idx} className={styles.substatBadge}>
+                                                                <span className={styles.substatRank}>{idx + 1}</span>
+                                                                <span>{sub}</span>
+                                                            </div>
+                                                        ))}
+                                                        {build.substats.length === 0 && (
+                                                            <div className="py-6 text-center text-xs italic text-gray-500 uppercase tracking-wider">No substats priority set</div>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <SectionLabel>Dedicated Stats</SectionLabel>
+                                                    <div className={styles.dedicatedList}>
+                                                        {build.dedicatedStats?.filter(Boolean).map((ded, idx) => {
+                                                            const icon = getDedicatedStatIcon(ded)
+                                                            return (
+                                                                <div key={idx} className={styles.dedicatedBadge}>
+                                                                    {icon && (
+                                                                        <div className={styles.dedicatedIcon}>
+                                                                            <SafeImage src={icon} fill alt="" className="object-contain" />
+                                                                        </div>
+                                                                    )}
+                                                                    <span className={styles.dedicatedName}>{ded}</span>
+                                                                </div>
+                                                            )
+                                                        })}
+                                                        {(!build.dedicatedStats || !build.dedicatedStats.some(Boolean)) && (
+                                                            <div className="col-span-full py-6 text-center text-xs italic text-gray-500 uppercase tracking-wider">No dedicated stats set</div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* TAB 3: NOTE */}
+                                    {activeTab === "guide" && build.note && (
+                                        <div className="animate-in fade-in duration-300">
+                                            <div className={styles.noteBox}>
+                                                <div className={styles.noteAccent} />
+                                                <h5 className={styles.noteTitle}>Note</h5>
+                                                <p className={styles.noteText}>{build.note}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <div className={styles.noBuilds}>No build data configured.</div>
+                            )}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     )
@@ -239,25 +379,27 @@ function SectionLabel({ children }) {
 function ViewerItemCard({ item, type }) {
     if (!item?.image) return (
         <div className={styles.emptyCard}>
-            EMPTY
+            EMPTY {type.toUpperCase()}
         </div>
     )
+
+    const isWeapon = type.toLowerCase().includes("weapon")
 
     return (
         <div className={styles.viewerCard}>
             <div className={styles.itemImageWrapper}>
                 <SafeImage
-                    src={`/items/${type.toLowerCase()}/${item.image}`}
+                    src={`/items/${isWeapon ? 'weapon' : 'armor'}/${item.image}`}
                     fill
                     className="object-cover"
                     alt={type}
-                    sizes="44px"
+                    sizes="48px"
                 />
             </div>
-
             <div className={styles.itemInfo}>
-                <div className={styles.itemType}>{type}</div>
-                <div className={styles.itemStat}>{item.stat}</div>
+                <span className={styles.itemType}>{type}</span>
+                <span className={styles.itemName}>{item.image.replace(/\.[^/.]+$/, "").split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}</span>
+                <span className={styles.itemStat}>{item.stat}</span>
             </div>
         </div>
     )
