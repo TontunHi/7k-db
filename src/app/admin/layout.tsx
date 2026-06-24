@@ -13,7 +13,7 @@ export default async function AdminLayout({ children }) {
             <Sidebar user={user} />
 
             {/* Main Content */}
-            <main className="flex-1 p-4 md:p-8 overflow-y-auto custom-scrollbar">
+            <main className="flex-1 min-h-screen p-5 md:p-8 overflow-y-auto">
                 {children}
             </main>
         </div>

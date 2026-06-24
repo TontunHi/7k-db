@@ -2,10 +2,12 @@
 import { Sword, Shield, Trash2, Plus } from 'lucide-react'
 import { clsx } from 'clsx'
 import SafeImage from '@/components/shared/SafeImage'
-import { WEAPON_MAIN_STATS, ARMOR_MAIN_STATS, SUBSTATS, MIN_STATS_KEYS } from '../constants'
+import { WEAPON_MAIN_STATS, ARMOR_MAIN_STATS, SUBSTATS, MIN_STATS_KEYS, getDedicatedStatIcon } from '../constants'
 import styles from './SimulatorEditor.module.css'
 
-export default function SimulatorEditor({ build, setBuild, displaySkills, setActivePicker, showMobilePreview }) {
+export default function SimulatorEditor({ hero, build, setBuild, displaySkills, setActivePicker, showMobilePreview }) {
+    const maxSkills = hero?.grade === 'a' ? 5 : 4
+
     return (
         <div className={clsx(
             styles.editor,
@@ -68,7 +70,7 @@ export default function SimulatorEditor({ build, setBuild, displaySkills, setAct
                     </div>
                 </div>
             </Section>
-
+ 
             {/* Accessory Section */}
             <Section title="Accessory Slots">
                 <div className={styles.accessoryList}>
@@ -115,7 +117,7 @@ export default function SimulatorEditor({ build, setBuild, displaySkills, setAct
                     ))}
                 </div>
             </Section>
-
+ 
             {/* Substats */}
             <Section title="Substats Priority">
                 <div className={styles.substatsGrid}>
@@ -143,7 +145,7 @@ export default function SimulatorEditor({ build, setBuild, displaySkills, setAct
                     ))}
                 </div>
             </Section>
-
+ 
             {/* Skill Priority */}
             <Section title="Manual Skill Priority">
                 <div className={styles.skillPriorityGrid}>
@@ -158,7 +160,7 @@ export default function SimulatorEditor({ build, setBuild, displaySkills, setAct
                                         if (isSelected) {
                                             return { ...prev, skillPriority: prev.skillPriority.filter(x => x !== s) }
                                         } else {
-                                            if (prev.skillPriority.length >= 4) return prev
+                                            if (prev.skillPriority.length >= maxSkills) return prev
                                             return { ...prev, skillPriority: [...prev.skillPriority, s] }
                                         }
                                     })
@@ -180,9 +182,9 @@ export default function SimulatorEditor({ build, setBuild, displaySkills, setAct
                         )
                     })}
                 </div>
-                <p className={styles.priorityNote}>Click skills to set priority (1-4)</p>
+                <p className={styles.priorityNote}>Click skills to set priority (1-{maxSkills})</p>
             </Section>
-
+ 
             {/* Min Stats */}
             <Section title="Minimum Stats (Goals)">
                 <div className={styles.minStatsList}>
@@ -202,6 +204,56 @@ export default function SimulatorEditor({ build, setBuild, displaySkills, setAct
                     ))}
                 </div>
             </Section>
+
+            {/* Dedicated Stats */}
+            <Section title="Dedicated Stats">
+                <div className="grid grid-cols-4 gap-3 mt-1">
+                    {Array.from({ length: 4 }).map((_, i) => {
+                        const stat = build.dedicatedStats?.[i]
+                        const icon = stat ? getDedicatedStatIcon(stat) : null
+                        return (
+                            <div key={i} className="relative group/ded">
+                                <button
+                                    onClick={() => setActivePicker({ type: 'dedicated', index: i })}
+                                    className={clsx(
+                                        "w-full h-12 rounded-xl border flex flex-col items-center justify-center gap-1 relative overflow-hidden transition-all duration-300 cursor-pointer text-xs font-bold text-center px-1",
+                                        stat
+                                            ? "bg-black/50 border-white/20 hover:border-primary/50 hover:shadow-[0_0_10px_rgba(255,215,0,0.1)]"
+                                            : "bg-black/20 border-white/10 border-dashed hover:border-primary/30 hover:bg-primary/5 text-gray-400"
+                                    )}
+                                >
+                                    {stat ? (
+                                        <>
+                                            {icon && (
+                                                <div className="w-4 h-4 relative flex-shrink-0 opacity-70 group-hover/ded:opacity-100 transition-opacity">
+                                                    <SafeImage src={icon} fill alt="" className="object-contain" />
+                                                </div>
+                                            )}
+                                            <span className="text-[8px] uppercase tracking-wider font-bold text-gray-300 group-hover/ded:text-primary transition-colors truncate max-w-full">{stat}</span>
+                                        </>
+                                    ) : (
+                                        <span className="text-sm font-black text-gray-500 group-hover/ded:text-primary/60 transition-colors">+</span>
+                                    )}
+                                </button>
+                                {stat && (
+                                    <button
+                                        onClick={() => {
+                                            const newDeds = [...(build.dedicatedStats || [null, null, null, null])]
+                                            newDeds[i] = null
+                                            setBuild(b => ({ ...b, dedicatedStats: newDeds }))
+                                        }}
+                                        className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-950/80 border border-red-800 text-red-400 hover:bg-red-900 hover:text-white flex items-center justify-center text-[9px] font-black transition-all z-20"
+                                        title="Clear stat"
+                                    >
+                                        ×
+                                    </button>
+                                )}
+                            </div>
+                        )
+                    })}
+                </div>
+            </Section>
+
 
             {/* Progression */}
             <Section title="Hero Progression">

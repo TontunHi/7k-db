@@ -31,3 +31,30 @@ export const MIN_STATS_KEYS = [
   { key: "resilience", label: "Resilience", icon: "/about_website/icon_dedicated_resilience.webp", unit: "%" },
   { key: "rejuvenate", label: "Rejuvenate", icon: "/about_website/icon_dedicated_rejuvenate.webp", unit: "%" }
 ]
+export const DEDICATED_STATS_OPTIONS = [
+    "All Attack (%)",
+    "Defense (%)",
+    "HP (%)",
+    "Effect Hit Rate",
+    "Effect Resistance",
+    "Damage Amplification",
+    "Crush",
+    "Resilience",
+    "Rejuvenate"
+]
+
+export function getDedicatedStatIcon(stat: string) {
+    switch (stat) {
+        case "All Attack (%)": return "/about_website/icon_physical_attack.webp";
+        case "Defense (%)": return "/about_website/icon_defense.webp";
+        case "HP (%)": return "/about_website/icon_hp.webp";
+        case "Effect Hit Rate": return "/about_website/icon_effect_hit_rate.webp";
+        case "Effect Resistance": return "/about_website/icon_effect_resistance.webp";
+        case "Damage Amplification": return "/about_website/icon_dedicated_damage_amplification.webp";
+        case "Crush": return "/about_website/icon_dedicated_crush.webp";
+        case "Resilience": return "/about_website/icon_dedicated_resilience.webp";
+        case "Rejuvenate": return "/about_website/icon_dedicated_rejuvenate.webp";
+        default: return null;
+    }
+}
+

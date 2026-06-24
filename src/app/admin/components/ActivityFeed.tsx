@@ -1,8 +1,5 @@
 "use client"
 
-import Link from "next/link"
-import { Terminal, ArrowRight } from "lucide-react"
-
 interface LogItem {
   admin_name?: string;
   display_time: string;
@@ -14,83 +11,40 @@ interface ActivityFeedProps {
   logs?: LogItem[];
 }
 
-const ACTION_THEMES: Record<string, { dot: string; text: string; label: string; badgeBg: string }> = {
-  create: {
-    dot: "bg-emerald-500 shadow-emerald-500/50",
-    text: "text-emerald-400",
-    label: "CREATE",
-    badgeBg: "bg-emerald-500/10 border-emerald-500/20"
-  },
-  delete: {
-    dot: "bg-rose-500 shadow-rose-500/50",
-    text: "text-rose-400",
-    label: "DELETE",
-    badgeBg: "bg-rose-500/10 border-rose-500/20"
-  },
-  update: {
-    dot: "bg-cyan-500 shadow-cyan-500/50",
-    text: "text-cyan-400",
-    label: "UPDATE",
-    badgeBg: "bg-cyan-500/10 border-cyan-500/20"
-  },
-  default: {
-    dot: "bg-gray-500 shadow-gray-500/50",
-    text: "text-gray-400",
-    label: "SYSTEM",
-    badgeBg: "bg-gray-500/10 border-gray-500/20"
-  }
+const ACTION_CONFIG: Record<string, { label: string; dot: string; text: string }> = {
+  create: { label: "Created", dot: "bg-emerald-500", text: "text-emerald-500" },
+  delete: { label: "Deleted", dot: "bg-rose-500",    text: "text-rose-500"    },
+  update: { label: "Updated", dot: "bg-blue-400",    text: "text-blue-400"    },
+  default:{ label: "Action",  dot: "bg-muted-foreground/40", text: "text-muted-foreground" },
 };
 
 export default function ActivityFeed({ logs = [] }: ActivityFeedProps) {
   return (
-    <div className="flex flex-col bg-card/40 backdrop-blur-md border border-border/50 rounded-2xl p-5 shadow-2xl space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-border/40 pb-3">
-        <div className="flex items-center gap-2">
-          <Terminal className="w-5 h-5 text-primary animate-pulse" />
-          <h2 className="text-sm font-black tracking-widest uppercase text-foreground/90">Audit Log Feed</h2>
-        </div>
-        <Link 
-          href="/admin/logs" 
-          className="text-[10px] font-black tracking-widest text-[#FFD700] hover:text-[#FFD700]/80 transition-colors flex items-center gap-1 group"
-        >
-          VIEW ALL
-          <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
-        </Link>
-      </div>
-
-      {/* Log list */}
-      <div className="max-h-[350px] overflow-y-auto pr-1.5 custom-scrollbar space-y-3">
+    <div className="rounded-xl border border-border/30 bg-card/40 overflow-hidden">
+      <div className="max-h-[420px] overflow-y-auto divide-y divide-border/20">
         {logs && logs.length > 0 ? (
-          <div className="relative border-l border-border/40 ml-2.5 pl-5 space-y-4 py-2">
-            {logs.map((log, i) => {
-              const theme = ACTION_THEMES[log.action_type] || ACTION_THEMES.default;
-
-              return (
-                <div key={i} className="relative group/item">
-                  {/* Timeline Dot Indicator */}
-                  <div className={`absolute -left-[25px] top-1.5 w-2 h-2 rounded-full ${theme.dot} shadow-[0_0_8px]`} />
-                  
-                  <div className="space-y-1">
-                    <div className="flex justify-between items-baseline gap-2">
-                      <span className="text-[11px] font-bold text-foreground/90">{log.admin_name || 'System'}</span>
-                      <span className="text-[9px] text-muted-foreground/60 font-semibold">{log.display_time}</span>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-medium text-muted-foreground/80">
-                      <span className="font-mono text-amber-500 font-semibold">{log.target_name}</span>
-                      <span className="opacity-30">/</span>
-                      <span className={`px-1.5 py-0.5 rounded text-[8px] font-black border ${theme.badgeBg} ${theme.text}`}>
-                        {theme.label}
-                      </span>
-                    </div>
-                  </div>
+          logs.map((log, i) => {
+            const config = ACTION_CONFIG[log.action_type] || ACTION_CONFIG.default;
+            return (
+              <div key={i} className="flex items-start gap-4 px-5 py-4 hover:bg-accent/10 transition-colors">
+                <div className="pt-1.5 shrink-0">
+                  <span className={`block w-1.5 h-1.5 rounded-full ${config.dot} opacity-80`} />
                 </div>
-              );
-            })}
-          </div>
+                <div className="flex-1 min-w-0 space-y-0.5">
+                  <p className="text-xs text-foreground/80">
+                    <span className="font-medium">{log.admin_name || "System"}</span>
+                    {" "}<span className="text-muted-foreground/60">{config.label.toLowerCase()}</span>{" "}
+                    <span className="font-medium truncate">{log.target_name}</span>
+                  </p>
+                  <p className="text-[11px] text-muted-foreground/40">{log.display_time}</p>
+                </div>
+              </div>
+            );
+          })
         ) : (
-          <div className="p-8 text-center text-xs text-muted-foreground uppercase tracking-widest font-black">
-            No telemetry logs.
+          <div className="px-5 py-14 text-center space-y-1.5">
+            <p className="text-sm text-muted-foreground/40 font-medium">No recent activity</p>
+            <p className="text-xs text-muted-foreground/30">Actions will appear here as they happen.</p>
           </div>
         )}
       </div>

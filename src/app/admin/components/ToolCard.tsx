@@ -12,31 +12,18 @@ interface ToolCardProps {
 
 export default function ToolCard({ title, desc, href, markerColor = "bg-primary" }: ToolCardProps) {
   return (
-    <Link 
-      href={href} 
-      className="group relative overflow-hidden bg-card/30 backdrop-blur-sm hover:bg-card/60 border border-border/40 hover:border-primary/40 rounded-2xl p-5 shadow-lg transition-all duration-300 hover:-translate-y-1"
+    <Link
+      href={href}
+      className="group flex items-start gap-4 px-5 py-4 rounded-xl border border-border/30 bg-card/40 hover:border-border/60 hover:bg-card/70 transition-all duration-200"
     >
-      {/* Decorative top indicator line */}
-      <div className={`absolute top-0 inset-x-0 h-[2px] ${markerColor} opacity-70 group-hover:opacity-100 transition-opacity`} />
-      
-      <div className="flex justify-between items-start mb-2">
-        <h3 className="text-sm font-black uppercase tracking-wider text-foreground/90 group-hover:text-primary transition-colors">
-          {title}
-        </h3>
-        <div className="p-1 rounded-lg bg-accent/25 border border-border/30 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-300">
-          <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-        </div>
+      <div className={`w-2 h-2 rounded-full ${markerColor} shrink-0 mt-1.5 opacity-80`} />
+
+      <div className="flex-1 min-w-0 space-y-1">
+        <p className="text-sm font-medium text-foreground/90 group-hover:text-foreground transition-colors">{title}</p>
+        <p className="text-xs text-muted-foreground/60 leading-relaxed">{desc}</p>
       </div>
-      
-      <p className="text-xs text-muted-foreground/80 leading-relaxed min-h-[32px] mb-4">
-        {desc}
-      </p>
-      
-      <div className="flex items-center gap-1.5 pt-3 border-t border-border/25">
-        <span className="text-[9px] font-black tracking-widest text-[#FFD700]/50 group-hover:text-[#FFD700] transition-colors uppercase">
-          Launch Command
-        </span>
-      </div>
+
+      <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/25 group-hover:text-muted-foreground/60 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0 mt-1" />
     </Link>
   );
 }

@@ -7,7 +7,10 @@ import { logout } from "@/lib/actions"
 import { clsx } from "clsx"
 import { NAV_SECTIONS } from "@/app/admin/constants"
 import { ThemeToggle } from "@/components/shared/ThemeToggle"
-import { Menu, X, Shield, LogOut, Terminal, Compass } from "lucide-react"
+import {
+  Menu, X, LogOut, ChevronRight, Home,
+  Layers, Swords, Flame, BookOpen, Users, Settings
+} from "lucide-react"
 
 interface User {
   username?: string;
@@ -22,22 +25,40 @@ interface SidebarContentProps {
   user: User | null;
 }
 
+const SECTION_ICONS: Record<string, React.ReactNode> = {
+  "General": <Layers className="w-3.5 h-3.5" />,
+  "PVE Content": <BookOpen className="w-3.5 h-3.5" />,
+  "PVP Content": <Swords className="w-3.5 h-3.5" />,
+  "Database": <Flame className="w-3.5 h-3.5" />,
+  "Analytics": <Settings className="w-3.5 h-3.5" />,
+  "System": <Users className="w-3.5 h-3.5" />,
+}
+
 const SidebarContent = ({ setIsOpen, pathname, filteredSections, user }: SidebarContentProps) => {
   const isSuperAdmin = user?.role === "super_admin";
 
   return (
-    <div className="flex flex-col h-full bg-card/65 backdrop-blur-lg border-r border-border/50 text-foreground font-sans w-64">
-      {/* Sidebar Header */}
-      <div className="h-16 flex items-center justify-between px-6 border-b border-border/40 shrink-0">
-        <Link href="/admin" className="font-extrabold italic tracking-wider text-lg transform -skew-x-6 flex items-center gap-1.5 group">
-          <Terminal className="w-5 h-5 text-primary" />
-          7K <span className="text-primary italic">ADM</span>
+    <div className="flex flex-col h-full w-64 bg-card border-r border-border/40 text-foreground">
+      {/* Logo / Brand */}
+      <div className="h-16 flex items-center px-6 border-b border-border/30 shrink-0">
+        <Link
+          href="/admin"
+          className="flex items-center gap-2.5 group"
+          onClick={() => setIsOpen(false)}
+        >
+          <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center shadow-sm">
+            <span className="text-[10px] font-black text-primary-foreground">7K</span>
+          </div>
+          <div className="flex flex-col leading-none">
+            <span className="text-[11px] font-bold text-foreground/90">7K Admin</span>
+            <span className="text-[9px] text-muted-foreground/70 font-medium">Control Panel</span>
+          </div>
         </Link>
-        <div className="flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-1.5">
           <ThemeToggle />
           <button
             onClick={() => setIsOpen(false)}
-            className="p-1 text-muted-foreground hover:text-foreground md:hidden border border-border/40 rounded-lg hover:bg-accent/40"
+            className="p-1.5 text-muted-foreground hover:text-foreground md:hidden rounded-lg hover:bg-accent/40 transition-colors"
             aria-label="Close menu"
           >
             <X className="w-4 h-4" />
@@ -45,30 +66,38 @@ const SidebarContent = ({ setIsOpen, pathname, filteredSections, user }: Sidebar
         </div>
       </div>
 
-      {/* Navigation menu */}
-      <nav className="flex-1 overflow-y-auto custom-scrollbar px-4 py-6 space-y-6">
-        <div className="space-y-1">
-          <Link
-            href="/admin"
-            onClick={() => setIsOpen(false)}
-            className={clsx(
-              "flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
-              pathname === "/admin"
-                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/10"
-                : "text-muted-foreground hover:text-foreground hover:bg-accent/35"
-            )}
-          >
-            <Compass className="w-4 h-4 shrink-0" />
-            Command Center
-          </Link>
-        </div>
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-1">
+        {/* Dashboard Home */}
+        <Link
+          href="/admin"
+          onClick={() => setIsOpen(false)}
+          className={clsx(
+            "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 mb-4",
+            pathname === "/admin"
+              ? "bg-primary/10 text-primary font-semibold"
+              : "text-muted-foreground hover:text-foreground hover:bg-accent/20"
+          )}
+        >
+          <Home className="w-4 h-4 shrink-0" />
+          <span>Dashboard</span>
+          {pathname === "/admin" && (
+            <ChevronRight className="w-3 h-3 ml-auto text-primary/70" />
+          )}
+        </Link>
 
+        {/* Sections */}
         {filteredSections.map((section) => (
-          <div key={section.title} className="space-y-2">
-            <h3 className="px-4 text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
-              {section.title}
-            </h3>
-            <div className="space-y-0.5">
+          <div key={section.title} className="py-3">
+            <div className="flex items-center gap-1.5 px-3 mb-2">
+              <span className="text-muted-foreground/40">
+                {SECTION_ICONS[section.title] || <Layers className="w-3.5 h-3.5" />}
+              </span>
+              <p className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-wider">
+                {section.title}
+              </p>
+            </div>
+            <div className="space-y-1">
               {section.items.map((item: any) => {
                 const isActive = pathname === item.href;
                 return (
@@ -77,13 +106,16 @@ const SidebarContent = ({ setIsOpen, pathname, filteredSections, user }: Sidebar
                     href={item.href}
                     onClick={() => setIsOpen(false)}
                     className={clsx(
-                      "flex items-center gap-3 px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all",
+                      "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150",
                       isActive
-                        ? "bg-accent text-primary border-l-2 border-primary"
-                        : "text-muted-foreground hover:text-foreground hover:bg-accent/30"
+                        ? "bg-accent/60 text-foreground font-semibold"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/20 font-medium"
                     )}
                   >
-                    <div className={clsx("w-1.5 h-1.5 rounded-full shrink-0", isActive ? "bg-primary animate-pulse" : item.color || "bg-muted-foreground/40")} />
+                    <span className={clsx(
+                      "w-1.5 h-1.5 rounded-full shrink-0",
+                      isActive ? item.color || "bg-primary" : "bg-muted-foreground/30"
+                    )} />
                     <span>{item.name}</span>
                   </Link>
                 );
@@ -93,32 +125,37 @@ const SidebarContent = ({ setIsOpen, pathname, filteredSections, user }: Sidebar
         ))}
       </nav>
 
-      {/* Operator Badge & Logout Footer */}
-      <div className="p-4 border-t border-border/40 bg-accent/10 space-y-4">
-        <div className="flex items-center gap-3.5 bg-card/40 border border-border/50 rounded-2xl p-3.5 shadow-sm relative overflow-hidden group">
-          <div className={`absolute -right-6 -bottom-6 w-14 h-14 bg-gradient-to-tr ${isSuperAdmin ? "from-emerald-500/10" : "from-cyan-500/10"} blur-xl rounded-full pointer-events-none`} />
+      {/* Footer — User Profile */}
+      <div className="p-4 border-t border-border/30 space-y-3 shrink-0">
+        {/* User row */}
+        <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-accent/10 border border-border/20">
           <div className={clsx(
-            "w-9 h-9 rounded-xl border flex items-center justify-center relative z-10 shrink-0",
-            isSuperAdmin ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-cyan-500/10 border-cyan-500/20 text-cyan-400"
+            "w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 ring-2",
+            isSuperAdmin
+              ? "bg-amber-500/20 text-amber-400 ring-amber-400/20"
+              : "bg-blue-500/20 text-blue-400 ring-blue-400/20"
           )}>
-            <Shield className="w-4 h-4" />
+            {user?.username?.charAt(0).toUpperCase() || "A"}
           </div>
-          <div className="space-y-0.5 min-w-0 relative z-10">
-            <p className="text-[8px] font-black uppercase tracking-wider text-muted-foreground/60 leading-none">OPERATOR SIG</p>
-            <p className="text-xs font-black text-foreground/95 truncate leading-tight">{user?.username || "Admin"}</p>
-            <p className={`text-[8px] font-black uppercase tracking-widest leading-none ${isSuperAdmin ? "text-emerald-400" : "text-cyan-400"}`}>
-              {user?.role?.replace("_", " ")}
+          <div className="min-w-0 flex-1">
+            <p className="text-[12px] font-semibold text-foreground truncate">{user?.username || "Admin"}</p>
+            <p className={clsx(
+              "text-[10px] font-medium capitalize truncate",
+              isSuperAdmin ? "text-amber-500" : "text-blue-400"
+            )}>
+              {user?.role?.replace("_", " ") || "admin"}
             </p>
           </div>
         </div>
 
+        {/* Logout */}
         <form action={logout}>
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/20 hover:border-rose-500/40 rounded-xl text-[10px] font-black tracking-widest text-rose-400 hover:text-rose-300 transition-all active:scale-[0.98] uppercase"
+            className="w-full flex items-center gap-2 px-3 py-2 text-[12px] font-medium text-muted-foreground hover:text-rose-400 hover:bg-rose-500/5 rounded-lg transition-all duration-150"
           >
             <LogOut className="w-3.5 h-3.5" />
-            Sign Out
+            Sign out
           </button>
         </form>
       </div>
@@ -135,7 +172,6 @@ export default function Sidebar({ user }: { user: User | null }) {
     return user?.permissions?.includes(perm) || user?.permissions?.includes("*");
   };
 
-  // Filter sections and items based on permissions
   const filteredSections = NAV_SECTIONS.map((section) => ({
     ...section,
     items: section.items.filter((item) => {
@@ -146,28 +182,28 @@ export default function Sidebar({ user }: { user: User | null }) {
 
   return (
     <>
-      {/* Mobile Top Navigation Bar */}
-      <div className="md:hidden flex h-16 w-full items-center justify-between px-6 border-b border-border bg-card/65 backdrop-blur-md shrink-0">
-        <Link href="/admin" className="font-extrabold italic tracking-wider text-lg transform -skew-x-6 flex items-center gap-1.5">
-          <Terminal className="w-5 h-5 text-primary" />
-          7K <span className="text-primary italic">ADM</span>
+      {/* Mobile Top Bar */}
+      <div className="md:hidden flex h-14 w-full items-center justify-between px-4 border-b border-border/60 bg-card shrink-0">
+        <Link href="/admin" className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
+            <span className="text-[10px] font-black text-primary-foreground">7K</span>
+          </div>
+          <span className="text-sm font-semibold">Admin</span>
         </Link>
         <button
           onClick={() => setIsOpen(true)}
-          className="p-2 border border-border/40 rounded-lg hover:bg-accent/40 text-muted-foreground hover:text-foreground"
+          className="p-2 rounded-lg hover:bg-accent/40 text-muted-foreground hover:text-foreground transition-colors"
           aria-label="Open menu"
         >
           <Menu className="w-5 h-5" />
         </button>
       </div>
 
-      {/* Sidebar Drawer Container */}
-      <div
-        className={clsx(
-          "fixed inset-y-0 left-0 z-50 transform md:relative md:translate-x-0 transition-transform duration-300 ease-in-out shrink-0",
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        )}
-      >
+      {/* Sidebar */}
+      <div className={clsx(
+        "fixed inset-y-0 left-0 z-50 transform md:relative md:translate-x-0 transition-transform duration-200 ease-out shrink-0",
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
         <SidebarContent
           setIsOpen={setIsOpen}
           pathname={pathname}
@@ -176,10 +212,10 @@ export default function Sidebar({ user }: { user: User | null }) {
         />
       </div>
 
-      {/* Backdrop for mobile view */}
+      {/* Mobile backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}

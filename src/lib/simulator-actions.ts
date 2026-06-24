@@ -11,13 +11,14 @@ export async function getSimulatorHeroes() {
     const files = await fs.promises.readdir(heroesDir)
     
     // Grade ranking Map
-    const gradeOrder = { "l++": 0, "l+": 1, "l": 2, "r": 3 }
+    const gradeOrder = { "a": 0, "l++": 1, "l+": 2, "l": 3, "r": 4 }
 
     function getGradeFromFilename(filename) {
         if (filename.startsWith("l++_")) return "l++"
         if (filename.startsWith("l+_")) return "l+"
         if (filename.startsWith("l_")) return "l"
         if (filename.startsWith("r_")) return "r"
+        if (filename.startsWith("a_")) return "a"
         return null
     }
 
@@ -31,7 +32,7 @@ export async function getSimulatorHeroes() {
                 filename: file,
                 slug: file.replace(/\.[^/.]+$/, ""),
                 grade: grade,
-                name: file.replace(/^(l\+\+|l\+|l|r)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " ")
+                name: file.replace(/^(l\+\+|l\+|l|r|a)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " ")
             }
         })
         .filter(h => h !== null)

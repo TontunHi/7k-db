@@ -3,10 +3,15 @@
 import { forwardRef } from 'react'
 import { Sword, Wand2, Plus, Sparkles, Info } from 'lucide-react'
 import { clsx } from 'clsx'
-import { MIN_STATS_KEYS } from '../constants' // I will create this constants file
+import { MIN_STATS_KEYS, getDedicatedStatIcon } from '../constants' // I will create this constants file
 import styles from './BuildCardExport.module.css'
 
 const BuildCardExport = forwardRef<HTMLDivElement, any>(({ hero, build, skills }, ref) => {
+    const dedicatedCounts = (build.dedicatedStats || []).filter(Boolean).reduce((acc: any, curr: string) => {
+        acc[curr] = (acc[curr] || 0) + 1
+        return acc
+    }, {})
+
     return (
         <div 
             ref={ref}
@@ -176,6 +181,38 @@ const BuildCardExport = forwardRef<HTMLDivElement, any>(({ hero, build, skills }
                                      <span className={styles.minStatValue}>{build.minStats[s.key]}</span>
                                  </div>
                              ))}
+                             {MIN_STATS_KEYS.filter(s => build.minStats[s.key]).length === 0 && (
+                                 <div className="col-span-2 text-xs font-bold text-gray-500 italic p-2">No target stats set</div>
+                             )}
+                        </div>
+                    </div>
+
+                    {/* Dedicated Stats */}
+                    <div className={styles.minStatsFullWidth}>
+                        <h4 className={styles.sectionHeader}>
+                             <Sparkles className={styles.iconSmall} /> Dedicated Stats
+                             <div className={styles.headerLine} />
+                        </h4>
+                        <div className={styles.minStatsGrid}>
+                             {Object.entries(dedicatedCounts).map(([ded, count]: any, idx) => {
+                                 const icon = getDedicatedStatIcon(ded)
+                                 const textLabel = count > 1 ? `${ded} x${count}` : ded
+                                 return (
+                                     <div key={`ded-${idx}`} className={clsx(styles.minStatBadge, "border-primary/20 bg-primary/5")}>
+                                         <div className={styles.minStatLabelBox}>
+                                             {icon && (
+                                                 <div className={styles.minStatIconBox}>
+                                                    <img src={icon} className={styles.itemIcon} alt="" />
+                                                 </div>
+                                             )}
+                                             <span className="text-[9px] font-bold text-primary uppercase">{textLabel}</span>
+                                         </div>
+                                     </div>
+                                 )
+                             })}
+                             {Object.keys(dedicatedCounts).length === 0 && (
+                                 <div className="col-span-2 text-xs font-bold text-gray-500 italic p-2">No dedicated stats set</div>
+                             )}
                         </div>
                     </div>
                 </div>

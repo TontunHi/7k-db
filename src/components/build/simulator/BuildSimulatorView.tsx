@@ -11,7 +11,7 @@ import SimulatorHeroPicker from "./components/SimulatorHeroPicker"
 import SimulatorEditor from "./components/SimulatorEditor"
 import SimulatorPreview from "./components/SimulatorPreview"
 import ItemPickerModal from "./components/ItemPickerModal"
-import { WEAPON_MAIN_STATS, ARMOR_MAIN_STATS } from "./constants"
+import { WEAPON_MAIN_STATS, ARMOR_MAIN_STATS, DEDICATED_STATS_OPTIONS } from "./constants"
 
 import styles from "./BuildSimulator.module.css"
 
@@ -47,23 +47,25 @@ export default function BuildSimulatorView({ initialHero, onBack }) {
         ],
         substats: [],
         minStats: {},
+        dedicatedStats: [null, null, null, null],
         skillPriority: [],
         cLevel: "None"
     })
 
     // Filter to only include skill files 1, 2, 3, 4 and sort descending (4,3,2,1)
     const displaySkills = useMemo(() => {
+        const allowed = hero?.grade === 'a' ? ["0", "1", "2", "3", "4"] : ["1", "2", "3", "4"]
         return skills
             .filter(s => {
                 const filename = s.split('/').pop().split('.')[0]
-                return ["1", "2", "3", "4"].includes(filename)
+                return allowed.includes(filename)
             })
             .sort((a, b) => {
                 const numA = parseInt(a.split('/').pop().split('.')[0]) || 0
                 const numB = parseInt(b.split('/').pop().split('.')[0]) || 0
-                return numB - numA // Descending: 4, 3, 2, 1
+                return numB - numA // Descending: 4, 3, 2, 1, 0
             })
-    }, [skills])
+    }, [skills, hero])
 
     const exportRef = useRef(null)
 
@@ -218,6 +220,7 @@ export default function BuildSimulatorView({ initialHero, onBack }) {
 
             <div className={styles.mainLayout}>
                 <SimulatorEditor 
+                    hero={hero}
                     build={build}
                     setBuild={setBuild}
                     displaySkills={displaySkills}
@@ -242,22 +245,32 @@ export default function BuildSimulatorView({ initialHero, onBack }) {
             {activePicker && (
                 <ItemPickerModal 
                     type={activePicker.type} 
-                    items={activePicker.type === 'accessory' ? items.accessories : items[`${activePicker.type}s`]} 
-                    onSelect={(img) => {
+                    items={
+                        activePicker.type === 'accessory' 
+                            ? items.accessories 
+                            : activePicker.type === 'dedicated'
+                            ? DEDICATED_STATS_OPTIONS
+                            : items[`${activePicker.type}s`]
+                    } 
+                    onSelect={(val) => {
                         setBuild(prev => {
                             const newB = { ...prev }
                             if (activePicker.type === 'accessory') {
                                 const newAccs = [...newB.accessories]
                                 if (activePicker.sub === 'refined') {
-                                    newAccs[activePicker.index] = { ...newAccs[activePicker.index], refined: img }
+                                    newAccs[activePicker.index] = { ...newAccs[activePicker.index], refined: val }
                                 } else {
-                                    newAccs[activePicker.index] = { ...newAccs[activePicker.index], image: img }
+                                    newAccs[activePicker.index] = { ...newAccs[activePicker.index], image: val }
                                 }
                                 newB.accessories = newAccs
+                            } else if (activePicker.type === 'dedicated') {
+                                const newDeds = [...(newB.dedicatedStats || [null, null, null, null])]
+                                newDeds[activePicker.index] = val
+                                newB.dedicatedStats = newDeds
                             } else {
                                 const targetField = activePicker.type === 'weapon' ? 'weapons' : 'armors'
                                 const newList = newB[targetField].map((item, idx) => 
-                                    idx === activePicker.index ? { ...item, image: img } : item
+                                    idx === activePicker.index ? { ...item, image: val } : item
                                 )
                                 newB[targetField] = newList
                             }
