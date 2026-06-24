@@ -6,16 +6,16 @@ import HeroCard from "./HeroCard"
 import BuildEditorModal from "@/components/admin/BuildEditorModal"
 import styles from "./builds.module.css"
 import { Marker } from "@/app/admin/components/AdminEditorial"
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core"
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy } from "@dnd-kit/sortable"
-import { reorderHeroes } from "@/lib/build-db"
-import { toast } from "sonner"
+import { Search } from "lucide-react"
 
 /**
  * BuildManagerView - Main Dashboard for Builds Management
  */
 export default function BuildManagerView({ heroes: initialHeroes = [] }) {
     const [heroes, setHeroes] = useState(initialHeroes)
+    const [searchQuery, setSearchQuery] = useState("")
+    const [selectedGrade, setSelectedGrade] = useState("ALL")
+
     const {
         editorOpen,
         setEditorOpen,
@@ -32,33 +32,12 @@ export default function BuildManagerView({ heroes: initialHeroes = [] }) {
         setHeroes(initialHeroes)
     }, [initialHeroes])
 
-    const sensors = useSensors(
-        useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-    )
-
-    const handleDragEnd = async (event) => {
-        const { active, over } = event
-        if (over && active.id !== over.id) {
-            const oldIndex = heroes.findIndex(h => h.filename === active.id)
-            const newIndex = heroes.findIndex(h => h.filename === over.id)
-            
-            const newHeroes = arrayMove(heroes, oldIndex, newIndex)
-            setHeroes(newHeroes)
-
-            try {
-                const orderedSlugs = newHeroes.map(h => h.slug)
-                const result = await reorderHeroes(orderedSlugs)
-                if (result.success) {
-                    toast.success("Hero order synchronized")
-                } else {
-                    toast.error("Failed to sync order: " + result.error)
-                }
-            } catch (err) {
-                toast.error("Reordering failed")
-            }
-        }
-    }
+    // Filter display heroes based on Search and Grade
+    const filteredHeroes = heroes.filter(hero => {
+        const matchesSearch = hero.name.toLowerCase().includes(searchQuery.toLowerCase())
+        const matchesGrade = selectedGrade === "ALL" || hero.grade.toLowerCase() === selectedGrade.toLowerCase()
+        return matchesSearch && matchesGrade
+    })
 
     return (
         <div className={styles.container}>
@@ -66,38 +45,53 @@ export default function BuildManagerView({ heroes: initialHeroes = [] }) {
             <header className={styles.header}>
                 <div className={styles.headerLeft}>
                     <div className={styles.titleWrapper}>
-                        <Marker color="bg-primary" className="w-2 h-10" />
-                        <h1 className={styles.title}>HERO BUILDS</h1>
+                        <Marker color="bg-primary" className="w-1.5 h-6" />
+                        <h1 className={styles.title}>Hero Builds</h1>
                     </div>
+                    <p className={styles.subtitle}>Configure and optimize hero equipment sets and skill priorities.</p>
                 </div>
 
                 <div className={styles.statsBox}>
                     <span className={styles.statsCount}>{heroes.length}</span>
-                    <span className={styles.statsLabel}>Heroes</span>
+                    <span className={styles.statsLabel}>Total Heroes</span>
                 </div>
             </header>
 
-            {/* Grid */}
-            <DndContext 
-                sensors={sensors} 
-                collisionDetection={closestCenter} 
-                onDragEnd={handleDragEnd}
-            >
-                <div className={styles.grid}>
-                    <SortableContext 
-                        items={heroes.map(h => h.filename)} 
-                        strategy={rectSortingStrategy}
-                    >
-                        {heroes.map((hero) => (
-                            <HeroCard 
-                                key={hero.filename} 
-                                hero={hero} 
-                                onEdit={handleEdit} 
-                            />
-                        ))}
-                    </SortableContext>
+            {/* Operations Control Bar */}
+            <div className={styles.controlBar}>
+                <div className={styles.searchWrapper}>
+                    <Search className={styles.searchIcon} size={14} />
+                    <input 
+                        type="text" 
+                        placeholder="Search hero builds..." 
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className={styles.searchInput}
+                    />
                 </div>
-            </DndContext>
+                <div className={styles.gradeTabs}>
+                    {["ALL", "AWAKE", "L++", "L+", "L", "R"].map(grade => (
+                        <button
+                            key={grade}
+                            onClick={() => setSelectedGrade(grade)}
+                            className={`${styles.gradeTabBtn} ${selectedGrade === grade ? styles.gradeTabBtnActive : ""}`}
+                        >
+                            {grade}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Grid */}
+            <div className={styles.grid}>
+                {filteredHeroes.map((hero) => (
+                    <HeroCard 
+                        key={hero.filename} 
+                        hero={hero} 
+                        onEdit={handleEdit} 
+                    />
+                ))}
+            </div>
 
             {/* Loading Overlay */}
             {isLoading && (

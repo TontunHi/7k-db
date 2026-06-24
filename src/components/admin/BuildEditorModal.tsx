@@ -154,6 +154,42 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
         toast.info("Build removed.")
     }
 
+    const handleDuplicateBuild = (index) => {
+        const buildToCopy = builds[index]
+        const duplicated = {
+            ...buildToCopy,
+            id: Date.now() + Math.random(),
+            mode: [...buildToCopy.mode],
+            weapons: buildToCopy.weapons.map(w => ({ ...w })),
+            armors: buildToCopy.armors.map(a => ({ ...a })),
+            accessories: buildToCopy.accessories.map(acc => ({ ...acc })),
+            substats: [...buildToCopy.substats],
+            minStats: { ...buildToCopy.minStats },
+            dedicatedStats: [...(buildToCopy.dedicatedStats || [null, null, null, null])]
+        }
+        
+        const newBuilds = [...builds]
+        newBuilds.splice(index + 1, 0, duplicated)
+        setBuilds(newBuilds)
+        toast.success("Build duplicated.")
+    }
+
+    const handleResetBuild = (index) => {
+        if (!window.confirm("Reset all equipment and stats for this build?")) return
+        const newBuilds = [...builds]
+        newBuilds[index] = {
+            ...newBuilds[index],
+            weapons: [{ image: "", stat: WEAPON_MAIN_STATS[0] }, { image: "", stat: WEAPON_MAIN_STATS[0] }],
+            armors: [{ image: "", stat: ARMOR_MAIN_STATS[0] }, { image: "", stat: ARMOR_MAIN_STATS[0] }],
+            accessories: [],
+            substats: [],
+            minStats: {},
+            dedicatedStats: [null, null, null, null]
+        }
+        setBuilds(newBuilds)
+        toast.info("Build reset.")
+    }
+
     const moveBuild = (index, direction) => {
         const newIndex = index + direction
         if (newIndex < 0 || newIndex >= builds.length) return
@@ -433,12 +469,12 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                             </div>
 
                             {/* Action buttons (Move/Delete) */}
-                            <div className="absolute top-4 right-4 flex gap-2 z-10">
+                            <div className="absolute top-4 right-4 flex gap-1.5 z-10">
                                 <div className="flex bg-gray-900/60 rounded-xl border border-gray-800/80 overflow-hidden">
                                     <button
                                         onClick={() => moveBuild(bIndex, -1)}
                                         disabled={bIndex === 0}
-                                        className="px-3 py-1.5 hover:bg-white/5 text-gray-400 disabled:opacity-20 transition-colors border-r border-gray-800"
+                                        className="px-2.5 py-1.5 hover:bg-white/5 text-gray-400 disabled:opacity-20 transition-colors border-r border-gray-800"
                                         title="Move Up"
                                     >
                                         <ActionLabel label="↑" color="text-inherit" />
@@ -446,7 +482,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                     <button
                                         onClick={() => moveBuild(bIndex, 1)}
                                         disabled={bIndex === builds.length - 1}
-                                        className="px-3 py-1.5 hover:bg-white/5 text-gray-400 disabled:opacity-20 transition-colors"
+                                        className="px-2.5 py-1.5 hover:bg-white/5 text-gray-400 disabled:opacity-20 transition-colors"
                                         title="Move Down"
                                     >
                                         <ActionLabel label="↓" color="text-inherit" />
@@ -454,8 +490,24 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                 </div>
 
                                 <button
+                                    onClick={() => handleDuplicateBuild(bIndex)}
+                                    className="text-amber-500 hover:text-white bg-amber-500/10 hover:bg-amber-600 px-3 py-1.5 rounded-xl transition-all duration-200 border border-amber-500/20 hover:border-amber-500 hover:scale-105 active:scale-95"
+                                    title="Duplicate Build"
+                                >
+                                    <ActionLabel label="DUPLICATE" color="text-inherit" />
+                                </button>
+
+                                <button
+                                    onClick={() => handleResetBuild(bIndex)}
+                                    className="text-gray-400 hover:text-white bg-white/5 hover:bg-gray-700 px-3 py-1.5 rounded-xl transition-all duration-200 border border-gray-800 hover:border-gray-600 hover:scale-105 active:scale-95"
+                                    title="Reset Build"
+                                >
+                                    <ActionLabel label="RESET" color="text-inherit" />
+                                </button>
+
+                                <button
                                     onClick={() => handleRemoveBuild(bIndex)}
-                                    className="text-red-500/60 hover:text-white bg-red-950/20 hover:bg-red-600 px-3 py-2 rounded-xl transition-all duration-200 border border-red-900/30 hover:border-red-500 hover:scale-110 active:scale-95 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]"
+                                    className="text-red-500/60 hover:text-white bg-red-950/20 hover:bg-red-600 px-3 py-1.5 rounded-xl transition-all duration-200 border border-red-900/30 hover:border-red-500 hover:scale-110 active:scale-95 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]"
                                     title="Delete Build"
                                 >
                                     <ActionLabel label="REMOVE" color="text-red-500" className="group-hover:text-white" />
