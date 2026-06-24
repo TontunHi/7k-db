@@ -1,6 +1,11 @@
 import styles from './TotalWarHeader.module.css'
+import { getLocale, getTranslations } from '@/lib/i18n'
 
-export default function TotalWarHeader({ lastUpdated }) {
+export default async function TotalWarHeader({ lastUpdated }) {
+    const lang = await getLocale()
+    const translations = await getTranslations(lang)
+    const t = (key: string, defaultVal: string) => translations[key] || defaultVal
+
     return (
         <div className={styles.header}>
             {/* Advanced Decorative Elements */}
@@ -17,15 +22,15 @@ export default function TotalWarHeader({ lastUpdated }) {
             </div>
             
             <div className={styles.titleContainer}>
-                <h1 className={styles.title} data-text="TOTAL WAR">
-                    TOTAL WAR
+                <h1 className={styles.title} data-text={t("total_war.title", "TOTAL WAR").toUpperCase()}>
+                    {t("total_war.title", "TOTAL WAR").toUpperCase()}
                 </h1>
             </div>
 
             {lastUpdated && (
                 <div className={styles.updateBadge}>
                     <div className={styles.pulse} />
-                    <span className={styles.updateText}>Last Update :</span>
+                    <span className={styles.updateText}>{t("arena.last_update", "Last Update :")}</span>
                     <div className={styles.divider} />
                     <span className={styles.updateDate}>{lastUpdated}</span>
                 </div>

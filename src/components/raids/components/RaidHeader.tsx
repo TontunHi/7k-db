@@ -1,17 +1,20 @@
 import { Skull } from 'lucide-react'
 import styles from './RaidHeader.module.css'
+import { getLocale, getTranslations } from '@/lib/i18n'
 
-export default function RaidHeader() {
+export default async function RaidHeader() {
+    const lang = await getLocale()
+    const translations = await getTranslations(lang)
+    const t = (key: string, defaultVal: string) => translations[key] || defaultVal
+
     return (
         <div className={styles.header}>
             <div className={styles.titleWrapper}>
-
                 <h1 className={styles.title}>
-                    <span className={styles.redText}>RAIDS</span>
+                    <span className={styles.redText}>{t("raid.title", "RAIDS").toUpperCase()}</span>
                 </h1>
                 <div className={styles.underline} />
             </div>
-
         </div>
     )
 }

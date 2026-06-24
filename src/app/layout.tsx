@@ -45,9 +45,13 @@ export const metadata = {
   }
 }
 
-export default function RootLayout({ children }) {
+import { getLocale } from "@/lib/i18n"
+
+export default async function RootLayout({ children }) {
+  const lang = await getLocale()
+
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${prompt.variable}`}>
+    <html lang={lang} suppressHydrationWarning className={`${inter.variable} ${prompt.variable}`}>
       <head>
         <Script
           id="theme-init"

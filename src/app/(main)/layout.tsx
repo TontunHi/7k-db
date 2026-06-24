@@ -59,13 +59,17 @@ export const metadata = {
     },
 }
 
+import { getLocale, getTranslations } from "@/lib/i18n"
+
 export default async function MainLayout({ children }) {
     const isContactEnabled = await isContactFormEnabled()
+    const lang = await getLocale()
+    const translations = await getTranslations(lang)
 
     return (
         <>
             <SideDecoration />
-            <Navbar />
+            <Navbar translations={translations} />
             <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-8">
                 {children}
             </main>

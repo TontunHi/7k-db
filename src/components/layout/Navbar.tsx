@@ -2,52 +2,58 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useState, useEffect, useRef } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { clsx } from "clsx"
 import { ChevronDown, Menu, X } from "lucide-react"
 
 import { ThemeToggle } from "@/components/shared/ThemeToggle"
+import LanguageSwitcher from "./LanguageSwitcher"
 
-export default function Navbar() {
+interface NavbarProps {
+    translations?: Record<string, string>
+}
+
+export default function Navbar({ translations = {} }: NavbarProps) {
     const pathname = usePathname()
     const router = useRouter()
 
     const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const [activeDropdown, setActiveDropdown] = useState(null)
+    const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+
+    const t = (key: string, defaultVal: string) => translations[key] || defaultVal
 
     const navItems = [
-        { name: "Home", href: "/" },
-        { name: "Builds", href: "/build" },
-        { name: "Tier List", href: "/tierlist" },
+        { name: t("nav.home", "Home"), href: "/" },
+        { name: t("nav.builds", "Builds"), href: "/build" },
+        { name: t("nav.tierlist", "Tier List"), href: "/tierlist" },
         {
-            name: "PVE Mode",
+            name: t("nav.pve", "PVE Mode"),
             href: "#",
             children: [
-                // { name: "Stage", href: "/stages" },
-                { name: "Dungeons", href: "/dungeon" },
-                { name: "Raids", href: "/raid" },
-                { name: "Castle Rush", href: "/castle-rush" },
-                { name: "Advent Expedition", href: "/advent" },
+                { name: t("nav.dungeons", "Dungeons"), href: "/dungeon" },
+                { name: t("nav.raids", "Raids"), href: "/raid" },
+                { name: t("nav.castle_rush", "Castle Rush"), href: "/castle-rush" },
+                { name: t("nav.advent", "Advent Expedition"), href: "/advent" },
             ]
         },
         {
-            name: "PVP Mode",
+            name: t("nav.pvp", "PVP Mode"),
             href: "#",
             children: [
-                { name: "Arena & Celestial PVP", href: "/arena" },
-                { name: "Total War", href: "/total-war" },
-                { name: "Guild War", href: "/guild-war" },
+                { name: t("nav.arena", "Arena & Celestial PVP"), href: "/arena" },
+                { name: t("nav.total_war", "Total War"), href: "/total-war" },
+                { name: t("nav.guild_war", "Guild War"), href: "/guild-war" },
             ]
         },
         {
-            name: "Tools",
+            name: t("nav.tools", "Tools"),
             href: "#",
             children: [
-                { name: "Build Heroes", href: "/tools/build-simulator" },
-                { name: "Hero Stats", href: "/tools/hero-stats" },
-                { name: "Tier List Maker", href: "/tools/tierlist-maker" },
+                { name: t("nav.build_heroes", "Build Heroes"), href: "/tools/build-simulator" },
+                { name: t("nav.hero_stats", "Hero Stats"), href: "/tools/hero-stats" },
+                { name: t("nav.tierlist_maker", "Tier List Maker"), href: "/tools/tierlist-maker" },
             ]
         },
     ]
@@ -151,6 +157,7 @@ export default function Navbar() {
 
                 {/* Right Actions */}
                 <div className="flex items-center gap-2">
+                    <LanguageSwitcher />
                     <ThemeToggle />
                     
                     {/* Mobile Menu Button */}

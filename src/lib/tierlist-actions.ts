@@ -17,7 +17,7 @@ export async function getTierlistCreatorData() {
     if (!fs.existsSync(heroesDir)) return { heroes: [], typeMap: {} as Record<string, string> }
     
     const files = await fs.promises.readdir(heroesDir)
-    const gradeOrder: Record<string, number> = { "l++": 0, "l+": 1, "l": 2, "r": 3 }
+    const gradeOrder: Record<string, number> = { "l++": 0, "l+": 1, "l": 2, "r": 3, "a": 4 }
 
     const heroes = files
         .filter(file => /\.(png|jpg|jpeg|webp)$/i.test(file))
@@ -28,7 +28,7 @@ export async function getTierlistCreatorData() {
                 filename: file,
                 slug: file.replace(/\.[^/.]+$/, ""),
                 grade: grade,
-                name: file.replace(/^(l\+\+|l\+|l|r)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " ")
+                name: file.replace(/^(a|l\+\+|l\+|l|r)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " ")
             }
         })
         .filter((h): h is { filename: string; slug: string; grade: string; name: string } => h !== null)
@@ -56,6 +56,7 @@ export async function getTierlistCreatorData() {
 
 function getGradeFromFilename(filename: string) {
     const lower = filename.toLowerCase()
+    if (lower.startsWith("a_")) return "a"
     if (lower.startsWith("l++_")) return "l++"
     if (lower.startsWith("l+_")) return "l+"
     if (lower.startsWith("l_")) return "l"

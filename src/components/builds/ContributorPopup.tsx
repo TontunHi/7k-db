@@ -88,6 +88,11 @@ export default function ContributorPopup() {
                             <ExternalLink size={14} className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
                         </Link>
 
+                        <div className="text-[11px] text-muted-foreground/75 leading-relaxed space-y-1.5 py-3 border-t border-border/40 mt-3">
+                            <p>Since we can no longer access the old data, I have to re-enter the new information.</p>
+                            <p className="text-muted-foreground/60">เนื่องจากเราไม่สามารถเข้าถึงข้อมูลเก่าได้แล้วทำให้ผมต้องเพิ่มข้อมูลใหม่อีกครั้ง</p>
+                        </div>
+
                         {/* Checkbox "Do not show again today" */}
                         <div className="flex items-center justify-center gap-2.5 pt-3 border-t border-border/40 select-none">
                             <input 

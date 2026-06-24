@@ -10,7 +10,12 @@ export const metadata = {
     description: 'Welcome to the ultimate Seven Knights Rebirth database. Find hero builds, tier lists, and complete stage guides.',
 };
 
+import { getLocale, getTranslations } from "@/lib/i18n"
+
 export default async function HomePage() {
+    const lang = await getLocale()
+    const translations = await getTranslations(lang)
+
     return (
         <div className={styles.page}>
             {/* Background Layer */}
@@ -21,7 +26,7 @@ export default async function HomePage() {
                 <HeroSection />
 
                 <div className={styles.contentWrapper}>
-                    <FeaturesGridPremium />
+                    <FeaturesGridPremium translations={translations} />
                 </div>
             </div>
         </div>

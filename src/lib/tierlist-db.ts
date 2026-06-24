@@ -94,7 +94,7 @@ export async function getAllHeroesForTierlist() {
     const heroes = files
         .filter(file => /\.(png|jpg|jpeg|webp)$/i.test(file))
         .map(file => parseHeroDetails(file))
-        .filter((h): h is HeroDetails => h !== null && ["l++", "l+", "l", "r"].includes(h.grade))
+        .filter((h): h is HeroDetails => h !== null && ["l++", "l+", "l", "r", "a"].includes(h.grade))
 
     return heroes
 }

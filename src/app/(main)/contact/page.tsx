@@ -8,18 +8,23 @@ export const metadata = {
     description: "Reach out to the 7K DB team for feedback, suggestions, or bug reports."
 }
 
+import { getLocale, getTranslations } from "@/lib/i18n"
+
 export default async function ContactPage() {
     const isEnabled = await isContactFormEnabled()
+    const lang = await getLocale()
+    const translations = await getTranslations(lang)
+    const t = (key: string, defaultVal: string) => translations[key] || defaultVal
 
     return (
         <div className="container mx-auto px-4 py-20 max-w-4xl font-sans tracking-tight leading-relaxed">
             <div className="text-center mb-16 relative">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-32 bg-orange-500/20 blur-[100px] -z-10 rounded-full" />
                 <h1 className="text-5xl md:text-7xl font-black text-foreground italic transform -skew-x-12 uppercase mb-6 drop-shadow-lg leading-tight animate-in fade-in slide-in-from-top-8 duration-700">
-                    GET IN <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-orange-500 to-amber-500">TOUCH</span>
+                    {lang === 'th' ? "ติดต่อ" : "GET IN "}<span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-orange-500 to-amber-500">{lang === 'th' ? "เรา" : "TOUCH"}</span>
                 </h1>
                 <p className="text-muted-foreground text-lg font-light tracking-wide max-w-xl mx-auto animate-in fade-in duration-1000 delay-200">
-                    We&apos;re always looking for feedback, guide contributions, or bug reports. Choose a method below to reach us!
+                    {t("contact.desc", "We're always looking for feedback, guide contributions, or bug reports. Choose a method below to reach us!")}
                 </p>
                 <div className="h-1 w-24 bg-gradient-to-r from-orange-500 to-transparent mx-auto mt-8"></div>
             </div>
@@ -31,7 +36,7 @@ export default async function ContactPage() {
                         label="Email" 
                         value="pisutyimkuson@gmail.com" 
                         link="mailto:pisutyimkuson@gmail.com"
-                        desc="For general inquiries and partnerships." 
+                        desc={t("contact.email_desc", "For general inquiries and partnerships.")} 
                     />
                 </div>
             </div>
@@ -43,7 +48,7 @@ export default async function ContactPage() {
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-orange-500 opacity-50" />
                         <h2 className="text-2xl font-black text-foreground uppercase italic mb-8 flex items-center gap-3 relative z-10">
                             <Send className="w-6 h-6 text-orange-500" />
-                            Send a Message
+                            {t("contact.message_title", "Send a Message")}
                         </h2>
                         <div className="relative z-10">
                             <ContactForm />
@@ -54,9 +59,9 @@ export default async function ContactPage() {
                         <div className="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
                             <AlertTriangle className="w-8 h-8 text-amber-500" />
                         </div>
-                        <h3 className="text-xl font-bold text-foreground uppercase mb-2">Messaging Offline</h3>
+                        <h3 className="text-xl font-bold text-foreground uppercase mb-2">{t("contact.offline_title", "Messaging Offline")}</h3>
                         <p className="text-muted-foreground font-light text-sm max-w-sm mx-auto">
-                            The contact form is currently closed. Please reach out via email instead.
+                            {t("contact.offline_desc", "The contact form is currently closed. Please reach out via email instead.")}
                         </p>
                     </div>
                 )}
@@ -67,14 +72,14 @@ export default async function ContactPage() {
                 
                 <h2 className="text-xl font-black text-foreground uppercase tracking-widest mb-6 flex items-center gap-4">
                     <span className="w-8 h-px bg-primary"></span>
-                    Community Contributions
+                    {t("contact.contribution_title", "Community Contributions")}
                 </h2>
                 <div className="space-y-6 text-muted-foreground font-light leading-relaxed">
                     <p>
-                        We are a community-driven project. If you have an optimized build or a new stage strategy that isn&apos;t on the site yet, we&rsquo;d love to hear it.
+                        {t("contact.contribution_desc1", "We are a community-driven project. If you have an optimized build or a new stage strategy that isn't on the site yet, we'd love to hear it.")}
                     </p>
                     <p className="text-sm">
-                        Contributors who provide accurate and useful guides may be featured in our &quot;Contributors List&quot; coming soon!
+                        {t("contact.contribution_desc2", "Contributors who provide accurate and useful guides may be featured in our \"Contributors List\" coming soon!")}
                     </p>
                 </div>
             </div>

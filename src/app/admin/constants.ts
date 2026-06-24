@@ -41,6 +41,7 @@ export const NAV_SECTIONS = [
         items: [
             { name: "Asset Manager", href: "/admin/assets", color: "bg-gray-500", perm: "MANAGE_ASSETS" },
             { name: "Manage Credit", href: "/admin/credits", color: "bg-green-500", perm: "MANAGE_CREDITS" },
+            { name: "Translations", href: "/admin/translations", color: "bg-indigo-500", perm: "*" },
             { name: "User Messages", href: "/admin/messages", color: "bg-blue-400", perm: "MANAGE_MESSAGES" },
             { name: "User Management", href: "/admin/users", color: "bg-cyan-500", perm: "MANAGE_USERS", superOnly: true },
         ]

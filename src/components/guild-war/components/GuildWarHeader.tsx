@@ -1,6 +1,11 @@
 import styles from './GuildWarHeader.module.css'
+import { getLocale, getTranslations } from '@/lib/i18n'
 
-export default function GuildWarHeader({ lastUpdated }) {
+export default async function GuildWarHeader({ lastUpdated }) {
+    const lang = await getLocale()
+    const translations = await getTranslations(lang)
+    const t = (key: string, defaultVal: string) => translations[key] || defaultVal
+
     return (
         <div className={styles.header}>
             {/* Advanced Decorative Elements */}
@@ -18,14 +23,14 @@ export default function GuildWarHeader({ lastUpdated }) {
             
             <div className={styles.titleContainer}>
                 <h1 className={styles.title}>
-                    GUILD WAR
+                    {t("guild_war.title", "GUILD WAR").toUpperCase()}
                 </h1>
             </div>
 
             {lastUpdated && (
                 <div className={styles.updateBadge}>
                     <div className={styles.pulse} />
-                    <span className={styles.updateText}>Last Update :</span>
+                    <span className={styles.updateText}>{t("arena.last_update", "Last Update :")}</span>
                     <div className={styles.divider} />
                     <span className={styles.updateDate}>{lastUpdated}</span>
                 </div>
