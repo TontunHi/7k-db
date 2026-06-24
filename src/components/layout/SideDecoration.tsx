@@ -15,7 +15,7 @@ export default function SideDecoration() {
             >
                 <div className="relative w-full h-full opacity-60 dark:opacity-80">
                     <Image
-                        src="/about_website/left.jpg"
+                        src="/about_website/left.webp"
                         alt=""
                         fill
                         className="object-cover object-right"
@@ -34,7 +34,7 @@ export default function SideDecoration() {
             >
                 <div className="relative w-full h-full opacity-60 dark:opacity-80">
                     <Image
-                        src="/about_website/right.jpg"
+                        src="/about_website/right.webp"
                         alt=""
                         fill
                         className="object-cover object-left"

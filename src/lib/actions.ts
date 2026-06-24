@@ -6,10 +6,18 @@ import { redirect } from "next/navigation"
 import bcrypt from "bcryptjs"
 import pool, { initDB } from "./db"
 import { createSignedToken, deleteSession } from "./session"
+import { rateLimit, getClientIp } from "./rate-limiter"
 
 export async function login(formData) {
     const username = formData.get("username")
     const password = formData.get("password")
+
+    // Enforce Rate Limiting
+    const ip = await getClientIp()
+    const rateLimitResult = rateLimit(ip, { limit: 5, windowMs: 1000 * 60 * 2 })
+    if (!rateLimitResult.success) {
+        redirect(`/login?error=Too many failed login attempts. Please try again in a few minutes.`)
+    }
 
     if (!username || !password) {
         redirect(`/login?error=Invalid Credentials`)

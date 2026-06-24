@@ -104,12 +104,13 @@ export default function TeamBuilder({
     // Sort heroes by grade (l++ > l+ > l > r > uc > c) then by name
     // Grade is parsed from filename prefix: l++_xxx, l+_xxx, l_xxx, r_xxx, uc_xxx, c_xxx
     const sortedHeroesList = useMemo(() => {
-        const gradeOrder = { 'l++': 6, 'l+': 5, 'l': 4, 'r': 3, 'uc': 2, 'c': 1 }
-        const allowedGrades = ['l++', 'l+', 'l', 'r']
+        const gradeOrder = { 'a': 7, 'l++': 6, 'l+': 5, 'l': 4, 'r': 3, 'uc': 2, 'c': 1 }
+        const allowedGrades = ['a', 'l++', 'l+', 'l', 'r']
 
         const getGradeFromFilename = (filename) => {
             if (!filename) return 0
             const lower = filename.toLowerCase()
+            if (lower.startsWith('a_')) return gradeOrder['a']
             if (lower.startsWith('l++_')) return gradeOrder['l++']
             if (lower.startsWith('l+_')) return gradeOrder['l+']
             if (lower.startsWith('l_')) return gradeOrder['l']
@@ -120,7 +121,7 @@ export default function TeamBuilder({
         const getNameFromFilename = (filename) => {
             if (!filename) return ''
             return filename
-                .replace(/^(l\+\+|l\+|l|r|uc|c)_/i, '') // Remove grade prefix
+                .replace(/^(a|l\+\+|l\+|l|r|uc|c)_/i, '') // Remove grade prefix
                 .replace(/\.[^/.]+$/, '')                // Remove extension
                 .replace(/_/g, ' ')                      // Replace underscores with spaces
         }

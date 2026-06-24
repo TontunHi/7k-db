@@ -1,6 +1,7 @@
 import { getArenaTeams } from '@/lib/arena-actions'
 import { getAllHeroes, getPets, getFormations, getHeroSkillsMap } from '@/lib/stage-actions'
 import ArenaManagerView from './ArenaManagerView'
+import { requireAdmin } from '@/lib/auth-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,6 +15,7 @@ export const metadata = {
  * Orchestrates data fetching for the Arena management dashboard.
  */
 export default async function AdminArenaPage() {
+    await requireAdmin('MANAGE_ARENA')
     const [teamsData, heroesData, petsData, formationsData, skillsData] = await Promise.all([
         getArenaTeams(),
         getAllHeroes(),

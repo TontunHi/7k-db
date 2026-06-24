@@ -17,6 +17,7 @@ export interface HeroListItem {
  * Filenames: l++_Name.png, l+_Name.png, l_Name.png, r_Name.png
  */
 function getGradeFromFilename(filename: string): string {
+    if (filename.startsWith("a_")) return "a"
     if (filename.startsWith("l++_")) return "l++"
     if (filename.startsWith("l+_")) return "l+"
     if (filename.startsWith("l_")) return "l"
@@ -48,7 +49,7 @@ export async function getHeroBuildList(): Promise<HeroListItem[]> {
                     filename: file,
                     slug: slug,
                     grade: grade,
-                    name: file.replace(/^(l\+\+|l\+|l|r)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " "),
+                    name: file.replace(/^(a|l\+\+|l\+|l|r)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " "),
                     is_new_hero: metadata[slug]?.is_new_hero || false,
                     type: metadata[slug]?.type || null,
                     sort_order: metadata[slug]?.sort_order || 0
@@ -67,7 +68,7 @@ export async function getHeroBuildList(): Promise<HeroListItem[]> {
                 if (a.is_new_hero !== b.is_new_hero) return b.is_new_hero ? 1 : -1
 
                 // 2. grade
-                const gradeOrder: Record<string, number> = { "l++": 0, "l+": 1, "l": 2, "r": 3 }
+                const gradeOrder: Record<string, number> = { "a": 0, "l++": 1, "l+": 2, "l": 3, "r": 4 }
                 const ga = gradeOrder[a.grade] ?? 99
                 const gb = gradeOrder[b.grade] ?? 99
                 if (ga !== gb) return ga - gb

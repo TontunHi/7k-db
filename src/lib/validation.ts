@@ -1,6 +1,9 @@
 import { z } from 'zod'
+import { sanitizeHTML } from './sanitize'
 
 // --- Common Schemas ---
+
+export const SafeHtmlNoteSchema = z.string().max(1000).transform(val => sanitizeHTML(val)).optional().nullable()
 
 export const HeroSlugSchema = z.string().min(1).max(255).regex(/^[a-z0-9+_-]+$/i, "Invalid hero slug format")
 
@@ -27,7 +30,7 @@ export const CastleRushSetSchema = z.object({
   heroes: TeamHeroesSchema,
   skill_rotation: SkillRotationSchema,
   video_url: z.string().url().or(z.string().length(0)).nullable(),
-  note: z.string().max(1000).optional().nullable()
+  note: SafeHtmlNoteSchema
 })
 
 export const DungeonSetSchema = z.object({
@@ -40,7 +43,7 @@ export const DungeonSetSchema = z.object({
   heroes: TeamHeroesSchema,
   skill_rotation: SkillRotationSchema,
   video_url: z.string().url().or(z.string().length(0)).nullable(),
-  note: z.string().max(1000).optional().nullable()
+  note: SafeHtmlNoteSchema
 })
 
 export const RaidSetSchema = z.object({
@@ -52,7 +55,7 @@ export const RaidSetSchema = z.object({
   heroes: TeamHeroesSchema,
   skill_rotation: SkillRotationSchema,
   video_url: z.string().url().or(z.string().length(0)).nullable(),
-  note: z.string().max(1000).optional().nullable()
+  note: SafeHtmlNoteSchema
 })
 
 export const GlobalCreditSchema = z.object({
@@ -71,7 +74,7 @@ export const AdventSetSchema = z.object({
   skill_rotation: SkillRotationSchema,
   hero_builds: z.record(z.string(), z.any()).optional().nullable(),
   video_url: z.string().url().or(z.string().length(0)).nullable(),
-  note: z.string().max(1000).optional().nullable()
+  note: SafeHtmlNoteSchema
 })
 
 export const ArenaTeamSchema = z.object({
@@ -81,7 +84,7 @@ export const ArenaTeamSchema = z.object({
   heroes: TeamHeroesSchema,
   skill_rotation: SkillRotationSchema,
   video_url: z.string().url().or(z.string().length(0)).nullable(),
-  note: z.string().max(1000).optional().nullable()
+  note: SafeHtmlNoteSchema
 })
 
 export const GuildWarTeamSchema = z.object({
@@ -98,9 +101,9 @@ export const GuildWarTeamSchema = z.object({
     weapon: z.string().optional().nullable(),
     armor: z.string().optional().nullable(),
     accessories: z.array(z.string().optional().nullable()).optional().nullable(),
-    note: z.string().max(1000).optional().nullable()
+    note: SafeHtmlNoteSchema
   })).optional().nullable(),
-  note: z.string().max(1000).optional().nullable(),
+  note: SafeHtmlNoteSchema,
   counters: z.array(z.number()).optional().nullable(),
   counter_teams: z.array(z.object({
     team_name: z.string().max(100).optional().nullable(),
@@ -115,16 +118,16 @@ export const GuildWarTeamSchema = z.object({
         weapon: z.string().optional().nullable(),
         armor: z.string().optional().nullable(),
         accessories: z.array(z.string().optional().nullable()).optional().nullable(),
-        note: z.string().max(1000).optional().nullable()
+        note: SafeHtmlNoteSchema
     })).optional().nullable(),
-    note: z.string().max(1000).optional().nullable()
+    note: SafeHtmlNoteSchema
   })).optional().nullable()
 })
 
 export const TotalWarSetSchema = z.object({
   tier: z.string().min(1),
   set_name: z.string().max(100).optional().nullable(),
-  note: z.string().max(1000).optional().nullable()
+  note: SafeHtmlNoteSchema
 })
 
 export const TotalWarTeamSchema = z.object({
@@ -135,7 +138,7 @@ export const TotalWarTeamSchema = z.object({
   heroes: TeamHeroesSchema,
   skill_rotation: SkillRotationSchema,
   video_url: z.string().url().or(z.string().length(0)).nullable(),
-  note: z.string().max(1000).optional().nullable()
+  note: SafeHtmlNoteSchema
 })
 
 export const HeroSchema = z.object({
@@ -150,7 +153,7 @@ export const HeroSchema = z.object({
 export const BuildSchema = z.object({
   cLevel: z.string().or(z.number()), // Supports "C0" or 0
   mode: z.array(z.string()),
-  note: z.string().max(1000).optional().nullable(),
+  note: SafeHtmlNoteSchema,
   weapons: z.array(z.object({
     image: z.string().optional().nullable(),
     stat: z.string().optional().nullable()
@@ -171,7 +174,7 @@ export const BuildSchema = z.object({
 export const StageSetupSchema = z.object({
   type: z.string().min(1),
   name: z.string().min(1).max(200),
-  note: z.string().max(1000).optional().nullable(),
+  note: SafeHtmlNoteSchema,
   teams: z.array(z.object({
     index: z.number().int(),
     formation: z.string().min(1),

@@ -21,9 +21,9 @@ export default function FilterBar({
                 <div className={styles.searchGlow} />
             </div>
 
-            {/* Legendary / Rare Tabs */}
+            {/* Awake / Legendary / Rare Tabs */}
             <div className={styles.tabs}>
-                {['legendary', 'rare'].map((tab) => (
+                {['awake', 'legendary', 'rare'].map((tab) => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}

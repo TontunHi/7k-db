@@ -23,6 +23,7 @@ export function resolveHeroImage(slug: string | null | undefined, imageMap: Reco
  */
 export function getGradeFromFilename(filename: string | null | undefined): string {
     if (!filename) return "unknown"
+    if (filename.startsWith("a_")) return "a"
     if (filename.startsWith("l++_")) return "l++"
     if (filename.startsWith("l+_")) return "l+"
     if (filename.startsWith("l_")) return "l"
@@ -45,7 +46,7 @@ export function parseHeroDetails(filename: string | null | undefined): HeroDetai
     const slug = filename.replace(/\.[^/.]+$/, "")
     const grade = getGradeFromFilename(filename)
     const name = filename
-        .replace(/^(l\+\+|l\+|l|r)_/, "")
+        .replace(/^(a|l\+\+|l\+|l|r)_/, "")
         .replace(/\.[^/.]+$/, "")
         .replace(/_/g, " ")
 

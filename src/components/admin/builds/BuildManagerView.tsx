@@ -93,7 +93,6 @@ export default function BuildManagerView({ heroes: initialHeroes = [] }) {
                                 key={hero.filename} 
                                 hero={hero} 
                                 onEdit={handleEdit} 
-                                onDelete={handleDelete} 
                             />
                         ))}
                     </SortableContext>

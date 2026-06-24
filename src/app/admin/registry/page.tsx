@@ -1,5 +1,6 @@
 import { getFullRegistryData } from "@/lib/registry-actions"
 import RegistryDashboardView from "./components/RegistryDashboardView"
+import { requireAdmin } from "@/lib/auth-guard"
 
 export const metadata = {
     title: "Database Registry | 7K Admin",
@@ -7,6 +8,7 @@ export const metadata = {
 }
 
 export default async function RegistryPage() {
+    await requireAdmin('*')
     const data = await getFullRegistryData()
 
     return (

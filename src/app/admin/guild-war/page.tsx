@@ -1,73 +1,55 @@
-"use client"
-
-import { useState, useEffect } from "react"
 import { getGuildWarTeams, getItemFiles } from "@/lib/guild-war-actions"
 import { getAllHeroes, getPets, getFormations, getHeroSkillsMap } from "@/lib/stage-actions"
+import { requireAdmin } from "@/lib/auth-guard"
 import GuildWarManagerView from "./components/GuildWarManagerView"
 
+export const dynamic = 'force-dynamic'
+
+export const metadata = { 
+    title: 'Guild War Management | Admin',
+    description: 'Configure tactical team strategies for Guild War.'
+}
+
 /**
- * AdminGuildWarPage - Entrance to Guild War tactical management
+ * AdminGuildWarPage - Server Component
+ * Handles permission validation and initial data fetching for Guild War.
  */
-export default function AdminGuildWarPage() {
-    const [data, setData] = useState(null)
-    const [loading, setLoading] = useState(true)
+export default async function AdminGuildWarPage() {
+    await requireAdmin('MANAGE_GUILD_WAR')
 
-    useEffect(() => {
-        async function loadStrategicData() {
-            try {
-                const [teams, heroes, pets, formations, items, skills] = await Promise.all([
-                    getGuildWarTeams('all'),
-                    getAllHeroes(),
-                    getPets(),
-                    getFormations(),
-                    getItemFiles(),
-                    getHeroSkillsMap()
-                ])
+    const [teams, heroes, pets, formations, items, skills] = await Promise.all([
+        getGuildWarTeams('all'),
+        getAllHeroes(),
+        getPets(),
+        getFormations(),
+        getItemFiles(),
+        getHeroSkillsMap()
+    ])
 
-                const sortItems = (list) => {
-                    const gradeOrder = { 'l': 10, 'r': 5, 'un': 3, 'c': 1 }
-                    return [...list].sort((a, b) => {
-                        const fA = a.filename || a
-                        const fB = b.filename || b
-                        const getGrade = (f) => gradeOrder[f.split('_')[0].toLowerCase()] || 0
-                        const ga = getGrade(fA), gb = getGrade(fB)
-                        if (ga !== gb) return gb - ga
-                        return fA.localeCompare(fB)
-                    })
-                }
-
-                setData({
-                    teams,
-                    heroes,
-                    pets,
-                    formations,
-                    items: {
-                        weapons: sortItems(items.weapons),
-                        armors: sortItems(items.armors),
-                        accessories: sortItems(items.accessories)
-                    },
-                    skills
-                })
-            } catch (err) {
-                console.error("Critical error loading Guild War intelligence:", err)
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        loadStrategicData()
-    }, [])
-
-    if (loading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                <div className="text-[3rem] font-black italic opacity-10 animate-pulse tracking-tighter">DATA_FETCH</div>
-                <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground animate-pulse">Initializing Strategic Command...</p>
-            </div>
-        )
+    const sortItems = (list) => {
+        const gradeOrder = { 'l': 10, 'r': 5, 'un': 3, 'c': 1 }
+        return [...list].sort((a, b) => {
+            const fA = a.filename || a
+            const fB = b.filename || b
+            const getGrade = (f) => gradeOrder[f.split('_')[0].toLowerCase()] || 0
+            const ga = getGrade(fA), gb = getGrade(fB)
+            if (ga !== gb) return gb - ga
+            return fA.localeCompare(fB)
+        })
     }
 
-    if (!data) return null
+    const data = {
+        teams,
+        heroes,
+        pets,
+        formations,
+        items: {
+            weapons: sortItems(items.weapons),
+            armors: sortItems(items.armors),
+            accessories: sortItems(items.accessories)
+        },
+        skills
+    }
 
     return (
         <GuildWarManagerView

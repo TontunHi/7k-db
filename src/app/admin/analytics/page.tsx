@@ -8,7 +8,7 @@ export const metadata = {
 }
 
 export default async function AnalyticsDashboard() {
-  await requireAdmin()
+  await requireAdmin('*')
   
   const [reach, growth, conversion, exits, trend] = await Promise.all([
     getReachStats(),

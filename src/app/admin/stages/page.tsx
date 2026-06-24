@@ -1,5 +1,6 @@
 import { getStages } from '@/lib/stage-actions'
 import StagesManagerView from './StagesManagerView'
+import { requireAdmin } from '@/lib/auth-guard'
 
 export const metadata = {
     title: 'Stage Management | Admin',
@@ -11,6 +12,7 @@ export const metadata = {
  * Fetches stage and nightmare data from the database.
  */
 export default async function AdminStagesPage() {
+    await requireAdmin('MANAGE_STAGES')
     // Fetch data in parallel for efficiency
     const [stages, nightmares] = await Promise.all([
         getStages('stage'),

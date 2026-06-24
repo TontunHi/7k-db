@@ -3,6 +3,7 @@ import path from "path"
 import { getHeroesMetadata } from "@/lib/build-db"
 import { parseHeroDetails } from "@/lib/hero-utils"
 import BuildManagerView from "@/components/admin/builds/BuildManagerView"
+import { requireAdmin } from "@/lib/auth-guard"
 
 export const dynamic = 'force-dynamic'
 
@@ -16,6 +17,8 @@ export const metadata = {
  * Handles scanning the filesystem and fetching metadata for hero builds.
  */
 export default async function AdminBuildsPage() {
+    await requireAdmin('MANAGE_BUILDS')
+
     const heroesDir = path.join(process.cwd(), "public", "heroes")
     let heroes = []
 
@@ -53,8 +56,8 @@ export default async function AdminBuildsPage() {
                 // Priority 1: New Heroes first
                 if (a.is_new_hero !== b.is_new_hero) return b.is_new_hero ? 1 : -1
 
-                // Priority 2: Grade ranking (L++ > L+ > L > R)
-                const gradesOrder = { "l++": 4, "l+": 3, "l": 2, "r": 1 }
+                // Priority 2: Grade ranking (Awake > L++ > L+ > L > R)
+                const gradesOrder = { "a": 5, "l++": 4, "l+": 3, "l": 2, "r": 1 }
                 const rankA = gradesOrder[a.grade] || 0
                 const rankB = gradesOrder[b.grade] || 0
                 if (rankA !== rankB) return rankB - rankA

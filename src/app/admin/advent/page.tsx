@@ -1,5 +1,6 @@
 import { getBosses } from '@/lib/advent-actions'
 import AdventManagerView from './AdventManagerView'
+import { requireAdmin } from '@/lib/auth-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,6 +14,7 @@ export const metadata = {
  * Fetches advent boss registry and set counts.
  */
 export default async function AdminAdventPage() {
+    await requireAdmin('MANAGE_ADVENT')
     const bosses = await getBosses()
 
     return (

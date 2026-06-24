@@ -15,7 +15,7 @@ export async function getHeroesRegistry() {
     const [rows] = await pool.query<Hero[]>(`
         SELECT * FROM heroes 
         ORDER BY 
-            FIELD(grade, 'l++', 'l+', 'l', 'r', 'uc', 'c'),
+            FIELD(grade, 'a', 'l++', 'l+', 'l', 'r', 'uc', 'c'),
             name ASC
     `)
     return rows
@@ -54,7 +54,7 @@ export async function getPetsRegistry() {
     const [rows] = await pool.query<Pet[]>(`
         SELECT * FROM pets 
         ORDER BY 
-            FIELD(grade, 'l++', 'l+', 'l', 'r', 'uc', 'c'),
+            FIELD(grade, 'a', 'l++', 'l+', 'l', 'r', 'uc', 'c'),
             name ASC
     `)
     return rows
@@ -95,7 +95,7 @@ export async function getItemsRegistry() {
         SELECT * FROM items 
         ORDER BY 
             item_type, 
-            FIELD(grade, 'l++', 'l+', 'l', 'r', 'uc', 'c'),
+            FIELD(grade, 'a', 'l++', 'l+', 'l', 'r', 'uc', 'c'),
             name ASC
     `)
     return rows

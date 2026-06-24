@@ -66,28 +66,25 @@ export default function BuildViewerModal({ hero, data, onClose }) {
     const { builds, heroData, skills: allSkills } = data
     const { skillPriority } = heroData
 
-    const sortedSkills = allSkills
-        .filter(s => {
-            const filename = s.split('/').pop().split('.')[0]
-            return ["1", "2", "3", "4"].includes(filename)
-        })
-        .sort((a, b) => {
-            const getNum = (s) => parseInt(s.split('/').pop().split('.')[0]) || 0
-            return getNum(a) - getNum(b)
-        })
-
     const getPriorityRank = (skillPath) => {
         if (!skillPriority) return null
         const index = skillPriority.indexOf(skillPath)
         return index !== -1 ? index + 1 : null
     }
 
-    const prioritizedSkills = sortedSkills
+    const prioritizedSkills = allSkills
         .filter(s => getPriorityRank(s) !== null)
         .sort((a, b) => getPriorityRank(a)! - getPriorityRank(b)!)
 
-    const unprioritizedSkills = sortedSkills
-        .filter(s => getPriorityRank(s) === null)
+    const unprioritizedSkills = allSkills
+        .filter(s => {
+            const filename = s.split('/').pop().split('.')[0]
+            return ["1", "2", "3", "4"].includes(filename) && getPriorityRank(s) === null
+        })
+        .sort((a, b) => {
+            const getNum = (s) => parseInt(s.split('/').pop().split('.')[0]) || 0
+            return getNum(a) - getNum(b)
+        })
 
     const build = builds[currentBuildIndex]
 

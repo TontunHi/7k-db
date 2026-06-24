@@ -233,7 +233,7 @@ export async function getFilteredItems(type: string, group: string | null = null
         params.push(group)
     }
     
-    query += " ORDER BY FIELD(grade, 'l++', 'l+', 'l', 'r', 'uc', 'c'), name ASC"
+    query += " ORDER BY FIELD(grade, 'a', 'l++', 'l+', 'l', 'r', 'uc', 'c'), name ASC"
     
     const [rows] = await pool.query<({ image: string })[] & RowDataPacket[]>(query, params)
     return rows.map(r => r.image)
@@ -243,7 +243,7 @@ export async function getHeroSkills(heroFilename: string) {
     const exactName = heroFilename.replace(/\.[^/.]+$/, "")
     const dirExact = path.join(process.cwd(), "public", "skills", exactName)
 
-    const coreName = heroFilename.replace(/^(l\+\+|l\+|l|r)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " ").trim()
+    const coreName = heroFilename.replace(/^(a|l\+\+|l\+|l|r)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " ").trim()
     const dirCore = path.join(process.cwd(), "public", "skills", coreName)
 
     let targetDir = null

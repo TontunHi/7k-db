@@ -226,7 +226,7 @@ export async function getAllHeroes() {
 
         // 4. Sort (Grade Descending, then Name)
         // Order: L++ > L+ > L > R > UC > C
-        const gradeOrder = { 'l++': 6, 'l+': 5, 'l': 4, 'r': 3, 'uc': 2, 'c': 1 }
+        const gradeOrder = { 'a': 7, 'l++': 6, 'l+': 5, 'l': 4, 'r': 3, 'uc': 2, 'c': 1 }
 
         return combined.sort((a, b) => {
             const gradeA = gradeOrder[a.grade?.toLowerCase()] || 0
@@ -298,9 +298,9 @@ export async function getAllSkills() {
             }
         }
         
-        const gradeOrder = { 'l++': 6, 'l+': 5, 'l': 4, 'r': 3, 'uc': 2, 'c': 1 }
+        const gradeOrder = { 'a': 7, 'l++': 6, 'l+': 5, 'l': 4, 'r': 3, 'uc': 2, 'c': 1 }
         allSkills.sort((a, b) => {
-            const getGrade = f => f.match(/^(l\+\+|l\+|l|r|uc|c)_/i)?.[1].toLowerCase() || ''
+            const getGrade = f => f.match(/^(a|l\+\+|l\+|l|r|uc|c)_/i)?.[1].toLowerCase() || ''
             const gA = gradeOrder[getGrade(a.folder)] || 0
             const gB = gradeOrder[getGrade(b.folder)] || 0
             if (gA !== gB) return gB - gA

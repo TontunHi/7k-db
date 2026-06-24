@@ -1,5 +1,6 @@
 import { getAllSetCounts } from '@/lib/total-war-actions'
 import TotalWarManagerView from './TotalWarManagerView'
+import { requireAdmin } from '@/lib/auth-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,6 +14,7 @@ export const metadata = {
  * Fetches tier statistics and renders the dashboard.
  */
 export default async function AdminTotalWarPage() {
+    await requireAdmin('MANAGE_TOTAL_WAR')
     const setCounts = await getAllSetCounts()
 
     return (

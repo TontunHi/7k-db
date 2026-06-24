@@ -1,5 +1,6 @@
 import { getAllHeroesForTierlist } from "@/lib/tierlist-db"
 import TierlistManagerView from "@/components/admin/tierlist/TierlistManagerView"
+import { requireAdmin } from "@/lib/auth-guard"
 
 export const metadata = {
     title: "Tier List Management | Admin",
@@ -11,6 +12,7 @@ export const metadata = {
  * Fetches the base hero registry for the tierlist management tool.
  */
 export default async function TierlistPage() {
+    await requireAdmin('MANAGE_TIERLIST')
     const heroes = await getAllHeroesForTierlist()
 
     return (

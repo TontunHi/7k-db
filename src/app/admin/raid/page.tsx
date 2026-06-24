@@ -1,5 +1,6 @@
 import { getRaids } from '@/lib/raid-actions'
 import RaidManagerView from './RaidManagerView'
+import { requireAdmin } from '@/lib/auth-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,6 +14,7 @@ export const metadata = {
  * Fetches the raid boss registry and set counts.
  */
 export default async function AdminRaidPage() {
+    await requireAdmin('MANAGE_RAIDS')
     const raids = await getRaids()
 
     return (

@@ -9,7 +9,7 @@ export const metadata = {
 }
 
 export default async function AuditLogsPage({ searchParams }: { searchParams: Promise<{ page?: string; type?: string }> }) {
-    await requireAdmin()
+    await requireAdmin('MANAGE_LOGS')
     
     const params = await searchParams
     const page = parseInt(params.page || "1", 10)

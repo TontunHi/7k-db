@@ -9,7 +9,7 @@ import { CSS } from "@dnd-kit/utilities"
 /**
  * HeroCard - Displays an individual hero and handles primary actions
  */
-export default function HeroCard({ hero, onEdit, onDelete }) {
+export default function HeroCard({ hero, onEdit }) {
     const {
         attributes,
         listeners,
@@ -73,16 +73,6 @@ export default function HeroCard({ hero, onEdit, onDelete }) {
                 </div>
             </div>
 
-            {/* Delete Button */}
-            <button
-                onClick={(e) => {
-                    e.stopPropagation()
-                    onDelete(hero.filename)
-                }}
-                className="absolute top-2.5 right-2.5 z-20 w-8 h-8 bg-red-600 hover:bg-red-500 text-white flex items-center justify-center rounded-sm opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300 shadow-xl border border-red-400/50"
-            >
-                <span className="text-lg font-bold">×</span>
-            </button>
         </div>
     )
 }
