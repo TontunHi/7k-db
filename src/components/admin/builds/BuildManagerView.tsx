@@ -35,7 +35,8 @@ export default function BuildManagerView({ heroes: initialHeroes = [] }) {
     // Filter display heroes based on Search and Grade
     const filteredHeroes = heroes.filter(hero => {
         const matchesSearch = hero.name.toLowerCase().includes(searchQuery.toLowerCase())
-        const matchesGrade = selectedGrade === "ALL" || hero.grade.toLowerCase() === selectedGrade.toLowerCase()
+        const filterGrade = selectedGrade === "AWAKE" ? "a" : selectedGrade.toLowerCase()
+        const matchesGrade = selectedGrade === "ALL" || hero.grade.toLowerCase() === filterGrade
         return matchesSearch && matchesGrade
     })
 
