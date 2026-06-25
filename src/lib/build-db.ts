@@ -106,7 +106,7 @@ export async function getHeroBuilds(heroFilename: string) {
         accessories: typeof row.accessories === 'string' ? JSON.parse(row.accessories) : (row.accessories || []),
         substats: typeof row.substats === 'string' ? JSON.parse(row.substats) : (row.substats || []),
         minStats: typeof row.min_stats === 'string' ? JSON.parse(row.min_stats) : (row.min_stats || {}),
-        dedicatedStats: typeof row.dedicated_stats === 'string' ? JSON.parse(row.dedicated_stats) : (row.dedicated_stats || [null, null, null, null]),
+        dedicatedStats: typeof row.dedicated_stats === 'string' ? JSON.parse(row.dedicated_stats) : (row.dedicated_stats || [null, null, null, null, null, null, null, null]),
     }))
 }
 
@@ -145,7 +145,7 @@ export async function saveHeroBuilds(heroFilename: string, builds: BuildInput[])
                 JSON.stringify(build.accessories),
                 JSON.stringify(build.substats),
                 JSON.stringify(build.minStats || {}),
-                JSON.stringify(build.dedicatedStats || [null, null, null, null]),
+                JSON.stringify(build.dedicatedStats || [null, null, null, null, null, null, null, null]),
                 i + 1
             ])
         }

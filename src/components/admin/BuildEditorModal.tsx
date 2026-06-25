@@ -116,7 +116,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
     const [builds, setBuilds] = useState(() =>
         (initialBuilds || []).map(b => ({
             ...b,
-            dedicatedStats: b.dedicatedStats || [null, null, null, null]
+            dedicatedStats: b.dedicatedStats || [null, null, null, null, null, null, null, null]
         }))
     )
     const [skillPriority, setSkillPriority] = useState(initialSkillPriority || [])
@@ -139,7 +139,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
         accessories: [],
         substats: [],
         minStats: {},
-        dedicatedStats: [null, null, null, null]
+        dedicatedStats: [null, null, null, null, null, null, null, null]
     }
 
     const handleAddBuild = () => {
@@ -165,7 +165,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
             accessories: buildToCopy.accessories.map(acc => ({ ...acc })),
             substats: [...buildToCopy.substats],
             minStats: { ...buildToCopy.minStats },
-            dedicatedStats: [...(buildToCopy.dedicatedStats || [null, null, null, null])]
+            dedicatedStats: [...(buildToCopy.dedicatedStats || [null, null, null, null, null, null, null, null])]
         }
         
         const newBuilds = [...builds]
@@ -184,7 +184,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
             accessories: [],
             substats: [],
             minStats: {},
-            dedicatedStats: [null, null, null, null]
+            dedicatedStats: [null, null, null, null, null, null, null, null]
         }
         setBuilds(newBuilds)
         toast.info("Build reset.")
@@ -248,7 +248,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
 
     const updateDedicatedStat = (buildIndex, slotIndex, value) => {
         const newBuilds = [...builds]
-        const current = [...(newBuilds[buildIndex].dedicatedStats || [null, null, null, null])]
+        const current = [...(newBuilds[buildIndex].dedicatedStats || [null, null, null, null, null, null, null, null])]
         current[slotIndex] = value
         newBuilds[buildIndex].dedicatedStats = current
         setBuilds(newBuilds)
@@ -739,7 +739,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
 
                             {/* Dedicated Stats */}
                             <div className="mt-6 pt-5 border-t border-gray-800/40 relative z-10">
-                                <SectionLabel color="blue">Dedicated Stats</SectionLabel>
+                                <SectionLabel color="blue">Primary Dedicated Stats</SectionLabel>
                                 <div className="grid grid-cols-4 gap-3 mt-3">
                                     {Array.from({ length: 4 }).map((_, i) => {
                                         const stat = build.dedicatedStats?.[i]
@@ -780,6 +780,52 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                                             </div>
                                         )
                                     })}
+                                </div>
+
+                                <div className="mt-4">
+                                    <SectionLabel color="cyan">Secondary Dedicated Stats</SectionLabel>
+                                    <div className="grid grid-cols-4 gap-3 mt-3">
+                                        {Array.from({ length: 4 }).map((_, i) => {
+                                            const slotIndex = i + 4
+                                            const stat = build.dedicatedStats?.[slotIndex]
+                                            const icon = stat ? getDedicatedStatIcon(stat) : null
+                                            return (
+                                                <div key={slotIndex} className="relative group/ded">
+                                                    <button
+                                                        onClick={() => openDedicatedSelector(bIndex, slotIndex)}
+                                                        className={clsx(
+                                                            "w-full h-12 rounded-xl border flex items-center justify-center gap-2 relative overflow-hidden transition-all duration-300 cursor-pointer text-xs font-bold text-center px-3",
+                                                            stat
+                                                                ? "bg-black/50 border-gray-700/80 hover:border-[#FFD700]/50 hover:shadow-[0_0_10px_rgba(255,215,0,0.1)]"
+                                                                : "bg-black/20 border-gray-800/40 border-dashed hover:border-[#FFD700]/30 hover:bg-[#FFD700]/5"
+                                                        )}
+                                                    >
+                                                        {stat ? (
+                                                            <>
+                                                                {icon && (
+                                                                    <div className="w-5 h-5 relative flex-shrink-0 opacity-70 group-hover/ded:opacity-100 transition-opacity">
+                                                                        <SafeImage src={icon} fill alt="" className="object-contain" />
+                                                                    </div>
+                                                                )}
+                                                                <span className="text-[9px] uppercase tracking-wider font-bold text-gray-300 group-hover/ded:text-[#FFD700] transition-colors truncate">{stat}</span>
+                                                            </>
+                                                        ) : (
+                                                            <span className="text-sm font-black text-gray-800 group-hover/ded:text-[#FFD700]/60 transition-colors">+</span>
+                                                        )}
+                                                    </button>
+                                                    {stat && (
+                                                        <button
+                                                            onClick={() => updateDedicatedStat(bIndex, slotIndex, null)}
+                                                            className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-950/80 border border-red-800 text-red-400 hover:bg-red-900 hover:text-white flex items-center justify-center text-[9px] font-black transition-all z-20"
+                                                            title="Clear stat"
+                                                        >
+                                                            ×
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
                                 </div>
                             </div>
 
