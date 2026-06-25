@@ -330,34 +330,30 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                                             
                                                             return (
                                                                 <div key={i} className="grid grid-cols-2 gap-3 w-full">
-                                                                    <div>
-                                                                        {primary ? (
-                                                                            <div className={styles.dedicatedBadgePrimary}>
-                                                                                {priIcon && (
-                                                                                    <div className={styles.dedicatedIcon}>
-                                                                                        <SafeImage src={priIcon} fill alt="" className="object-contain" />
-                                                                                    </div>
-                                                                                )}
-                                                                                <span className={styles.dedicatedName}>{primary}</span>
-                                                                            </div>
-                                                                        ) : (
-                                                                            <div className="h-full border border-dashed border-gray-800/10 rounded-lg min-h-[34px]" />
-                                                                        )}
-                                                                    </div>
-                                                                    <div>
-                                                                        {secondary ? (
-                                                                            <div className={styles.dedicatedBadgeSecondary}>
-                                                                                {secIcon && (
-                                                                                    <div className={styles.dedicatedIcon}>
-                                                                                        <SafeImage src={secIcon} fill alt="" className="object-contain" />
-                                                                                    </div>
-                                                                                )}
-                                                                                <span className={styles.dedicatedName}>{secondary}</span>
-                                                                            </div>
-                                                                        ) : (
-                                                                            <div className="h-full border border-dashed border-gray-800/10 rounded-lg min-h-[34px]" />
-                                                                        )}
-                                                                    </div>
+                                                                    {primary ? (
+                                                                        <div className={styles.dedicatedBadgePrimary}>
+                                                                            {priIcon && (
+                                                                                <div className={styles.dedicatedIcon}>
+                                                                                    <SafeImage src={priIcon} fill alt="" className="object-contain" />
+                                                                                </div>
+                                                                            )}
+                                                                            <span className={styles.dedicatedName}>{primary}</span>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <div className="h-full border border-dashed border-gray-800/10 rounded-lg min-h-[34px]" />
+                                                                    )}
+                                                                    {secondary ? (
+                                                                        <div className={styles.dedicatedBadgeSecondary}>
+                                                                            {secIcon && (
+                                                                                <div className={styles.dedicatedIcon}>
+                                                                                    <SafeImage src={secIcon} fill alt="" className="object-contain" />
+                                                                                </div>
+                                                                            )}
+                                                                            <span className={styles.dedicatedName}>{secondary}</span>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <div className="h-full border border-dashed border-gray-800/10 rounded-lg min-h-[34px]" />
+                                                                    )}
                                                                 </div>
                                                             )
                                                         })}
