@@ -2,6 +2,8 @@ import { Video, ExternalLink, ScrollText } from 'lucide-react'
 import FormationGrid from '@/components/shared/FormationGrid'
 import PetDisplay from '@/components/shared/PetDisplay'
 import SkillSequence from '@/components/shared/SkillSequence'
+import HeroBuildTooltip from '@/components/advent/detail/components/HeroBuildTooltip'
+import { parseHeroDetails } from '@/lib/hero-utils'
 import styles from './CastleRushTeamSet.module.css'
 
 export default function CastleRushTeamSet({ set, index, heroImageMap }) {
@@ -48,7 +50,24 @@ export default function CastleRushTeamSet({ set, index, heroImageMap }) {
                                 emptyRender: () => (
                                     <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/30 text-xs">Empty</div>
                                 ),
-                                cardString: "bg-card border border-border aspect-[3/4] rounded-lg overflow-hidden transition-all duration-300"
+                                cardString: "bg-card border border-border aspect-[3/4] rounded-lg overflow-hidden transition-all duration-300",
+                                renderWrapper: (cardNode, idx) => {
+                                    const heroFile = set.heroes?.[idx];
+                                    const heroName = heroFile ? parseHeroDetails(heroFile)?.name : '';
+                                    // Slots 0, 1 are left-aligned tooltips, 3, 4 are right-aligned
+                                    const align = idx < 2 ? 'left' : idx > 2 ? 'right' : 'center';
+                                    
+                                    return (
+                                        <HeroBuildTooltip 
+                                            key={idx} 
+                                            buildData={set.hero_builds?.[idx]} 
+                                            heroName={heroName}
+                                            align={align}
+                                        >
+                                            {cardNode}
+                                        </HeroBuildTooltip>
+                                    )
+                                }
                             }}
                         />
                     </div>
@@ -97,3 +116,4 @@ export default function CastleRushTeamSet({ set, index, heroImageMap }) {
         </div>
     )
 }
+

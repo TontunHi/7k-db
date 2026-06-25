@@ -10,21 +10,37 @@ import { getSlotType, getStaggerClass } from '@/lib/formation-utils'
 
 // Modal Components
 const HeroPicker = ({ isOpen, sortedHeroesList, onSelect, onClose }) => {
+    const [search, setSearch] = useState('')
     if (isOpen === null) return null
+
+    const filtered = sortedHeroesList.filter(h => 
+        h.name.toLowerCase().includes(search.toLowerCase()) || 
+        h.filename.toLowerCase().includes(search.toLowerCase())
+    )
+
     return (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in">
             <div className="bg-gray-900 w-full max-w-4xl h-[85vh] rounded-2xl border border-gray-700 flex flex-col shadow-2xl">
-                <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-black/50">
+                <div className="p-6 border-b border-gray-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-black/50">
                     <div>
                         <h3 className="text-2xl font-black text-white tracking-tight">Select Hero</h3>
                         <p className="text-sm text-gray-400 mt-1">Choose a hero for this slot</p>
                     </div>
-                    <button onClick={onClose} className="p-3 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400">
-                        <X size={24} />
-                    </button>
+                    <div className="flex items-center gap-4 w-full md:w-auto">
+                        <input
+                            type="text"
+                            placeholder="Search hero..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="bg-black/60 border border-gray-700/80 text-sm text-white rounded-xl px-4 py-2 w-full md:w-64 outline-none focus:border-[#FFD700] transition-colors"
+                        />
+                        <button onClick={onClose} className="p-3 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400 flex-shrink-0">
+                            <X size={24} />
+                        </button>
+                    </div>
                 </div>
                 <div className="flex-1 overflow-y-auto p-6 grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-3 auto-rows-max">
-                    {sortedHeroesList.map(h => (
+                    {filtered.map(h => (
                         <button
                             key={h.filename}
                             onClick={() => onSelect(h.filename)}
@@ -39,6 +55,9 @@ const HeroPicker = ({ isOpen, sortedHeroesList, onSelect, onClose }) => {
                             />
                         </button>
                     ))}
+                    {filtered.length === 0 && (
+                        <div className="col-span-full py-12 text-center text-gray-500 italic">No heroes found.</div>
+                    )}
                 </div>
             </div>
         </div>

@@ -25,7 +25,9 @@ export default function CastleRushTeamSet({
     onUpdateSlotLabel,
     onOpenSkillPicker,
     onToggleCollapse,
-    onSkillError 
+    onSkillError,
+    onDuplicate,
+    onOpenBuildPicker
 }) {
     const {
         attributes,
@@ -97,6 +99,12 @@ export default function CastleRushTeamSet({
 
                 <div className="flex items-center gap-4">
                     <button
+                        onClick={() => onDuplicate(index)}
+                        className="text-muted-foreground hover:text-amber-500 px-2 py-1 transition-colors"
+                    >
+                        <ActionLabel label="DUPLICATE" size="text-[9px]" />
+                    </button>
+                    <button
                         onClick={() => onToggleCollapse(set.id)}
                         className="text-muted-foreground hover:text-amber-500 px-2 py-1 transition-colors"
                     >
@@ -126,6 +134,22 @@ export default function CastleRushTeamSet({
                         petsList={assets.pets}
                         formations={assets.formations}
                         onUpdate={(teamData) => onTeamUpdate(index, teamData)}
+                        renderHeroAction={(hIdx, heroFile) => heroFile ? (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onOpenBuildPicker({ setIdx: index, heroIdx: hIdx });
+                                }}
+                                className={clsx(
+                                    "absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all z-30 shadow-xl border backdrop-blur-md",
+                                    set.hero_builds?.[hIdx] 
+                                        ? "bg-amber-600/90 hover:bg-amber-500 text-black border-amber-400/50 opacity-100" 
+                                        : "bg-black/60 hover:bg-amber-600/90 text-white border-white/10 opacity-0 group-hover:opacity-100"
+                                )}
+                            >
+                                {set.hero_builds?.[hIdx] ? 'Edit Build' : 'Set Build'}
+                            </button>
+                        ) : null}
                     />
 
                     {/* Skill Rotation */}

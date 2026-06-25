@@ -38,8 +38,23 @@ export async function getBossInfo(bossKey: string) {
     return BOSS_ORDER.find(b => b.key === bossKey) || null
 }
 
+async function ensureHeroBuildsColumn() {
+    try {
+        const [check] = await pool.query<any[]>(
+            'SHOW COLUMNS FROM castle_rush_sets LIKE "hero_builds_json"'
+        )
+        if (check.length === 0) {
+            console.log("[DB PATCH] Adding hero_builds_json column to castle_rush_sets...")
+            await pool.query('ALTER TABLE castle_rush_sets ADD COLUMN hero_builds_json JSON AFTER heroes_json')
+        }
+    } catch (e: any) {
+        console.warn("[DB PATCH] Could not ensure hero_builds_json column:", e.message)
+    }
+}
+
 export async function getSetsByBoss(bossKey: string) {
     await initDB()
+    await ensureHeroBuildsColumn()
     const [rows] = await pool.query<CastleRushSet[]>(
         'SELECT * FROM castle_rush_sets WHERE boss_key = ? ORDER BY set_index ASC',
         [bossKey]
@@ -50,6 +65,9 @@ export async function getSetsByBoss(bossKey: string) {
         heroes: typeof row.heroes_json === 'string' 
             ? JSON.parse(row.heroes_json) 
             : (row.heroes_json || []),
+        hero_builds: typeof row.hero_builds_json === 'string'
+            ? JSON.parse(row.hero_builds_json)
+            : (row.hero_builds_json || {}),
         skill_rotation: typeof row.skill_rotation === 'string'
             ? JSON.parse(row.skill_rotation)
             : (row.skill_rotation || [])
@@ -66,6 +84,7 @@ export async function createSet(data: CastleRushSetInput): Promise<ActionRespons
     const validatedData = validation.data
     
     await initDB()
+    await ensureHeroBuildsColumn()
     
     try {
         // Get next set_index for this boss
@@ -76,8 +95,8 @@ export async function createSet(data: CastleRushSetInput): Promise<ActionRespons
         const nextIndex = countResult[0].next_index
 
         const [result] = await pool.query<ResultSetHeader>(
-            `INSERT INTO castle_rush_sets (boss_key, set_index, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO castle_rush_sets (boss_key, set_index, team_name, formation, pet_file, heroes_json, hero_builds_json, skill_rotation, video_url, note)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 validatedData.boss_key, 
                 nextIndex, 
@@ -85,6 +104,7 @@ export async function createSet(data: CastleRushSetInput): Promise<ActionRespons
                 validatedData.formation, 
                 validatedData.pet_file || null, 
                 JSON.stringify(validatedData.heroes), 
+                JSON.stringify(validatedData.hero_builds || {}), 
                 JSON.stringify(validatedData.skill_rotation), 
                 validatedData.video_url, 
                 validatedData.note
@@ -100,7 +120,7 @@ export async function createSet(data: CastleRushSetInput): Promise<ActionRespons
         revalidatePath('/castle-rush')
         
         return { success: true, id: result.insertId }
-    } catch (error) {
+    } catch (error: any) {
         console.error("Create Set Error:", error)
         return { success: false, error: error.message }
     }
@@ -115,15 +135,18 @@ export async function updateSet(id: number, data: CastleRushSetInput & { set_ind
     const validatedData = validation.data
 
     try {
+        await initDB()
+        await ensureHeroBuildsColumn()
         await pool.query(
             `UPDATE castle_rush_sets 
-             SET team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?, set_index = ?
+             SET team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, hero_builds_json = ?, skill_rotation = ?, video_url = ?, note = ?, set_index = ?
              WHERE id = ?`,
             [
                 validatedData.team_name || null, 
                 validatedData.formation, 
                 validatedData.pet_file || null, 
                 JSON.stringify(validatedData.heroes), 
+                JSON.stringify(validatedData.hero_builds || {}), 
                 JSON.stringify(validatedData.skill_rotation), 
                 validatedData.video_url, 
                 validatedData.note, 

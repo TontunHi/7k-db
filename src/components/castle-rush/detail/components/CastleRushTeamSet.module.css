@@ -4,11 +4,12 @@
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 1.5rem;
-  overflow: hidden;
   transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  z-index: 1;
 }
 
 .set:hover {
+  z-index: 10;
   border-color: color-mix(in srgb, var(--primary), transparent 55%);
   box-shadow: 0 0 35px color-mix(in srgb, var(--primary), transparent 85%),
               0 18px 45px -12px rgba(0, 0, 0, 0.3);
@@ -24,6 +25,8 @@
   border-bottom: 1px solid var(--border);
   background: color-mix(in srgb, var(--muted), transparent 25%);
   gap: 0.75rem;
+  border-top-left-radius: 1.5rem;
+  border-top-right-radius: 1.5rem;
 }
 
 @media (min-width: 640px) {

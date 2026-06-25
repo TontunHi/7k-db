@@ -253,15 +253,17 @@ async function runMigrations() {
             formation VARCHAR(50) NOT NULL,
             pet_file VARCHAR(255),
             heroes_json JSON,
+            hero_builds_json JSON,
             skill_rotation JSON,
             video_url VARCHAR(500),
             note TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
           )
         `);
-
+ 
         const castleCols = [
             { name: 'skill_rotation', type: 'JSON', after: 'heroes_json' },
+            { name: 'hero_builds_json', type: 'JSON', after: 'heroes_json' },
             { name: 'team_name', type: 'VARCHAR(100)', after: 'set_index' }
         ];
         for (const c of castleCols) {

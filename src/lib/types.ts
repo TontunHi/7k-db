@@ -72,6 +72,8 @@ export interface CastleRushSet extends RowDataPacket {
   formation: string;
   pet_file: string | null;
   heroes_json: string | any[];
+  hero_builds_json?: string | any[];
+  hero_builds?: any;
   skill_rotation: string | any[];
   video_url: string | null;
   note: string | null;

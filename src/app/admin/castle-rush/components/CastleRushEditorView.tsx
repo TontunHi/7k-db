@@ -9,6 +9,7 @@ import styles from '../castle-rush.module.css'
 import { clsx } from 'clsx'
 import CastleRushTeamSet from './CastleRushTeamSet'
 import CastleRushSkillPicker from './CastleRushSkillPicker'
+import CastleRushHeroBuildPicker from './CastleRushHeroBuildPicker'
 import { toast } from 'sonner'
 
 import {
@@ -35,6 +36,7 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
     const [saving, setSaving] = useState(false)
     const [skillErrors, setSkillErrors] = useState({})
     const [skillPicker, setSkillPicker] = useState(null)
+    const [buildPicker, setBuildPicker] = useState(null)
     const [collapsedSets, setCollapsedSets] = useState(new Set(initialSets.map(s => s.id)))
 
     const sensors = useSensors(
@@ -79,6 +81,7 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
             pet_file: '',
             heroes: [null, null, null, null, null],
             skill_rotation: [],
+            hero_builds: {},
             video_url: '',
             note: '',
             _isNew: true,
@@ -86,6 +89,20 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
         }
         setSets([...sets, newSet])
         toast.info("New team deployment drafted")
+    }
+
+    const handleDuplicateSet = (index) => {
+        const sourceSet = sets[index]
+        const duplicated = {
+            ...sourceSet,
+            id: `new-${Date.now()}`,
+            set_index: sets.length + 1,
+            team_name: sourceSet.team_name ? `${sourceSet.team_name} (Copy)` : 'New Copy',
+            _isNew: true,
+            _dirty: true
+        }
+        setSets([...sets, duplicated])
+        toast.success("Squad cloned successfully")
     }
 
     const handleUpdateSet = (index, field, value) => {
@@ -103,6 +120,19 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
             heroes: teamData.heroes,
             _dirty: true 
         }
+        setSets(updated)
+    }
+
+    const handleUpdateHeroBuild = (setIdx, heroIdx, buildData) => {
+        const updated = [...sets]
+        const currentSet = updated[setIdx]
+        const newHeroBuilds = { ...(currentSet.hero_builds || {}) }
+        if (buildData) {
+            newHeroBuilds[heroIdx] = buildData
+        } else {
+            delete newHeroBuilds[heroIdx]
+        }
+        updated[setIdx] = { ...currentSet, hero_builds: newHeroBuilds, _dirty: true }
         setSets(updated)
     }
 
@@ -133,6 +163,7 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
                     formation: set.formation,
                     pet_file: set.pet_file,
                     heroes: set.heroes,
+                    hero_builds: set.hero_builds || {},
                     skill_rotation: set.skill_rotation,
                     video_url: set.video_url,
                     note: set.note,
@@ -286,6 +317,8 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
                                         onTeamUpdate={handleTeamUpdate}
                                         onSetUpdate={handleUpdateSet}
                                         onDelete={handleDeleteSet}
+                                        onDuplicate={handleDuplicateSet}
+                                        onOpenBuildPicker={setBuildPicker}
                                         onAddSlot={handleAddSlot}
                                         onDeleteSlot={handleDeleteSlot}
                                         onUpdateSlotLabel={handleUpdateSlotLabel}
@@ -312,6 +345,21 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
                 onClose={() => setSkillPicker(null)}
                 onSkillError={(key) => setSkillErrors(prev => ({ ...prev, [key]: true }))}
             />
+
+            {/* Hero Build Picker */}
+            {buildPicker && (
+                <CastleRushHeroBuildPicker
+                    isOpen={!!buildPicker}
+                    onClose={() => setBuildPicker(null)}
+                    heroFile={sets[buildPicker.setIdx]?.heroes?.[buildPicker.heroIdx]}
+                    initialBuild={sets[buildPicker.setIdx]?.hero_builds?.[buildPicker.heroIdx] || null}
+                    items={assets.items}
+                    onSave={(buildData) => {
+                        handleUpdateHeroBuild(buildPicker.setIdx, buildPicker.heroIdx, buildData)
+                        setBuildPicker(null)
+                    }}
+                />
+            )}
         </div>
     )
 }
