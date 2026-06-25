@@ -81,7 +81,7 @@ CREATE TABLE `builds` (
   `build_index` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */,
   KEY `fk_1` (`hero_filename`),
-  CONSTRAINT `fk_1` FOREIGN KEY (`hero_filename`) REFERENCES `heroes` (`filename`) ON DELETE CASCADE
+  CONSTRAINT `fk_builds_hero` FOREIGN KEY (`hero_filename`) REFERENCES `heroes` (`filename`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 -- Table structure for table `castle_rush_sets`
@@ -552,7 +552,7 @@ CREATE TABLE `teams` (
   `heroes_json` json DEFAULT NULL,
   PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */,
   KEY `fk_1` (`setup_id`),
-  CONSTRAINT `fk_1` FOREIGN KEY (`setup_id`) REFERENCES `stage_setups` (`id`) ON DELETE CASCADE
+  CONSTRAINT `fk_teams_setup` FOREIGN KEY (`setup_id`) REFERENCES `stage_setups` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 -- Table structure for table `tierlist`
@@ -565,7 +565,7 @@ CREATE TABLE `tierlist` (
   `hero_type` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */,
   UNIQUE KEY `unique_hero_cat` (`hero_filename`,`category`),
-  CONSTRAINT `fk_1` FOREIGN KEY (`hero_filename`) REFERENCES `heroes` (`filename`) ON DELETE CASCADE
+  CONSTRAINT `fk_tierlist_hero` FOREIGN KEY (`hero_filename`) REFERENCES `heroes` (`filename`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 -- Table structure for table `total_war_sets`
@@ -596,7 +596,7 @@ CREATE TABLE `total_war_teams` (
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */,
   KEY `fk_1` (`set_id`),
-  CONSTRAINT `fk_1` FOREIGN KEY (`set_id`) REFERENCES `total_war_sets` (`id`) ON DELETE CASCADE
+  CONSTRAINT `fk_total_war_set` FOREIGN KEY (`set_id`) REFERENCES `total_war_sets` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 -- Table structure for table `users`

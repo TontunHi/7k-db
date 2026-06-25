@@ -11,7 +11,7 @@ try {
         envContent.split('\n').forEach(line => {
             const [key, ...valueParts] = line.split('=');
             if (key && (valueParts.length > 0)) {
-                const value = valueParts.join('=').trim().replace(/^['"]|['"]$/g, '');
+                const value = valueParts.join('=').trim().replace(/^['"]|['"]$/g, '').replace(/\\(\$)/g, '$1');
                 process.env[key.trim()] = value;
             }
         });
