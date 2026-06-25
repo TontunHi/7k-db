@@ -332,7 +332,7 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                                                 <div key={i} className="grid grid-cols-2 gap-3 w-full">
                                                                     <div>
                                                                         {primary ? (
-                                                                            <div className={styles.dedicatedBadge}>
+                                                                            <div className={styles.dedicatedBadgePrimary}>
                                                                                 {priIcon && (
                                                                                     <div className={styles.dedicatedIcon}>
                                                                                         <SafeImage src={priIcon} fill alt="" className="object-contain" />
@@ -346,7 +346,7 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                                                     </div>
                                                                     <div>
                                                                         {secondary ? (
-                                                                            <div className={`${styles.dedicatedBadge} opacity-75 border-cyan-500/20 bg-cyan-500/5`}>
+                                                                            <div className={styles.dedicatedBadgeSecondary}>
                                                                                 {secIcon && (
                                                                                     <div className={styles.dedicatedIcon}>
                                                                                         <SafeImage src={secIcon} fill alt="" className="object-contain" />
