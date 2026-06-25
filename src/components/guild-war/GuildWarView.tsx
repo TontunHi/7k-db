@@ -1,4 +1,3 @@
-'use client'
 import { Users } from 'lucide-react'
 import GuildWarHeader from './components/GuildWarHeader'
 import GuildWarTeamCard from './components/GuildWarTeamCard'
