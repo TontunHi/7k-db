@@ -316,52 +316,53 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                                         )}
                                                     </div>
                                                 </div>
-
                                                 <div>
                                                     <SectionLabel>Dedicated Stats</SectionLabel>
-                                                    <div className={styles.dedicatedList}>
-                                                        {/* Primary Dedicated Stats (1-4) */}
-                                                        {build.dedicatedStats?.slice(0, 4).filter(Boolean).map((ded, idx) => {
-                                                            const icon = getDedicatedStatIcon(ded)
+                                                    <div className="flex flex-col gap-2 w-full">
+                                                        {Array.from({ length: 4 }).map((_, i) => {
+                                                            const primary = build.dedicatedStats?.[i]
+                                                            const secondary = build.dedicatedStats?.[i + 4]
+                                                            
+                                                            if (!primary && !secondary) return null
+                                                            
+                                                            const priIcon = primary ? getDedicatedStatIcon(primary) : null
+                                                            const secIcon = secondary ? getDedicatedStatIcon(secondary) : null
+                                                            
                                                             return (
-                                                                <div key={`pri-${idx}`} className={styles.dedicatedBadge}>
-                                                                    {icon && (
-                                                                        <div className={styles.dedicatedIcon}>
-                                                                            <SafeImage src={icon} fill alt="" className="object-contain" />
-                                                                        </div>
-                                                                    )}
-                                                                    <span className={styles.dedicatedName}>{ded}</span>
+                                                                <div key={i} className="grid grid-cols-2 gap-3 w-full">
+                                                                    <div>
+                                                                        {primary ? (
+                                                                            <div className={styles.dedicatedBadge}>
+                                                                                {priIcon && (
+                                                                                    <div className={styles.dedicatedIcon}>
+                                                                                        <SafeImage src={priIcon} fill alt="" className="object-contain" />
+                                                                                    </div>
+                                                                                )}
+                                                                                <span className={styles.dedicatedName}>{primary}</span>
+                                                                            </div>
+                                                                        ) : (
+                                                                            <div className="h-full border border-dashed border-gray-800/10 rounded-lg min-h-[34px]" />
+                                                                        )}
+                                                                    </div>
+                                                                    <div>
+                                                                        {secondary ? (
+                                                                            <div className={`${styles.dedicatedBadge} opacity-75 border-cyan-500/20 bg-cyan-500/5`}>
+                                                                                {secIcon && (
+                                                                                    <div className={styles.dedicatedIcon}>
+                                                                                        <SafeImage src={secIcon} fill alt="" className="object-contain" />
+                                                                                    </div>
+                                                                                )}
+                                                                                <span className={styles.dedicatedName}>{secondary}</span>
+                                                                            </div>
+                                                                        ) : (
+                                                                            <div className="h-full border border-dashed border-gray-800/10 rounded-lg min-h-[34px]" />
+                                                                        )}
+                                                                    </div>
                                                                 </div>
                                                             )
                                                         })}
-
-                                                        {/* Secondary Dedicated Stats (5-8) in a new row/section */}
-                                                        {build.dedicatedStats?.slice(4, 8).some(Boolean) && (
-                                                            <div className="w-full mt-2 pt-2 border-t border-gray-800/40">
-                                                                <div className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                                                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
-                                                                    Secondary Stats
-                                                                </div>
-                                                                <div className="flex flex-col gap-1.5">
-                                                                    {build.dedicatedStats.slice(4, 8).filter(Boolean).map((ded, idx) => {
-                                                                        const icon = getDedicatedStatIcon(ded)
-                                                                        return (
-                                                                            <div key={`sec-${idx}`} className={`${styles.dedicatedBadge} opacity-75`}>
-                                                                                {icon && (
-                                                                                    <div className={styles.dedicatedIcon}>
-                                                                                        <SafeImage src={icon} fill alt="" className="object-contain" />
-                                                                                    </div>
-                                                                                )}
-                                                                                <span className={styles.dedicatedName}>{ded}</span>
-                                                                            </div>
-                                                                        )
-                                                                    })}
-                                                                </div>
-                                                            </div>
-                                                        )}
-
                                                         {(!build.dedicatedStats || !build.dedicatedStats.some(Boolean)) && (
-                                                            <div className="col-span-full py-6 text-center text-xs italic text-gray-500 uppercase tracking-wider">No dedicated stats set</div>
+                                                            <div className="py-6 text-center text-xs italic text-gray-500 uppercase tracking-wider">No dedicated stats set</div>
                                                         )}
                                                     </div>
                                                 </div>
