@@ -106,6 +106,7 @@ export default function BuildManagerView({ heroes: initialHeroes = [] }) {
             {editorOpen && currentHero && editorData && (
                 <BuildEditorModal
                     hero={currentHero}
+                    allHeroes={heroes}
                     skills={editorData.resources.skills}
                     weapons={editorData.resources.weapons}
                     armors={editorData.resources.armors}

@@ -112,7 +112,7 @@ function SectionLabel({ children, color = "gold" }) {
     )
 }
 
-export default function BuildEditorModal({ hero, skills, weapons, armors, accessories, initialBuilds, initialSkillPriority, initialIsNewHero, onSave, onClose }) {
+export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons, armors, accessories, initialBuilds, initialSkillPriority, initialIsNewHero, onSave, onClose }) {
     const [builds, setBuilds] = useState(() =>
         (initialBuilds || []).map(b => ({
             ...b,
@@ -122,6 +122,12 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
     const [skillPriority, setSkillPriority] = useState(initialSkillPriority || [])
     const [isNewHero, setIsNewHero] = useState(initialIsNewHero ?? hero.is_new_hero ?? false)
     const [isSaving, setIsSaving] = useState(false)
+    const [selectedSyncTargets, setSelectedSyncTargets] = useState([])
+
+    const syncTargets = (allHeroes || []).filter(h => 
+        h.name.toLowerCase() === hero.name.toLowerCase() && 
+        h.filename !== hero.filename
+    )
 
     // Item Selector State
     const [selectorOpen, setSelectorOpen] = useState(false)
@@ -313,7 +319,7 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
     const handleSave = async () => {
         setIsSaving(true)
         try {
-            await onSave(builds, skillPriority, isNewHero)
+            await onSave(builds, skillPriority, isNewHero, selectedSyncTargets)
             onClose()
         } catch (err) {
             console.error(err)
@@ -363,6 +369,27 @@ export default function BuildEditorModal({ hero, skills, weapons, armors, access
                             />
                             <span className="text-[10px] font-bold text-gray-400 group-hover/new:text-gray-300 uppercase tracking-wider transition-colors select-none">New Hero</span>
                         </label>
+
+                        {/* Sync targets checkboxes */}
+                        {syncTargets.map(t => (
+                            <label key={t.filename} className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[#FFD700]/10 hover:border-[#FFD700]/30 bg-[#FFD700]/2 hover:bg-[#FFD700]/5 cursor-pointer transition-colors group/sync">
+                                <input
+                                    type="checkbox"
+                                    checked={selectedSyncTargets.includes(t.filename)}
+                                    onChange={(e) => {
+                                        if (e.target.checked) {
+                                            setSelectedSyncTargets([...selectedSyncTargets, t.filename])
+                                        } else {
+                                            setSelectedSyncTargets(selectedSyncTargets.filter(x => x !== t.filename))
+                                        }
+                                    }}
+                                    className="w-3.5 h-3.5 rounded border-gray-700 text-[#FFD700] focus:ring-[#FFD700] bg-black cursor-pointer accent-[#FFD700]"
+                                />
+                                <span className="text-[10px] font-black text-[#FFD700] group-hover/sync:text-[#FFD700]/80 uppercase tracking-widest transition-colors select-none">
+                                    Sync to {t.grade}
+                                </span>
+                            </label>
+                        ))}
 
                         <button onClick={handleAddBuild} className="bg-gray-800/80 hover:bg-gray-700 text-white px-3 py-2 rounded-xl text-[10px] font-black flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 border border-gray-700/50 hover:border-gray-600 uppercase tracking-wider">
                             <ActionLabel label="ADD_BUILD" color="text-white" />

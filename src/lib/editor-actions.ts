@@ -28,7 +28,7 @@ export async function openEditor(filename) {
     }
 }
 
-export async function saveEditor(filename, builds, skillPriority, heroName, grade, isNewHero) {
+export async function saveEditor(filename, builds, skillPriority, heroName, grade, isNewHero, syncTargets = []) {
     await requireAdmin()
     // Save Hero Data first (Global Skill Priority)
     await saveHeroData({
@@ -43,6 +43,17 @@ export async function saveEditor(filename, builds, skillPriority, heroName, grad
     const displayName = heroName || filename.replace(/\.[^/.]+$/, '').replace(/_/g, ' ')
     await logSiteUpdate('HERO', displayName, 'UPDATE', `Updated build for ${displayName}`)
 
-    // Save Builds
-    return await saveHeroBuilds(filename, builds)
+    // Save Builds for main hero
+    const result = await saveHeroBuilds(filename, builds)
+    if (!result.success) return result
+
+    // Save Builds for sync targets
+    for (const targetFilename of syncTargets) {
+        const syncResult = await saveHeroBuilds(targetFilename, builds)
+        if (!syncResult.success) {
+            console.error(`Failed to sync builds to ${targetFilename}:`, syncResult.error)
+        }
+    }
+
+    return result
 }

@@ -52,7 +52,7 @@ export function useBuildEditor(initialHeroes = []) {
     /**
      * Saves the build modifications
      */
-    async function handleSave(newBuilds, newSkillPriority, isNewHero) {
+    async function handleSave(newBuilds, newSkillPriority, isNewHero, syncTargets = []) {
         if (!currentHero) return
         
         try {
@@ -62,7 +62,8 @@ export function useBuildEditor(initialHeroes = []) {
                 newSkillPriority,
                 currentHero.name,
                 currentHero.grade,
-                isNewHero
+                isNewHero,
+                syncTargets
             )
             
             if (result.success) {
