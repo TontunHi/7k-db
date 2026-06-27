@@ -53,16 +53,19 @@
 .bossCard {
   position: relative;
   aspect-ratio: 3/4;
+  max-width: 280px;
+  width: 100%;
+  margin: 0 auto;
   border-radius: 1.5rem;
   overflow: hidden;
   border: 1px solid var(--border);
-  background-color: #000;
+  background-color: var(--card);
   transition: all 0.3s ease;
 }
 
 .bossCard:hover {
-  border-color: #8b5cf6;
-  box-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
+  border-color: var(--primary);
+  box-shadow: 0 0 30px var(--primary-opacity);
 }
 
 .bgImage {
@@ -72,13 +75,13 @@
 }
 
 .bossCard:hover .bgImage {
-  transform: scale(1.05);
+  transform: scale(1.02);
 }
 
 .overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, #000 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 60%, transparent 100%);
   z-index: 1;
 }
 
@@ -108,8 +111,8 @@
   top: 1rem;
   right: 1rem;
   z-index: 10;
-  background-color: #10b981;
-  color: #fff;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
   padding: 0.25rem 0.75rem;
   border-radius: 2rem;
   font-size: 0.75rem;
@@ -132,11 +135,11 @@
 
 .sidebarCard {
   position: relative;
-  aspect-ratio: 2/3;
+  aspect-ratio: 3/4;
   border-radius: 1.25rem;
   overflow: hidden;
   border: 1px solid var(--border);
-  background: linear-gradient(to bottom, #111, #000);
+  background: linear-gradient(to bottom, var(--card), var(--background));
 }
 
 .mainContent {
@@ -151,7 +154,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  background-color: rgba(var(--card-rgb), 0.5);
+  background-color: color-mix(in srgb, var(--card), transparent 50%);
   border: 1px solid var(--border);
   border-radius: 1rem;
   backdrop-filter: blur(8px);
@@ -159,7 +162,7 @@
 
 /* Team Set Card */
 .teamSet {
-  background-color: rgba(var(--card-rgb), 0.3);
+  background-color: color-mix(in srgb, var(--card), transparent 70%);
   border: 1px solid var(--border);
   border-radius: 1.25rem;
   overflow: hidden;
@@ -167,12 +170,12 @@
 }
 
 .teamSetDirty {
-  border-color: rgba(139, 92, 246, 0.4);
+  border-color: color-mix(in srgb, var(--primary), transparent 50%);
 }
 
 .setHead {
   padding: 1rem 1.5rem;
-  background-color: rgba(var(--background-rgb), 0.5);
+  background-color: color-mix(in srgb, var(--background), transparent 50%);
   border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
@@ -187,9 +190,9 @@
 }
 
 .phaseSelect {
-  background-color: #000;
+  background-color: var(--background);
   border: 1px solid var(--border);
-  color: #fff;
+  color: var(--foreground);
   font-size: 0.75rem;
   font-weight: 700;
   padding: 0.25rem 0.5rem;
@@ -202,7 +205,7 @@
   border: none;
   font-size: 1.125rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--foreground);
   outline: none;
   width: 200px;
 }
@@ -232,7 +235,7 @@
 }
 
 .rotationGrid {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: color-mix(in srgb, var(--foreground), transparent 95%);
   border: 1px solid var(--border);
   border-radius: 1rem;
   padding: 1rem;
@@ -258,7 +261,7 @@
   text-align: center;
   font-size: 0.625rem;
   font-weight: 700;
-  color: #a78bfa;
+  color: var(--primary);
   outline: none;
 }
 
@@ -278,7 +281,7 @@
 
 .skillBtnActive {
   border-style: solid;
-  border-color: rgba(139, 92, 246, 0.5);
+  border-color: color-mix(in srgb, var(--primary), transparent 50%);
 }
 
 .removeSlotBtn {
@@ -314,9 +317,9 @@
 }
 
 .addSlotBtn:not(:disabled):hover {
-  border-color: #8b5cf6;
-  color: #8b5cf6;
-  background-color: rgba(139, 92, 246, 0.05);
+  border-color: var(--primary);
+  color: var(--primary);
+  background-color: var(--primary-opacity);
 }
 
 /* Modal */
@@ -385,7 +388,7 @@
 }
 
 .skillPickBtn:hover {
-  border-color: #8b5cf6;
+  border-color: var(--primary);
   transform: scale(1.05);
 }
 

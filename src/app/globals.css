@@ -31,122 +31,111 @@
 
   --font-sans: var(--font-sans), Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-thai: var(--font-thai), Prompt, "Noto Sans Thai", "Leelawadee UI", Tahoma, sans-serif;
+  --font-serif: var(--font-serif), Cormorant Garamond, "Times New Roman", serif;
 
-  /* Linear Design Tokens */
-  --color-linear-bg: #08090a;
-  --color-linear-panel: #0f1011;
-  --color-linear-surface: #191a1b;
-  --color-linear-accent: #5e6ad2;
-  --color-linear-accent-hover: #7170ff;
+  /* Linear Design Tokens mapped to Claude style */
+  --color-linear-bg: #181715;
+  --color-linear-panel: #1f1e1b;
+  --color-linear-surface: #252320;
+  --color-linear-accent: #cc785c;
+  --color-linear-accent-hover: #a9583e;
 
-  --color-linear-text-primary: #f7f8f8;
-  --color-linear-text-secondary: #d0d6e0;
-  --color-linear-text-tertiary: #8a8f98;
-  --color-linear-text-quaternary: #62666d;
+  --color-linear-text-primary: #faf9f5;
+  --color-linear-text-secondary: #a09d96;
+  --color-linear-text-tertiary: #8e8b82;
+  --color-linear-text-quaternary: #6c6a64;
 
-  --color-linear-border: rgba(255, 255, 255, 0.08);
-  --color-linear-border-subtle: rgba(255, 255, 255, 0.05);
+  --color-linear-border: #252320;
+  --color-linear-border-subtle: #252320;
 }
 
-/* Enforce Dark Theme Variables at Root with GOLD/BLACK Theme */
-/* Enforce Dark Theme Variables at Root with GOLD/BLACK Theme */
 :root {
-  /* LIGHT MODE (Fallback / Alternative if enforced) - Clean Luxury White/Gold */
-  --background: oklch(0.98 0.01 85);
-  /* Warm White */
-  --foreground: oklch(0.15 0.02 85);
-  /* Deep Gold-Black */
+  /* LIGHT MODE - LUXURY GOLD, CREAM & CHARCOAL */
+  --background: #faf8f2;
+  --foreground: #1a160d;
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.02 85);
+  --card: #ffffff;
+  --card-foreground: #1a160d;
 
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.02 85);
+  --popover: #fdfcf7;
+  --popover-foreground: #1a160d;
 
-  /* LUXURY GOLD Primary */
-  --primary: #D4AF37;
-  /* Darker Gold for Light Mode readability */
+  --primary: #d4af37; /* Metallic Gold */
   --primary-foreground: #000000;
-  /* Distinct Black */
 
-  /* DEEP ROYAL BLUE Secondary */
-  --secondary: oklch(0.25 0.1 270);
-  /* Deep Navy/Royal */
-  --secondary-foreground: oklch(0.95 0.01 85);
+  --secondary: #1a160d;
+  --secondary-foreground: #faf8f2;
 
-  --muted: oklch(0.94 0.02 85);
-  --muted-foreground: oklch(0.35 0.05 85);
+  --muted: #f5f2e9;
+  --muted-foreground: #7a725c;
 
-  --accent: oklch(0.95 0.04 75);
-  /* Pale Gold Accent */
-  --accent-foreground: oklch(0.2 0.05 75);
+  --accent: #f4ebd0;
+  --accent-foreground: #1a160d;
 
-  --destructive: oklch(0.6 0.2 25);
-  --destructive-foreground: oklch(0.98 0 0);
+  --destructive: #c64545;
+  --destructive-foreground: #ffffff;
 
-  --border: oklch(0.85 0.05 85);
-  --input: oklch(0.85 0.05 85);
-  --ring: #FFD700;
+  --border: #e8e2d0;
+  --input: #ffffff;
+  --ring: #d4af37;
 
-  --surface: oklch(1 0 0);
-  --surface-hover: oklch(0.96 0.01 85);
+  --surface: #f5f2e9;
+  --surface-hover: #e8e2d0;
 
   --radius: 0.75rem;
 
-  --primary-opacity: color-mix(in srgb, var(--primary), transparent 85%);
-  --shadow-sm: 0 4px 6px -1px oklch(0 0 0 / 0.08);
-  --shadow-md: 0 10px 30px -10px oklch(0 0 0 / 0.12);
-  --shadow-lg: 0 25px 50px -12px oklch(0 0 0 / 0.15);
-  --overlay-dark: oklch(0 0 0 / 0.75);
+  --primary-opacity: rgba(212, 175, 55, 0.15);
+  --shadow-sm: 0 4px 6px -1px rgba(26, 22, 13, 0.05);
+  --shadow-md: 0 10px 30px -10px rgba(26, 22, 13, 0.08);
+  --shadow-lg: 0 25px 50px -12px rgba(26, 22, 13, 0.1);
+  --overlay-dark: rgba(26, 22, 13, 0.75);
 }
 
 .dark {
-  /* DARK MODE - The Main Aesthetic - DEEP BLACK & VIBRANT GOLD */
-  --background: oklch(0.12 0.03 260);
-  /* Deep Obsidian/Charcoal (Not pure black) */
-  --foreground: oklch(0.92 0.02 85);
-  /* Off-white/Cream */
+  /* DARK MODE - OBSIDIAN & RADIANT GOLD */
+  --background: #08090a;
+  --foreground: #f5f5f7;
 
-  --card: oklch(0.16 0.03 260);
-  /* Slightly lighter obsidian */
-  --card-foreground: oklch(0.92 0.02 85);
+  --card: #121314;
+  --card-foreground: #f5f5f7;
 
-  --popover: oklch(0.16 0.03 260);
-  --popover-foreground: oklch(0.92 0.02 85);
+  --popover: #18191b;
+  --popover-foreground: #f5f5f7;
 
-  /* VIBRANT GOLD Primary */
-  --primary: #FFD700;
+  --primary: #ffd700; /* Radiant Gold */
   --primary-foreground: #000000;
 
-  /* MYSTIC PURPLE Secondary (Complementary to Gold) */
-  --secondary: oklch(0.25 0.12 290);
-  /* Deep Rich Purple */
-  --secondary-foreground: oklch(0.92 0.02 85);
+  --secondary: #1e1f22;
+  --secondary-foreground: #ffd700;
 
-  --muted: oklch(0.22 0.04 260);
-  --muted-foreground: oklch(0.65 0.05 85);
+  --muted: #1a1b1d;
+  --muted-foreground: #888d96;
 
-  --accent: oklch(0.25 0.1 85);
-  /* Dark Gold/Bronze Accent */
-  --accent-foreground: oklch(0.95 0.05 85);
+  --accent: #2a271c;
+  --accent-foreground: #ffd700;
 
-  --destructive: oklch(0.5 0.2 25);
-  /* Rich Red */
-  --destructive-foreground: oklch(0.95 0.02 85);
+  --destructive: #c64545;
+  --destructive-foreground: #ffffff;
 
-  --border: oklch(0.25 0.05 85);
-  /* Subtle Gold Border */
-  --input: oklch(0.2 0.04 260);
-  --ring: #FFD700;
+  --border: #202124;
+  --input: #08090a;
+  --ring: #ffd700;
 
-  --surface: oklch(0.16 0.03 260);
-  --surface-hover: oklch(0.2 0.04 260);
+  --surface: #121314;
+  --surface-hover: #1e1f22;
 
-  --primary-opacity: color-mix(in srgb, var(--primary), transparent 85%);
-  --shadow-sm: 0 4px 6px -1px oklch(0 0 0 / 0.3);
-  --shadow-md: 0 10px 30px -10px oklch(0 0 0 / 0.5);
-  --shadow-lg: 0 25px 50px -12px oklch(0 0 0 / 0.6);
-  --overlay-dark: oklch(0 0 0 / 0.85);
+  --primary-opacity: rgba(255, 215, 0, 0.15);
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  --overlay-dark: rgba(0, 0, 0, 0.85);
+}
+
+/* Base Headings Style - BOLD DISPLAY TYPOGRAPHY */
+h1, h2, h3, h4, .font-serif-display {
+  font-family: var(--font-serif), Cormorant Garamond, Georgia, serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
 }
 
 body {

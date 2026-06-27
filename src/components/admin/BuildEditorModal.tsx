@@ -929,21 +929,39 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
                                         {DEDICATED_STATS_OPTIONS.map((opt) => {
                                             const icon = getDedicatedStatIcon(opt);
                                             return (
-                                                <button
+                                                <div
                                                     key={opt}
-                                                    onClick={() => {
-                                                        updateDedicatedStat(selectorTarget.buildIndex, selectorTarget.itemIndex, opt);
-                                                        setSelectorOpen(false);
-                                                    }}
-                                                    className="bg-black/40 border border-gray-800 hover:border-[#FFD700] hover:bg-[#FFD700]/5 rounded-xl p-4 flex flex-col items-center justify-center gap-2.5 transition-all text-center min-h-[90px] group cursor-pointer"
+                                                    className="bg-black/40 border border-gray-800 hover:border-[#FFD700] hover:bg-[#FFD700]/5 rounded-xl p-3 flex flex-col items-center justify-center gap-2 transition-all text-center min-h-[110px] relative group"
                                                 >
-                                                    {icon && (
-                                                        <div className="w-8 h-8 relative opacity-70 group-hover:opacity-100 transition-opacity">
-                                                            <SafeImage src={icon} fill alt="" className="object-contain" />
-                                                        </div>
-                                                    )}
-                                                    <span className="text-[9px] uppercase font-black tracking-wider text-gray-400 group-hover:text-white transition-colors">{opt}</span>
-                                                </button>
+                                                    <button
+                                                        onClick={() => {
+                                                            updateDedicatedStat(selectorTarget.buildIndex, selectorTarget.itemIndex, opt);
+                                                            setSelectorOpen(false);
+                                                        }}
+                                                        className="w-full flex flex-col items-center justify-center gap-2"
+                                                    >
+                                                        {icon && (
+                                                            <div className="w-8 h-8 relative opacity-70 group-hover:opacity-100 transition-opacity">
+                                                                <SafeImage src={icon} fill alt="" className="object-contain" />
+                                                            </div>
+                                                        )}
+                                                        <span className="text-[9px] uppercase font-black tracking-wider text-gray-400 group-hover:text-white transition-colors">{opt}</span>
+                                                    </button>
+                                                    
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            const startIndex = selectorTarget.itemIndex < 4 ? 0 : 4;
+                                                            for (let i = 0; i < 4; i++) {
+                                                                updateDedicatedStat(selectorTarget.buildIndex, startIndex + i, opt);
+                                                            }
+                                                            setSelectorOpen(false);
+                                                        }}
+                                                        className="mt-1 text-[8px] font-black uppercase bg-[#FFD700]/10 hover:bg-[#FFD700] hover:text-black text-[#FFD700] border border-[#FFD700]/30 rounded-md py-1 px-2 transition-all cursor-pointer"
+                                                    >
+                                                        Set x4 Slots
+                                                    </button>
+                                                </div>
                                             )
                                         })}
                                     </div>
@@ -959,6 +977,7 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
                                             })
                                             .map((img) => {
                                                 const isSelected = selectorTarget.type === "accessories" ? multiSelection.includes(img) : false
+                                                const selectedIndex = isSelected ? multiSelection.indexOf(img) + 1 : -1
                                                 return (
                                                     <button
                                                         key={img}
@@ -979,8 +998,8 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
                                                             sizes="64px"
                                                         />
                                                         {isSelected && (
-                                                            <div className="absolute top-1 right-1 bg-gradient-to-br from-[#FFD700] to-yellow-600 text-black w-4 h-4 rounded-full flex items-center justify-center shadow-lg z-10 border border-black text-[10px] font-black">
-                                                                OK
+                                                            <div className="absolute top-1 right-1 bg-gradient-to-br from-[#FFD700] to-yellow-600 text-black w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-lg z-10 border border-black text-[9px] font-black">
+                                                                {selectedIndex}
                                                             </div>
                                                         )}
                                                     </button>

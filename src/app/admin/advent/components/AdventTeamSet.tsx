@@ -40,7 +40,7 @@ export default function AdventTeamSet({
             <div className={styles.setHead}>
                 <div className={styles.setMeta}>
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => onToggleCollapse(set.id)}>
-                        <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400 font-black text-sm">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-black text-sm">
                             {index + 1}
                         </div>
                         <select
@@ -61,7 +61,7 @@ export default function AdventTeamSet({
                             className={styles.setNameInput}
                         />
                     </div>
-                    {set._dirty && <span className="px-2 py-0.5 bg-violet-500/20 text-violet-400 text-[10px] font-black rounded uppercase">Unsaved</span>}
+                    {set._dirty && <span className="px-2 py-0.5 bg-primary/20 text-primary text-[10px] font-black rounded uppercase">Unsaved</span>}
                     
                     {isCollapsed && (
                         <div className="flex items-center gap-1.5 ml-4 animate-in fade-in slide-in-from-left-2">
@@ -77,7 +77,7 @@ export default function AdventTeamSet({
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => onToggleCollapse(set.id)}
-                        className="text-muted-foreground hover:text-violet-400 p-2 hover:bg-accent rounded-lg transition-colors"
+                        className="text-muted-foreground hover:text-primary p-2 hover:bg-accent rounded-lg transition-colors"
                     >
                         {isCollapsed ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
                     </button>
@@ -114,8 +114,8 @@ export default function AdventTeamSet({
                                 className={clsx(
                                     "absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all z-30 shadow-xl border backdrop-blur-md",
                                     set.hero_builds?.[hIdx] 
-                                        ? "bg-violet-600/90 hover:bg-violet-500 text-white border-violet-400/50 opacity-100" 
-                                        : "bg-black/60 hover:bg-violet-600/90 text-white border-white/10 opacity-0 group-hover:opacity-100"
+                                        ? "bg-primary/90 hover:bg-primary border-primary/50 text-white opacity-100" 
+                                        : "bg-black/60 hover:bg-primary/90 text-white border-white/10 opacity-0 group-hover:opacity-100"
                                 )}
                             >
                                 {set.hero_builds?.[hIdx] ? 'Edit Build' : 'Set Build'}
@@ -126,7 +126,7 @@ export default function AdventTeamSet({
                     {/* Skill Rotation */}
                     <div className={styles.rotationSection}>
                         <label className={styles.sectionLabel}>
-                            <Zap size={14} className="text-violet-400" /> Tactical Sequence
+                            <Zap size={14} className="text-primary" /> Tactical Sequence
                         </label>
 
                         <div className={styles.rotationGrid}>
@@ -200,7 +200,7 @@ export default function AdventTeamSet({
                                 value={set.video_url || ''}
                                 onChange={(e) => onSetUpdate(index, 'video_url', e.target.value)}
                                 placeholder="https://youtube.com/watch?v=..."
-                                className="w-full bg-background border border-border rounded-xl px-4 py-3 font-bold text-sm focus:ring-2 focus:ring-violet-500 focus:outline-none"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 font-bold text-sm focus:ring-2 focus:ring-primary focus:outline-none"
                             />
                         </div>
 
@@ -212,7 +212,7 @@ export default function AdventTeamSet({
                                 value={set.note || ''}
                                 onChange={(e) => onSetUpdate(index, 'note', e.target.value)}
                                 placeholder="Add specific timings, phase-specific requirements, or critical hero stats..."
-                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-violet-500 focus:outline-none resize-none h-full min-h-[100px]"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary focus:outline-none resize-none h-full min-h-[100px]"
                             />
                         </div>
                     </div>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { 
-    Sword, Map, Skull, Landmark, Trophy, Crown, Compass, Swords, Wand2, Sparkles, Zap, ArrowRight 
+    Sword, Map, Skull, Landmark, Trophy, Crown, Compass, Swords, Wand2, Sparkles, Zap
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import styles from './FeatureCard.module.css'
@@ -47,7 +47,6 @@ export default function FeatureCard({ title, description, iconName, href, size =
             {size !== "tiny" && (
                 <div className={styles.footer}>
                     <span className={styles.actionText}>Explore</span>
-                    <ArrowRight className={styles.arrowIcon} />
                 </div>
             )}
 

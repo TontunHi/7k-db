@@ -17,7 +17,7 @@ export async function getTierlistCreatorData() {
     if (!fs.existsSync(heroesDir)) return { heroes: [], typeMap: {} as Record<string, string> }
     
     const files = await fs.promises.readdir(heroesDir)
-    const gradeOrder: Record<string, number> = { "l++": 0, "l+": 1, "l": 2, "r": 3, "a": 4 }
+    const gradeOrder: Record<string, number> = { "a": 0, "l++": 1, "l+": 2, "l": 3, "r": 4 }
 
     const heroes = files
         .filter(file => /\.(png|jpg|jpeg|webp)$/i.test(file))

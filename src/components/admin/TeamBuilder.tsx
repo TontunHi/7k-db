@@ -19,12 +19,12 @@ const HeroPicker = ({ isOpen, sortedHeroesList, onSelect, onClose }) => {
     )
 
     return (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in">
-            <div className="bg-gray-900 w-full max-w-4xl h-[85vh] rounded-2xl border border-gray-700 flex flex-col shadow-2xl">
-                <div className="p-6 border-b border-gray-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-black/50">
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in">
+            <div className="bg-card w-full max-w-4xl h-[85vh] rounded-2xl border border-border flex flex-col shadow-2xl">
+                <div className="p-6 border-b border-border flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-background/50">
                     <div>
-                        <h3 className="text-2xl font-black text-white tracking-tight">Select Hero</h3>
-                        <p className="text-sm text-gray-400 mt-1">Choose a hero for this slot</p>
+                        <h3 className="text-2xl font-black text-foreground tracking-tight">Select Hero</h3>
+                        <p className="text-sm text-muted-foreground mt-1">Choose a hero for this slot</p>
                     </div>
                     <div className="flex items-center gap-4 w-full md:w-auto">
                         <input
@@ -32,9 +32,9 @@ const HeroPicker = ({ isOpen, sortedHeroesList, onSelect, onClose }) => {
                             placeholder="Search hero..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="bg-black/60 border border-gray-700/80 text-sm text-white rounded-xl px-4 py-2 w-full md:w-64 outline-none focus:border-[#FFD700] transition-colors"
+                            className="bg-background/65 border border-border text-sm text-foreground rounded-xl px-4 py-2 w-full md:w-64 outline-none focus:border-primary transition-colors"
                         />
-                        <button onClick={onClose} className="p-3 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400 flex-shrink-0">
+                        <button onClick={onClose} className="p-3 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-muted-foreground flex-shrink-0">
                             <X size={24} />
                         </button>
                     </div>
@@ -44,7 +44,7 @@ const HeroPicker = ({ isOpen, sortedHeroesList, onSelect, onClose }) => {
                         <button
                             key={h.filename}
                             onClick={() => onSelect(h.filename)}
-                            className="group relative aspect-[3/4] rounded-xl overflow-hidden border-2 border-gray-700 hover:border-[#FFD700] hover:shadow-[0_0_20px_rgba(255,215,0,0.3)] transition-all bg-black"
+                            className="group relative aspect-[3/4] rounded-xl overflow-hidden border-2 border-border hover:border-primary hover:shadow-lg transition-all bg-background"
                         >
                             <SafeImage
                                 src={`/heroes/${h.filename}`}
@@ -56,7 +56,7 @@ const HeroPicker = ({ isOpen, sortedHeroesList, onSelect, onClose }) => {
                         </button>
                     ))}
                     {filtered.length === 0 && (
-                        <div className="col-span-full py-12 text-center text-gray-500 italic">No heroes found.</div>
+                        <div className="col-span-full py-12 text-center text-muted-foreground italic">No heroes found.</div>
                     )}
                 </div>
             </div>
@@ -67,14 +67,14 @@ const HeroPicker = ({ isOpen, sortedHeroesList, onSelect, onClose }) => {
 const PetPicker = ({ isOpen, petsList, onSelect, onClose }) => {
     if (!isOpen) return null
     return (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in">
-            <div className="bg-gray-900 w-full max-w-3xl max-h-[80vh] rounded-2xl border border-gray-700 flex flex-col shadow-2xl">
-                <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-black/50">
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in">
+            <div className="bg-card w-full max-w-3xl max-h-[80vh] rounded-2xl border border-border flex flex-col shadow-2xl">
+                <div className="p-6 border-b border-border flex justify-between items-center bg-background/50">
                     <div>
-                        <h3 className="text-2xl font-black text-white tracking-tight">Select Pet</h3>
-                        <p className="text-sm text-gray-400 mt-1">Choose a pet for this team</p>
+                        <h3 className="text-2xl font-black text-foreground tracking-tight">Select Pet</h3>
+                        <p className="text-sm text-muted-foreground mt-1">Choose a pet for this team</p>
                     </div>
-                    <button onClick={onClose} className="p-3 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-gray-400">
+                    <button onClick={onClose} className="p-3 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-colors text-muted-foreground">
                         <X size={24} />
                     </button>
                 </div>
@@ -83,7 +83,7 @@ const PetPicker = ({ isOpen, petsList, onSelect, onClose }) => {
                         <button
                             key={p}
                             onClick={() => onSelect(p)}
-                            className="group flex items-center justify-center aspect-square rounded-xl border-2 border-gray-700 hover:border-[#FFD700] hover:shadow-[0_0_20px_rgba(255,215,0,0.3)] transition-all bg-gradient-to-b from-gray-800 to-black"
+                            className="group flex items-center justify-center aspect-square rounded-xl border-2 border-border hover:border-primary hover:shadow-lg transition-all bg-gradient-to-b from-card to-background"
                         >
                             <SafeImage 
                                 src={p} 

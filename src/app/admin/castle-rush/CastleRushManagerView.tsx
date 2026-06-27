@@ -13,7 +13,7 @@ export default function CastleRushManagerView({ bosses = [] }) {
         <div className={styles.container}>
             <header className={styles.header}>
                 <div className={styles.titleWrapper}>
-                    <Marker color="bg-amber-500" className="w-2 h-10" />
+                    <Marker color="bg-primary" className="w-2 h-10" />
                     <h1 className={styles.title}>CASTLE RUSH</h1>
                 </div>
             </header>
@@ -28,7 +28,7 @@ export default function CastleRushManagerView({ bosses = [] }) {
                         {/* Set Count Badge - High Contrast Floating */}
                         {boss.setCount > 0 && (
                             <div className="absolute top-4 right-4 z-20">
-                                <div className="bg-amber-600 text-white px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest shadow-lg shadow-amber-600/30">
+                                <div className="bg-primary text-primary-foreground px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/30">
                                     {boss.setCount} SQUADS
                                 </div>
                             </div>
@@ -42,6 +42,9 @@ export default function CastleRushManagerView({ bosses = [] }) {
                             priority
                         />
                         <div className={styles.overlay} />
+                        <div className={styles.cardContent}>
+                            <h2 className={styles.bossName}>{boss.name}</h2>
+                        </div>
                     </Link>
                 ))}
             </div>

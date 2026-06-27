@@ -3,7 +3,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "sonner"
 import { Suspense } from "react"
 import AnalyticsTracker from "@/components/analytics/AnalyticsTracker"
-import { Inter, Prompt } from "next/font/google"
+import { Inter, Prompt, Cormorant_Garamond } from "next/font/google"
 import Script from "next/script"
 
 const inter = Inter({
@@ -16,6 +16,13 @@ const prompt = Prompt({
   subsets: ["thai", "latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-thai",
+  display: "swap",
+})
+
+const cormorantGaramond = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-serif",
   display: "swap",
 })
 
@@ -51,7 +58,7 @@ export default async function RootLayout({ children }) {
   const lang = await getLocale()
 
   return (
-    <html lang={lang} suppressHydrationWarning className={`${inter.variable} ${prompt.variable}`}>
+    <html lang={lang} suppressHydrationWarning className={`${inter.variable} ${prompt.variable} ${cormorantGaramond.variable}`}>
       <head>
         <Script
           id="theme-init"
