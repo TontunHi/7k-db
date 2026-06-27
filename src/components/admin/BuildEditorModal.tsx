@@ -443,6 +443,7 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
                             <Image
                                 src={`/heroes/${hero.filename}`}
                                 fill
+                                unoptimized
                                 className="object-cover transition-transform duration-500 group-hover/hero:scale-110"
                                 alt={hero.name}
                                 sizes="(max-width: 768px) 96px, 120px"
@@ -1043,6 +1044,7 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
                                                         <Image
                                                             src={`/items/${(selectorTarget.type === 'weapons' ? 'weapon' : selectorTarget.type === 'armors' ? 'armor' : 'accessory')}/${img}`}
                                                             fill
+                                                            unoptimized
                                                             className="object-cover group-hover/item:scale-110 transition-transform duration-300"
                                                             alt="item"
                                                             sizes="64px"
