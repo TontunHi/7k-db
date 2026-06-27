@@ -316,6 +316,27 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
         setSelectorOpen(false)
     }
 
+    const autoFillEquipmentSet = (buildIndex, matchedKeyword) => {
+        if (!matchedKeyword) return;
+        const matchingWeapon = weapons.find(w => w.toLowerCase().includes(matchedKeyword.toLowerCase()));
+        const matchingArmor = armors.find(a => a.toLowerCase().includes(matchedKeyword.toLowerCase()));
+        if (!matchingWeapon && !matchingArmor) {
+            toast.info(`Could not find items matching "${matchedKeyword}"`);
+            return;
+        }
+        const newBuilds = [...builds];
+        if (matchingWeapon) {
+            newBuilds[buildIndex].weapons[0].image = matchingWeapon;
+            newBuilds[buildIndex].weapons[1].image = matchingWeapon;
+        }
+        if (matchingArmor) {
+            newBuilds[buildIndex].armors[0].image = matchingArmor;
+            newBuilds[buildIndex].armors[1].image = matchingArmor;
+        }
+        setBuilds(newBuilds);
+        toast.success(`Loaded 5-Set: ${matchedKeyword}`);
+    };
+
     const handleSave = async () => {
         setIsSaving(true)
         try {
@@ -480,28 +501,30 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
 
                     {/* Build List */}
                     {builds.map((build, bIndex) => (
-                        <div key={build.id} className="relative rounded-2xl p-5 md:p-6 overflow-hidden group/build"
+                        <div key={build.id} className="relative rounded-2xl p-5 md:p-6 overflow-hidden group/build transition-all duration-300 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
                             style={{
-                                background: "linear-gradient(145deg, rgba(15,15,15,1) 0%, rgba(5,5,5,1) 100%)",
-                                border: "1px solid rgba(50,50,50,0.5)",
-                                boxShadow: "0 4px 30px rgba(0,0,0,0.3)"
+                                background: "linear-gradient(180deg, rgba(20,20,22,1) 0%, rgba(10,10,12,1) 100%)",
+                                border: "1px solid rgba(50,50,50,0.4)",
+                                borderLeft: "4px solid #FFD700",
+                                boxShadow: "0 4px 30px rgba(0,0,0,0.4)"
                             }}
                         >
                             {/* Corner glow */}
-                            <div className="absolute top-0 right-0 w-48 h-48 bg-[#FFD700]/[0.03] rounded-full blur-3xl -mr-24 -mt-24 pointer-events-none group-hover/build:bg-[#FFD700]/[0.06] transition-colors duration-500" />
+                            <div className="absolute top-0 right-0 w-48 h-48 bg-[#FFD700]/[0.02] rounded-full blur-3xl -mr-24 -mt-24 pointer-events-none group-hover/build:bg-[#FFD700]/[0.05] transition-colors duration-500" />
 
                             {/* Build number badge */}
-                            <div className="absolute top-4 left-5 text-[10px] font-black text-gray-700 uppercase tracking-widest">
+                            <div className="absolute top-4 left-5 bg-[#FFD700]/10 text-[#FFD700] text-[9px] font-black uppercase tracking-[0.15em] px-2.5 py-1 rounded-md border border-[#FFD700]/20 shadow-sm flex items-center gap-1.5">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#FFD700] animate-pulse" />
                                 Build #{bIndex + 1}
                             </div>
 
-                            {/* Action buttons (Move/Delete) */}
-                            <div className="absolute top-4 right-4 flex gap-1.5 z-10">
-                                <div className="flex bg-gray-900/60 rounded-xl border border-gray-800/80 overflow-hidden">
+                             {/* Action buttons (Move/Delete) */}
+                            <div className="absolute top-4 right-4 flex gap-1.5 items-center z-10">
+                                <div className="flex bg-black/80 rounded-xl border border-gray-800/80 overflow-hidden">
                                     <button
                                         onClick={() => moveBuild(bIndex, -1)}
                                         disabled={bIndex === 0}
-                                        className="px-2.5 py-1.5 hover:bg-white/5 text-gray-400 disabled:opacity-20 transition-colors border-r border-gray-800"
+                                        className="px-2.5 py-1.5 hover:bg-[#FFD700]/10 hover:text-[#FFD700] text-gray-400 disabled:opacity-20 transition-all border-r border-gray-850"
                                         title="Move Up"
                                     >
                                         <ActionLabel label="↑" color="text-inherit" />
@@ -509,7 +532,7 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
                                     <button
                                         onClick={() => moveBuild(bIndex, 1)}
                                         disabled={bIndex === builds.length - 1}
-                                        className="px-2.5 py-1.5 hover:bg-white/5 text-gray-400 disabled:opacity-20 transition-colors"
+                                        className="px-2.5 py-1.5 hover:bg-[#FFD700]/10 hover:text-[#FFD700] text-gray-400 disabled:opacity-20 transition-all"
                                         title="Move Down"
                                     >
                                         <ActionLabel label="↓" color="text-inherit" />
@@ -518,7 +541,7 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
 
                                 <button
                                     onClick={() => handleDuplicateBuild(bIndex)}
-                                    className="text-amber-500 hover:text-white bg-amber-500/10 hover:bg-amber-600 px-3 py-1.5 rounded-xl transition-all duration-200 border border-amber-500/20 hover:border-amber-500 hover:scale-105 active:scale-95"
+                                    className="text-[#FFD700] hover:text-black bg-[#FFD700]/5 hover:bg-[#FFD700] px-3 py-1.5 rounded-xl transition-all duration-200 border border-[#FFD700]/20 hover:border-[#FFD700] hover:scale-105 active:scale-95 text-[9px] font-black tracking-wider uppercase"
                                     title="Duplicate Build"
                                 >
                                     <ActionLabel label="DUPLICATE" color="text-inherit" />
@@ -526,7 +549,7 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
 
                                 <button
                                     onClick={() => handleResetBuild(bIndex)}
-                                    className="text-gray-400 hover:text-white bg-white/5 hover:bg-gray-700 px-3 py-1.5 rounded-xl transition-all duration-200 border border-gray-800 hover:border-gray-600 hover:scale-105 active:scale-95"
+                                    className="text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-xl transition-all duration-200 border border-gray-800 hover:border-gray-700 hover:scale-105 active:scale-95 text-[9px] font-black tracking-wider uppercase"
                                     title="Reset Build"
                                 >
                                     <ActionLabel label="RESET" color="text-inherit" />
@@ -534,10 +557,10 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
 
                                 <button
                                     onClick={() => handleRemoveBuild(bIndex)}
-                                    className="text-red-500/60 hover:text-white bg-red-950/20 hover:bg-red-600 px-3 py-1.5 rounded-xl transition-all duration-200 border border-red-900/30 hover:border-red-500 hover:scale-110 active:scale-95 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]"
+                                    className="text-red-500 hover:text-black bg-red-500/5 hover:bg-red-500 px-3 py-1.5 rounded-xl transition-all duration-200 border border-red-500/20 hover:border-red-500 hover:scale-105 active:scale-95 text-[9px] font-black tracking-wider uppercase"
                                     title="Delete Build"
                                 >
-                                    <ActionLabel label="REMOVE" color="text-red-500" className="group-hover:text-white" />
+                                    <ActionLabel label="REMOVE" color="text-inherit" />
                                 </button>
                             </div>
 
@@ -586,7 +609,32 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
                             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6 relative z-10">
                                 {/* Equipment */}
                                 <div className="space-y-3">
-                                    <SectionLabel color="gold">Core Equipment</SectionLabel>
+                                    <div className="flex justify-between items-center pb-3 mb-1 border-b border-gray-800/60">
+                                        <span className="text-[#FFD700] text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-[#FFD700]" />
+                                            Core Equipment
+                                        </span>
+                                        <select
+                                            onChange={(e) => {
+                                                const preset = e.target.value;
+                                                if (!preset) return;
+                                                autoFillEquipmentSet(bIndex, preset);
+                                                e.target.value = "";
+                                            }}
+                                            className="bg-gray-850 hover:bg-gray-800 border border-gray-800 text-[#FFD700] text-[9px] font-black rounded-lg px-2.5 py-1 outline-none cursor-pointer uppercase tracking-wider"
+                                        >
+                                            <option value="">Quick Preset Set...</option>
+                                            <option value="Assassin">Critical (Assassin)</option>
+                                            <option value="Paladin">Skill LV (Paladin)</option>
+                                            <option value="Spellweaver">Cooldown (Spellweaver)</option>
+                                            <option value="Avenger">Atk Speed (Avenger)</option>
+                                            <option value="Guardian">Block (Guardian)</option>
+                                            <option value="Bounty_Tracker">Bounty Tracker</option>
+                                            <option value="Vanguard">Vanguard</option>
+                                            <option value="Gatekeeper">Gatekeeper</option>
+                                            <option value="Orchestrator">Orchestrator</option>
+                                        </select>
+                                    </div>
                                     <div className="grid grid-cols-2 gap-2.5">
                                         <ItemCard
                                             item={build.weapons[0]}
