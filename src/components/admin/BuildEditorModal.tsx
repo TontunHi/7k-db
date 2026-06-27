@@ -696,6 +696,7 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
                                                         <Image
                                                             src={`/items/accessory/${acc.image}`}
                                                             fill
+                                                            unoptimized
                                                             className="object-cover hover:scale-110 transition-transform duration-500"
                                                             alt="acc"
                                                             sizes="64px"
@@ -744,6 +745,7 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
                                                             <Image
                                                                 src={`/items/accessory/${refinedImg}`}
                                                                 fill
+                                                                unoptimized
                                                                 className="object-cover hover:scale-110 transition-transform duration-500"
                                                                 alt="refined"
                                                                 sizes="64px"
@@ -1093,6 +1095,7 @@ function ItemCard({ item, type, stats, onClick, onStatChange }) {
                     <Image
                         src={`/items/${type.toLowerCase()}/${item.image}`}
                         fill
+                        unoptimized
                         className="object-cover hover:scale-110 transition-transform duration-300"
                         alt={type}
                         sizes="64px"
