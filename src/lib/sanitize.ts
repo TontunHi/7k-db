@@ -7,7 +7,7 @@ import sanitizeHtml from "sanitize-html"
 export function sanitizeHTML(dirty: string): string {
     if (!dirty || typeof dirty !== "string") return ""
 
-    return sanitizeHtml(dirty, {
+    const clean = sanitizeHtml(dirty, {
         allowedTags: [
             "address", "article", "aside", "footer", "header", "h1", "h2", "h3", "h4",
             "h5", "h6", "hgroup", "main", "nav", "section", "blockquote", "dd", "div",
@@ -33,4 +33,12 @@ export function sanitizeHTML(dirty: string): string {
         allowedSchemes: ["http", "https", "mailto", "tel", "data"],
         allowedIframeHostnames: ["www.youtube.com", "youtube.com", "youtu.be", "player.vimeo.com"]
     })
+
+    // Decode safe characters back to plain text so they render correctly in text context
+    return clean
+        .replace(/&gt;/g, ">")
+        .replace(/&lt;/g, "<")
+        .replace(/&amp;/g, "&")
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
 }

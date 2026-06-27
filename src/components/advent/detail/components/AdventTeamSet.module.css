@@ -32,6 +32,12 @@
 }
 
 /* ===== Header Strip ===== */
+.headerWrapper {
+  overflow: hidden;
+  border-top-left-radius: 1.65rem;
+  border-top-right-radius: 1.65rem;
+}
+
 .header {
   display: flex;
   flex-direction: column;

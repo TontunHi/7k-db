@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { clsx } from 'clsx'
-import { Video, ExternalLink, Users } from 'lucide-react'
+import { Video, ExternalLink } from 'lucide-react'
 import FormationGrid from '@/components/shared/FormationGrid'
 import PetDisplay from '@/components/shared/PetDisplay'
 import SkillSequence from '@/components/shared/SkillSequence'
@@ -11,40 +11,40 @@ import { parseHeroDetails } from '@/lib/hero-utils'
 import styles from './AdventTeamSet.module.css'
 
 export default function AdventTeamSet({ set, index, heroImageMap }) {
-    const [expanded, setExpanded] = useState(false);
+    const [expanded, setExpanded] = useState(true);
 
     return (
         <div className={styles.set}>
-            <div className={styles.topLine} />
-            
-            {/* Set Header */}
-            <div className={styles.header}>
-                <div className={styles.headerInfo}>
-                    <div className={styles.number}>{index + 1}</div>
-                    <h3 className={styles.teamTitle}>
-                        {set.team_name || `Set ${index + 1}`}
-                    </h3>
-                </div>
+            <div className={styles.headerWrapper}>
+                <div className={styles.topLine} />
                 
-                {set.video_url && (
-                    <a 
-                        href={set.video_url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className={styles.videoLink}
-                    >
-                        <Video className="w-4 h-4" />
-                        Video
-                        <ExternalLink className="w-3 h-3" />
-                    </a>
-                )}
+                {/* Set Header */}
+                <div className={styles.header}>
+                    <div className={styles.headerInfo}>
+                        <h3 className={styles.teamTitle}>
+                            {set.team_name || `Set ${index + 1}`}
+                        </h3>
+                    </div>
+                    
+                    {set.video_url && (
+                        <a 
+                            href={set.video_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className={styles.videoLink}
+                        >
+                            <Video className="w-4 h-4" />
+                            Video
+                            <ExternalLink className="w-3 h-3" />
+                        </a>
+                    )}
+                </div>
             </div>
 
             <div className={styles.body}>
                 <div className={styles.layout}>
                     <div className={styles.heroesSection}>
                         <div className={styles.heroesLabel}>
-                            <Users className={styles.labelIcon} />
                             <span className={styles.labelText}>Team Composition</span>
                             <span className={styles.formationText}>
                                 Formation: {set.formation?.replace('-', ' - ')}
@@ -102,6 +102,7 @@ export default function AdventTeamSet({ set, index, heroImageMap }) {
                         heroes={set.heroes} 
                         heroImageMap={heroImageMap}
                         accentColor="var(--primary)"
+                        hideHeaderIcon={true}
                     />
                 </div>
 
@@ -111,12 +112,8 @@ export default function AdventTeamSet({ set, index, heroImageMap }) {
                         <div className={styles.noteBar} />
                         <div 
                             className={styles.noteHeader}
-                            onClick={() => setExpanded(!expanded)}
                         >
                             <span className={styles.noteBadge}>Strategy Note</span>
-                            <button className={styles.expandButton}>
-                                {expanded ? 'Hide Note' : 'Read Note'}
-                            </button>
                         </div>
                         
                         <div className={clsx(
