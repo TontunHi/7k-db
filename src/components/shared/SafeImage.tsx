@@ -29,11 +29,20 @@ export default function SafeImage({ src, alt, fallback = "data:image/png;base64,
         ...(props.height && !props.width ? { width: 'auto' } : {}),
     }
 
+    // Check if the image source points to game asset directories
+    const isGameAsset = finalSrc && (
+        finalSrc.includes('/items/') || 
+        finalSrc.includes('/skills/') || 
+        finalSrc.includes('/pets/') || 
+        finalSrc.includes('/heroes/')
+    )
+
     return (
         <NextImage
             key={finalSrc}
             {...props}
             {...fillProps}
+            unoptimized={props.unoptimized !== undefined ? props.unoptimized : isGameAsset}
             style={styleProps}
             src={imagePath}
             alt={alt || "image"}
