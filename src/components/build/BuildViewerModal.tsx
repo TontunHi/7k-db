@@ -250,9 +250,9 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                                                 sizes="56px"
                                                             />
                                                         </div>
-                                                        <div className={styles.refinedContainer}>
-                                                            <span className={styles.refiningLabel}>Refining</span>
-                                                            {acc.refined ? (
+                                                        {acc.refined && (
+                                                            <div className={styles.refinedContainer}>
+                                                                <span className={styles.refiningLabel}>Refining</span>
                                                                 <div className={styles.refinedImg} title="Refining accessory effect">
                                                                     <SafeImage
                                                                         src={`/items/accessory/${acc.refined}`}
@@ -262,10 +262,8 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                                                                         sizes="28px"
                                                                     />
                                                                 </div>
-                                                            ) : (
-                                                                <span className={styles.emptyRefined}>None</span>
-                                                            )}
-                                                        </div>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 ))}
                                                 {build.accessories.length === 0 && (
