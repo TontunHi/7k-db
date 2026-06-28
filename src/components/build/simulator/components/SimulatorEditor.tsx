@@ -147,7 +147,7 @@ export default function SimulatorEditor({ hero, build, setBuild, displaySkills, 
             </Section>
  
             {/* Skill Priority */}
-            <Section title="แนะนำให้อัพเกรด">
+            <Section title="Recommended Upgrade">
                 <div className={styles.skillPriorityGrid}>
                     {displaySkills.map((s, i) => {
                         const isSelected = build.skillPriority.includes(s)

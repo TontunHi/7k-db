@@ -136,7 +136,7 @@ const BuildCardExport = forwardRef<HTMLDivElement, any>(({ hero, build, skills }
 
                         <div>
                             <h4 className={styles.sectionHeader}>
-                                 <Sparkles className={styles.iconSmall} /> แนะนำให้อัพเกรด
+                                 <Sparkles className={styles.iconSmall} /> Recommended Upgrade
                                  <div className={styles.headerLine} />
                              </h4>
                              <div className={styles.skillsRow}>

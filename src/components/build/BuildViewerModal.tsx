@@ -136,12 +136,12 @@ export default function BuildViewerModal({ hero, data, onClose }) {
 
                         {/* Recommended Upgrades Grid */}
                         <div className={styles.skillPriorityContainer}>
-                            <span className={styles.skillsTitle}>แนะนำให้อัพเกรด</span>
+                            <span className={styles.skillsTitle}>Recommended Upgrade</span>
                             <div className="grid grid-cols-4 gap-2.5 mt-3">
                                 {allSkills
                                     .sort((a, b) => {
                                         const getNum = (s) => parseInt(s.split('/').pop().split('.')[0]) || 0
-                                        return getNum(a) - getNum(b)
+                                        return getNum(b) - getNum(a)
                                     })
                                     .map((s, i) => {
                                         const isRecommended = skillPriority?.includes(s)

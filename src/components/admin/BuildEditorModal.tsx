@@ -451,7 +451,7 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
                         </div>
 
                         <div className="flex-1 relative z-10">
-                            <SectionLabel color="gold">แนะนำให้อัพเกรด</SectionLabel>
+                            <SectionLabel color="gold">Recommended Upgrade</SectionLabel>
                             <div className="flex flex-wrap gap-3 mt-3">
                                 {skills.length > 0 ? [...skills]
                                     .sort((a, b) => {
