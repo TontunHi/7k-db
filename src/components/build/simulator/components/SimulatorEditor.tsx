@@ -147,11 +147,10 @@ export default function SimulatorEditor({ hero, build, setBuild, displaySkills, 
             </Section>
  
             {/* Skill Priority */}
-            <Section title="Manual Skill Priority">
+            <Section title="แนะนำให้อัพเกรด">
                 <div className={styles.skillPriorityGrid}>
                     {displaySkills.map((s, i) => {
                         const isSelected = build.skillPriority.includes(s)
-                        const order = isSelected ? build.skillPriority.indexOf(s) + 1 : null
                         return (
                             <div 
                                 key={i} 
@@ -172,10 +171,14 @@ export default function SimulatorEditor({ hero, build, setBuild, displaySkills, 
                             >
                                 <SafeImage src={`/skills/${s}`} fill className="object-cover" alt="" />
                                 {isSelected && (
-                                    <div className={styles.skillBadgeWrapper}>
-                                        <div className={styles.skillBadge}>
-                                            {order}
-                                        </div>
+                                    <div className="absolute -top-1.5 -right-1.5 w-5 h-5 z-20">
+                                        <SafeImage
+                                            src="/about_website/icon_upgrade.png"
+                                            fill
+                                            unoptimized
+                                            className="object-contain"
+                                            alt="upgrade"
+                                        />
                                     </div>
                                 )}
                             </div>

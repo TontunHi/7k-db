@@ -451,7 +451,7 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
                         </div>
 
                         <div className="flex-1 relative z-10">
-                            <SectionLabel color="gold">Global Skill Priority</SectionLabel>
+                            <SectionLabel color="gold">แนะนำให้อัพเกรด</SectionLabel>
                             <div className="flex flex-wrap gap-3 mt-3">
                                 {skills.length > 0 ? [...skills]
                                     .sort((a, b) => {
@@ -461,7 +461,6 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
                                     })
                                     .map((s, i) => {
                                         const isSelected = skillPriority.includes(s)
-                                        const order = isSelected ? skillPriority.indexOf(s) + 1 : null
                                         return (
                                             <div
                                                 key={i}
@@ -483,13 +482,15 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
                                                     />
                                                 </div>
                                                 {isSelected && (
-                                                    <div className="absolute -top-1.5 -right-1.5 bg-gradient-to-br from-[#FFD700] to-yellow-600 text-black w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shadow-lg border-2 border-black z-10">
-                                                        {order}
+                                                    <div className="absolute -top-2 -right-2 w-6 h-6 z-10">
+                                                        <Image
+                                                            src="/about_website/icon_upgrade.png"
+                                                            fill
+                                                            unoptimized
+                                                            className="object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+                                                            alt="upgrade"
+                                                        />
                                                     </div>
-                                                )}
-                                                {/* Glow ring on selected */}
-                                                {isSelected && (
-                                                    <div className="absolute inset-0 rounded-lg border border-[#FFD700]/40 animate-ping pointer-events-none" style={{ animationDuration: "2.5s" }} />
                                                 )}
                                             </div>
                                         )

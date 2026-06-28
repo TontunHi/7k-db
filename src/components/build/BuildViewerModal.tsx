@@ -134,45 +134,36 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                             ))}
                         </div>
 
-                        {/* Skill Upgrade Priority Timeline */}
+                        {/* Recommended Upgrades Grid */}
                         <div className={styles.skillPriorityContainer}>
-                            <span className={styles.skillsTitle}>Skill Upgrade Priority</span>
-                            <div className={styles.skillsRow}>
-                                {prioritizedSkills.map((s, i) => {
-                                    const rank = getPriorityRank(s)
-                                    return (
-                                        <div key={i} className={styles.skillPriorityItem}>
-                                            <div className={styles.skillIconBoxActive}>
-                                                <SafeImage src={`/skills/${s}`} fill alt="skill" sizes="36px" />
-                                            </div>
-                                            <div className={styles.skillMeta}>
-                                                <span className={styles.skillName} style={{ fontSize: '0.8rem' }}>
-                                                    {rank === 1 ? "1st Upgrade" : rank === 2 ? "2nd Upgrade" : rank === 3 ? "3rd Upgrade" : `${rank}th Upgrade`}
-                                                </span>
-                                            </div>
-                                            {i < prioritizedSkills.length - 1 && (
-                                                <div className={styles.connectorArrow}>↓</div>
-                                            )}
-                                        </div>
-                                    )
-                                })}
-
-                                {prioritizedSkills.length === 0 && (
-                                    <div className="text-[10px] text-gray-500 italic py-2 text-center">No skill upgrade priority set</div>
-                                )}
-
-                                {unprioritizedSkills.length > 0 && (
-                                    <>
-                                        <span className={styles.unprioritizedHeader}>Base Skills</span>
-                                        <div className={styles.unprioritizedGrid}>
-                                            {unprioritizedSkills.map((s, i) => (
-                                                <div key={i} className={styles.unprioritizedIconBox} title={getSkillLabel(s)}>
-                                                    <SafeImage src={`/skills/${s}`} fill alt="skill" sizes="28px" />
+                            <span className={styles.skillsTitle}>แนะนำให้อัพเกรด</span>
+                            <div className="grid grid-cols-4 gap-2.5 mt-3">
+                                {allSkills
+                                    .sort((a, b) => {
+                                        const getNum = (s) => parseInt(s.split('/').pop().split('.')[0]) || 0
+                                        return getNum(a) - getNum(b)
+                                    })
+                                    .map((s, i) => {
+                                        const isRecommended = skillPriority?.includes(s)
+                                        return (
+                                            <div key={i} className="relative w-12 h-12 bg-black/50 border border-gray-800 rounded-xl overflow-visible p-0.5 group/s shadow-md">
+                                                <div className="relative w-full h-full overflow-hidden rounded-lg">
+                                                    <SafeImage src={`/skills/${s}`} fill alt="skill" sizes="48px" className="object-cover" />
                                                 </div>
-                                            ))}
-                                        </div>
-                                    </>
-                                )}
+                                                {isRecommended && (
+                                                    <div className="absolute -top-2 -right-2 w-5 h-5 z-20">
+                                                        <SafeImage
+                                                            src="/about_website/icon_upgrade.png"
+                                                            fill
+                                                            unoptimized
+                                                            className="object-contain"
+                                                            alt="upgrade"
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )
+                                    })}
                             </div>
                         </div>
                     </div>

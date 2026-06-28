@@ -136,29 +136,29 @@ const BuildCardExport = forwardRef<HTMLDivElement, any>(({ hero, build, skills }
 
                         <div>
                             <h4 className={styles.sectionHeader}>
-                                 <Sparkles className={styles.iconSmall} /> Skill Priority
+                                 <Sparkles className={styles.iconSmall} /> แนะนำให้อัพเกรด
                                  <div className={styles.headerLine} />
-                            </h4>
-                            <div className={styles.skillsRow}>
-                                {skills.map((s, idx) => {
-                                    const rankIndex = build.skillPriority.indexOf(s)
-                                    const isRanked = rankIndex !== -1
-                                    return (
-                                        <div key={idx} className={styles.skillSlot}>
-                                            <div className={clsx(
-                                                styles.skillIconBox,
-                                                !isRanked && styles.skillIconBoxInactive
-                                            )}>
-                                                <img src={`/skills/${s}`} className={styles.skillIcon} alt="" />
-                                            </div>
-                                            {isRanked && (
-                                                <div className={styles.skillPriorityBadge}>
-                                                    {rankIndex + 1}
-                                                </div>
-                                            )}
-                                        </div>
-                                    )
-                                })}
+                             </h4>
+                             <div className={styles.skillsRow}>
+                                 {skills.map((s, idx) => {
+                                     const rankIndex = build.skillPriority.indexOf(s)
+                                     const isRanked = rankIndex !== -1
+                                     return (
+                                         <div key={idx} className={clsx(styles.skillSlot, "relative")}>
+                                             <div className={clsx(
+                                                 styles.skillIconBox,
+                                                 !isRanked && styles.skillIconBoxInactive
+                                             )}>
+                                                 <img src={`/skills/${s}`} className={styles.skillIcon} alt="" />
+                                             </div>
+                                             {isRanked && (
+                                                 <div className="absolute -top-1 -right-1 w-4 h-4 z-10">
+                                                     <img src="/about_website/icon_upgrade.png" className="w-full h-full object-contain" alt="upgrade" />
+                                                 </div>
+                                             )}
+                                         </div>
+                                     )
+                                 })}
                             </div>
                         </div>
                     </div>
