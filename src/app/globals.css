@@ -138,6 +138,10 @@ h1, h2, h3, h4, .font-serif-display {
   letter-spacing: -0.02em !important;
 }
 
+*, *::before, *::after {
+  cursor: url('/about_website/img_CursorDefault.webp'), auto !important;
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);

@@ -9,7 +9,7 @@ export function useBuildFilter(heroes) {
         return heroes.filter((hero) => {
             let matchesTab = false
             if (activeTab === "awake") {
-                matchesTab = hero.grade === "a"
+                matchesTab = hero.grade.startsWith("a")
             } else if (activeTab === "legendary") {
                 matchesTab = hero.grade.startsWith("l")
             } else {

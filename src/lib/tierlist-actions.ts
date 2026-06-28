@@ -17,12 +17,22 @@ export async function getTierlistCreatorData() {
     if (!fs.existsSync(heroesDir)) return { heroes: [], typeMap: {} as Record<string, string> }
     
     const files = await fs.promises.readdir(heroesDir)
-    const gradeOrder: Record<string, number> = { "a": 0, "l++": 1, "l+": 2, "l": 3, "r": 4 }
+    const gradeOrder: Record<string, number> = {
+        "al++": 0,
+        "al+": 1,
+        "al": 2,
+        "ar": 3,
+        "a": 4,
+        "l++": 5,
+        "l+": 6,
+        "l": 7,
+        "r": 8
+    }
 
     const heroes = files
         .filter(file => /\.(png|jpg|jpeg|webp)$/i.test(file))
         .map(file => {
-            const grade = getGradeFromFilename(file)
+            const grade = getGradeFromFilename(file, files)
             if (!grade) return null
             return {
                 filename: file,
@@ -54,9 +64,18 @@ export async function getTierlistCreatorData() {
     }
 }
 
-function getGradeFromFilename(filename: string) {
+function getGradeFromFilename(filename: string, allFiles: string[]) {
     const lower = filename.toLowerCase()
-    if (lower.startsWith("a_")) return "a"
+    if (lower.startsWith("a_")) {
+        const coreName = lower.replace(/^a_/, "").replace(/\.[^/.]+$/, "")
+        for (const basePrefix of ["l++_", "l+_", "l_", "r_"]) {
+            const baseFilenameWithoutExt = basePrefix + coreName
+            if (allFiles.some(file => file.toLowerCase().replace(/\.[^/.]+$/, "") === baseFilenameWithoutExt)) {
+                return "a" + basePrefix.slice(0, -1) // e.g. "al+"
+            }
+        }
+        return "a"
+    }
     if (lower.startsWith("l++_")) return "l++"
     if (lower.startsWith("l+_")) return "l+"
     if (lower.startsWith("l_")) return "l"

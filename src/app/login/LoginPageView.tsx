@@ -1,11 +1,12 @@
 "use client"
 
+import { useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { useFormStatus } from "react-dom"
 import Image from "next/image"
 import Link from "next/link"
 import { login } from "@/lib/actions"
-import { Shield, User, Lock, ArrowLeft, Loader2 } from "lucide-react"
+import { Shield, User, Lock, ArrowLeft, Loader2, Eye, EyeOff } from "lucide-react"
 import styles from "./login.module.css"
 
 /**
@@ -23,7 +24,7 @@ function SubmitButton() {
             {pending ? (
                 <>
                     <Loader2 className={styles.loadingSpinner} />
-                    <span>Processing...</span>
+                    <span>Accessing System...</span>
                 </>
             ) : (
                 <>
@@ -43,13 +44,14 @@ export default function LoginPageView() {
     const searchParams = useSearchParams()
     const error = searchParams.get("error")
     const prefillUser = searchParams.get("u") || "admin"
+    const [showPassword, setShowPassword] = useState(false)
 
     return (
         <main className={styles.page}>
             {/* Cinematic Background */}
             <div className={styles.backgroundOverlay}>
                 <Image 
-                    src="/login_bg_tactical.png"
+                    src="/login_bg_new.png"
                     alt="Background"
                     fill
                     className={styles.backgroundImage}
@@ -61,11 +63,20 @@ export default function LoginPageView() {
 
             <div className={styles.loginCard}>
                 <header className={styles.header}>
-                    <div className={styles.badge}>Security Terminal</div>
+                    <div className={styles.logoWrapper}>
+                        <Image 
+                            src="/about_website/logo_website.webp"
+                            alt="7K Database Logo"
+                            width={110}
+                            height={110}
+                            style={{ height: 'auto' }}
+                            className={styles.logo}
+                            priority
+                        />
+                    </div>
                     <h1 className={styles.title}>
                         Access <span className={styles.titleSpan}>System</span>
                     </h1>
-                    <p className={styles.subtitle}>Enter administrator credentials</p>
                 </header>
 
                 <form action={login} className={styles.form}>
@@ -100,13 +111,21 @@ export default function LoginPageView() {
                         <div className={styles.inputWrapper}>
                             <input
                                 id="password"
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 name="password"
                                 placeholder="Password"
                                 required
-                                className={styles.input}
+                                className={styles.inputWithToggle}
                                 autoComplete="current-password"
                             />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className={styles.passwordToggle}
+                                aria-label={showPassword ? "Hide password" : "Show password"}
+                            >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
                         </div>
                     </div>
 
@@ -118,13 +137,6 @@ export default function LoginPageView() {
 
                     <SubmitButton />
                 </form>
-
-                <footer className={styles.footer}>
-                    <Link href="/" className={styles.backLink}>
-                        <ArrowLeft size={12} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
-                        Back to main database
-                    </Link>
-                </footer>
             </div>
         </main>
     )

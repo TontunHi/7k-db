@@ -29,12 +29,10 @@ export default function SafeImage({ src, alt, fallback = "data:image/png;base64,
         ...(props.height && !props.width ? { width: 'auto' } : {}),
     }
 
-    // Check if the image source points to game asset directories
+    // Check if the image source points to small game asset directories (large assets like heroes and pets should be optimized)
     const isGameAsset = finalSrc && (
         finalSrc.includes('/items/') || 
-        finalSrc.includes('/skills/') || 
-        finalSrc.includes('/pets/') || 
-        finalSrc.includes('/heroes/')
+        finalSrc.includes('/skills/')
     )
 
     return (

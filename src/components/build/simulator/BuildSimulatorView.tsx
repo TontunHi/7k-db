@@ -54,7 +54,7 @@ export default function BuildSimulatorView({ initialHero, onBack }) {
 
     // Filter to only include skill files 1, 2, 3, 4 and sort descending (4,3,2,1)
     const displaySkills = useMemo(() => {
-        const allowed = hero?.grade === 'a' ? ["0", "1", "2", "3", "4"] : ["1", "2", "3", "4"]
+        const allowed = hero?.grade?.startsWith('a') ? ["0", "1", "2", "3", "4"] : ["1", "2", "3", "4"]
         return skills
             .filter(s => {
                 const filename = s.split('/').pop().split('.')[0]

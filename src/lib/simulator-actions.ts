@@ -1,6 +1,6 @@
 "use server"
 
-import { getItemImages, getHeroSkills, getHeroData, getFilteredItems } from "./build-db"
+import { getItemImages, getHeroSkills, getHeroData, getFilteredItems, getHeroesMetadata } from "./build-db"
 import fs from "fs"
 import path from "path"
 
@@ -8,31 +8,56 @@ export async function getSimulatorHeroes() {
     const heroesDir = path.join(process.cwd(), "public", "heroes")
     if (!fs.existsSync(heroesDir)) return []
 
-    const files = await fs.promises.readdir(heroesDir)
+    const [files, metadata] = await Promise.all([
+        fs.promises.readdir(heroesDir),
+        getHeroesMetadata()
+    ])
+    
+    const imageFiles = files.filter(file => /\.(png|jpg|jpeg|webp)$/i.test(file))
     
     // Grade ranking Map
-    const gradeOrder = { "a": 0, "l++": 1, "l+": 2, "l": 3, "r": 4 }
+    const gradeOrder: Record<string, number> = {
+        "al++": 0,
+        "al+": 1,
+        "al": 2,
+        "ar": 3,
+        "a": 4,
+        "l++": 5,
+        "l+": 6,
+        "l": 7,
+        "r": 8
+    }
 
-    function getGradeFromFilename(filename) {
+    function getGradeFromFilename(filename: string, allFiles: string[]): string | null {
+        if (filename.startsWith("a_")) {
+            const coreName = filename.replace(/^a_/, "").replace(/\.[^/.]+$/, "")
+            for (const basePrefix of ["l++_", "l+_", "l_", "r_"]) {
+                const baseFilenameWithoutExt = basePrefix + coreName
+                if (allFiles.some(file => file.replace(/\.[^/.]+$/, "") === baseFilenameWithoutExt)) {
+                    return "a" + basePrefix.slice(0, -1) // e.g. "al+"
+                }
+            }
+            return "a"
+        }
         if (filename.startsWith("l++_")) return "l++"
         if (filename.startsWith("l+_")) return "l+"
         if (filename.startsWith("l_")) return "l"
         if (filename.startsWith("r_")) return "r"
-        if (filename.startsWith("a_")) return "a"
         return null
     }
 
-    const heroes = files
-        .filter(file => /\.(png|jpg|jpeg|webp)$/i.test(file))
+    const heroes = imageFiles
         .map(file => {
-            const grade = getGradeFromFilename(file)
-            if (!grade) return null // Filter out anything not in l++, l+, l, r
+            const grade = getGradeFromFilename(file, imageFiles)
+            if (!grade) return null // Filter out anything not in l++, l+, l, r, a
+            const slug = file.replace(/\.[^/.]+$/, "")
 
             return {
                 filename: file,
-                slug: file.replace(/\.[^/.]+$/, ""),
+                slug: slug,
                 grade: grade,
-                name: file.replace(/^(l\+\+|l\+|l|r|a)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " ")
+                name: file.replace(/^(l\+\+|l\+|l|r|a)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " "),
+                type: metadata[slug]?.type || null
             }
         })
         .filter(h => h !== null)

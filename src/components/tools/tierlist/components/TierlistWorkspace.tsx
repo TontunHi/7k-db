@@ -54,7 +54,7 @@ const TierlistWorkspace = forwardRef<HTMLDivElement, any>(({
                                             className={styles.heroItem}
                                         >
                                             <div className={styles.heroPortrait}>
-                                                <SafeImage src={`/heroes/${hero.filename}`} fill unoptimized className="object-cover" alt="" />
+                                                <SafeImage src={`/heroes/${hero.filename}`} fill className="object-cover" alt="" sizes="64px" />
                                                 <div className={styles.deleteOverlay}>
                                                     <Trash2 className={styles.trashIcon} />
                                                 </div>
@@ -131,7 +131,7 @@ const TierlistWorkspace = forwardRef<HTMLDivElement, any>(({
                                                                 className={clsx(styles.heroItem, styles.heroItemMatrix)}
                                                             >
                                                                 <div className={styles.heroPortrait}>
-                                                                    <SafeImage src={`/heroes/${hero.filename}`} fill unoptimized className="object-cover" alt="" />
+                                                                    <SafeImage src={`/heroes/${hero.filename}`} fill className="object-cover" alt="" sizes="64px" />
                                                                     <div className={styles.deleteOverlay}>
                                                                         <Trash2 className={styles.trashIcon} />
                                                                     </div>

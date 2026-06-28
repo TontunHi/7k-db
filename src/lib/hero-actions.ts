@@ -16,8 +16,18 @@ export interface HeroListItem {
  * Logic to parse filename to grade
  * Filenames: l++_Name.png, l+_Name.png, l_Name.png, r_Name.png
  */
-function getGradeFromFilename(filename: string): string {
-    if (filename.startsWith("a_")) return "a"
+function getGradeFromFilename(filename: string, allFiles: string[]): string {
+    if (filename.startsWith("a_")) {
+        const coreName = filename.replace(/^a_/, "").replace(/\.[^/.]+$/, "")
+        for (const basePrefix of ["l++_", "l+_", "l_", "r_"]) {
+            const baseFilenameWithoutExt = basePrefix + coreName
+            if (allFiles.some(file => file.replace(/\.[^/.]+$/, "") === baseFilenameWithoutExt)) {
+                const baseGrade = basePrefix.slice(0, -1) // "l++", "l+", "l", "r"
+                return "a" + baseGrade
+            }
+        }
+        return "a"
+    }
     if (filename.startsWith("l++_")) return "l++"
     if (filename.startsWith("l+_")) return "l+"
     if (filename.startsWith("l_")) return "l"
@@ -38,11 +48,12 @@ export async function getHeroBuildList(): Promise<HeroListItem[]> {
             getHeroesMetadata()
         ])
 
-        heroes = files
-            .filter((file) => /\.(png|jpg|jpeg|webp)$/i.test(file))
+        const imageFiles = files.filter((file) => /\.(png|jpg|jpeg|webp)$/i.test(file))
+
+        heroes = imageFiles
             .map((file): HeroListItem | null => {
                 const slug = file.replace(/\.[^/.]+$/, "")
-                const grade = getGradeFromFilename(file)
+                const grade = getGradeFromFilename(file, imageFiles)
                 if (grade === "unknown") return null
 
                 return {
@@ -68,7 +79,17 @@ export async function getHeroBuildList(): Promise<HeroListItem[]> {
                 if (a.is_new_hero !== b.is_new_hero) return b.is_new_hero ? 1 : -1
 
                 // 2. grade
-                const gradeOrder: Record<string, number> = { "a": 0, "l++": 1, "l+": 2, "l": 3, "r": 4 }
+                const gradeOrder: Record<string, number> = {
+                    "al++": 0,
+                    "al+": 1,
+                    "al": 2,
+                    "ar": 3,
+                    "a": 4,
+                    "l++": 5,
+                    "l+": 6,
+                    "l": 7,
+                    "r": 8
+                }
                 const ga = gradeOrder[a.grade] ?? 99
                 const gb = gradeOrder[b.grade] ?? 99
                 if (ga !== gb) return ga - gb

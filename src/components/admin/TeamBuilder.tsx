@@ -123,13 +123,33 @@ export default function TeamBuilder({
     // Sort heroes by grade (l++ > l+ > l > r > uc > c) then by name
     // Grade is parsed from filename prefix: l++_xxx, l+_xxx, l_xxx, r_xxx, uc_xxx, c_xxx
     const sortedHeroesList = useMemo(() => {
-        const gradeOrder = { 'a': 7, 'l++': 6, 'l+': 5, 'l': 4, 'r': 3, 'uc': 2, 'c': 1 }
+        const gradeOrder: Record<string, number> = {
+            'al++': 9,
+            'al+': 8,
+            'al': 7,
+            'ar': 6,
+            'a': 5,
+            'l++': 4,
+            'l+': 3,
+            'l': 2,
+            'r': 1
+        }
         const allowedGrades = ['a', 'l++', 'l+', 'l', 'r']
 
         const getGradeFromFilename = (filename) => {
             if (!filename) return 0
             const lower = filename.toLowerCase()
-            if (lower.startsWith('a_')) return gradeOrder['a']
+            if (lower.startsWith('a_')) {
+                const coreName = lower.replace(/^a_/, "").replace(/\.[^/.]+$/, "")
+                for (const basePrefix of ["l++_", "l+_", "l_", "r_"]) {
+                    const baseFilenameWithoutExt = basePrefix + coreName
+                    if (heroesList.some(h => h.filename && h.filename.toLowerCase().replace(/\.[^/.]+$/, "") === baseFilenameWithoutExt)) {
+                        const baseGrade = "a" + basePrefix.slice(0, -1) // e.g. "al+"
+                        return gradeOrder[baseGrade] ?? gradeOrder['a']
+                    }
+                }
+                return gradeOrder['a']
+            }
             if (lower.startsWith('l++_')) return gradeOrder['l++']
             if (lower.startsWith('l+_')) return gradeOrder['l+']
             if (lower.startsWith('l_')) return gradeOrder['l']
