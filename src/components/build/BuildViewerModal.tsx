@@ -134,10 +134,10 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                             ))}
                         </div>
 
-                        {/* Recommended Upgrades Grid */}
+                        {/* Recommended Upgrades Column */}
                         <div className={styles.skillPriorityContainer}>
                             <span className={styles.skillsTitle}>Recommended Upgrade</span>
-                            <div className="grid grid-cols-4 gap-2.5 mt-3">
+                            <div className="flex flex-col items-center gap-3 mt-3">
                                 {allSkills
                                     .sort((a, b) => {
                                         const getNum = (s) => parseInt(s.split('/').pop().split('.')[0]) || 0
