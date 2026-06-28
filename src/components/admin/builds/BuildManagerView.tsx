@@ -15,6 +15,7 @@ export default function BuildManagerView({ heroes: initialHeroes = [] }) {
     const [heroes, setHeroes] = useState(initialHeroes)
     const [searchQuery, setSearchQuery] = useState("")
     const [selectedGrade, setSelectedGrade] = useState("ALL")
+    const [selectedType, setSelectedType] = useState("ALL")
 
     const {
         editorOpen,
@@ -32,12 +33,16 @@ export default function BuildManagerView({ heroes: initialHeroes = [] }) {
         setHeroes(initialHeroes)
     }, [initialHeroes])
 
-    // Filter display heroes based on Search and Grade
+    // Extract unique types dynamically
+    const allTypes = ["ALL", ...Array.from(new Set(heroes.map(h => h.type).filter(Boolean).map(t => t.toUpperCase())))]
+
+    // Filter display heroes based on Search, Grade, and Type
     const filteredHeroes = heroes.filter(hero => {
         const matchesSearch = hero.name.toLowerCase().includes(searchQuery.toLowerCase())
         const filterGrade = selectedGrade === "AWAKE" ? "a" : selectedGrade.toLowerCase()
         const matchesGrade = selectedGrade === "ALL" || hero.grade.toLowerCase() === filterGrade
-        return matchesSearch && matchesGrade
+        const matchesType = selectedType === "ALL" || (hero.type && hero.type.toUpperCase() === selectedType)
+        return matchesSearch && matchesGrade && matchesType
     })
 
     return (
@@ -59,27 +64,46 @@ export default function BuildManagerView({ heroes: initialHeroes = [] }) {
             </header>
 
             {/* Operations Control Bar */}
-            <div className={styles.controlBar}>
-                <div className={styles.searchWrapper}>
-                    <Search className={styles.searchIcon} size={14} />
-                    <input 
-                        type="text" 
-                        placeholder="Search hero builds..." 
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className={styles.searchInput}
-                    />
-                </div>
-                <div className={styles.gradeTabs}>
-                    {["ALL", "AWAKE", "L++", "L+", "L", "R"].map(grade => (
-                        <button
-                            key={grade}
-                            onClick={() => setSelectedGrade(grade)}
-                            className={`${styles.gradeTabBtn} ${selectedGrade === grade ? styles.gradeTabBtnActive : ""}`}
-                        >
-                            {grade}
-                        </button>
-                    ))}
+            <div className={styles.controlBar} style={{ flexDirection: "column", alignItems: "stretch", gap: "1rem" }}>
+                <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between w-full">
+                    <div className={styles.searchWrapper}>
+                        <Search className={styles.searchIcon} size={14} />
+                        <input 
+                            type="text" 
+                            placeholder="Search hero builds..." 
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className={styles.searchInput}
+                        />
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-4 items-center">
+                        {/* Grade Filters */}
+                        <div className={styles.gradeTabs}>
+                            {["ALL", "AWAKE", "L++", "L+", "L", "R"].map(grade => (
+                                <button
+                                    key={grade}
+                                    onClick={() => setSelectedGrade(grade)}
+                                    className={`${styles.gradeTabBtn} ${selectedGrade === grade ? styles.gradeTabBtnActive : ""}`}
+                                >
+                                    {grade}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Type Filters */}
+                        <div className={styles.gradeTabs}>
+                            {allTypes.map(t => (
+                                <button
+                                    key={t}
+                                    onClick={() => setSelectedType(t)}
+                                    className={`${styles.gradeTabBtn} ${selectedType === t ? styles.gradeTabBtnActive : ""}`}
+                                >
+                                    {t}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
 

@@ -40,8 +40,9 @@ export default async function AdminBuildsPage() {
 
                 return {
                     ...details,
-                    is_new_hero: metadata[details.slug]?.is_new_hero || false,
-                    sort_order: metadata[details.slug]?.sort_order || 0
+                    is_new_hero: (metadata[file]?.is_new_hero || metadata[details.slug]?.is_new_hero) || false,
+                    sort_order: (metadata[file]?.sort_order || metadata[details.slug]?.sort_order) || 0,
+                    type: (metadata[file]?.type || metadata[details.slug]?.type) || null
                 }
             })
             .filter(Boolean)
