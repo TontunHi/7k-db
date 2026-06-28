@@ -7,6 +7,18 @@ import BuildEditorModal from "@/components/admin/BuildEditorModal"
 import styles from "./builds.module.css"
 import { Marker } from "@/app/admin/components/AdminEditorial"
 import { Search } from "lucide-react"
+import Image from "next/image"
+
+function getTypeIconPath(type) {
+    if (!type) return null
+    const lower = type.toLowerCase()
+    if (lower === "attack" || lower === "dps") return "/logo_tiers/type/attack.webp"
+    if (lower === "defense" || lower === "tank") return "/logo_tiers/type/defense.webp"
+    if (lower === "magic" || lower === "ranged") return "/logo_tiers/type/magic.webp"
+    if (lower === "support") return "/logo_tiers/type/support.webp"
+    if (lower === "universal" || lower === "charge") return "/logo_tiers/type/universal.webp"
+    return null
+}
 
 /**
  * BuildManagerView - Main Dashboard for Builds Management
@@ -93,15 +105,31 @@ export default function BuildManagerView({ heroes: initialHeroes = [] }) {
 
                         {/* Type Filters */}
                         <div className={styles.gradeTabs}>
-                            {allTypes.map(t => (
-                                <button
-                                    key={t}
-                                    onClick={() => setSelectedType(t)}
-                                    className={`${styles.gradeTabBtn} ${selectedType === t ? styles.gradeTabBtnActive : ""}`}
-                                >
-                                    {t}
-                                </button>
-                            ))}
+                            {allTypes.map(t => {
+                                const iconPath = getTypeIconPath(t)
+                                return (
+                                    <button
+                                        key={t}
+                                        onClick={() => setSelectedType(t)}
+                                        className={`${styles.gradeTabBtn} ${selectedType === t ? styles.gradeTabBtnActive : ""} flex items-center justify-center p-1.5`}
+                                        title={t}
+                                    >
+                                        {iconPath ? (
+                                            <div className="w-5 h-5 relative">
+                                                <Image 
+                                                    src={iconPath} 
+                                                    fill 
+                                                    unoptimized
+                                                    className="object-contain" 
+                                                    alt={t} 
+                                                />
+                                            </div>
+                                        ) : (
+                                            <span className="text-[10px] px-1">{t}</span>
+                                        )}
+                                    </button>
+                                )
+                            })}
                         </div>
                     </div>
                 </div>
