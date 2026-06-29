@@ -626,15 +626,15 @@ export default function BuildEditorModal({ hero, allHeroes = [], skills, weapons
                                             className="bg-gray-850 hover:bg-gray-800 border border-gray-800 text-[#FFD700] text-[9px] font-black rounded-lg px-2.5 py-1 outline-none cursor-pointer uppercase tracking-wider"
                                         >
                                             <option value="">Quick Preset Set...</option>
-                                            <option value="Assassin">Critical (Assassin)</option>
-                                            <option value="Paladin">Skill LV (Paladin)</option>
-                                            <option value="Spellweaver">Cooldown (Spellweaver)</option>
-                                            <option value="Avenger">Atk Speed (Avenger)</option>
-                                            <option value="Guardian">Block (Guardian)</option>
-                                            <option value="Bounty_Tracker">Bounty Tracker</option>
-                                            <option value="Vanguard">Vanguard</option>
-                                            <option value="Gatekeeper">Gatekeeper</option>
-                                            <option value="Orchestrator">Orchestrator</option>
+                                            <option value="Assassin">Crit</option>
+                                            <option value="Paladin">HP</option>
+                                            <option value="Spellweaver">Effect Hit</option>
+                                            <option value="Avenger">Boss</option>
+                                            <option value="Guardian">Shield (Guardian)</option>
+                                            <option value="Bounty_Tracker">Weakness</option>
+                                            <option value="Vanguard">Attack</option>
+                                            <option value="Gatekeeper">Block</option>
+                                            <option value="Orchestrator">Resistance</option>
                                         </select>
                                     </div>
                                     <div className="grid grid-cols-2 gap-2.5">
