@@ -165,8 +165,7 @@
   background-color: color-mix(in srgb, var(--card), transparent 70%);
   border: 1px solid var(--border);
   border-radius: 1.25rem;
-  overflow: hidden;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease;
 }
 
 .teamSetDirty {

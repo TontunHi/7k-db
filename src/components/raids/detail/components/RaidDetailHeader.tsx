@@ -33,10 +33,6 @@ export default function RaidDetailHeader({ raid }) {
                 
                 {/* Raid Info Section */}
                 <div className={styles.info}>
-                    <div className={styles.badge}>
-                        <Skull className={styles.badgeIcon} />
-                        <span className={styles.badgeText}>Raid Intel</span>
-                    </div>
                     <h1 className={styles.title}>
                         {raid.name}
                     </h1>

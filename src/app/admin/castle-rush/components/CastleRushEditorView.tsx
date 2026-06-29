@@ -67,7 +67,7 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
                     _dirty: true
                 }))
             })
-            toast.info("Tactical order adjusted")
+            toast.info("Team order adjusted")
         }
     }
 
@@ -88,7 +88,7 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
             _dirty: true
         }
         setSets([...sets, newSet])
-        toast.info("New team deployment drafted")
+        toast.info("New team set added")
     }
 
     const handleDuplicateSet = (index) => {
@@ -102,7 +102,7 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
             _dirty: true
         }
         setSets([...sets, duplicated])
-        toast.success("Squad cloned successfully")
+        toast.success("Team set cloned")
     }
 
     const handleUpdateSet = (index, field, value) => {
@@ -118,6 +118,7 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
             formation: teamData.formation,
             pet_file: teamData.pet_file,
             heroes: teamData.heroes,
+            selection_order: teamData.selection_order || updated[index].selection_order || [],
             _dirty: true 
         }
         setSets(updated)
@@ -145,7 +146,7 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
                 await deleteSetAction(set.id)
             }
             setSets(sets.filter((_, i) => i !== index))
-            toast.success("Team deployment removed")
+            toast.success("Team set removed")
         } catch (err) {
             toast.error("Deletion failed")
         }
@@ -170,18 +171,23 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
                     set_index: set.set_index
                 }
 
+                let res;
                 if (set._isNew) {
-                    await createSet(data)
+                    res = await createSet(data)
                 } else {
-                    await updateSet(set.id, data)
+                    res = await updateSet(set.id, data)
+                }
+
+                if (res && !res.success) {
+                    throw new Error(res.error || "Save failed")
                 }
             }
             
             const freshSets = await getSetsByBoss(bossKey)
             setSets(freshSets.map(s => ({ ...s, _dirty: false })))
-            toast.success("Tactical intel synchronized")
-        } catch (err) {
-            toast.error("Synchronization failed")
+            toast.success("Team settings saved")
+        } catch (err: any) {
+            toast.error(err.message || "Save failed")
         } finally {
             setSaving(false)
         }
@@ -236,7 +242,7 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
                 {/* Sidebar Protocol */}
                 <aside className={styles.sidebar}>
                     <Link href="/admin/castle-rush" className="flex items-center gap-2 text-muted-foreground hover:text-amber-500 transition-colors w-fit group mb-4">
-                        <ActionLabel label="ABORT TO COMMAND" />
+                        <ActionLabel label="BACK TO DASHBOARD" />
                     </Link>
 
                     <div className={styles.sidebarCard}>
@@ -267,11 +273,11 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
                     <header className={styles.editorHeader}>
                         <div className="flex items-center gap-3">
                             <Marker color="bg-amber-500" />
-                            <h1 className="text-xl font-black italic uppercase">Squad Configuration</h1>
+                            <h1 className="text-xl font-black italic uppercase">Team Configuration</h1>
                         </div>
                         <div className="flex items-center gap-3">
                             <button onClick={handleAddSet} className="flex items-center gap-2 px-4 py-2.5 bg-accent text-foreground rounded-xl text-xs font-black uppercase tracking-widest hover:bg-border transition-colors border border-border shadow-xl">
-                                <ActionLabel label="ADD SQUAD" />
+                                <ActionLabel label="ADD TEAM SET" />
                             </button>
                             <button
                                 onClick={handleSaveAll}
@@ -283,7 +289,7 @@ export default function CastleRushEditorView({ bossKey, initialBoss, initialSets
                                         : "bg-muted text-muted-foreground cursor-not-allowed opacity-50"
                                 )}
                             >
-                                <ActionLabel label={saving ? "EXECUTING..." : "COMMIT INTEL"} color={hasDirty ? "text-black" : "text-muted-foreground"} />
+                                <ActionLabel label={saving ? "SAVING..." : "SAVE SETTINGS"} color={hasDirty ? "text-black" : "text-muted-foreground"} />
                             </button>
                         </div>
                     </header>

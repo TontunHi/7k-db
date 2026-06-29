@@ -21,7 +21,7 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
     const [skillErrors, setSkillErrors] = useState({})
     const [skillPicker, setSkillPicker] = useState(null)
     const [buildPicker, setBuildPicker] = useState(null)
-    const [collapsedSets, setCollapsedSets] = useState(new Set(initialSets.map(s => s.id)))
+    const [collapsedSets, setCollapsedSets] = useState(new Set<number | string>())
 
     const handleAddSet = () => {
         const newSet = {
@@ -57,6 +57,7 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
             formation: teamData.formation,
             pet_file: teamData.pet_file,
             heroes: teamData.heroes,
+            selection_order: teamData.selection_order || updated[index].selection_order || [],
             _dirty: true 
         }
         setSets(updated)
@@ -103,24 +104,30 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
                     formation: set.formation,
                     pet_file: set.pet_file,
                     heroes: set.heroes,
+                    selection_order: set.selection_order || [],
                     skill_rotation: set.skill_rotation,
                     hero_builds: set.hero_builds || {},
                     video_url: set.video_url,
                     note: set.note
                 }
 
+                let res;
                 if (set._isNew) {
-                    await createSet(data)
+                    res = await createSet(data)
                 } else {
-                    await updateSet(set.id, data)
+                    res = await updateSet(set.id, data)
+                }
+
+                if (res && !res.success) {
+                    throw new Error(res.error || "Validation failed")
                 }
             }
             
             const freshSets = await getSetsByBoss(bossKey)
             setSets(freshSets.map(s => ({ ...s, _dirty: false })))
             toast.success("Strategic data synchronized")
-        } catch (err) {
-            toast.error("Synchronization failed")
+        } catch (err: any) {
+            toast.error(err.message || "Synchronization failed")
         } finally {
             setSaving(false)
         }
@@ -181,7 +188,7 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
                 <aside className={styles.sidebar}>
                     <Link href="/admin/advent" className="flex items-center gap-2 text-muted-foreground hover:text-violet-400 transition-colors w-fit group mb-4">
                         <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                        <span className="font-bold uppercase text-xs tracking-widest">Return to Expedition HUB</span>
+                        <span className="font-bold uppercase text-xs tracking-widest">Back to Advent</span>
                     </Link>
 
                     <div className={styles.sidebarCard}>
@@ -199,7 +206,7 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
                     </div>
 
                     <div className="mt-4 space-y-3">
-                        <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50 px-2">Expedition Vectors</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50 px-2">Other Bosses</h4>
                         <div className="grid grid-cols-1 gap-2 pr-2">
                             {allBosses.filter(b => b.key !== bossKey).map(b => (
                                 <Link key={b.key} href={`/admin/advent/${b.key}`} className="relative aspect-video block rounded-xl overflow-hidden border border-border group grayscale hover:grayscale-0 transition-all">
@@ -216,11 +223,11 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
                 {/* Main Data Stream */}
                 <main className={styles.mainContent}>
                     <header className={styles.editorHeader}>
-                        <h1 className="text-xl font-black italic uppercase">Strategy Matrix</h1>
+                        <h1 className="text-xl font-black italic uppercase">Manage Strategy</h1>
                         <div className="flex items-center gap-3">
                             <button onClick={handleAddSet} className="flex items-center gap-2 px-4 py-2.5 bg-accent text-foreground rounded-xl text-xs font-black uppercase tracking-widest hover:bg-border transition-colors border border-border shadow-xl">
                                 <Plus size={18} />
-                                <span>Draft Strategy</span>
+                                <span>Add Team Set</span>
                             </button>
                             <button
                                 onClick={handleSaveAll}
@@ -233,7 +240,7 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
                                 )}
                             >
                                 {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                                Upload Intel
+                                Save Settings
                             </button>
                         </div>
                     </header>
@@ -242,7 +249,7 @@ export default function AdventEditorView({ bossKey, initialBoss, initialSets, al
                         {sets.length === 0 && (
                             <div className="text-center py-20 border-2 border-dashed border-border rounded-3xl bg-card/30">
                                 <Compass size={48} className="mx-auto mb-4 text-muted-foreground opacity-20" />
-                                <p className="text-muted-foreground italic">No tactical strategies logged for this boss.</p>
+                                <p className="text-muted-foreground italic">No teams added yet.</p>
                             </div>
                         )}
 

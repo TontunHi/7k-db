@@ -37,8 +37,42 @@ export async function getRaidInfo(raidKey: string) {
     return RAID_ORDER.find(r => r.key === raidKey) || null
 }
 
+async function ensureTableColumns() {
+    try {
+        // Check selection_order_json
+        const [checkOrder] = await pool.query<any[]>(
+            'SHOW COLUMNS FROM raid_sets LIKE "selection_order_json"'
+        )
+        if (checkOrder.length === 0) {
+            console.log("[DB PATCH] Adding selection_order_json column to raid_sets...")
+            await pool.query('ALTER TABLE raid_sets ADD COLUMN selection_order_json JSON AFTER heroes_json')
+        }
+
+        // Check team_name
+        const [checkTeamName] = await pool.query<any[]>(
+            'SHOW COLUMNS FROM raid_sets LIKE "team_name"'
+        )
+        if (checkTeamName.length === 0) {
+            console.log("[DB PATCH] Adding team_name column to raid_sets...")
+            await pool.query('ALTER TABLE raid_sets ADD COLUMN team_name VARCHAR(100) NULL AFTER set_index')
+        }
+
+        // Check hero_builds_json
+        const [checkBuilds] = await pool.query<any[]>(
+            'SHOW COLUMNS FROM raid_sets LIKE "hero_builds_json"'
+        )
+        if (checkBuilds.length === 0) {
+            console.log("[DB PATCH] Adding hero_builds_json column to raid_sets...")
+            await pool.query('ALTER TABLE raid_sets ADD COLUMN hero_builds_json JSON AFTER heroes_json')
+        }
+    } catch (e: any) {
+        console.warn("[DB PATCH] Could not ensure table columns:", e.message)
+    }
+}
+
 export async function getSetsByRaid(raidKey: string) {
     await initDB()
+    await ensureTableColumns()
     const [rows] = await pool.query<RaidSet[] & RowDataPacket[]>(
         'SELECT * FROM raid_sets WHERE raid_key = ? ORDER BY set_index ASC',
         [raidKey]
@@ -49,6 +83,12 @@ export async function getSetsByRaid(raidKey: string) {
         heroes: typeof row.heroes_json === 'string' 
             ? JSON.parse(row.heroes_json) 
             : (row.heroes_json || []),
+        selection_order: typeof row.selection_order_json === 'string'
+            ? JSON.parse(row.selection_order_json)
+            : (row.selection_order_json || []),
+        hero_builds: typeof row.hero_builds_json === 'string'
+            ? JSON.parse(row.hero_builds_json)
+            : (row.hero_builds_json || {}),
         skill_rotation: typeof row.skill_rotation === 'string'
             ? JSON.parse(row.skill_rotation)
             : (row.skill_rotation || [])
@@ -74,8 +114,8 @@ export async function createSet(data: RaidSetInput): Promise<ActionResponse> {
         const nextIndex = countResult[0].next_index
 
         const [result] = await pool.query<ResultSetHeader>(
-            `INSERT INTO raid_sets (raid_key, set_index, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO raid_sets (raid_key, set_index, team_name, formation, pet_file, heroes_json, selection_order_json, hero_builds_json, skill_rotation, video_url, note)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 validatedData.raid_key, 
                 nextIndex, 
@@ -83,6 +123,8 @@ export async function createSet(data: RaidSetInput): Promise<ActionResponse> {
                 validatedData.formation, 
                 validatedData.pet_file || null, 
                 JSON.stringify(validatedData.heroes), 
+                JSON.stringify(validatedData.selection_order || []),
+                JSON.stringify(validatedData.hero_builds || {}),
                 JSON.stringify(validatedData.skill_rotation), 
                 validatedData.video_url, 
                 validatedData.note
@@ -115,13 +157,15 @@ export async function updateSet(id: number, data: RaidSetInput): Promise<ActionR
     try {
         await pool.query(
             `UPDATE raid_sets 
-             SET team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
+             SET team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, selection_order_json = ?, hero_builds_json = ?, skill_rotation = ?, video_url = ?, note = ?
              WHERE id = ?`,
             [
                 validatedData.team_name || null,
                 validatedData.formation, 
                 validatedData.pet_file || null, 
                 JSON.stringify(validatedData.heroes), 
+                JSON.stringify(validatedData.selection_order || []),
+                JSON.stringify(validatedData.hero_builds || {}),
                 JSON.stringify(validatedData.skill_rotation), 
                 validatedData.video_url, 
                 validatedData.note, 

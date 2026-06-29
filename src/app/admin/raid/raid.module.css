@@ -159,8 +159,7 @@
   background-color: var(--card);
   border: 1px solid var(--border);
   border-radius: 1.5rem;
-  overflow: hidden;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease;
 }
 
 .teamSetDirty {

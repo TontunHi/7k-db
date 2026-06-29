@@ -84,7 +84,7 @@ export default function AdventTeamSet({
                     <button
                         onClick={() => onDelete(index)}
                         className="text-muted-foreground hover:text-red-500 transition-colors p-2 hover:bg-red-500/10 rounded-lg"
-                        title="Remove deployment"
+                        title="Remove Team Set"
                     >
                         <Trash2 size={18} />
                     </button>
@@ -94,11 +94,13 @@ export default function AdventTeamSet({
             {!isCollapsed && (
                 <div className={styles.setBody}>
                     <TeamBuilder
+                        key={`teambuilder-${set.id}-${assets.heroes.length}-${assets.formations.length}`}
                         team={{
                             index: index + 1,
                             formation: set.formation,
                             pet_file: set.pet_file,
-                            heroes: set.heroes || [null, null, null, null, null]
+                            heroes: set.heroes || [null, null, null, null, null],
+                            selection_order: set.selection_order || []
                         }}
                         index={index}
                         heroesList={assets.heroes}
@@ -123,10 +125,98 @@ export default function AdventTeamSet({
                         ) : null}
                     />
 
+                    {/* Speed Order Section */}
+                    {set.heroes && set.heroes.some(h => h) && (() => {
+                        const validHeroes = set.heroes
+                            .map((heroFile, idx) => ({ heroFile, idx }))
+                            .filter(item => item.heroFile);
+
+                        const selOrder = set.selection_order || [];
+                        const orderedHeroes = [...validHeroes].sort((a, b) => {
+                            const indexA = selOrder.indexOf(a.idx);
+                            const indexB = selOrder.indexOf(b.idx);
+                            if (indexA === -1 && indexB === -1) return a.idx - b.idx;
+                            if (indexA === -1) return 1;
+                            if (indexB === -1) return -1;
+                            return indexA - indexB;
+                        });
+
+                        const handleMove = (itemIdx, direction) => {
+                            const currentOrder = orderedHeroes.map(h => h.idx);
+                            const targetIdx = itemIdx + direction;
+                            if (targetIdx < 0 || targetIdx >= currentOrder.length) return;
+
+                            const newOrder = [...currentOrder];
+                            const temp = newOrder[itemIdx];
+                            newOrder[itemIdx] = newOrder[targetIdx];
+                            newOrder[targetIdx] = temp;
+
+                            onSetUpdate(index, 'selection_order', newOrder);
+                        };
+
+                        return (
+                            <div className={styles.rotationSection}>
+                                <div className="mb-2 flex items-center justify-between">
+                                    <label className={styles.sectionLabel}>
+                                        <Zap size={14} className="text-primary" /> Speed
+                                    </label>
+                                    <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Adjust order using arrows</span>
+                                </div>
+                                <div className="flex flex-wrap items-center gap-3 w-full bg-black/40 backdrop-blur-md rounded-2xl border border-white/5 p-4 shadow-lg">
+                                    {orderedHeroes.map((item, sortedIdx) => {
+                                        const isLast = sortedIdx === orderedHeroes.length - 1;
+                                        return (
+                                            <div key={item.idx} className="flex items-center gap-2">
+                                                <div className="flex flex-col items-center p-0.5 bg-background rounded-xl border border-border relative shadow-lg group/speedhero">
+                                                    <div className="absolute -top-2 -left-2 min-w-[20px] h-[20px] px-1 text-black rounded-full flex items-center justify-center text-[9px] font-black border-2 border-card z-20 shadow-sm bg-primary">
+                                                        {sortedIdx + 1}
+                                                    </div>
+                                                    <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-muted">
+                                                        <SafeImage 
+                                                            src={`/heroes/${item.heroFile}`} 
+                                                            alt="" 
+                                                            fill 
+                                                            sizes="40px" 
+                                                            className="object-contain" 
+                                                        />
+                                                    </div>
+
+                                                    <div className="absolute inset-0 bg-black/75 flex items-center justify-center gap-1 opacity-0 group-hover/speedhero:opacity-100 transition-opacity rounded-lg z-30">
+                                                        <button 
+                                                            onClick={() => handleMove(sortedIdx, -1)}
+                                                            disabled={sortedIdx === 0}
+                                                            className="w-4 h-4 rounded bg-primary disabled:opacity-20 text-black flex items-center justify-center text-[10px] font-black"
+                                                            title="Move Left"
+                                                        >
+                                                            ◀
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => handleMove(sortedIdx, 1)}
+                                                            disabled={isLast}
+                                                            className="w-4 h-4 rounded bg-primary disabled:opacity-20 text-black flex items-center justify-center text-[10px] font-black"
+                                                            title="Move Right"
+                                                        >
+                                                            ▶
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                {!isLast && (
+                                                    <div className="flex items-center justify-center w-5 opacity-40">
+                                                        <span className="text-muted-foreground text-xs font-black">➔</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        );
+                    })()}
+
                     {/* Skill Rotation */}
                     <div className={styles.rotationSection}>
                         <label className={styles.sectionLabel}>
-                            <Zap size={14} className="text-primary" /> Tactical Sequence
+                            <Zap size={14} className="text-primary" /> Skill Rotation
                         </label>
 
                         <div className={styles.rotationGrid}>
@@ -182,7 +272,7 @@ export default function AdventTeamSet({
                                 onClick={() => onAddSlot(index)}
                                 disabled={!hasHeroes}
                                 className={styles.addSlotBtn}
-                                title="Add tactical slot"
+                                title="Add skill slot"
                             >
                                 <Plus size={20} />
                             </button>
@@ -193,7 +283,7 @@ export default function AdventTeamSet({
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <div className="space-y-3">
                             <label className={styles.sectionLabel}>
-                                <Video size={14} /> Mission Briefing (Video URL)
+                                <Video size={14} /> Video URL
                             </label>
                             <input
                                 type="url"
@@ -206,7 +296,7 @@ export default function AdventTeamSet({
 
                         <div className="space-y-3">
                             <label className={styles.sectionLabel}>
-                                <ScrollText size={14} /> Tactical Intel (Notes)
+                                <ScrollText size={14} /> Strategy Note (Notes)
                             </label>
                             <textarea
                                 value={set.note || ''}

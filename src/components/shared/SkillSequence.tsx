@@ -15,7 +15,7 @@ export default function SkillSequence({
     return (
         <div className={cn("space-y-3", customClasses.container)}>
             <div className="flex items-center gap-2 px-1">
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Tactical Skill Rotation</span>
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Skill Rotation</span>
             </div>
             
             <div className={cn(

@@ -46,6 +46,8 @@ export interface AdventSet extends RowDataPacket {
   heroes_json: string | any[];
   skill_rotation: string | any[];
   hero_builds_json: string | any[];
+  selection_order_json?: string | any[];
+  selection_order?: number[];
   video_url: string | null;
   note: string | null;
   created_at: string;
@@ -74,6 +76,8 @@ export interface CastleRushSet extends RowDataPacket {
   heroes_json: string | any[];
   hero_builds_json?: string | any[];
   hero_builds?: any;
+  selection_order_json?: string | any[];
+  selection_order?: number[];
   skill_rotation: string | any[];
   video_url: string | null;
   note: string | null;
@@ -103,6 +107,8 @@ export interface RaidSet extends RowDataPacket {
   formation: string;
   pet_file: string | null;
   heroes_json: string | any[];
+  selection_order_json?: string | any[];
+  selection_order?: number[];
   skill_rotation: string | any[];
   video_url: string | null;
   note: string | null;

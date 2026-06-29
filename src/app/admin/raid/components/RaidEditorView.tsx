@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ArrowLeft, Plus, Save, Loader2, Skull } from 'lucide-react'
 import { createSet, updateSet, deleteSet as deleteSetAction, getSetsByRaid } from '@/lib/raid-actions'
 import RaidTeamSet from './RaidTeamSet'
+import AdventHeroBuildPicker from '../../advent/components/AdventHeroBuildPicker'
 import { clsx } from 'clsx'
 import { toast } from 'sonner'
 import styles from '../raid.module.css'
@@ -17,7 +18,8 @@ export default function RaidEditorView({ raidKey, initialRaid, initialSets, allR
     const [sets, setSets] = useState(initialSets.map(s => ({ ...s, _dirty: false })))
     const [saving, setSaving] = useState(false)
     const [skillErrors, setSkillErrors] = useState({})
-    const [collapsedSets, setCollapsedSets] = useState(new Set(initialSets.map(s => s.id)))
+    const [buildPicker, setBuildPicker] = useState(null)
+    const [collapsedSets, setCollapsedSets] = useState(new Set<number | string>())
 
     const handleAddSet = () => {
         const newSet = {
@@ -51,8 +53,22 @@ export default function RaidEditorView({ raidKey, initialRaid, initialSets, allR
             formation: teamData.formation,
             pet_file: teamData.pet_file,
             heroes: teamData.heroes,
+            selection_order: teamData.selection_order || updated[index].selection_order || [],
             _dirty: true 
         }
+        setSets(updated)
+    }
+
+    const handleUpdateHeroBuild = (setIdx, heroIdx, buildData) => {
+        const updated = [...sets]
+        const currentSet = updated[setIdx]
+        const newHeroBuilds = { ...(currentSet.hero_builds || {}) }
+        if (buildData) {
+            newHeroBuilds[heroIdx] = buildData
+        } else {
+            delete newHeroBuilds[heroIdx]
+        }
+        updated[setIdx] = { ...currentSet, hero_builds: newHeroBuilds, _dirty: true }
         setSets(updated)
     }
 
@@ -83,23 +99,30 @@ export default function RaidEditorView({ raidKey, initialRaid, initialSets, allR
                     formation: set.formation,
                     pet_file: set.pet_file,
                     heroes: set.heroes,
+                    selection_order: set.selection_order || [],
+                    hero_builds: set.hero_builds || {},
                     skill_rotation: set.skill_rotation,
                     video_url: set.video_url,
                     note: set.note
                 }
 
+                let res;
                 if (set._isNew) {
-                    await createSet(data)
+                    res = await createSet(data)
                 } else {
-                    await updateSet(set.id, data)
+                    res = await updateSet(set.id, data)
+                }
+
+                if (res && !res.success) {
+                    throw new Error(res.error || "Validation failed")
                 }
             }
             
             const freshSets = await getSetsByRaid(raidKey)
             setSets(freshSets.map(s => ({ ...s, _dirty: false })))
             toast.success("Tactical synchronization complete")
-        } catch (err) {
-            toast.error("Synchronization failed")
+        } catch (err: any) {
+            toast.error(err.message || "Synchronization failed")
         } finally {
             setSaving(false)
         }
@@ -213,11 +236,27 @@ export default function RaidEditorView({ raidKey, initialRaid, initialSets, allR
                                 onToggleSkill={handleToggleSkill}
                                 onToggleCollapse={toggleCollapse}
                                 onSkillError={(key) => setSkillErrors(prev => ({ ...prev, [key]: true }))}
+                                onOpenBuildPicker={(hIdx) => setBuildPicker({ setIdx: idx, heroIdx: hIdx })}
                             />
                         ))}
                     </div>
                 </main>
             </div>
+
+            {/* Hero Build Picker */}
+            {buildPicker && (
+                <AdventHeroBuildPicker
+                    isOpen={!!buildPicker}
+                    onClose={() => setBuildPicker(null)}
+                    heroFile={sets[buildPicker.setIdx]?.heroes?.[buildPicker.heroIdx]}
+                    initialBuild={sets[buildPicker.setIdx]?.hero_builds?.[buildPicker.heroIdx] || null}
+                    items={assets.items}
+                    onSave={(buildData) => {
+                        handleUpdateHeroBuild(buildPicker.setIdx, buildPicker.heroIdx, buildData)
+                        setBuildPicker(null)
+                    }}
+                />
+            )}
         </div>
     )
 }

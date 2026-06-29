@@ -35,8 +35,33 @@ export async function getBossInfo(bossKey: string) {
     return BOSS_ORDER.find(b => b.key === bossKey) || null
 }
 
+async function ensureTableColumns() {
+    try {
+        // Check selection_order_json
+        const [checkOrder] = await pool.query<any[]>(
+            'SHOW COLUMNS FROM advent_expedition_sets LIKE "selection_order_json"'
+        )
+        if (checkOrder.length === 0) {
+            console.log("[DB PATCH] Adding selection_order_json column to advent_expedition_sets...")
+            await pool.query('ALTER TABLE advent_expedition_sets ADD COLUMN selection_order_json JSON AFTER hero_builds_json')
+        }
+
+        // Check team_name
+        const [checkTeamName] = await pool.query<any[]>(
+            'SHOW COLUMNS FROM advent_expedition_sets LIKE "team_name"'
+        )
+        if (checkTeamName.length === 0) {
+            console.log("[DB PATCH] Adding team_name column to advent_expedition_sets...")
+            await pool.query('ALTER TABLE advent_expedition_sets ADD COLUMN team_name VARCHAR(100) NULL AFTER set_index')
+        }
+    } catch (e: any) {
+        console.warn("[DB PATCH] Could not ensure table columns:", e.message)
+    }
+}
+
 export async function getSetsByBoss(bossKey: string) {
     await initDB()
+    await ensureTableColumns()
     const [rows] = await pool.query<AdventSet[] & RowDataPacket[]>(
         'SELECT * FROM advent_expedition_sets WHERE boss_key = ? ORDER BY set_index ASC',
         [bossKey]
@@ -54,6 +79,7 @@ export async function getSetsByBoss(bossKey: string) {
             heroes: parseJSON(row.heroes_json),
             skill_rotation: parseJSON(row.skill_rotation),
             hero_builds: parseJSON(row.hero_builds_json),
+            selection_order: parseJSON(row.selection_order_json)
         }
     })
 }
@@ -77,12 +103,12 @@ export async function createSet(data: AdventSetInput): Promise<ActionResponse> {
 
         const [result] = await pool.query<ResultSetHeader>(
             `INSERT INTO advent_expedition_sets 
-             (boss_key, phase, set_index, team_name, formation, pet_file, heroes_json, skill_rotation, hero_builds_json, video_url, note)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+             (boss_key, phase, set_index, team_name, formation, pet_file, heroes_json, skill_rotation, hero_builds_json, selection_order_json, video_url, note)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 validatedData.boss_key, validatedData.phase || 'Phase 1', nextIndex, validatedData.team_name || null,
                 validatedData.formation, validatedData.pet_file || null, JSON.stringify(validatedData.heroes), JSON.stringify(validatedData.skill_rotation),
-                JSON.stringify(validatedData.hero_builds || {}), validatedData.video_url, validatedData.note
+                JSON.stringify(validatedData.hero_builds || {}), JSON.stringify(validatedData.selection_order || []), validatedData.video_url, validatedData.note
             ]
         )
 
@@ -112,12 +138,12 @@ export async function updateSet(id: number, data: AdventSetInput): Promise<Actio
         await pool.query(
             `UPDATE advent_expedition_sets 
              SET phase = ?, team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?,
-                 hero_builds_json = ?, video_url = ?, note = ?
+                 hero_builds_json = ?, selection_order_json = ?, video_url = ?, note = ?
              WHERE id = ?`,
             [
                 validatedData.phase || 'Phase 1', validatedData.team_name || null,
                 validatedData.formation, validatedData.pet_file || null, JSON.stringify(validatedData.heroes), JSON.stringify(validatedData.skill_rotation),
-                 JSON.stringify(validatedData.hero_builds || {}), validatedData.video_url, validatedData.note, id
+                 JSON.stringify(validatedData.hero_builds || {}), JSON.stringify(validatedData.selection_order || []), validatedData.video_url, validatedData.note, id
             ]
         )
 

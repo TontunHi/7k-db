@@ -47,8 +47,25 @@ async function ensureHeroBuildsColumn() {
             console.log("[DB PATCH] Adding hero_builds_json column to castle_rush_sets...")
             await pool.query('ALTER TABLE castle_rush_sets ADD COLUMN hero_builds_json JSON AFTER heroes_json')
         }
+
+        const [checkOrder] = await pool.query<any[]>(
+            'SHOW COLUMNS FROM castle_rush_sets LIKE "selection_order_json"'
+        )
+        if (checkOrder.length === 0) {
+            console.log("[DB PATCH] Adding selection_order_json column to castle_rush_sets...")
+            await pool.query('ALTER TABLE castle_rush_sets ADD COLUMN selection_order_json JSON AFTER hero_builds_json')
+        }
+
+        // Check team_name
+        const [checkTeamName] = await pool.query<any[]>(
+            'SHOW COLUMNS FROM castle_rush_sets LIKE "team_name"'
+        )
+        if (checkTeamName.length === 0) {
+            console.log("[DB PATCH] Adding team_name column to castle_rush_sets...")
+            await pool.query('ALTER TABLE castle_rush_sets ADD COLUMN team_name VARCHAR(100) NULL AFTER set_index')
+        }
     } catch (e: any) {
-        console.warn("[DB PATCH] Could not ensure hero_builds_json column:", e.message)
+        console.warn("[DB PATCH] Could not ensure table columns:", e.message)
     }
 }
 
@@ -68,6 +85,9 @@ export async function getSetsByBoss(bossKey: string) {
         hero_builds: typeof row.hero_builds_json === 'string'
             ? JSON.parse(row.hero_builds_json)
             : (row.hero_builds_json || {}),
+        selection_order: typeof row.selection_order_json === 'string'
+            ? JSON.parse(row.selection_order_json)
+            : (row.selection_order_json || []),
         skill_rotation: typeof row.skill_rotation === 'string'
             ? JSON.parse(row.skill_rotation)
             : (row.skill_rotation || [])
@@ -95,8 +115,8 @@ export async function createSet(data: CastleRushSetInput): Promise<ActionRespons
         const nextIndex = countResult[0].next_index
 
         const [result] = await pool.query<ResultSetHeader>(
-            `INSERT INTO castle_rush_sets (boss_key, set_index, team_name, formation, pet_file, heroes_json, hero_builds_json, skill_rotation, video_url, note)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO castle_rush_sets (boss_key, set_index, team_name, formation, pet_file, heroes_json, hero_builds_json, selection_order_json, skill_rotation, video_url, note)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 validatedData.boss_key, 
                 nextIndex, 
@@ -105,6 +125,7 @@ export async function createSet(data: CastleRushSetInput): Promise<ActionRespons
                 validatedData.pet_file || null, 
                 JSON.stringify(validatedData.heroes), 
                 JSON.stringify(validatedData.hero_builds || {}), 
+                JSON.stringify(validatedData.selection_order || []),
                 JSON.stringify(validatedData.skill_rotation), 
                 validatedData.video_url, 
                 validatedData.note
@@ -139,7 +160,7 @@ export async function updateSet(id: number, data: CastleRushSetInput & { set_ind
         await ensureHeroBuildsColumn()
         await pool.query(
             `UPDATE castle_rush_sets 
-             SET team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, hero_builds_json = ?, skill_rotation = ?, video_url = ?, note = ?, set_index = ?
+             SET team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, hero_builds_json = ?, selection_order_json = ?, skill_rotation = ?, video_url = ?, note = ?, set_index = ?
              WHERE id = ?`,
             [
                 validatedData.team_name || null, 
@@ -147,6 +168,7 @@ export async function updateSet(id: number, data: CastleRushSetInput & { set_ind
                 validatedData.pet_file || null, 
                 JSON.stringify(validatedData.heroes), 
                 JSON.stringify(validatedData.hero_builds || {}), 
+                JSON.stringify(validatedData.selection_order || []),
                 JSON.stringify(validatedData.skill_rotation), 
                 validatedData.video_url, 
                 validatedData.note, 

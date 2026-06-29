@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from 'react'
 import { getRaidInfo, getSetsByRaid, getRaids } from '@/lib/raid-actions'
 import { getAllHeroes, getPets, getFormations, getHeroSkillsMap } from '@/lib/stage-actions'
+import { getFilteredItems } from '@/lib/build-db'
 import { Loader2 } from 'lucide-react'
 import RaidEditorView from '../components/RaidEditorView'
 
@@ -20,21 +21,25 @@ export default function RaidDetailPage({ params }: { params: Promise<{ key: stri
         heroes: [],
         pets: [],
         formations: [],
-        skills: {}
+        skills: {},
+        items: { weapons: [], armors: [], accessories: [] }
     })
 
     useEffect(() => {
         async function loadData() {
             setLoading(true)
             try {
-                const [raidInfo, setsData, heroesData, petsData, formationsData, allRaidsData, skillsData] = await Promise.all([
+                const [raidInfo, setsData, heroesData, petsData, formationsData, allRaidsData, skillsData, weapons, armors, accessories] = await Promise.all([
                     getRaidInfo(raidKey),
                     getSetsByRaid(raidKey),
                     getAllHeroes(),
                     getPets(),
                     getFormations(),
                     getRaids(),
-                    getHeroSkillsMap()
+                    getHeroSkillsMap(),
+                    getFilteredItems('weapon'),
+                    getFilteredItems('armor'),
+                    getFilteredItems('accessory')
                 ])
                 
                 setRaid(raidInfo)
@@ -44,7 +49,8 @@ export default function RaidDetailPage({ params }: { params: Promise<{ key: stri
                     heroes: heroesData,
                     pets: petsData,
                     formations: formationsData,
-                    skills: skillsData
+                    skills: skillsData,
+                    items: { weapons, armors, accessories }
                 })
             } catch (err) {
                 console.error("[RAID_EDITOR_LOAD]", err)

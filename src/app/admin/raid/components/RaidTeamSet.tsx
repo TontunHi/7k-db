@@ -20,7 +20,8 @@ export default function RaidTeamSet({
     onDelete, 
     onToggleSkill,
     onToggleCollapse,
-    onSkillError 
+    onSkillError,
+    onOpenBuildPicker
 }) {
     
     function getSkillImagePath(heroFilename, skillNumber) {
@@ -52,7 +53,7 @@ export default function RaidTeamSet({
                     {/* Inline Summary when collapsed */}
                     {isCollapsed && (
                         <div className="flex items-center gap-1.5 ml-4 animate-in fade-in slide-in-from-left-2">
-                            {set.heroes.map((hero, hIdx) => hero && (
+                            {(set.heroes || []).map((hero, hIdx) => hero && (
                                 <div key={hIdx} className="relative w-7 h-7 rounded-md overflow-hidden border border-border">
                                     <SafeImage src={`/heroes/${hero}`} alt="" fill className="object-cover" />
                                 </div>
@@ -82,19 +83,125 @@ export default function RaidTeamSet({
                 <div className={styles.setBody}>
                     {/* Team Builder Core */}
                     <TeamBuilder
+                        key={`teambuilder-${set.id}-${assets.heroes.length}-${assets.formations.length}`}
                         team={{
                             index: index + 1,
-                            formation: set.formation,
+                            formation: set.formation || (assets.formations[0]?.value ?? '2-3'),
                             pet_file: set.pet_file,
                             aura: set.aura,
-                            heroes: set.heroes
+                            heroes: set.heroes || [null, null, null, null, null],
+                            selection_order: set.selection_order || []
                         }}
                         index={index}
                         heroesList={assets.heroes}
                         petsList={assets.pets}
                         formations={assets.formations}
                         onUpdate={(teamData) => onTeamUpdate(index, teamData)}
+                        renderHeroAction={(hIdx, heroFile) => heroFile ? (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onOpenBuildPicker(hIdx);
+                                }}
+                                className={clsx(
+                                    "absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all z-30 shadow-xl border backdrop-blur-md",
+                                    set.hero_builds?.[hIdx] 
+                                        ? "bg-red-600/90 hover:bg-red-500 border-red-500/50 text-white opacity-100" 
+                                        : "bg-black/60 hover:bg-red-600/90 text-white border-white/10 opacity-0 group-hover:opacity-100"
+                                )}
+                            >
+                                {set.hero_builds?.[hIdx] ? 'Edit Build' : 'Set Build'}
+                            </button>
+                        ) : null}
                     />
+
+                    {/* Speed Order Section */}
+                    {set.heroes && set.heroes.some(h => h) && (() => {
+                        const validHeroes = set.heroes
+                            .map((heroFile, idx) => ({ heroFile, idx }))
+                            .filter(item => item.heroFile);
+
+                        const selOrder = set.selection_order || [];
+                        const orderedHeroes = [...validHeroes].sort((a, b) => {
+                            const indexA = selOrder.indexOf(a.idx);
+                            const indexB = selOrder.indexOf(b.idx);
+                            if (indexA === -1 && indexB === -1) return a.idx - b.idx;
+                            if (indexA === -1) return 1;
+                            if (indexB === -1) return -1;
+                            return indexA - indexB;
+                        });
+
+                        const handleMove = (itemIdx, direction) => {
+                            const currentOrder = orderedHeroes.map(h => h.idx);
+                            const targetIdx = itemIdx + direction;
+                            if (targetIdx < 0 || targetIdx >= currentOrder.length) return;
+
+                            const newOrder = [...currentOrder];
+                            const temp = newOrder[itemIdx];
+                            newOrder[itemIdx] = newOrder[targetIdx];
+                            newOrder[targetIdx] = temp;
+
+                            onSetUpdate(index, 'selection_order', newOrder);
+                        };
+
+                        return (
+                            <div className={styles.rotationSection}>
+                                <div className="mb-2 flex items-center justify-between">
+                                    <label className={styles.sectionLabel}>
+                                        <Zap size={14} className="text-red-500" /> Speed
+                                    </label>
+                                    <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Adjust order using arrows</span>
+                                </div>
+                                <div className="flex flex-wrap items-center gap-3 w-full bg-black/40 backdrop-blur-md rounded-2xl border border-white/5 p-4 shadow-lg">
+                                    {orderedHeroes.map((item, sortedIdx) => {
+                                        const isLast = sortedIdx === orderedHeroes.length - 1;
+                                        return (
+                                            <div key={item.idx} className="flex items-center gap-2">
+                                                <div className="flex flex-col items-center p-0.5 bg-background rounded-xl border border-border relative shadow-lg group/speedhero">
+                                                    <div className="absolute -top-2 -left-2 min-w-[20px] h-[20px] px-1 text-black rounded-full flex items-center justify-center text-[9px] font-black border-2 border-card z-20 shadow-sm bg-red-500 text-white">
+                                                        {sortedIdx + 1}
+                                                    </div>
+                                                    <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-muted">
+                                                        <SafeImage 
+                                                            src={`/heroes/${item.heroFile}`} 
+                                                            alt="" 
+                                                            fill 
+                                                            sizes="40px" 
+                                                            className="object-contain" 
+                                                        />
+                                                    </div>
+
+                                                    <div className="absolute inset-0 bg-black/75 flex items-center justify-center gap-1 opacity-0 group-hover/speedhero:opacity-100 transition-opacity rounded-lg z-30">
+                                                        <button 
+                                                            onClick={() => handleMove(sortedIdx, -1)}
+                                                            disabled={sortedIdx === 0}
+                                                            className="w-4 h-4 rounded bg-red-500 disabled:opacity-20 text-white flex items-center justify-center text-[10px] font-black"
+                                                            title="Move Left"
+                                                        >
+                                                            ◀
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => handleMove(sortedIdx, 1)}
+                                                            disabled={isLast}
+                                                            className="w-4 h-4 rounded bg-red-500 disabled:opacity-20 text-white flex items-center justify-center text-[10px] font-black"
+                                                            title="Move Right"
+                                                        >
+                                                            ▶
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                {!isLast && (
+                                                    <div className="flex items-center justify-center w-5 opacity-40">
+                                                        <span className="text-muted-foreground text-xs font-black">➔</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        );
+                    })()}
 
                     {/* Grid-based Skill Rotation */}
                     <div className={styles.rotationSection}>

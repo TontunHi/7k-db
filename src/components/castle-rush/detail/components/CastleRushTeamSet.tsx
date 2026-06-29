@@ -3,7 +3,8 @@ import FormationGrid from '@/components/shared/FormationGrid'
 import PetDisplay from '@/components/shared/PetDisplay'
 import SkillSequence from '@/components/shared/SkillSequence'
 import HeroBuildTooltip from '@/components/advent/detail/components/HeroBuildTooltip'
-import { parseHeroDetails } from '@/lib/hero-utils'
+import SafeImage from '@/components/shared/SafeImage'
+import { parseHeroDetails, resolveHeroImage } from '@/lib/hero-utils'
 import styles from './CastleRushTeamSet.module.css'
 
 export default function CastleRushTeamSet({ set, index, heroImageMap }) {
@@ -83,6 +84,64 @@ export default function CastleRushTeamSet({ set, index, heroImageMap }) {
                         />
                     </div>
                 </div>
+
+                {/* Speed Order Section */}
+                {set.heroes && set.heroes.some(h => h) && (() => {
+                    const validHeroes = set.heroes
+                        .map((heroFile, originalIdx) => ({ heroFile, originalIdx }))
+                        .filter(item => item.heroFile);
+                    
+                    const selOrder = set.selection_order || [];
+                    const orderedHeroes = [...validHeroes].sort((a, b) => {
+                        const indexA = selOrder.indexOf(a.originalIdx);
+                        const indexB = selOrder.indexOf(b.originalIdx);
+                        if (indexA === -1 && indexB === -1) return a.originalIdx - b.originalIdx;
+                        if (indexA === -1) return 1;
+                        if (indexB === -1) return -1;
+                        return indexA - indexB;
+                    });
+
+                    return (
+                        <div className="mt-6 space-y-3">
+                            <div className="flex items-center gap-2 px-1">
+                                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Speed</span>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-3 w-full bg-black/40 backdrop-blur-md rounded-2xl border border-white/5 p-4 shadow-lg relative overflow-hidden">
+                                {orderedHeroes.map((item, sortedIdx) => {
+                                    const heroName = parseHeroDetails(item.heroFile)?.name || '';
+                                    const isLast = sortedIdx === orderedHeroes.length - 1;
+                                    return (
+                                        <div key={item.originalIdx} className="flex items-center gap-2">
+                                            <div className="flex flex-col items-center p-0.5 bg-background rounded-xl border border-border relative shadow-lg">
+                                                {/* Speed Order Number Badge */}
+                                                <div className="absolute -top-2 -left-2 min-w-[20px] h-[20px] px-1 text-black rounded-full flex items-center justify-center text-[9px] font-black border-2 border-card z-20 shadow-sm bg-amber-500">
+                                                    {sortedIdx + 1}
+                                                </div>
+
+                                                {/* Hero Icon */}
+                                                <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-muted">
+                                                    <SafeImage 
+                                                        src={`/heroes/${resolveHeroImage(item.heroFile, heroImageMap) || item.heroFile + '.webp'}`} 
+                                                        alt={heroName} 
+                                                        fill 
+                                                        sizes="40px" 
+                                                        className="object-contain" 
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {!isLast && (
+                                                <div className="flex items-center justify-center w-5 opacity-40">
+                                                    <span className="text-muted-foreground text-xs font-black">➔</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    );
+                })()}
 
                 {/* Skill Rotation */}
                 <SkillSequence 

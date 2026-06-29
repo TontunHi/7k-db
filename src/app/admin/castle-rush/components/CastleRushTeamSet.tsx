@@ -127,7 +127,8 @@ export default function CastleRushTeamSet({
                             formation: set.formation,
                             pet_file: set.pet_file,
                             aura: set.aura,
-                            heroes: set.heroes
+                            heroes: set.heroes,
+                            selection_order: set.selection_order || []
                         }}
                         index={index}
                         heroesList={assets.heroes}
@@ -152,11 +153,102 @@ export default function CastleRushTeamSet({
                         ) : null}
                     />
 
+                    {/* Speed Order Section */}
+                    {set.heroes && set.heroes.some(h => h) && (() => {
+                        const validHeroes = set.heroes
+                            .map((heroFile, idx) => ({ heroFile, idx }))
+                            .filter(item => item.heroFile);
+
+                        // Order heroes based on selection_order
+                        const selOrder = set.selection_order || [];
+                        const orderedHeroes = [...validHeroes].sort((a, b) => {
+                            const indexA = selOrder.indexOf(a.idx);
+                            const indexB = selOrder.indexOf(b.idx);
+                            if (indexA === -1 && indexB === -1) return a.idx - b.idx;
+                            if (indexA === -1) return 1;
+                            if (indexB === -1) return -1;
+                            return indexA - indexB;
+                        });
+
+                        const handleMove = (itemIdx, direction) => {
+                            const currentOrder = orderedHeroes.map(h => h.idx);
+                            const targetIdx = itemIdx + direction;
+                            if (targetIdx < 0 || targetIdx >= currentOrder.length) return;
+
+                            const newOrder = [...currentOrder];
+                            const temp = newOrder[itemIdx];
+                            newOrder[itemIdx] = newOrder[targetIdx];
+                            newOrder[targetIdx] = temp;
+
+                            onSetUpdate(index, 'selection_order', newOrder);
+                        };
+
+                        return (
+                            <div className={styles.rotationSection}>
+                                <div className="mb-2 flex items-center justify-between">
+                                    <div className="flex items-center">
+                                        <Marker color="bg-amber-500" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest ml-2 text-muted-foreground">Speed</span>
+                                    </div>
+                                    <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Adjust order using arrows</span>
+                                </div>
+                                <div className="flex flex-wrap items-center gap-3 w-full bg-black/40 backdrop-blur-md rounded-2xl border border-white/5 p-4 shadow-lg">
+                                    {orderedHeroes.map((item, sortedIdx) => {
+                                        const isLast = sortedIdx === orderedHeroes.length - 1;
+                                        return (
+                                            <div key={item.idx} className="flex items-center gap-2">
+                                                <div className="flex flex-col items-center p-0.5 bg-background rounded-xl border border-border relative shadow-lg group/speedhero">
+                                                    <div className="absolute -top-2 -left-2 min-w-[20px] h-[20px] px-1 text-black rounded-full flex items-center justify-center text-[9px] font-black border-2 border-card z-20 shadow-sm bg-amber-500">
+                                                        {sortedIdx + 1}
+                                                    </div>
+                                                    <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-muted">
+                                                        <SafeImage 
+                                                            src={`/heroes/${item.heroFile}`} 
+                                                            alt="" 
+                                                            fill 
+                                                            sizes="40px" 
+                                                            className="object-contain" 
+                                                        />
+                                                    </div>
+
+                                                    {/* Control overlays */}
+                                                    <div className="absolute inset-0 bg-black/75 flex items-center justify-center gap-1 opacity-0 group-hover/speedhero:opacity-100 transition-opacity rounded-lg z-30">
+                                                        <button 
+                                                            onClick={() => handleMove(sortedIdx, -1)}
+                                                            disabled={sortedIdx === 0}
+                                                            className="w-4 h-4 rounded bg-amber-500 disabled:opacity-20 text-black flex items-center justify-center text-[10px] font-black"
+                                                            title="Move Left"
+                                                        >
+                                                            ◀
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => handleMove(sortedIdx, 1)}
+                                                            disabled={isLast}
+                                                            className="w-4 h-4 rounded bg-amber-500 disabled:opacity-20 text-black flex items-center justify-center text-[10px] font-black"
+                                                            title="Move Right"
+                                                        >
+                                                            ▶
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                {!isLast && (
+                                                    <div className="flex items-center justify-center w-5 opacity-40">
+                                                        <span className="text-muted-foreground text-xs font-black">➔</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        );
+                    })()}
+
                     {/* Skill Rotation */}
                     <div className={styles.rotationSection}>
                         <div className="mb-4">
                             <Marker color="bg-amber-500" />
-                            <span className="text-[10px] font-black uppercase tracking-widest ml-2 text-muted-foreground">Skill Rotation Intel</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest ml-2 text-muted-foreground">Skill Rotation</span>
                         </div>
 
                         <div className={styles.rotationGrid}>
@@ -173,10 +265,13 @@ export default function CastleRushTeamSet({
                                             type="text"
                                             value={slot.label || ''}
                                             onChange={(e) => onUpdateSlotLabel(index, slotIdx, e.target.value)}
-                                            placeholder="..."
+                                            placeholder={`Step ${slotIdx + 1}`}
                                             className={styles.slotLabelInput}
                                         />
                                         <div className="relative">
+                                            <div className="absolute -top-1.5 -right-1.5 min-w-[16px] h-[16px] px-1 bg-amber-500 text-black rounded-full flex items-center justify-center text-[8px] font-black z-20 pointer-events-none shadow">
+                                                {slotIdx + 1}
+                                            </div>
                                             <button
                                                 onClick={() => onOpenSkillPicker({ setIdx: index, slotIdx })}
                                                 disabled={!hasHeroes}
@@ -214,7 +309,7 @@ export default function CastleRushTeamSet({
                                 className={styles.addSlotBtn}
                                 title="Add rotation slot"
                             >
-                                <span className="text-[10px] font-black">+ STEP</span>
+                                <span className="text-[10px] font-black">+ Add Skill</span>
                             </button>
                         </div>
                     </div>

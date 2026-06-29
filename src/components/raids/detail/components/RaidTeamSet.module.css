@@ -8,9 +8,8 @@
   );
   border: 1px solid var(--border);
   border-radius: 1.5rem;
-  overflow: hidden;
   backdrop-filter: blur(12px);
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, z-index 0s;
 }
 
 .set:hover {
@@ -18,6 +17,7 @@
   box-shadow:
     0 0 40px rgba(239, 68, 68, 0.08),
     0 20px 48px -12px rgba(0, 0, 0, 0.4);
+  z-index: 20;
 }
 
 /* ===== Header Strip ===== */
@@ -62,11 +62,12 @@
 }
 
 .teamTitle {
+  font-family: var(--font-serif), serif;
+  font-variant-numeric: lining-nums;
   font-size: 1.1rem;
   font-weight: 800;
   color: var(--foreground);
   text-transform: uppercase;
-  font-style: italic;
   letter-spacing: -0.01em;
   transition: color 0.3s ease;
 }
