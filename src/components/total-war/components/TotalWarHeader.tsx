@@ -15,12 +15,7 @@ export default function TotalWarHeader({ lastUpdated }) {
 
             <div className={styles.mainInfo}>
                 <div className={styles.titleGroup}>
-                    <div className={styles.categoryTag}>
-                        <Swords className="w-3.5 h-3.5 animate-pulse" />
-                        <span>PVE Combat Matrix</span>
-                    </div>
                     <h1 className={styles.title}>TOTAL WAR</h1>
-                    <p className={styles.subtitle}>7K GLOBAL CAMPAIGN DIRECTIVES</p>
                 </div>
                 
                 {lastUpdated && (
