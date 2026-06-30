@@ -44,7 +44,10 @@ export default function SafeImage({ src, alt, fallback = "data:image/png;base64,
             style={styleProps}
             src={imagePath}
             alt={alt || "image"}
-            onError={() => setHasError(true)}
+            onError={(e) => {
+                setHasError(true)
+                if (props.onError) props.onError(e)
+            }}
         />
     )
 }

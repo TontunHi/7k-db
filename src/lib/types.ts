@@ -59,6 +59,8 @@ export interface ArenaTeam extends RowDataPacket {
   team_name: string | null;
   formation: string;
   pet_file: string | null;
+  pet_supports_json?: string | any[];
+  pet_supports?: (string | null)[];
   heroes_json: string | any[];
   skill_rotation: string | any[];
   video_url: string | null;

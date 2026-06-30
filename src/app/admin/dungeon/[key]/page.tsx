@@ -57,8 +57,7 @@ export default function DungeonDetailPage({ params }: { params: Promise<{ key: s
     if (loading) {
         return (
             <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
-                <div className="text-[4rem] font-black italic opacity-10 animate-pulse tracking-tighter">DATA_FETCH</div>
-                <p className="text-xs font-black text-muted-foreground uppercase tracking-widest animate-pulse">Accessing Sector Data...</p>
+                <p className="text-xs font-black text-muted-foreground uppercase tracking-widest animate-pulse">Loading Dungeon Details...</p>
             </div>
         )
     }
@@ -66,8 +65,8 @@ export default function DungeonDetailPage({ params }: { params: Promise<{ key: s
     if (!dungeon) {
         return (
             <div className="h-[40vh] flex flex-col items-center justify-center gap-2">
-                <h2 className="text-2xl font-black uppercase text-red-500">Sector Missing</h2>
-                <p className="text-muted-foreground">The requested dungeon tactical data could not be found.</p>
+                <h2 className="text-2xl font-black uppercase text-red-500">Dungeon Not Found</h2>
+                <p className="text-muted-foreground">The requested dungeon data could not be loaded.</p>
             </div>
         )
     }

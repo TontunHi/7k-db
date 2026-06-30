@@ -2,6 +2,7 @@ import { Video, ExternalLink } from 'lucide-react'
 import FormationGrid from '@/components/shared/FormationGrid'
 import PetDisplay from '@/components/shared/PetDisplay'
 import SkillSequence from '@/components/shared/SkillSequence'
+import SafeImage from '@/components/shared/SafeImage'
 import styles from './ArenaTeamCard.module.css'
 
 export default function ArenaTeamCard({ set, index, heroImageMap }) {
@@ -14,9 +15,6 @@ export default function ArenaTeamCard({ set, index, heroImageMap }) {
             {/* Team Header */}
             <div className={styles.header}>
                 <div className={styles.headerInfo}>
-                    <div className={styles.number}>
-                        {index + 1}
-                    </div>
                     <div className={styles.titleGroup}>
 
                         <h3 className={styles.teamName}>
@@ -54,10 +52,26 @@ export default function ArenaTeamCard({ set, index, heroImageMap }) {
                         />
                     </div>
 
-                    <div className={styles.petArea}>
+                    <div className="flex flex-col items-center gap-3 shrink-0">
                         <div className={styles.petBox}>
                             <PetDisplay petFile={set.pet_file} hideLabel={true} />
                         </div>
+
+                        {set.pet_supports && set.pet_supports.some(p => p !== null) && (
+                            <div className="flex gap-1.5 justify-center">
+                                {set.pet_supports.map((pet, pIdx) => pet && (
+                                    <div key={pIdx} className="relative w-8 h-8 rounded-lg border border-border bg-slate-900/40 overflow-hidden flex items-center justify-center group/support-pet hover:border-blue-500/50 transition-colors shadow-md">
+                                        <SafeImage 
+                                            src={pet} 
+                                            alt="" 
+                                            fill 
+                                            sizes="32px"
+                                            className="object-contain p-1 group-hover/support-pet:scale-110 transition-transform duration-300" 
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
 

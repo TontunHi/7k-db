@@ -65,7 +65,7 @@ export default function RaidDetailPage({ params }: { params: Promise<{ key: stri
         return (
             <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
                 <Loader2 className="w-10 h-10 animate-spin text-red-500" />
-                <p className="text-xs font-black text-muted-foreground uppercase tracking-widest animate-pulse">Syncing Tactical Intel...</p>
+                <p className="text-xs font-black text-muted-foreground uppercase tracking-widest animate-pulse">Loading Raid Boss Details...</p>
             </div>
         )
     }
@@ -73,8 +73,8 @@ export default function RaidDetailPage({ params }: { params: Promise<{ key: stri
     if (!raid) {
         return (
             <div className="h-[40vh] flex flex-col items-center justify-center gap-2">
-                <h2 className="text-2xl font-black uppercase text-red-500 italic transform -skew-x-3">Sector Compromised</h2>
-                <p className="text-muted-foreground font-bold uppercase tracking-wider text-xs opacity-50">Target RAID data not found in registry.</p>
+                <h2 className="text-2xl font-black uppercase text-red-500 italic transform -skew-x-3">Raid Boss Not Found</h2>
+                <p className="text-muted-foreground font-bold uppercase tracking-wider text-xs opacity-50">The requested raid boss data could not be loaded.</p>
             </div>
         )
     }

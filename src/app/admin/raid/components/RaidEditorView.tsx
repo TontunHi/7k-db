@@ -11,15 +11,64 @@ import { clsx } from 'clsx'
 import { toast } from 'sonner'
 import styles from '../raid.module.css'
 
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core'
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
+
 /**
  * RaidEditorView - Main orchestrator for editing raid tactical data
  */
 export default function RaidEditorView({ raidKey, initialRaid, initialSets, allRaids, assets }) {
-    const [sets, setSets] = useState(initialSets.map(s => ({ ...s, _dirty: false })))
+    const [sets, setSets] = useState(initialSets.map(s => ({ ...s, id: s.id.toString(), _dirty: false })))
     const [saving, setSaving] = useState(false)
     const [skillErrors, setSkillErrors] = useState({})
     const [buildPicker, setBuildPicker] = useState(null)
     const [collapsedSets, setCollapsedSets] = useState(new Set<number | string>())
+
+    // --- DND Sensors ---
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    )
+
+    const handleDragEnd = (event: any) => {
+        const { active, over } = event
+
+        if (over && active.id !== over.id) {
+            setSets((items) => {
+                const oldIndex = items.findIndex((i) => i.id === active.id)
+                const newIndex = items.findIndex((i) => i.id === over.id)
+                
+                const newItems = arrayMove(items, oldIndex, newIndex)
+                
+                // Update set_index and mark all as dirty if order changed
+                return newItems.map((item: any, idx) => ({
+                    ...item,
+                    set_index: idx + 1,
+                    _dirty: true
+                }))
+            })
+            toast.info("Team order adjusted")
+        }
+    }
 
     const handleAddSet = () => {
         const newSet = {
@@ -37,7 +86,25 @@ export default function RaidEditorView({ raidKey, initialRaid, initialSets, allR
             _dirty: true
         }
         setSets([...sets, newSet])
-        toast.info("New tactical deployment drafted")
+        toast.info("New team draft created")
+    }
+
+    const handleDuplicateSet = (index: number) => {
+        const setToDuplicate = sets[index]
+        const duplicatedSet = {
+            ...setToDuplicate,
+            id: `new-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+            team_name: setToDuplicate.team_name ? `${setToDuplicate.team_name} (Copy)` : '',
+            set_index: sets.length + 1,
+            heroes: setToDuplicate.heroes ? [...setToDuplicate.heroes] : [null, null, null, null, null],
+            selection_order: setToDuplicate.selection_order ? [...setToDuplicate.selection_order] : [],
+            hero_builds: setToDuplicate.hero_builds ? JSON.parse(JSON.stringify(setToDuplicate.hero_builds)) : {},
+            skill_rotation: setToDuplicate.skill_rotation ? [...setToDuplicate.skill_rotation] : [],
+            _isNew: true,
+            _dirty: true
+        }
+        setSets([...sets, duplicatedSet])
+        toast.success("Team duplicated successfully (unsaved)")
     }
 
     const handleUpdateSet = (index, field, value) => {
@@ -74,16 +141,16 @@ export default function RaidEditorView({ raidKey, initialRaid, initialSets, allR
 
     const handleDeleteSet = async (index) => {
         const set = sets[index]
-        if (!confirm(`Permanently decommission Squad ${set.team_name || index + 1}?`)) return
+        if (!confirm(`Are you sure you want to permanently delete Team ${set.team_name || index + 1}?`)) return
 
         try {
             if (!set._isNew) {
                 await deleteSetAction(set.id)
             }
             setSets(sets.filter((_, i) => i !== index))
-            toast.success("Squad decommissioned")
+            toast.success("Team deleted successfully")
         } catch (err) {
-            toast.error("Decommissioning failed")
+            toast.error("Failed to delete team")
         }
     }
 
@@ -120,9 +187,9 @@ export default function RaidEditorView({ raidKey, initialRaid, initialSets, allR
             
             const freshSets = await getSetsByRaid(raidKey)
             setSets(freshSets.map(s => ({ ...s, _dirty: false })))
-            toast.success("Tactical synchronization complete")
+            toast.success("All teams saved successfully")
         } catch (err: any) {
-            toast.error(err.message || "Synchronization failed")
+            toast.error(err.message || "Failed to save teams")
         } finally {
             setSaving(false)
         }
@@ -155,33 +222,44 @@ export default function RaidEditorView({ raidKey, initialRaid, initialSets, allR
     return (
         <div className={styles.container}>
             <div className={styles.editorLayout}>
-                {/* Left Tactical Sidebar */}
+                {/* Left Sidebar */}
                 <aside className={styles.sidebar}>
-                    <Link href="/admin/raid" className="flex items-center gap-2 text-muted-foreground hover:text-red-500 transition-colors w-fit group mb-4">
-                        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                        <span className="font-bold uppercase text-xs tracking-widest">Abort to Command Center</span>
+                    <Link href="/admin/raid" className="flex items-center gap-2 px-4 py-2 bg-secondary/80 hover:bg-secondary border border-border rounded-xl text-muted-foreground hover:text-foreground transition-all duration-300 w-fit group">
+                        <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                        <span className="font-black uppercase text-[10px] tracking-widest">Back to List</span>
                     </Link>
 
-                    <div className={styles.sidebarCard}>
-                        <NextImage src={initialRaid.image} alt={initialRaid.name} fill className={styles.bgImage} />
-                        <div className={styles.overlay} />
-                        <div className={styles.cardContent}>
-                            <div className="flex items-center gap-2 mb-1">
-                                <Skull size={14} className="text-red-500" />
-                                <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Raid Boss</span>
+                    <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-border shadow-2xl group/sidebar-main">
+                        <NextImage src={initialRaid.image} alt={initialRaid.name} fill className="object-cover group-hover/sidebar-main:scale-105 transition-transform duration-700" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                        <div className="absolute bottom-4 left-4 right-4">
+                            <div className="flex items-center gap-1.5 mb-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                                <span className="text-[9px] font-black text-red-500 uppercase tracking-widest">Active Target</span>
                             </div>
-                            <h2 className={styles.raidName}>{initialRaid.name}</h2>
+                            <h2 className="text-xl font-black text-white uppercase italic tracking-tight">{initialRaid.name}</h2>
                         </div>
                     </div>
 
-                    <div className="mt-4 space-y-3">
-                        <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50 px-2">Other Sectors</h4>
-                        <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-2 mt-4">
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 px-2 flex items-center gap-1.5">
+                            <span className="w-1 h-3 bg-red-500/50 rounded-full" />
+                            Other Raid Targets
+                        </h4>
+                        <div className="space-y-1.5 max-h-[300px] overflow-y-auto pr-1">
                             {allRaids.filter(r => r.key !== raidKey).map(r => (
-                                <Link key={r.key} href={`/admin/raid/${r.key}`} className="relative aspect-[3/4] rounded-xl overflow-hidden border border-border group grayscale hover:grayscale-0 transition-all">
-                                    <NextImage src={r.image} alt={r.name} fill className="object-cover opacity-50 group-hover:opacity-100 transition-opacity" />
-                                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-2 text-center">
-                                        <span className="text-[8px] font-black text-white uppercase tracking-tighter leading-tight drop-shadow-lg">{r.name}</span>
+                                <Link 
+                                    key={r.key} 
+                                    href={`/admin/raid/${r.key}`} 
+                                    className="flex items-center gap-3 p-2.5 rounded-xl border border-white/5 hover:border-red-500/20 bg-card/40 hover:bg-card/90 transition-all duration-300 group"
+                                >
+                                    <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-white/10 shrink-0">
+                                        <NextImage src={r.image} alt={r.name} fill className="object-cover group-hover:scale-110 transition-transform duration-300" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="text-[11px] font-black text-foreground/80 group-hover:text-red-500 transition-colors uppercase truncate">
+                                            {r.name}
+                                        </div>
                                     </div>
                                 </Link>
                             ))}
@@ -192,11 +270,11 @@ export default function RaidEditorView({ raidKey, initialRaid, initialSets, allR
                 {/* Main Intel Flow */}
                 <main className={styles.mainContent}>
                     <header className={styles.stickyHeader}>
-                        <h1 className="text-xl font-black italic uppercase">Squad Intelligence</h1>
+                        <h1 className="text-xl font-black italic uppercase">Raid Teams Setup</h1>
                         <div className="flex items-center gap-3">
                             <button onClick={handleAddSet} className="flex items-center gap-2 px-4 py-2.5 bg-accent text-foreground rounded-xl text-xs font-black uppercase tracking-widest hover:bg-border transition-colors border border-border">
                                 <Plus size={18} />
-                                <span>Add Squad</span>
+                                <span>Add Team</span>
                             </button>
                             <button
                                 onClick={handleSaveAll}
@@ -206,10 +284,10 @@ export default function RaidEditorView({ raidKey, initialRaid, initialSets, allR
                                     hasDirty 
                                         ? "bg-red-600 text-white hover:bg-red-500 shadow-lg shadow-red-600/20" 
                                         : "bg-muted text-muted-foreground cursor-not-allowed opacity-50"
-                                )}
+                                    )}
                             >
                                 {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                                Sync Data
+                                Save Changes
                             </button>
                         </div>
                     </header>
@@ -218,27 +296,40 @@ export default function RaidEditorView({ raidKey, initialRaid, initialSets, allR
                         {sets.length === 0 && (
                             <div className="text-center py-20 border-2 border-dashed border-border rounded-3xl bg-card/30">
                                 <Skull size={48} className="mx-auto mb-4 text-muted-foreground opacity-20" />
-                                <p className="text-muted-foreground italic">No tactical squads deployed for this boss.</p>
+                                <p className="text-muted-foreground italic">No raid teams configured for this boss.</p>
                             </div>
                         )}
 
-                        {sets.map((set, idx) => (
-                            <RaidTeamSet
-                                key={set.id}
-                                set={set}
-                                index={idx}
-                                assets={assets}
-                                skillErrors={skillErrors}
-                                isCollapsed={collapsedSets.has(set.id)}
-                                onTeamUpdate={handleTeamUpdate}
-                                onSetUpdate={handleUpdateSet}
-                                onDelete={handleDeleteSet}
-                                onToggleSkill={handleToggleSkill}
-                                onToggleCollapse={toggleCollapse}
-                                onSkillError={(key) => setSkillErrors(prev => ({ ...prev, [key]: true }))}
-                                onOpenBuildPicker={(hIdx) => setBuildPicker({ setIdx: idx, heroIdx: hIdx })}
-                            />
-                        ))}
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCenter}
+                            modifiers={[restrictToVerticalAxis]}
+                            onDragEnd={handleDragEnd}
+                        >
+                            <SortableContext
+                                items={sets.map(s => s.id)}
+                                strategy={verticalListSortingStrategy}
+                            >
+                                {sets.map((set, idx) => (
+                                    <RaidTeamSet
+                                        key={set.id}
+                                        set={set}
+                                        index={idx}
+                                        assets={assets}
+                                        skillErrors={skillErrors}
+                                        isCollapsed={collapsedSets.has(set.id)}
+                                        onTeamUpdate={handleTeamUpdate}
+                                        onSetUpdate={handleUpdateSet}
+                                        onDelete={handleDeleteSet}
+                                        onDuplicate={handleDuplicateSet}
+                                        onToggleSkill={handleToggleSkill}
+                                        onToggleCollapse={toggleCollapse}
+                                        onSkillError={(key) => setSkillErrors(prev => ({ ...prev, [key]: true }))}
+                                        onOpenBuildPicker={(hIdx) => setBuildPicker({ setIdx: idx, heroIdx: hIdx })}
+                                    />
+                                ))}
+                            </SortableContext>
+                        </DndContext>
                     </div>
                 </main>
             </div>

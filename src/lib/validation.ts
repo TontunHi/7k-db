@@ -86,6 +86,7 @@ export const ArenaTeamSchema = z.object({
   team_name: z.string().max(100).optional().nullable(),
   formation: z.string().min(1),
   pet_file: z.string().optional().nullable(),
+  pet_supports: z.array(z.string().optional().nullable()).max(3).optional().nullable(),
   heroes: TeamHeroesSchema,
   skill_rotation: SkillRotationSchema,
   video_url: z.string().url().or(z.string().length(0)).nullable(),

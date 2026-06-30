@@ -9,7 +9,6 @@ import { clsx } from "clsx"
 import { ChevronDown, Menu, X } from "lucide-react"
 
 import { ThemeToggle } from "@/components/shared/ThemeToggle"
-import LanguageSwitcher from "./LanguageSwitcher"
 
 interface NavbarProps {
     translations?: Record<string, string>
@@ -157,7 +156,6 @@ export default function Navbar({ translations = {} }: NavbarProps) {
 
                 {/* Right Actions */}
                 <div className="flex items-center gap-2">
-                    <LanguageSwitcher />
                     <ThemeToggle />
                     
                     {/* Mobile Menu Button */}

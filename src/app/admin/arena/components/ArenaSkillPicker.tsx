@@ -45,7 +45,8 @@ export default function ArenaSkillPicker({
                         
                         const heroSlug = heroFile.replace(/\.[^/.]+$/, "")
                         const heroName = heroSlug.replace(/^(l\+\+|l\+|l|r|uc|c)_/i, '').replace(/_/g, ' ')
-                        const skills = skillsMap?.[heroSlug] || ["4", "3", "2", "1"]
+                        const rawSkills = skillsMap?.[heroSlug] || ["4", "3", "2", "1"]
+                        const skills = Array.from(new Set([...rawSkills, "0"])).sort((a, b) => parseInt(b) - parseInt(a))
 
                         return (
                             <div key={heroIdx} className={styles.heroRow}>
@@ -62,13 +63,15 @@ export default function ArenaSkillPicker({
                                         const skillPath = getSkillImagePath(heroFile, skillName)
                                         const errKey = `pick-${heroIdx}-${skillName}`
 
+                                        if (skillErrors[errKey]) return null
+
                                         return (
                                             <button
                                                 key={skillName}
                                                 onClick={() => onSelect(setIdx, slotIdx, skillKey)}
                                                 className={clsx(styles.skillPickBtn, "relative")}
                                             >
-                                                {skillPath && !skillErrors[errKey] && (
+                                                {skillPath && (
                                                     <SafeImage
                                                         src={skillPath}
                                                         alt=""
@@ -78,7 +81,6 @@ export default function ArenaSkillPicker({
                                                         onError={() => onSkillError(errKey)}
                                                     />
                                                 )}
-                                                {!skillPath && <span className="text-[10px] font-bold text-muted-foreground flex items-center justify-center w-full h-full">S{skillName}</span>}
                                             </button>
                                         )
                                     })}

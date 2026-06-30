@@ -65,7 +65,7 @@ export default function AdventBossDetailPage({ params }: { params: Promise<{ bos
         return (
             <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
                 <Loader2 className="w-10 h-10 animate-spin text-violet-500" />
-                <p className="text-xs font-black text-muted-foreground uppercase tracking-widest animate-pulse">Initializing Tactical Matrix...</p>
+                <p className="text-xs font-black text-muted-foreground uppercase tracking-widest animate-pulse">Loading Advent Boss Details...</p>
             </div>
         )
     }
@@ -73,8 +73,8 @@ export default function AdventBossDetailPage({ params }: { params: Promise<{ bos
     if (!boss) {
         return (
             <div className="h-[40vh] flex flex-col items-center justify-center gap-2">
-                <h2 className="text-2xl font-black uppercase text-violet-500 italic transform -skew-x-3">Intel Missing</h2>
-                <p className="text-muted-foreground font-bold uppercase tracking-wider text-xs opacity-50">Target BOSS data not found in expedition registry.</p>
+                <h2 className="text-2xl font-black uppercase text-violet-500 italic transform -skew-x-3">Boss Not Found</h2>
+                <p className="text-muted-foreground font-bold uppercase tracking-wider text-xs opacity-50">The requested boss data could not be loaded.</p>
             </div>
         )
     }

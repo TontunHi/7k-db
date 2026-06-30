@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ActionLabel, Marker } from "../components/AdminEditorial"
 import { 
     createArenaTeam, 
@@ -21,6 +21,11 @@ import { toast } from "sonner"
  * ArenaManagerView - Orchestrator for Arena squad management
  */
 export default function ArenaManagerView({ initialTeams, assets }) {
+    const [mounted, setMounted] = useState(false)
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
     const [teams, setTeams] = useState(initialTeams.map(t => ({ 
         ...t, 
         id: t.id.toString(), 
@@ -36,6 +41,10 @@ export default function ArenaManagerView({ initialTeams, assets }) {
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     )
+
+    if (!mounted) {
+        return <div className="animate-pulse h-96 bg-muted/10 rounded-2xl border border-border" />
+    }
 
     const handleDragEnd = (event) => {
         const { active, over } = event
@@ -62,6 +71,7 @@ export default function ArenaManagerView({ initialTeams, assets }) {
             team_name: '',
             formation: assets.formations[0]?.value || '2-3',
             pet_file: '',
+            pet_supports: [null, null, null],
             heroes: [null, null, null, null, null],
             skill_rotation: [],
             video_url: '',
@@ -80,6 +90,7 @@ export default function ArenaManagerView({ initialTeams, assets }) {
                 ...updated[index], 
                 formation: value.formation,
                 pet_file: value.pet_file,
+                pet_supports: value.pet_supports || [null, null, null],
                 heroes: value.heroes,
                 _dirty: true 
             }
@@ -116,6 +127,7 @@ export default function ArenaManagerView({ initialTeams, assets }) {
                     team_name: team.team_name,
                     formation: team.formation,
                     pet_file: team.pet_file,
+                    pet_supports: team.pet_supports || [null, null, null],
                     heroes: team.heroes,
                     skill_rotation: team.skill_rotation,
                     video_url: team.video_url,

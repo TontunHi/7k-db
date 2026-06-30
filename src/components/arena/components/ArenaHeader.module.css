@@ -1,167 +1,268 @@
-/* ===== Arena Header (Tactical & Dimensional) ===== */
-.header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 4rem 1.25rem 4.5rem;
+/* ===== Arena Header (Widescreen Pure CSS HUD Banner) ===== */
+.bannerWrapper {
   position: relative;
+  width: 100%;
+  min-height: 200px;
+  border-radius: 2rem;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 100%, rgba(59, 130, 246, 0.08), transparent 70%);
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  background: radial-gradient(circle at 20% 50%, rgba(15, 23, 42, 0.9) 0%, #030712 100%);
+  box-shadow: 
+    0 10px 40px -10px rgba(0, 0, 0, 0.7),
+    inset 0 0 30px rgba(59, 130, 246, 0.1);
+  margin-bottom: 3rem;
+  padding: 2.5rem;
 }
 
-.headerGlow {
+/* Corner Brackets */
+.corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid transparent;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.cornerTL {
+  top: 1rem;
+  left: 1rem;
+  border-top-color: rgba(59, 130, 246, 0.8);
+  border-left-color: rgba(59, 130, 246, 0.8);
+}
+
+.cornerTR {
+  top: 1rem;
+  right: 1rem;
+  border-top-color: rgba(59, 130, 246, 0.8);
+  border-right-color: rgba(59, 130, 246, 0.8);
+}
+
+.cornerBL {
+  bottom: 1rem;
+  left: 1rem;
+  border-bottom-color: rgba(59, 130, 246, 0.8);
+  border-left-color: rgba(59, 130, 246, 0.8);
+}
+
+.cornerBR {
+  bottom: 1rem;
+  right: 1rem;
+  border-bottom-color: rgba(59, 130, 246, 0.8);
+  border-right-color: rgba(59, 130, 246, 0.8);
+}
+
+.bannerGlow {
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: 30%;
   transform: translate(-50%, -50%);
-  width: 40rem;
-  height: 20rem;
-  background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.15), transparent 70%);
-  filter: blur(80px);
-  z-index: 1;
+  width: 600px;
+  height: 180px;
+  background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.25), transparent 70%);
+  filter: blur(50px);
   pointer-events: none;
+  z-index: 1;
 }
 
 .tacticalGrid {
   position: absolute;
   inset: 0;
   background-image: 
-    linear-gradient(to right, var(--border) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: radial-gradient(circle at 50% 50%, black, transparent 80%);
-  opacity: 0.03;
-  z-index: 0;
-}
-
-.horizontalLines {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(59, 130, 246, 0.05) 1px, rgba(59, 130, 246, 0.05) 2px);
-  background-size: 100% 4px;
-  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
-  opacity: 0.3;
+    linear-gradient(to right, rgba(59, 130, 246, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(circle at 30% 50%, black 55%, transparent 100%);
+  opacity: 0.6;
+  z-index: 2;
   pointer-events: none;
 }
 
-/* Title Dimensionality */
-.titleContainer {
+.scanline {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(59, 130, 246, 0.03) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0.5;
+}
+
+.bannerContent {
   position: relative;
   z-index: 10;
-  margin-bottom: 1rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .bannerContent {
+    flex-direction: row;
+    text-align: left;
+    gap: 3rem;
+  }
+}
+
+/* Left HUD Graphic */
+.hudGraphic {
+  display: none;
+  flex-shrink: 0;
+  z-index: 5;
+}
+
+@media (min-width: 1024px) {
+  .hudGraphic {
+    display: block;
+    width: 110px;
+    height: 110px;
+  }
+}
+
+.hudSvg {
+  width: 100%;
+  height: 100%;
+}
+
+.hudOuterCircle {
+  fill: none;
+  stroke: rgba(59, 130, 246, 0.2);
+  stroke-width: 1.5;
+  stroke-dasharray: 8 6;
+  transform-origin: 50px 50px;
+  animation: rotateCW 20s linear infinite;
+}
+
+.hudInnerCircle {
+  fill: none;
+  stroke: rgba(59, 130, 246, 0.4);
+  stroke-width: 1;
+  stroke-dasharray: 40 10;
+  transform-origin: 50px 50px;
+  animation: rotateCCW 15s linear infinite;
+}
+
+.hudCrosshair {
+  stroke: rgba(59, 130, 246, 0.3);
+  stroke-width: 0.75;
+}
+
+.hudSwords {
+  transform-origin: 50px 50px;
+  animation: pulseGlow 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.6));
+}
+
+/* Center Title Group */
+.titleGroup {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .titleGroup {
+    align-items: flex-start;
+  }
 }
 
 .title {
-  font-size: clamp(2rem, 9vw, 4.5rem);
+  font-size: clamp(2.5rem, 8vw, 4rem);
   font-weight: 950;
-  color: var(--foreground);
+  color: #fff;
   text-transform: uppercase;
-  letter-spacing: -0.05em;
-  line-height: 0.85;
+  letter-spacing: -0.01em;
+  line-height: 0.95;
   font-style: italic;
-  transform: skewX(-10deg);
-  position: relative;
-  z-index: 2;
-  background: linear-gradient(to bottom, var(--foreground) 60%, color-mix(in srgb, var(--foreground), transparent 50%));
+  transform: skewX(-8deg);
+  margin: 0.25rem 0 1rem;
+  background: linear-gradient(to right, #ffffff 40%, #93c5fd 100%);
   -webkit-background-clip: text;
   background-clip: text;
-  animation: tacticalEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.5));
+  animation: bannerEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.titleShadow {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  font-size: clamp(2rem, 9vw, 4.5rem);
-  font-weight: 950;
-  text-transform: uppercase;
-  letter-spacing: -0.05em;
-  line-height: 0.85;
-  font-style: italic;
-  transform: skewX(-10deg);
-  color: #3b82f6;
-  opacity: 0.15;
-  filter: blur(12px);
-  z-index: 1;
-  pointer-events: none;
-  animation: tacticalEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
-}
-
-/* Meta Status Badge */
 .metaStatus {
-  position: relative;
-  z-index: 10;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.625rem 1.25rem;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  border-radius: 9999px;
-  backdrop-filter: blur(12px);
-  animation: fadeIn 1s ease-out 0.5s both;
-}
-
-.statusPulse {
-  width: 8px;
-  height: 8px;
-  background: #3b82f6;
-  border-radius: 50%;
-  position: relative;
-}
-
-.statusPulse::after {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border: 1px solid #3b82f6;
-  border-radius: 50%;
-  animation: statusPulse 2s infinite;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 0.5rem;
+  font-size: 0.625rem;
+  font-weight: 800;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .statusText {
-  font-size: 0.65rem;
-  font-weight: 900;
-  color: #3b82f6;
-  letter-spacing: 0.15em;
+  color: #60a5fa;
+  letter-spacing: 0.1em;
 }
 
 .statusDivider {
   width: 1px;
-  height: 12px;
+  height: 10px;
   background: rgba(59, 130, 246, 0.3);
 }
 
 .dateText {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: var(--muted-foreground);
-  opacity: 0.8;
-  letter-spacing: 0.05em;
+  color: #94a3b8;
+}
+
+/* Right Stats Widget */
+.statsWidget {
+  width: 100%;
+  max-width: 220px;
+  background: rgba(30, 41, 59, 0.3);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: 1rem;
+  padding: 1rem;
+  backdrop-filter: blur(10px);
+}
+
+@media (max-width: 767px) {
+  .statsWidget {
+    display: none;
+  }
+}
+
+.widgetHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.5rem;
+}
+
+.widgetHeader span:last-child {
+  font-size: 0.55rem;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 /* Animations */
-@keyframes tacticalEntrance {
-  0% { opacity: 0; transform: scale(1.1) translateY(20px) skewX(-10deg); filter: blur(20px); }
-  100% { opacity: 1; transform: scale(1) translateY(0) skewX(-10deg); filter: blur(0); }
+@keyframes rotateCW {
+  to { transform: rotate(360deg); }
 }
 
-@keyframes statusPulse {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(2.5); opacity: 0; }
+@keyframes rotateCCW {
+  to { transform: rotate(-360deg); }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.8)); }
 }
 
-@media (max-width: 640px) {
-  .header { padding: 4rem 1rem; }
-  .title { font-size: 4rem; }
-  .titleShadow { font-size: 4rem; }
+@keyframes bannerEntrance {
+  0% { opacity: 0; transform: scale(1.03) translateY(10px) skewX(-8deg); filter: blur(5px); }
+  100% { opacity: 1; transform: scale(1) translateY(0) skewX(-8deg); filter: blur(0); }
 }

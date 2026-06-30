@@ -110,6 +110,7 @@ export default function ArenaTeamSet({
                             index: index + 1,
                             formation: team.formation,
                             pet_file: team.pet_file,
+                            pet_supports: team.pet_supports || [null, null, null],
                             heroes: team.heroes || [null, null, null, null, null]
                         }}
                         index={index}

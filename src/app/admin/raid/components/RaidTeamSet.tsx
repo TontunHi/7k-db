@@ -1,10 +1,12 @@
 "use client"
 
-import { Trash2, Zap, Video, Plus, ScrollText, ChevronDown, ChevronUp } from "lucide-react"
+import { Trash2, Zap, Video, Plus, ScrollText, ChevronDown, ChevronUp, Copy } from "lucide-react"
 import TeamBuilder from "@/components/admin/TeamBuilder"
 import SafeImage from "@/components/shared/SafeImage"
 import { clsx } from "clsx"
 import styles from "../raid.module.css"
+import { useSortable } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 
 /**
  * RaidTeamSet - Modular component for a single raid squad setup
@@ -18,11 +20,28 @@ export default function RaidTeamSet({
     onTeamUpdate, 
     onSetUpdate, 
     onDelete, 
+    onDuplicate,
     onToggleSkill,
     onToggleCollapse,
     onSkillError,
     onOpenBuildPicker
 }) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id: set.id })
+
+    const sortableStyle = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 50 : undefined,
+        position: 'relative' as const,
+        opacity: isDragging ? 0.5 : 1
+    }
     
     function getSkillImagePath(heroFilename, skillNumber) {
         if (!heroFilename) return null
@@ -33,10 +52,21 @@ export default function RaidTeamSet({
     const rotation = set.skill_rotation || []
 
     return (
-        <div className={clsx(styles.teamSet, set._dirty && styles.teamSetDirty)}>
+        <div 
+            ref={setNodeRef}
+            style={sortableStyle}
+            className={clsx(styles.teamSet, set._dirty && styles.teamSetDirty, isDragging && "shadow-2xl")}
+        >
             {/* Header */}
             <div className={styles.setHead}>
                 <div className="flex items-center gap-4 flex-1">
+                    <button 
+                        {...attributes} 
+                        {...listeners} 
+                        className="px-2 py-1 hover:bg-accent rounded cursor-grab active:cursor-grabbing text-muted-foreground transition-colors text-[10px] font-black"
+                    >
+                        DRAG
+                    </button>
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => onToggleCollapse(set.id)}>
                         <div className={styles.setIndex}>{index + 1}</div>
                         <input
@@ -44,11 +74,11 @@ export default function RaidTeamSet({
                             value={set.team_name || ''}
                             onChange={(e) => onSetUpdate(index, 'team_name', e.target.value)}
                             onClick={(e) => e.stopPropagation()}
-                            placeholder={`Tactical Team ${index + 1}`}
+                            placeholder={`Team ${index + 1}`}
                             className={styles.setNameInput}
                         />
                     </div>
-                    {set._dirty && <span className="px-2 py-0.5 bg-red-500/20 text-red-500 text-[10px] font-black rounded uppercase">Modified</span>}
+                    {set._dirty && <span className="px-2 py-0.5 bg-red-500/20 text-red-500 text-[10px] font-black rounded uppercase">Unsaved</span>}
                     
                     {/* Inline Summary when collapsed */}
                     {isCollapsed && (
@@ -66,13 +96,21 @@ export default function RaidTeamSet({
                     <button
                         onClick={() => onToggleCollapse(set.id)}
                         className="text-muted-foreground hover:text-red-500 p-2 hover:bg-accent rounded-lg transition-colors"
+                        title={isCollapsed ? "Expand" : "Collapse"}
                     >
                         {isCollapsed ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
                     </button>
                     <button
+                        onClick={() => onDuplicate(index)}
+                        className="text-muted-foreground hover:text-red-500 p-2 hover:bg-accent rounded-lg transition-colors"
+                        title="Duplicate Team"
+                    >
+                        <Copy size={18} />
+                    </button>
+                    <button
                         onClick={() => onDelete(index)}
                         className="text-muted-foreground hover:text-red-500 p-2 hover:bg-red-500/10 rounded-lg transition-colors"
-                        title="Remove squad"
+                        title="Delete Team"
                     >
                         <Trash2 size={18} />
                     </button>
@@ -148,9 +186,9 @@ export default function RaidTeamSet({
                             <div className={styles.rotationSection}>
                                 <div className="mb-2 flex items-center justify-between">
                                     <label className={styles.sectionLabel}>
-                                        <Zap size={14} className="text-red-500" /> Speed
+                                        <Zap size={14} className="text-red-500" /> Speed Order
                                     </label>
-                                    <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Adjust order using arrows</span>
+                                    <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Adjust skill order using arrows</span>
                                 </div>
                                 <div className="flex flex-wrap items-center gap-3 w-full bg-black/40 backdrop-blur-md rounded-2xl border border-white/5 p-4 shadow-lg">
                                     {orderedHeroes.map((item, sortedIdx) => {
@@ -207,9 +245,9 @@ export default function RaidTeamSet({
                     <div className={styles.rotationSection}>
                         <div className="flex justify-between items-end border-b border-border pb-2">
                             <label className={styles.sectionLabel}>
-                                <Zap size={14} className="text-red-500" /> Tactical Skill Sequence Grid
+                                <Zap size={14} className="text-red-500" /> Skill Rotation Grid
                             </label>
-                            <span className="text-[9px] font-black uppercase text-muted-foreground opacity-50 italic">Click icons to set numeric order</span>
+                            <span className="text-[9px] font-black uppercase text-muted-foreground opacity-50 italic">Click icons to set rotation order</span>
                         </div>
 
                         <div className={styles.skillPool}>
@@ -263,7 +301,7 @@ export default function RaidTeamSet({
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <div className="space-y-3">
                             <label className={styles.sectionLabel}>
-                                <Video size={14} /> Tactical Briefing (Video URL)
+                                <Video size={14} /> Guide Video (URL)
                             </label>
                             <input
                                 type="url"
@@ -276,7 +314,7 @@ export default function RaidTeamSet({
 
                         <div className="space-y-3">
                             <label className={styles.sectionLabel}>
-                                <ScrollText size={14} /> Strategic Intel (Notes)
+                                <ScrollText size={14} /> Additional Notes
                             </label>
                             <textarea
                                 value={set.note || ''}

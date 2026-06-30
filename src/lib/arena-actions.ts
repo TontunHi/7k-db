@@ -8,8 +8,23 @@ import { validateData, ArenaTeamSchema, type ArenaTeam as ArenaTeamInput } from 
 import { type ArenaTeam, type ActionResponse } from './types'
 import { type ResultSetHeader, type RowDataPacket } from 'mysql2'
 
+async function ensureTableColumns() {
+    try {
+        const [checkSupports] = await pool.query<any[]>(
+            'SHOW COLUMNS FROM arena_teams LIKE "pet_supports_json"'
+        )
+        if (checkSupports.length === 0) {
+            console.log("[DB PATCH] Adding pet_supports_json column to arena_teams...")
+            await pool.query('ALTER TABLE arena_teams ADD COLUMN pet_supports_json JSON AFTER pet_file')
+        }
+    } catch (e: any) {
+        console.warn("[DB PATCH] Could not ensure table columns:", e.message)
+    }
+}
+
 export async function getArenaTeams() {
     await initDB()
+    await ensureTableColumns()
     const [rows] = await pool.query<ArenaTeam[]>(
         'SELECT * FROM arena_teams ORDER BY team_index ASC'
     )
@@ -19,6 +34,9 @@ export async function getArenaTeams() {
         heroes: typeof row.heroes_json === 'string' 
             ? JSON.parse(row.heroes_json) 
             : (row.heroes_json || []),
+        pet_supports: typeof row.pet_supports_json === 'string'
+            ? JSON.parse(row.pet_supports_json)
+            : (row.pet_supports_json || []),
         skill_rotation: typeof row.skill_rotation === 'string'
             ? JSON.parse(row.skill_rotation)
             : (row.skill_rotation || [])
@@ -44,13 +62,14 @@ export async function createArenaTeam(data: ArenaTeamInput): Promise<ActionRespo
         const nextIndex = countResult[0].next_index
 
         const [result] = await pool.query<ResultSetHeader>(
-            `INSERT INTO arena_teams (team_index, team_name, formation, pet_file, heroes_json, skill_rotation, video_url, note)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO arena_teams (team_index, team_name, formation, pet_file, pet_supports_json, heroes_json, skill_rotation, video_url, note)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 nextIndex, 
                 validatedData.team_name || null, 
                 validatedData.formation, 
                 validatedData.pet_file || null, 
+                JSON.stringify(validatedData.pet_supports || []),
                 JSON.stringify(validatedData.heroes), 
                 JSON.stringify(validatedData.skill_rotation), 
                 validatedData.video_url, 
@@ -81,12 +100,13 @@ export async function updateArenaTeam(id: number, data: ArenaTeamInput): Promise
     try {
         await pool.query(
             `UPDATE arena_teams 
-             SET team_name = ?, formation = ?, pet_file = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
+             SET team_name = ?, formation = ?, pet_file = ?, pet_supports_json = ?, heroes_json = ?, skill_rotation = ?, video_url = ?, note = ?
              WHERE id = ?`,
             [
                 validatedData.team_name || null, 
                 validatedData.formation, 
                 validatedData.pet_file || null, 
+                JSON.stringify(validatedData.pet_supports || []),
                 JSON.stringify(validatedData.heroes), 
                 JSON.stringify(validatedData.skill_rotation), 
                 validatedData.video_url, 
