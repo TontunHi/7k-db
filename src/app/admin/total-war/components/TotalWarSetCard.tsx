@@ -45,14 +45,14 @@ export default function TotalWarSetCard({
                             value={set.set_name || ''}
                             onChange={(e) => onSetUpdate(setIdx, 'set_name', e.target.value)}
                             onClick={(e) => e.stopPropagation()}
-                            placeholder={`STRATEGIC SET ${setIdx + 1}`}
+                            placeholder={`SET ${setIdx + 1}`}
                             className={styles.setNameInput}
                         />
                         <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-40 ml-2">
-                            {set.teams?.length || 0} / {tierCfg.maxTeams} Teams Deployed
+                            {set.teams?.length || 0} / {tierCfg.maxTeams} Teams Created
                         </span>
                     </div>
-                    {set._dirty && <span className="px-2 py-0.5 bg-red-500/20 text-red-500 text-[10px] font-black rounded uppercase">Unsynchronized</span>}
+                    {set._dirty && <span className="px-2 py-0.5 bg-red-500/20 text-red-500 text-[10px] font-black rounded uppercase">Unsaved</span>}
                 </div>
 
                 <div className="flex items-center gap-1">
@@ -75,11 +75,11 @@ export default function TotalWarSetCard({
                 <div className={styles.setBody}>
                     {/* Set-level Note */}
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest pl-1">Strategic Overview</label>
+                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest pl-1">Description / Notes</label>
                         <textarea
                             value={set.note || ''}
                             onChange={(e) => onSetUpdate(setIdx, 'note', e.target.value)}
-                            placeholder="Overall strategy for this set (e.g. anti-cleave, stall team variants)..."
+                            placeholder="Describe the setup details (e.g. counter speed comps, stall setups)..."
                             className="w-full bg-black/40 border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-red-500/50 focus:outline-none resize-none min-h-[80px]"
                         />
                     </div>
@@ -107,11 +107,11 @@ export default function TotalWarSetCard({
                                 className={styles.addTeamBtn}
                             >
                                 <Plus size={20} />
-                                <span>Deploy New Squad ({set.teams?.length || 0} / {tierCfg.maxTeams})</span>
+                                <span>Add Team ({set.teams?.length || 0} / {tierCfg.maxTeams})</span>
                             </button>
                         ) : (
                             <div className="py-4 rounded-xl border border-border bg-black/20 text-center text-xs font-black text-muted-foreground uppercase tracking-widest opacity-50">
-                                Maximum Deployment Capacity Reached
+                                Max teams reached
                             </div>
                         )}
                     </div>
@@ -125,7 +125,7 @@ export default function TotalWarSetCard({
                                 className="flex items-center gap-2 px-8 py-3 rounded-xl font-black uppercase text-xs tracking-widest transition-all bg-red-600 text-white hover:bg-red-500 shadow-xl shadow-red-600/20"
                             >
                                 {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                                Synchronize Set {setIdx + 1}
+                                Save Set {setIdx + 1}
                             </button>
                         </div>
                     )}

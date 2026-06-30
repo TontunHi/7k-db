@@ -1,40 +1,37 @@
 import styles from './TotalWarHeader.module.css'
-import { getLocale, getTranslations } from '@/lib/i18n'
+import { Swords } from 'lucide-react'
 
-export default async function TotalWarHeader({ lastUpdated }) {
-    const lang = await getLocale()
-    const translations = await getTranslations(lang)
-    const t = (key: string, defaultVal: string) => translations[key] || defaultVal
-
+export default function TotalWarHeader({ lastUpdated }) {
     return (
         <div className={styles.header}>
-            {/* Advanced Decorative Elements */}
+            {/* Corner Borders */}
+            <div className={`${styles.corner} ${styles.topLeft}`} />
+            <div className={`${styles.corner} ${styles.topRight}`} />
+            <div className={`${styles.corner} ${styles.bottomLeft}`} />
+            <div className={`${styles.corner} ${styles.bottomRight}`} />
+            
             <div className={styles.headerGlow} />
             <div className={styles.tacticalGrid} />
-            <div className={styles.horizontalLines} />
-            <div className={styles.movingScan} />
-            
-            {/* Particle Elements */}
-            <div className={styles.particles}>
-                {[...Array(6)].map((_, i) => (
-                    <div key={i} className={styles.particle} />
-                ))}
-            </div>
-            
-            <div className={styles.titleContainer}>
-                <h1 className={styles.title} data-text={t("total_war.title", "TOTAL WAR").toUpperCase()}>
-                    {t("total_war.title", "TOTAL WAR").toUpperCase()}
-                </h1>
-            </div>
 
-            {lastUpdated && (
-                <div className={styles.updateBadge}>
-                    <div className={styles.pulse} />
-                    <span className={styles.updateText}>{t("arena.last_update", "Last Update :")}</span>
-                    <div className={styles.divider} />
-                    <span className={styles.updateDate}>{lastUpdated}</span>
+            <div className={styles.mainInfo}>
+                <div className={styles.titleGroup}>
+                    <div className={styles.categoryTag}>
+                        <Swords className="w-3.5 h-3.5 animate-pulse" />
+                        <span>PVE Combat Matrix</span>
+                    </div>
+                    <h1 className={styles.title}>TOTAL WAR</h1>
+                    <p className={styles.subtitle}>7K GLOBAL CAMPAIGN DIRECTIVES</p>
                 </div>
-            )}
+                
+                {lastUpdated && (
+                    <div className={styles.syncBadge}>
+                        <span className={styles.pulseDot} />
+                        <span className={styles.syncLabel}>LAST SYNC</span>
+                        <div className={styles.syncDivider} />
+                        <span className={styles.syncTime}>{lastUpdated}</span>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

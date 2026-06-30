@@ -210,9 +210,9 @@ export default function TotalWarEditorView({ tierKey, initialSets, assets }) {
                 ...s, _dirty: false,
                 teams: (s.teams || []).map(t => ({ ...t, _uid: String(t.id), _dirty: false }))
             })))
-            toast.success(`Strategic Set ${setIdx + 1} Synchronized`)
+            toast.success(`Set ${setIdx + 1} saved successfully`)
         } catch (err) {
-            toast.error("Synchronization failed")
+            toast.error("Save failed")
         } finally {
             setSavingSetId(null)
         }
@@ -238,16 +238,16 @@ export default function TotalWarEditorView({ tierKey, initialSets, assets }) {
         setSkillPicker(null)
     }
 
-    if (!tierCfg) return <div className="py-20 text-center text-gray-500">Tier profile missing from registry.</div>
+    if (!tierCfg) return <div className="py-20 text-center text-gray-500">Tier not found.</div>
 
     return (
         <div className={styles.container}>
             <div className={styles.editorLayout}>
-                {/* Tactical Sidebar */}
+                {/* Sidebar */}
                 <aside className={styles.sidebar}>
                     <Link href="/admin/total-war" className="flex items-center gap-2 text-muted-foreground hover:text-red-500 transition-colors w-fit group mb-4">
                         <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                        <span className="font-bold uppercase text-xs tracking-widest">Return to Operations</span>
+                        <span className="font-bold uppercase text-xs tracking-widest">Back to Total War</span>
                     </Link>
 
                     <div className={styles.sidebarLogoCard} style={{ borderColor: tierCfg.accent + '40' }}>
@@ -255,27 +255,27 @@ export default function TotalWarEditorView({ tierKey, initialSets, assets }) {
                     </div>
 
                     <div className="mt-4 space-y-3">
-                        <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50 px-2">Operational Tiers</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50 px-2">Tiers</h4>
                         <div className="grid grid-cols-1 gap-2">
                             {TIER_CONFIG.map(t => (
                                 <Link key={t.key} href={`/admin/total-war/${t.key}`}
-                                    className={clsx(
-                                        "flex items-center gap-2.5 w-full px-4 py-3 rounded-xl border transition-all",
-                                        t.key === tierKey ? "border-gray-600 bg-gray-800/80" : "border-transparent hover:bg-gray-800/40 hover:border-gray-700"
-                                    )}>
-                                    <div className="relative w-6 h-6 shrink-0">
-                                        <NextImage src={t.logo} alt={t.label} fill className="object-contain" sizes="24px" />
-                                    </div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: t.key === tierKey ? t.accent : '#4b5563' }}>
-                                        {t.label}
-                                    </span>
-                                </Link>
+                                     className={clsx(
+                                         "flex items-center gap-2.5 w-full px-4 py-3 rounded-xl border transition-all",
+                                         t.key === tierKey ? "border-gray-600 bg-gray-800/80" : "border-transparent hover:bg-gray-800/40 hover:border-gray-700"
+                                     )}>
+                                     <div className="relative w-6 h-6 shrink-0">
+                                         <NextImage src={t.logo} alt={t.label} fill className="object-contain" sizes="24px" />
+                                     </div>
+                                     <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: t.key === tierKey ? t.accent : '#4b5563' }}>
+                                         {t.label}
+                                     </span>
+                                 </Link>
                             ))}
                         </div>
                     </div>
                 </aside>
 
-                {/* Main Data Stream */}
+                {/* Main Content */}
                 <main className={styles.mainContent}>
                     <header className={styles.topBar}>
                         <div className="flex items-center gap-3">
@@ -283,8 +283,8 @@ export default function TotalWarEditorView({ tierKey, initialSets, assets }) {
                                 <NextImage src={tierCfg.logo} alt={tierCfg.label} fill className="object-contain" sizes="32px" />
                             </div>
                             <div>
-                                <h1 className="text-xl font-black italic uppercase" style={{ color: tierCfg.accent }}>{tierCfg.label} Strategic Matrix</h1>
-                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">{sets.length} Configured Sets · Capacity: {tierCfg.maxTeams} Teams / Set</p>
+                                <h1 className="text-xl font-black italic uppercase" style={{ color: tierCfg.accent }}>{tierCfg.label} Team Comp Setups</h1>
+                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">{sets.length} Sets · Max Teams: {tierCfg.maxTeams} per Set</p>
                             </div>
                         </div>
                         <div className="flex gap-2">
@@ -292,14 +292,14 @@ export default function TotalWarEditorView({ tierKey, initialSets, assets }) {
                                 onClick={handleOpenImport}
                                 className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-foreground rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-colors border border-border"
                             >
-                                <span>Duplicate from Tiers</span>
+                                <span>Copy Set from other Tier</span>
                             </button>
                             <button
                                 onClick={handleAddSet}
                                 className="flex items-center gap-2 px-4 py-2.5 bg-accent text-foreground rounded-xl text-xs font-black uppercase tracking-widest hover:bg-border transition-colors border border-border"
                             >
                                 <Plus size={18} />
-                                <span>Add Strategic Set</span>
+                                <span>Add Set</span>
                             </button>
                         </div>
                     </header>
@@ -308,7 +308,7 @@ export default function TotalWarEditorView({ tierKey, initialSets, assets }) {
                         {sets.length === 0 ? (
                             <div className="text-center py-24 border-2 border-dashed border-border rounded-3xl bg-card/30">
                                 <Swords size={48} className="mx-auto mb-4 text-muted-foreground opacity-20" />
-                                <p className="text-muted-foreground italic font-bold">No strategic configurations logged for this tier.</p>
+                                <p className="text-muted-foreground italic font-bold">No setups configured for this tier yet.</p>
                             </div>
                         ) : (
                             sets.map((set, setIdx) => (
@@ -353,19 +353,19 @@ export default function TotalWarEditorView({ tierKey, initialSets, assets }) {
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
                     <div className="relative w-full max-w-md bg-slate-950 border border-primary/20 rounded-2xl p-6 shadow-2xl">
                         <h3 className="text-sm font-black uppercase italic tracking-wider text-primary mb-4">
-                            Duplicate Set from Tiers
+                            Copy Set from another Tier
                         </h3>
                         
                         {loadingAllSets ? (
                             <div className="flex items-center justify-center py-8 gap-2 text-muted-foreground text-xs font-bold uppercase tracking-widest">
                                 <Loader2 className="w-5 h-5 animate-spin" />
-                                <span>Accessing Strategic Database...</span>
+                                <span>Loading sets...</span>
                             </div>
                         ) : (
                             <div className="space-y-4">
                                 <div>
                                     <label className="block text-[10px] font-black uppercase tracking-wider text-muted-foreground mb-1.5">
-                                        Select Strategy Set to Clone
+                                        Select Set to copy
                                     </label>
                                     <select
                                         value={selectedSetId}
@@ -377,7 +377,7 @@ export default function TotalWarEditorView({ tierKey, initialSets, assets }) {
                                             const tierInfo = TIER_CONFIG.find(t => t.key === s.tier)
                                             return (
                                                 <option key={s.id} value={s.id}>
-                                                    [{tierInfo?.label || s.tier.toUpperCase()}] {s.set_name || `Unnamed Set (${s.teams?.length || 0} squads)`}
+                                                    [{tierInfo?.label || s.tier.toUpperCase()}] {s.set_name || `Unnamed Set (${s.teams?.length || 0} teams)`}
                                                 </option>
                                             )
                                         })}
@@ -396,7 +396,7 @@ export default function TotalWarEditorView({ tierKey, initialSets, assets }) {
                                         disabled={!selectedSetId}
                                         className="px-4 py-2 bg-[#FFD700] hover:bg-[#FFD700]/95 text-black rounded-xl text-xs font-black uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        Clone Set
+                                        Copy Set
                                     </button>
                                 </div>
                             </div>

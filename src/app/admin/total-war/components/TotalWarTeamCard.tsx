@@ -45,7 +45,7 @@ export default function TotalWarTeamCard({
                         type="text"
                         value={team.team_name || ''}
                         onChange={(e) => onTeamChange(teamIdx, 'team_name', e.target.value)}
-                        placeholder={`SQUAD ${teamIdx + 1}`}
+                        placeholder={`TEAM ${teamIdx + 1}`}
                         className="bg-transparent border-none outline-none text-xs font-black text-white placeholder-gray-700 w-40 uppercase tracking-wider"
                     />
                     {team._dirty && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />}
@@ -78,7 +78,7 @@ export default function TotalWarTeamCard({
                 {/* Skill Rotation */}
                 <div className="space-y-3">
                     <label className="flex items-center gap-2 text-[10px] font-black text-muted-foreground uppercase tracking-widest pl-1">
-                        <Zap size={12} className="text-red-500" /> Operational Sequence
+                        <Zap size={12} className="text-red-500" /> Skill Order
                     </label>
 
                     <div className={styles.rotationGrid}>
@@ -157,7 +157,7 @@ export default function TotalWarTeamCard({
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <label className="flex items-center gap-1.5 text-[10px] font-black text-muted-foreground uppercase tracking-widest pl-1">
-                            <Video size={12} /> Deployment Feed
+                            <Video size={12} /> Guide Video URL
                         </label>
                         <input
                             type="url"
@@ -169,12 +169,12 @@ export default function TotalWarTeamCard({
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest pl-1">Operational Notes</label>
+                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest pl-1">Team Note</label>
                         <input
                             type="text"
                             value={team.note || ''}
                             onChange={(e) => onTeamChange(teamIdx, 'note', e.target.value)}
-                            placeholder="Team-specific strategy..."
+                            placeholder="Details for this team..."
                             className="w-full bg-black/40 border border-border rounded-xl px-4 py-2.5 font-bold text-xs focus:outline-none focus:border-red-500/50"
                         />
                     </div>

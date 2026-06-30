@@ -7,7 +7,7 @@ import SkillSequence from '@/components/shared/SkillSequence'
 import styles from './TotalWarTeamSet.module.css'
 
 export default function TotalWarTeamSet({ set, setIdx, tier, heroImageMap }) {
-    const [isCollapsed, setIsCollapsed] = useState(true)
+    const [isCollapsed, setIsCollapsed] = useState(false)
 
     return (
         <div className={styles.set}>
