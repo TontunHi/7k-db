@@ -7,6 +7,7 @@ import { ArrowLeft, Plus, Loader2, Swords } from 'lucide-react'
 import { TIER_CONFIG } from '@/lib/total-war-config'
 import {
     getSetsByTier,
+    getAllSets,
     createSet,
     updateSet,
     deleteSet as deleteSetAction,
@@ -36,6 +37,62 @@ export default function TotalWarEditorView({ tierKey, initialSets, assets }) {
     const [savingSetId, setSavingSetId] = useState(null)
     const [skillErrors, setSkillErrors] = useState({})
     const [skillPicker, setSkillPicker] = useState(null) // { setIdx, teamIdx, slotIdx }
+
+    const [showImportModal, setShowImportModal] = useState(false)
+    const [allAvailableSets, setAllAvailableSets] = useState([])
+    const [loadingAllSets, setLoadingAllSets] = useState(false)
+    const [selectedSetId, setSelectedSetId] = useState('')
+
+    const handleOpenImport = async () => {
+        setShowImportModal(true)
+        setLoadingAllSets(true)
+        try {
+            const res = await getAllSets()
+            setAllAvailableSets(res)
+        } catch (e) {
+            toast.error("Failed to load strategic sets")
+        } finally {
+            setLoadingAllSets(false)
+        }
+    }
+
+    const handleDuplicateImport = () => {
+        const sourceSet = allAvailableSets.find(s => String(s.id) === String(selectedSetId))
+        if (!sourceSet) return
+
+        const newSetId = uid()
+        const clonedTeams = (sourceSet.teams || []).map(t => {
+            const newTeamUid = uid()
+            return {
+                id: newTeamUid,
+                _uid: newTeamUid,
+                _isNew: true,
+                _dirty: true,
+                team_name: t.team_name ? `${t.team_name} (Copy)` : 'Cloned Team',
+                formation: t.formation,
+                pet_file: t.pet_file,
+                heroes: [...t.heroes],
+                skill_rotation: t.skill_rotation ? t.skill_rotation.map(sr => ({ ...sr })) : [],
+                video_url: t.video_url,
+                note: t.note
+            }
+        })
+
+        const newSet = {
+            id: newSetId,
+            tier: tierKey,
+            set_name: sourceSet.set_name ? `${sourceSet.set_name} (Copy)` : 'Cloned Set',
+            note: sourceSet.note,
+            teams: clonedTeams,
+            _isNew: true,
+            _dirty: true
+        }
+
+        setSets(prev => [...prev, newSet])
+        setShowImportModal(false)
+        setSelectedSetId('')
+        toast.success(`Strategy Set cloned! Press "Save Set" to save changes permanently.`)
+    }
 
     const handleAddSet = () => {
         setSets(prev => [...prev, {
@@ -230,13 +287,21 @@ export default function TotalWarEditorView({ tierKey, initialSets, assets }) {
                                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">{sets.length} Configured Sets · Capacity: {tierCfg.maxTeams} Teams / Set</p>
                             </div>
                         </div>
-                        <button
-                            onClick={handleAddSet}
-                            className="flex items-center gap-2 px-4 py-2.5 bg-accent text-foreground rounded-xl text-xs font-black uppercase tracking-widest hover:bg-border transition-colors border border-border"
-                        >
-                            <Plus size={18} />
-                            <span>Add Strategic Set</span>
-                        </button>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={handleOpenImport}
+                                className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-foreground rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-colors border border-border"
+                            >
+                                <span>Duplicate from Tiers</span>
+                            </button>
+                            <button
+                                onClick={handleAddSet}
+                                className="flex items-center gap-2 px-4 py-2.5 bg-accent text-foreground rounded-xl text-xs font-black uppercase tracking-widest hover:bg-border transition-colors border border-border"
+                            >
+                                <Plus size={18} />
+                                <span>Add Strategic Set</span>
+                            </button>
+                        </div>
                     </header>
 
                     <div className="space-y-6">
@@ -282,6 +347,63 @@ export default function TotalWarEditorView({ tierKey, initialSets, assets }) {
                 onClose={() => setSkillPicker(null)}
                 onSkillError={(key) => setSkillErrors(prev => ({ ...prev, [key]: true }))}
             />
+
+            {/* Import / Duplicate from Tiers Modal */}
+            {showImportModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="relative w-full max-w-md bg-slate-950 border border-primary/20 rounded-2xl p-6 shadow-2xl">
+                        <h3 className="text-sm font-black uppercase italic tracking-wider text-primary mb-4">
+                            Duplicate Set from Tiers
+                        </h3>
+                        
+                        {loadingAllSets ? (
+                            <div className="flex items-center justify-center py-8 gap-2 text-muted-foreground text-xs font-bold uppercase tracking-widest">
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <span>Accessing Strategic Database...</span>
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-[10px] font-black uppercase tracking-wider text-muted-foreground mb-1.5">
+                                        Select Strategy Set to Clone
+                                    </label>
+                                    <select
+                                        value={selectedSetId}
+                                        onChange={(e) => setSelectedSetId(e.target.value)}
+                                        className="w-full bg-slate-900 border border-border rounded-xl px-3 py-2 text-xs font-medium text-foreground focus:outline-none focus:border-primary"
+                                    >
+                                        <option value="">-- Choose a Set --</option>
+                                        {allAvailableSets.map(s => {
+                                            const tierInfo = TIER_CONFIG.find(t => t.key === s.tier)
+                                            return (
+                                                <option key={s.id} value={s.id}>
+                                                    [{tierInfo?.label || s.tier.toUpperCase()}] {s.set_name || `Unnamed Set (${s.teams?.length || 0} squads)`}
+                                                </option>
+                                            )
+                                        })}
+                                    </select>
+                                </div>
+
+                                <div className="flex justify-end gap-2 mt-6">
+                                    <button
+                                        onClick={() => setShowImportModal(false)}
+                                        className="px-4 py-2 border border-border hover:bg-slate-900 rounded-xl text-xs font-black uppercase tracking-wider text-muted-foreground"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={handleDuplicateImport}
+                                        disabled={!selectedSetId}
+                                        className="px-4 py-2 bg-[#FFD700] hover:bg-[#FFD700]/95 text-black rounded-xl text-xs font-black uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Clone Set
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

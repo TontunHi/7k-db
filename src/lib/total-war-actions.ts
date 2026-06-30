@@ -40,6 +40,30 @@ export async function getSetsByTier(tier: string) {
     }))
 }
 
+/** Get all sets across all tiers (for cloning/duplication) */
+export async function getAllSets() {
+    await initDB()
+
+    const [sets] = await pool.query<TotalWarSet[]>(
+        'SELECT * FROM total_war_sets ORDER BY tier ASC, set_index ASC'
+    )
+
+    const [teams] = await pool.query<TotalWarTeam[]>(
+        'SELECT * FROM total_war_teams ORDER BY set_id ASC, team_index ASC'
+    )
+
+    return sets.map(set => ({
+        ...set,
+        teams: teams
+            .filter(t => t.set_id === set.id)
+            .map(t => ({
+                ...t,
+                heroes: typeof t.heroes_json === 'string' ? JSON.parse(t.heroes_json) : (t.heroes_json || []),
+                skill_rotation: typeof t.skill_rotation === 'string' ? JSON.parse(t.skill_rotation) : (t.skill_rotation || []),
+            }))
+    }))
+}
+
 /** Get set counts per tier (for index page badges) */
 export async function getAllSetCounts() {
     await initDB()
