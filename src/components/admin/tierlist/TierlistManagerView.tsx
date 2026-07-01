@@ -60,7 +60,7 @@ export default function TierlistManagerView({ heroes }) {
                 ranks={RANKS}
                 types={TYPES}
                 tierData={tierData}
-                onDragStart={handlers.startDrag}
+                onHeroDragStart={handlers.startDrag}
                 onClick={(e, entry) => handlers.handleAssign({ filename: entry.heroFilename, name: entry.heroFilename })}
                 onRemove={(e, entry) => {
                     e.stopPropagation()
@@ -71,7 +71,7 @@ export default function TierlistManagerView({ heroes }) {
             {/* Pool */}
             <HeroPool 
                 heroes={poolHeroes}
-                onDragStart={handlers.startDrag}
+                onHeroDragStart={handlers.startDrag}
                 onClick={(hero) => handlers.handleAssign(hero)}
             />
 
@@ -82,7 +82,10 @@ export default function TierlistManagerView({ heroes }) {
                 tempRank={modal.tempRank}
                 ranks={RANKS}
                 types={TYPES}
-                onSelectRank={modal.setTempRank}
+                onSelectRank={(rank) => {
+                    modal.setTempRank(rank)
+                    modal.setSelectionStep(2)
+                }}
                 onSelectType={handlers.handleSave}
                 onBack={() => modal.setSelectionStep(1)}
                 onClose={() => modal.setSelectedHero(null)}

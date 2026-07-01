@@ -48,7 +48,6 @@ export function useTierlistEditor(initialCategory = "PVE") {
 
     const startDrag = useCallback((e, heroFilename, source, imgSrc) => {
         if (e.button !== 0) return
-        e.preventDefault()
 
         dragRef.current = {
             heroFilename,

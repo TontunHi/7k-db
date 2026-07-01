@@ -12,7 +12,7 @@ export default function TierlistMatrix({
     ranks, 
     types, 
     tierData, 
-    onDragStart, 
+    onHeroDragStart, 
     onClick, 
     onRemove 
 }) {
@@ -74,7 +74,8 @@ export default function TierlistMatrix({
                                                             data-rank={rank}
                                                             data-type={type}
                                                             className={styles.heroItem}
-                                                            onMouseDown={(e) => onDragStart(e, entry.heroFilename, "grid", `/heroes/${entry.heroFilename}`)}
+                                                            onMouseDown={(e) => onHeroDragStart(e, entry.heroFilename, "grid", `/heroes/${entry.heroFilename}`)}
+                                                            onDragStart={(e) => e.preventDefault()}
                                                             onClick={(e) => onClick(e, entry)}
                                                             title={`${name} — Click to reassign, drag to move`}
                                                         >

@@ -7,7 +7,7 @@ import styles from "./tierlist.module.css"
 /**
  * HeroPool - List of unassigned heroes available for the tierlist
  */
-export default function HeroPool({ heroes, onDragStart, onClick }) {
+export default function HeroPool({ heroes, onHeroDragStart, onClick }) {
     return (
         <div data-pool="true" className={styles.poolContainer}>
             <div className={styles.poolHeader}>
@@ -19,7 +19,8 @@ export default function HeroPool({ heroes, onDragStart, onClick }) {
                 {heroes.map(hero => (
                     <div
                         key={hero.filename}
-                        onMouseDown={(e) => onDragStart(e, hero.filename, "pool", `/heroes/${hero.filename}`)}
+                        onMouseDown={(e) => onHeroDragStart(e, hero.filename, "pool", `/heroes/${hero.filename}`)}
+                        onDragStart={(e) => e.preventDefault()}
                         onClick={() => onClick(hero)}
                         className={styles.poolHero}
                         title={hero.name}
