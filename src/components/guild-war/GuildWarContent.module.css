@@ -1,0 +1,237 @@
+/* ===== Guild War Search Bar — Amber/Gold accent ===== */
+
+/* ─── Outer section ─── */
+.searchSection {
+  margin-bottom: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ─── Wrapper (positions the dropdown) ─── */
+.searchWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+}
+
+/* ─── Input row ─── */
+.inputRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background: rgba(20, 14, 2, 0.9);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 1rem;
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(251, 191, 36, 0.08);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-height: 52px;
+}
+
+.inputRow:focus-within {
+  border-color: rgba(251, 191, 36, 0.6);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.5),
+    0 0 0 3px rgba(251, 191, 36, 0.08),
+    inset 0 1px 0 rgba(251, 191, 36, 0.1);
+}
+
+/* Search icon */
+.searchIcon {
+  color: rgba(251, 191, 36, 0.7);
+  flex-shrink: 0;
+}
+
+/* Text input */
+.input {
+  flex: 1;
+  min-width: 140px;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  caret-color: #fbbf24;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* Clear all button */
+.clearBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.clearBtn:hover {
+  background: rgba(251, 191, 36, 0.15);
+  border-color: rgba(251, 191, 36, 0.35);
+  color: #fbbf24;
+}
+
+/* ─── Selected hero chips ─── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  animation: chipIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.chip:hover {
+  background: rgba(251, 191, 36, 0.22);
+  border-color: rgba(251, 191, 36, 0.55);
+}
+
+.chipAvatar {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.chipImg {
+  object-fit: cover;
+  object-position: center 15%;
+}
+
+.chipName {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #fcd34d;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.chipX {
+  color: rgba(252, 211, 77, 0.5);
+  flex-shrink: 0;
+}
+
+/* ─── Dropdown ─── */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: rgba(14, 9, 2, 0.97);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(251, 191, 36, 0.04);
+  backdrop-filter: blur(20px);
+  z-index: 50;
+  animation: dropIn 0.15s ease both;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.625rem 1rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  text-align: left;
+}
+
+.dropdownItem:last-child {
+  border-bottom: none;
+}
+
+.dropdownItem:hover {
+  background: rgba(251, 191, 36, 0.08);
+}
+
+.dropdownAvatar {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(251, 191, 36, 0.1);
+}
+
+.dropdownImg {
+  object-fit: cover;
+  object-position: center 15%;
+}
+
+.dropdownName {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: capitalize;
+}
+
+/* ─── Result meta ─── */
+.resultMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.25rem;
+  animation: fadeSlideUp 0.3s ease both;
+}
+
+.resultCount {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #fbbf24;
+  line-height: 1;
+}
+
+.resultLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ─── Animations ─── */
+@keyframes chipIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

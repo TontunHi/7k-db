@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 import SafeImage from '@/components/shared/SafeImage'
 import FormationGrid from '@/components/shared/FormationGrid'
 import PetDisplay from '@/components/shared/PetDisplay'
-import styles from '../GuildWarView.module.css'
+import styles from './GuildWarView.module.css'
 import { resolveHeroImage } from '@/lib/hero-utils'
 import { getSkillImagePath, getSlotType, getStaggerClass } from '@/lib/formation-utils'
 
