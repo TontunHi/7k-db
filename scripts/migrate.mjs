@@ -278,6 +278,7 @@ async function runMigrations() {
             id INT AUTO_INCREMENT PRIMARY KEY,
             dungeon_key VARCHAR(50) NOT NULL,
             set_index INT NOT NULL DEFAULT 1,
+            team_name VARCHAR(100),
             formation VARCHAR(50) NOT NULL,
             pet_file VARCHAR(255),
             aura VARCHAR(20),
@@ -290,6 +291,7 @@ async function runMigrations() {
         `);
 
         const dungeonCols = [
+            { name: 'team_name', type: 'VARCHAR(100)', after: 'set_index' },
             { name: 'aura', type: 'VARCHAR(20)', after: 'pet_file' },
             { name: 'skill_rotation', type: 'JSON', after: 'heroes_json' }
         ];

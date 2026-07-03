@@ -9,6 +9,10 @@ import GuildWarCounterCard from "./GuildWarCounterCard"
 import { clsx } from "clsx"
 import styles from "../guild-war.module.css"
 
+import { generateAutoTeamName } from "@/lib/formation-utils"
+import { useSortable } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
+
 /**
  * GuildWarTeamCard — compact, information-rich admin card
  * Features:
@@ -35,6 +39,22 @@ export default function GuildWarTeamCard({
     const [isMinimized, setIsMinimized] = useState(true)
     const [confirmDelete, setConfirmDelete] = useState(false)
 
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id: team.id })
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 10 : 1,
+        opacity: isDragging ? 0.5 : 1
+    }
+
     // Sync with external collapse-all
     const collapsed = forceCollapsed !== undefined ? forceCollapsed : isMinimized
 
@@ -60,13 +80,23 @@ export default function GuildWarTeamCard({
     const visibleHeroes = (team.heroes || []).slice(0, 5)
 
     return (
-        <div className={clsx(styles.teamCard, team._dirty && styles.teamCardDirty)}>
+        <div ref={setNodeRef} style={style} className={clsx(styles.teamCard, team._dirty && styles.teamCardDirty)}>
 
             {/* ── Header ── */}
             <div
                 className={clsx(styles.cardHeader, !collapsed && styles.cardHeaderOpen)}
                 onClick={() => { setIsMinimized(prev => !prev); setConfirmDelete(false) }}
             >
+                {/* Drag Handle */}
+                <div
+                    {...attributes}
+                    {...listeners}
+                    className="px-2 py-1 bg-white/5 hover:bg-white/10 rounded cursor-grab active:cursor-grabbing text-muted-foreground transition-colors text-[9px] font-black mr-1 shrink-0"
+                    onClick={e => e.stopPropagation()}
+                >
+                    DRAG
+                </div>
+
                 {/* Index */}
                 <div className={styles.indexBadge}>{String(index + 1).padStart(2, '0')}</div>
 
@@ -86,14 +116,19 @@ export default function GuildWarTeamCard({
                 </div>
 
                 {/* Name */}
-                <input
-                    type="text"
-                    value={team.team_name || ''}
-                    onChange={(e) => { e.stopPropagation(); onUpdate('team_name', e.target.value) }}
-                    onClick={e => e.stopPropagation()}
-                    placeholder={`Squad ${index + 1}`}
-                    className={styles.nameInput}
-                />
+                <div className="flex items-center flex-1 gap-2 min-w-0" onClick={e => e.stopPropagation()}>
+                    <input
+                        type="text"
+                        value={team.team_name || ''}
+                        onChange={(e) => { e.stopPropagation(); onUpdate('team_name', e.target.value) }}
+                        onClick={e => e.stopPropagation()}
+                        placeholder={`Squad ${index + 1}`}
+                        className={styles.nameInput}
+                    />
+                    <span className="text-[10px] font-black text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20 shrink-0">
+                        {team.counter_teams?.length || 0} CTR
+                    </span>
+                </div>
 
                 {/* Type toggle */}
                 <div
@@ -166,7 +201,13 @@ export default function GuildWarTeamCard({
                             heroesList={heroesList}
                             petsList={petsList}
                             formations={formations}
-                            onUpdate={(data) => onUpdate('_builder', data)}
+                            onUpdate={(data) => {
+                                const autoName = generateAutoTeamName(data.heroes, data.selection_order, heroesList, 5);
+                                onUpdate('_builder', {
+                                    ...data,
+                                    team_name: autoName
+                                });
+                            }}
                             maxHeroes={5}
                             className="bg-transparent border-none p-0"
                         />

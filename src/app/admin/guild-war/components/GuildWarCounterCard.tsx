@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Marker, ActionLabel, SectionHeader } from "../../components/AdminEditorial"
 import SafeImage from "@/components/shared/SafeImage"
 import TeamBuilder from "@/components/admin/TeamBuilder"
+import { generateAutoTeamName } from "@/lib/formation-utils"
 import { clsx } from "clsx"
 import styles from "../guild-war.module.css"
 
@@ -89,12 +90,14 @@ export default function GuildWarCounterCard({
                             petsList={petsList}
                             formations={formations}
                             onUpdate={(updated) => {
+                                const autoName = generateAutoTeamName(updated.heroes, updated.selection_order, heroesList, 3);
                                 onUpdate({
                                     heroes: updated.heroes,
                                     formation: updated.formation,
                                     pet_file: updated.pet_file,
                                     pet_supports: updated.pet_supports,
-                                    selection_order: updated.selection_order
+                                    selection_order: updated.selection_order,
+                                    team_name: autoName
                                 })
                             }}
                             maxHeroes={3}

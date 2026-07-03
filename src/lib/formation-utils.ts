@@ -52,3 +52,28 @@ export function getSkillImagePath(heroIdentifier, skillNumber) {
     // Try .webp first — Next.js Image will 404 gracefully if file doesn't exist
     return `/skills/${folderName}/${skillNumber}.webp`
 }
+
+export function generateAutoTeamName(heroes, selectionOrder, heroesList, maxHeroes) {
+    const orderedIndices = (selectionOrder && selectionOrder.length > 0)
+        ? selectionOrder
+        : [0, 1, 2, 3, 4].filter(idx => heroes?.[idx]);
+
+    const names = orderedIndices
+        .map(idx => heroes?.[idx])
+        .filter(Boolean)
+        .map(filename => {
+            const hData = heroesList?.find(h => h.filename === filename || h.filename?.replace(/\.[^/.]+$/, "") === filename);
+            const baseName = hData?.name || filename
+                .replace(/^(a|l\+\+|l\+|l|r|uc|c)_/i, '')
+                .replace(/\.[^/.]+$/, '')
+                .replace(/_/g, ' ');
+            return baseName
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        });
+
+    if (names.length === 0) return '';
+    return names.join('/') + (names.length < 3 ? '/' : '');
+}
+

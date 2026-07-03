@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import SafeImage from '@/components/shared/SafeImage'
 import { Plus, X, Shield, Swords, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -119,6 +120,11 @@ export default function TeamBuilder({
     const [isHeroOpen, setIsHeroOpen] = useState(null) // index of slot opening modal
     const [isPetOpen, setIsPetOpen] = useState(false)
     const [isSupportPetOpen, setIsSupportPetOpen] = useState(null) // index of support slot (0, 1, 2)
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
     // Sort heroes by grade (l++ > l+ > l > r > uc > c) then by name
     // Grade is parsed from filename prefix: l++_xxx, l+_xxx, l_xxx, r_xxx, uc_xxx, c_xxx
@@ -407,20 +413,23 @@ export default function TeamBuilder({
             </div>
 
             {/* Modals */}
-            {/* Modals */}
-            <HeroPicker 
-                isOpen={isHeroOpen} 
-                sortedHeroesList={sortedHeroesList} 
-                onSelect={handleHeroSelect} 
-                onClose={() => setIsHeroOpen(null)} 
-            />
-            <PetPicker 
-                isOpen={isPetOpen || isSupportPetOpen !== null} 
-                petsList={petsList} 
-                onSelect={handlePetSelect} 
-                onClose={() => { setIsPetOpen(false); setIsSupportPetOpen(null); }} 
-            />
-
-        </div >
+            {mounted && createPortal(
+                <>
+                    <HeroPicker 
+                        isOpen={isHeroOpen} 
+                        sortedHeroesList={sortedHeroesList} 
+                        onSelect={handleHeroSelect} 
+                        onClose={() => setIsHeroOpen(null)} 
+                    />
+                    <PetPicker 
+                        isOpen={isPetOpen || isSupportPetOpen !== null} 
+                        petsList={petsList} 
+                        onSelect={handlePetSelect} 
+                        onClose={() => { setIsPetOpen(false); setIsSupportPetOpen(null); }} 
+                    />
+                </>,
+                document.body
+            )}
+        </div>
     )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Swords, Plus, Save, ChevronsUpDown, ChevronsDownUp, Search, X } from "lucide-react"
 import { ActionLabel } from "../../components/AdminEditorial"
 import { 
@@ -8,6 +8,7 @@ import {
     createGuildWarTeam, 
     updateGuildWarTeam, 
     deleteGuildWarTeam,
+    reorderGuildWarTeams,
 } from "@/lib/guild-war-actions"
 import { getSkillImagePath } from "@/lib/formation-utils"
 import GuildWarTeamCard from "./GuildWarTeamCard"
@@ -16,6 +17,9 @@ import GuildWarItemPicker from "./GuildWarItemPicker"
 import { clsx } from "clsx"
 import { toast } from "sonner"
 import styles from "../guild-war.module.css"
+
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core"
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable"
 
 /**
  * GuildWarManagerView — Orchestrator for Guild War strategic configurations
@@ -27,7 +31,12 @@ import styles from "../guild-war.module.css"
  *  - Inline delete confirmation (no window.confirm)
  */
 export default function GuildWarManagerView({ initialTeams, initialHeroes, initialPets, initialFormations, initialItems, initialSkills }) {
-    const [teams, setTeams]           = useState(initialTeams.map(t => ({ ...t, _dirty: false })))
+    const [mounted, setMounted] = useState(false)
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    const [teams, setTeams]           = useState(initialTeams.map(t => ({ ...t, id: t.id.toString(), _dirty: false })))
     const [heroes]                    = useState(initialHeroes)
     const [pets]                      = useState(initialPets)
     const [formations]                = useState(initialFormations)
@@ -40,6 +49,27 @@ export default function GuildWarManagerView({ initialTeams, initialHeroes, initi
     const [itemPicker, setItemPicker]     = useState(null)
     const [activeTeamIdx, setActiveTeamIdx] = useState(null)
     const [skillErrors, setSkillErrors]   = useState({})
+
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    )
+
+    const handleDragEnd = (event) => {
+        const { active, over } = event
+        if (over && active.id !== over.id) {
+            setTeams((items) => {
+                const oldIndex = items.findIndex(t => t.id === active.id)
+                const newIndex = items.findIndex(t => t.id === over.id)
+                const newArr = arrayMove(items, oldIndex, newIndex)
+                return newArr.map((t, idx) => ({
+                    ...t,
+                    team_index: idx + 1,
+                    _dirty: true
+                }))
+            })
+        }
+    }
 
     /* ── Add ── */
     const handleAddTeam = () => {
@@ -93,6 +123,7 @@ export default function GuildWarManagerView({ initialTeams, initialHeroes, initi
                     pet_supports: value.pet_supports,
                     heroes: value.heroes,
                     selection_order: value.selection_order,
+                    team_name: value.team_name !== undefined ? value.team_name : next[idx].team_name,
                     _dirty: true,
                 }
             } else {
@@ -148,9 +179,13 @@ export default function GuildWarManagerView({ initialTeams, initialHeroes, initi
                     return
                 }
             }
+            const orderedIds = teams.map(t => Number(t.id)).filter(id => !isNaN(id));
+            if (orderedIds.length > 0) {
+                await reorderGuildWarTeams(orderedIds)
+            }
             const freshTeams = await getGuildWarTeams('all')
-            setTeams(freshTeams.map(t => ({ ...t, _dirty: false })))
-            toast.success(`${dirtyTeams.length} squad${dirtyTeams.length > 1 ? 's' : ''} saved`)
+            setTeams(freshTeams.map(t => ({ ...t, id: t.id.toString(), _dirty: false })))
+            toast.success("Squads saved and synchronized")
         } catch {
             toast.error("Save failed")
         } finally {
@@ -215,6 +250,11 @@ export default function GuildWarManagerView({ initialTeams, initialHeroes, initi
     const hasDirty    = teams.some(t => t._dirty)
     const dirtyCount  = teams.filter(t => t._dirty).length
     const totalTeams  = teams.length
+    const totalCounterTeams = teams.reduce((acc, t) => acc + (t.counter_teams?.length || 0), 0)
+
+    if (!mounted) {
+        return <div className="animate-pulse h-96 bg-muted/10 rounded-2xl border border-border" />
+    }
 
     return (
         <div className={styles.container}>
@@ -240,6 +280,11 @@ export default function GuildWarManagerView({ initialTeams, initialHeroes, initi
                         <div className={styles.statItem}>
                             <span className={styles.statValue}>{totalTeams}</span>
                             <span className={styles.statLabel}>Squads</span>
+                        </div>
+                        <div className={styles.statDivider} />
+                        <div className={styles.statItem}>
+                            <span className={styles.statValue}>{totalCounterTeams}</span>
+                            <span className={styles.statLabel}>Counters</span>
                         </div>
                         {dirtyCount > 0 && (
                             <>
@@ -323,53 +368,57 @@ export default function GuildWarManagerView({ initialTeams, initialHeroes, initi
             )}
 
             {/* ── Team list ── */}
-            <div className={styles.teamList}>
-                {teams.length === 0 && (
-                    <div className={styles.emptyState}>
-                        <div className="text-[3rem] font-black opacity-10 italic">NO SQUADS</div>
-                        <p className="text-muted-foreground font-bold text-sm">No formations configured yet</p>
-                        <button onClick={handleAddTeam} className={styles.btnPrimary}>
-                            <Plus size={14} />
-                            Add First Squad
-                        </button>
-                    </div>
-                )}
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <div className={styles.teamList}>
+                    {teams.length === 0 && (
+                        <div className={styles.emptyState}>
+                            <div className="text-[3rem] font-black opacity-10 italic">NO SQUADS</div>
+                            <p className="text-muted-foreground font-bold text-sm">No formations configured yet</p>
+                            <button onClick={handleAddTeam} className={styles.btnPrimary}>
+                                <Plus size={14} />
+                                Add First Squad
+                            </button>
+                        </div>
+                    )}
 
-                {teams
-                    .map((team, idx) => ({ ...team, _originalIndex: idx })) // Keep track of actual index for callbacks
-                    .filter(team => {
-                        const q = searchQuery.toLowerCase().trim()
-                        if (!q) return true
-                        const nameMatch = (team.team_name || '').toLowerCase().includes(q)
-                        const heroMatch = (team.heroes || []).some(h => 
-                            h && h.toLowerCase().replace(/^(l\+\+|l\+|l|r|uc|c)_/i, '').replace(/_/g, ' ').includes(q)
-                        )
-                        return nameMatch || heroMatch
-                    })
-                    .map((team) => (
-                        <GuildWarTeamCard
-                            key={team.id}
-                            team={team}
-                            index={team._originalIndex}
-                            heroesList={heroes}
-                            petsList={pets}
-                            formations={formations}
-                            onUpdate={(field, val) => handleUpdateTeam(team._originalIndex, field, val)}
-                            onDelete={() => handleDeleteTeam(team._originalIndex)}
-                            onDuplicate={() => handleDuplicateTeam(team._originalIndex)}
-                            onOpenSkillPicker={(cIdx, sIdx) => {
-                                setActiveTeamIdx(team._originalIndex)
-                                setSkillPicker({ counterIdx: cIdx, slotIdx: sIdx })
-                            }}
-                            onOpenItemPicker={(cIdx, hIdx, type, aIdx) => {
-                                setActiveTeamIdx(team._originalIndex)
-                                setItemPicker({ counterIdx: cIdx, heroIdx: hIdx, type, accIdx: aIdx })
-                            }}
-                            getSkillImagePath={getSkillImagePath}
-                            forceCollapsed={allCollapsed === null ? undefined : allCollapsed}
-                        />
-                    ))}
-            </div>
+                    <SortableContext items={teams.map(t => t.id)} strategy={verticalListSortingStrategy}>
+                        {teams
+                            .map((team, idx) => ({ ...team, _originalIndex: idx })) // Keep track of actual index for callbacks
+                            .filter(team => {
+                                const q = searchQuery.toLowerCase().trim()
+                                if (!q) return true
+                                const nameMatch = (team.team_name || '').toLowerCase().includes(q)
+                                const heroMatch = (team.heroes || []).some(h => 
+                                    h && h.toLowerCase().replace(/^(l\+\+|l\+|l|r|uc|c)_/i, '').replace(/_/g, ' ').includes(q)
+                                )
+                                return nameMatch || heroMatch
+                            })
+                            .map((team) => (
+                                <GuildWarTeamCard
+                                    key={team.id}
+                                    team={team}
+                                    index={team._originalIndex}
+                                    heroesList={heroes}
+                                    petsList={pets}
+                                    formations={formations}
+                                    onUpdate={(field, val) => handleUpdateTeam(team._originalIndex, field, val)}
+                                    onDelete={() => handleDeleteTeam(team._originalIndex)}
+                                    onDuplicate={() => handleDuplicateTeam(team._originalIndex)}
+                                    onOpenSkillPicker={(cIdx, sIdx) => {
+                                        setActiveTeamIdx(team._originalIndex)
+                                        setSkillPicker({ counterIdx: cIdx, slotIdx: sIdx })
+                                    }}
+                                    onOpenItemPicker={(cIdx, hIdx, type, aIdx) => {
+                                        setActiveTeamIdx(team._originalIndex)
+                                        setItemPicker({ counterIdx: cIdx, heroIdx: hIdx, type, accIdx: aIdx })
+                                    }}
+                                    getSkillImagePath={getSkillImagePath}
+                                    forceCollapsed={allCollapsed === null ? undefined : allCollapsed}
+                                />
+                            ))}
+                    </SortableContext>
+                </div>
+            </DndContext>
 
             {/* ── Sticky save bar ── */}
             {hasDirty && (

@@ -160,10 +160,15 @@ export default function DungeonEditorView({ dungeonKey, initialDungeon, initialS
                     note: set.note
                 }
 
+                let res;
                 if (set._isNew) {
-                    await createSet(data)
+                    res = await createSet(data)
                 } else {
-                    await updateSet(set.id, data)
+                    res = await updateSet(set.id, data)
+                }
+
+                if (res && !res.success) {
+                    throw new Error(res.error || "Save failed")
                 }
             }
             
@@ -171,8 +176,8 @@ export default function DungeonEditorView({ dungeonKey, initialDungeon, initialS
             const freshSets = await getSetsByDungeon(dungeonKey)
             setSets(freshSets.map(s => ({ ...s, id: s.id.toString(), _dirty: false })))
             toast.success("All teams saved successfully")
-        } catch (err) {
-            toast.error("Failed to save teams")
+        } catch (err: any) {
+            toast.error(err.message || "Failed to save teams")
         } finally {
             setSaving(false)
         }
