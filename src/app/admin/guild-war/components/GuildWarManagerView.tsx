@@ -62,7 +62,7 @@ export default function GuildWarManagerView({ initialTeams, initialHeroes, initi
                 const oldIndex = items.findIndex(t => t.id === active.id)
                 const newIndex = items.findIndex(t => t.id === over.id)
                 const newArr = arrayMove(items, oldIndex, newIndex)
-                return newArr.map((t, idx) => ({
+                return newArr.map((t: any, idx) => ({
                     ...t,
                     team_index: idx + 1,
                     _dirty: true
