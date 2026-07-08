@@ -68,6 +68,8 @@ export default function GuildWarContent({ teams, heroImageMap }) {
         setQuery('')
     }
 
+    const [expandedTeamId, setExpandedTeamId] = useState<string | null>(null)
+
     return (
         <>
             {/* ── Search Bar ── */}
@@ -177,6 +179,8 @@ export default function GuildWarContent({ teams, heroImageMap }) {
                             team={team}
                             index={idx}
                             heroImageMap={heroImageMap}
+                            expandedTeamId={expandedTeamId}
+                            setExpandedTeamId={setExpandedTeamId}
                         />
                     ))
                 )}

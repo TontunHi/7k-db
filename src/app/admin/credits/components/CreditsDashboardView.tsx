@@ -1,6 +1,7 @@
 "use client"
 
 import { TiktokIcon, DiscordIcon } from '@/components/shared/BrandIcons'
+import { Youtube, Facebook, Link as LinkIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useCreditsManager } from '../hooks/useCreditsManager'
 import CreditRow from './CreditRow'
@@ -9,11 +10,11 @@ import { clsx } from 'clsx'
 import { Marker, ActionLabel } from '@/app/admin/components/AdminEditorial'
 
 const PLATFORMS = [
-    { id: 'youtube', name: 'YouTube', icon: null, color: 'text-[#FF0000]' },
+    { id: 'youtube', name: 'YouTube', icon: Youtube, color: 'text-[#FF0000]' },
     { id: 'tiktok', name: 'TikTok', icon: TiktokIcon, color: 'text-white' },
-    { id: 'facebook', name: 'Facebook', icon: null, color: 'text-[#1877F2]' },
+    { id: 'facebook', name: 'Facebook', icon: Facebook, color: 'text-[#1877F2]' },
     { id: 'discord', name: 'Discord', icon: DiscordIcon, color: 'text-[#5865F2]' },
-    { id: 'other', name: 'Other', icon: null, color: 'text-gray-400' },
+    { id: 'other', name: 'Other', icon: LinkIcon, color: 'text-gray-400' },
 ]
 
 export default function CreditsDashboardView() {

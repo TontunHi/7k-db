@@ -1,25 +1,29 @@
 .teamWrapper {
   border-radius: 2rem;
   overflow: hidden;
-  background: var(--card);
-  border: 1px solid var(--border);
-  transition: all 0.5s ease;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   margin-bottom: 1rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .teamWrapper:hover {
-  border-color: var(--primary-opacity);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 }
 
 .teamWrapperActive {
-  border-color: var(--primary);
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+  border-color: var(--accent-color, #f43f5e);
+  background: rgba(15, 15, 18, 0.85);
+  box-shadow: 0 16px 48px -12px rgba(0, 0, 0, 0.6);
   margin-bottom: 2rem;
 }
 
 :global(.dark) .teamWrapperActive {
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 16px 48px -12px rgba(0, 0, 0, 0.8);
 }
 
 .banner {
@@ -31,7 +35,7 @@
 }
 
 .banner:hover {
-  background-color: var(--muted);
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .bannerLayout {
@@ -144,13 +148,13 @@
 
 .expandedContent {
   padding: 1.5rem;
-  border-top: 1px solid var(--border);
-  background: var(--muted);
-  animation: slideUp 0.5s ease;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @media (min-width: 640px) {
-  .expandedContent { padding: 2.5rem; }
+  .expandedContent { padding: 2.25rem; }
 }
 
 .grid {
@@ -191,17 +195,17 @@
   }
 }
 
-
 .formationPreview {
   position: relative;
-  padding: 2rem 0.5rem;
+  padding: 2.25rem 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 180px;
-  background: var(--background);
+  background: rgba(0, 0, 0, 0.35);
   border-radius: 2rem;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .gridContainer {
@@ -224,18 +228,18 @@
 }
 
 .slotFront {
-  border-radius: 0.75rem;
-  border: 1px solid var(--primary);
-  background: var(--primary-opacity);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 0.85rem;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  background: rgba(56, 189, 248, 0.08);
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
   overflow: hidden;
 }
 
 .slotBack {
-  border-radius: 0.75rem;
-  border: 1px solid var(--border);
-  background: var(--muted);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 0.85rem;
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  background: rgba(244, 63, 94, 0.08);
+  box-shadow: 0 0 15px rgba(244, 63, 94, 0.1);
   overflow: hidden;
 }
 
@@ -261,9 +265,11 @@
   justify-content: center;
   gap: 1.25rem;
   padding: 2.5rem;
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 2rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .petMainWrapper {
@@ -277,13 +283,9 @@
   width: 5.5rem;
   height: 5.5rem;
   border-radius: 1.25rem;
-  background: var(--background);
-  border: 1px solid var(--border);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
-}
-
-:global(.dark) .mainPetBox {
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
 }
 
 .mainPetImage {
@@ -301,10 +303,16 @@
   position: relative;
   width: 3.5rem;
   height: 3.5rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  background: var(--background);
+  border-radius: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.25);
   padding: 0.25rem;
+  transition: all 0.3s ease;
+}
+
+.supportBox:hover {
+  border-color: var(--accent-color, #f43f5e);
+  transform: scale(1.05);
 }
 
 .supportImage {
@@ -314,7 +322,7 @@
 
 .setNote {
   font-size: 11px;
-  color: var(--muted-foreground);
+  color: rgba(255, 255, 255, 0.5);
   font-style: italic;
   line-height: 1.625;
   text-align: center;
@@ -356,18 +364,20 @@
 }
 
 .itemCard {
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 2rem;
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: border-color 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .itemCard:hover {
-  border-color: var(--primary-opacity);
+  border-color: var(--accent-color, #f43f5e);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
 }
 
 .itemHeroPortrait {

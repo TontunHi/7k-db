@@ -10,94 +10,140 @@ import styles from './GuildWarTabContent.module.css'
 export default function GuildWarTabContent({ activeTab, team, heroImageMap }) {
     if (activeTab === 'overview') {
         return (
-            <div className={styles.overview}>
-                {/* Formation Card */}
-                <div className={styles.formationBox}>
-                    <div className={styles.boxAccent} />
-                    <div className={styles.boxHeader}>
-                        <div className={styles.headerIconWrapper}>
-                            <LayoutGrid className={styles.headerIcon} />
-                        </div>
-                        <h4 className={styles.boxTitle}>Formation</h4>
-                        {team.formation && (
-                            <span className="ml-auto text-[10px] font-black text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20 capitalize tracking-wider">
-                                {team.formation}
-                            </span>
-                        )}
-                    </div>
-                    
-                    <div className={styles.formationGridWrapper}>
-                        <div className="grid grid-cols-5 gap-2 sm:gap-4 max-w-[450px] w-full">
-                            {[0, 1, 2, 3, 4].map(slotIdx => {
-                                const heroFile = team.heroes?.[slotIdx]
-                                const type = getSlotType(team.formation, slotIdx)
-                                const isFront = type === 'front'
-                                const stagger = getStaggerClass(team.formation, slotIdx)
-                                
-                                return (
-                                    <div key={slotIdx} className={clsx(
-                                        "relative aspect-[3/4] transition-all duration-500",
-                                        stagger,
-                                        heroFile 
-                                            ? (isFront ? "rounded-2xl border border-sky-500/30 bg-sky-500/10 shadow-lg overflow-hidden" : "rounded-2xl border border-rose-500/30 bg-rose-500/10 shadow-lg overflow-hidden")
-                                            : "opacity-0 pointer-events-none"
-                                    )}>
-                                        {heroFile && (
-                                            <div className="relative flex-1 w-full h-full">
-                                                <SafeImage src={`/heroes/${heroFile}`} alt="" fill className="object-cover" />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
-                                            </div>
-                                        )}
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Side Panel */}
-                <div className={styles.sidePanel}>
-                    {/* Pet Box */}
-                    <div className={styles.petBox}>
+            <div className="flex flex-col gap-6">
+                <div className={styles.overview}>
+                    {/* Formation Card */}
+                    <div className={styles.formationBox}>
+                        <div className={styles.boxAccent} />
                         <div className={styles.boxHeader}>
                             <div className={styles.headerIconWrapper}>
-                                <PawPrint className={styles.headerIcon} />
+                                <LayoutGrid className={styles.headerIcon} />
                             </div>
-                            <h4 className={styles.boxTitle}>Pet</h4>
+                            <h4 className={styles.boxTitle}>Formation</h4>
+                            {team.formation && (
+                                <span className="ml-auto text-[10px] font-black text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20 capitalize tracking-wider">
+                                    {team.formation}
+                                </span>
+                            )}
                         </div>
                         
-                        <div className={styles.petContent}>
-                            <PetDisplay 
-                                petFile={team.pet_file ? (team.pet_file.startsWith('/') ? team.pet_file : `/pets/${team.pet_file}`) : null} 
-                                hideLabel={true}
-                                customClasses={{
-                                    wrapper: "w-28 h-28 border-indigo-500/20 bg-indigo-500/5 shadow-2xl ring-1 ring-white/5",
-                                    image: "p-4"
-                                }}
-                            />
-                            
-                            {team.pet_supports && team.pet_supports.filter(p => p).length > 0 && (
-                                <div className={styles.supports}>
-                                    {team.pet_supports.filter(p => p).map((p, i) => (
-                                        <div key={i} className={styles.supportPet}>
-                                            <SafeImage src={p.startsWith('/') ? p : `/pets/${p}`} alt="" fill className="object-contain p-1" />
+                        <div className={styles.formationGridWrapper}>
+                            <div className="grid grid-cols-5 gap-2 sm:gap-4 max-w-[450px] w-full">
+                                {[0, 1, 2, 3, 4].map(slotIdx => {
+                                    const heroFile = team.heroes?.[slotIdx]
+                                    const type = getSlotType(team.formation, slotIdx)
+                                    const isFront = type === 'front'
+                                    const stagger = getStaggerClass(team.formation, slotIdx)
+                                    
+                                    return (
+                                        <div key={slotIdx} className={clsx(
+                                            "relative aspect-[3/4] transition-all duration-500",
+                                            stagger,
+                                            heroFile 
+                                                ? (isFront ? "rounded-2xl border border-sky-500/30 bg-sky-500/10 shadow-lg overflow-hidden" : "rounded-2xl border border-rose-500/30 bg-rose-500/10 shadow-lg overflow-hidden")
+                                                : "opacity-0 pointer-events-none"
+                                        )}>
+                                            {heroFile && (
+                                                <div className="relative flex-1 w-full h-full">
+                                                    <SafeImage src={`/heroes/${heroFile}`} alt="" fill className="object-cover" />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
+                                                </div>
+                                            )}
                                         </div>
-                                    ))}
-                                </div>
-                            )}
+                                    )
+                                })}
+                            </div>
                         </div>
                     </div>
 
-                    {/* Analyst Notes */}
-                    {team.note && (
-                        <div className={styles.noteBox}>
-                            <Info className={styles.noteIconBg} />
-                            <p className={styles.noteText}>
-                                &quot;{team.note}&quot;
-                            </p>
+                    {/* Side Panel */}
+                    <div className={styles.sidePanel}>
+                        {/* Pet Box */}
+                        <div className={styles.petBox}>
+                            <div className={styles.boxHeader}>
+                                <div className={styles.headerIconWrapper}>
+                                    <PawPrint className={styles.headerIcon} />
+                                </div>
+                                <h4 className={styles.boxTitle}>Pet</h4>
+                            </div>
+                            
+                            <div className={styles.petContent}>
+                                <PetDisplay 
+                                    petFile={team.pet_file ? (team.pet_file.startsWith('/') ? team.pet_file : `/pets/${team.pet_file}`) : null} 
+                                    hideLabel={true}
+                                    customClasses={{
+                                        wrapper: "w-28 h-28 border-indigo-500/20 bg-indigo-500/5 shadow-2xl ring-1 ring-white/5",
+                                        image: "p-4"
+                                    }}
+                                />
+                                
+                                {team.pet_supports && team.pet_supports.filter(p => p).length > 0 && (
+                                    <div className={styles.supports}>
+                                        {team.pet_supports.filter(p => p).map((p, i) => (
+                                            <div key={i} className={styles.supportPet}>
+                                                <SafeImage src={p.startsWith('/') ? p : `/pets/${p}`} alt="" fill className="object-contain p-1" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    )}
+
+                        {/* Analyst Notes */}
+                        {team.note && (
+                            <div className={styles.noteBox}>
+                                <Info className={styles.noteIconBg} />
+                                <p className={styles.noteText}>
+                                    &quot;{team.note}&quot;
+                                </p>
+                            </div>
+                        )}
+                    </div>
                 </div>
+
+                {/* Skill Rotation */}
+                {team.skill_rotation && team.skill_rotation.length > 0 && (
+                    <div className={styles.rotation}>
+                        <div className={styles.rotationContent}>
+                            <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
+                                <div className="p-2 rounded bg-red-500/10 border border-red-500/20">
+                                    <Zap size={16} className="text-red-400" />
+                                </div>
+                                <h4 className="text-xs font-black text-white uppercase tracking-[0.2em]">Skill Rotation</h4>
+                            </div>
+                            <div className={styles.skillSequence}>
+                                {(team.skill_rotation || []).map((slot, sIdx) => {
+                                    const [hIdx, sNum] = (slot.skill || '').split('-').map(Number)
+                                    const hFile = team.heroes?.[hIdx]
+                                    const sPath = slot.skill ? getSkillImagePath(hFile, sNum) : null
+                                    const isLast = sIdx === (team.skill_rotation.length - 1)
+
+                                    return (
+                                        <div key={sIdx} className={styles.skillStep}>
+                                            <div className={styles.skillWrapper}>
+                                                <div className={styles.skillGlow} />
+                                                <div className={styles.skillIcon}>
+                                                    {sPath ? <SafeImage src={sPath} alt="" fill className="object-cover" /> : <div className="w-full h-full flex items-center justify-center text-gray-800 text-2xl font-black">?</div>}
+                                                </div>
+                                                <div className={styles.skillIndex}>
+                                                    {sIdx + 1}
+                                                </div>
+                                                <span className={styles.skillLabel}>
+                                                    {slot.label || ""}
+                                                </span>
+                                            </div>
+                                            {!isLast && (
+                                                <div className={styles.skillConnector}>
+                                                    <ArrowRight size={24} strokeWidth={2.5} />
+                                                </div>
+                                            )}
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         )
     }
@@ -152,45 +198,6 @@ export default function GuildWarTabContent({ activeTab, team, heroImageMap }) {
                         </div>
                     )
                 })}
-            </div>
-        )
-    }
-
-    if (activeTab === 'skills') {
-        return (
-            <div className={styles.rotation}>
-                <div className={styles.rotationContent}>
-                    <div className={styles.skillSequence}>
-                        {(team.skill_rotation || []).map((slot, sIdx) => {
-                            const [hIdx, sNum] = (slot.skill || '').split('-').map(Number)
-                            const hFile = team.heroes?.[hIdx]
-                            const sPath = slot.skill ? getSkillImagePath(hFile, sNum) : null
-                            const isLast = sIdx === (team.skill_rotation.length - 1)
-
-                            return (
-                                <div key={sIdx} className={styles.skillStep}>
-                                    <div className={styles.skillWrapper}>
-                                        <div className={styles.skillGlow} />
-                                        <div className={styles.skillIcon}>
-                                            {sPath ? <SafeImage src={sPath} alt="" fill className="object-cover" /> : <div className="w-full h-full flex items-center justify-center text-gray-800 text-2xl font-black">?</div>}
-                                        </div>
-                                        <div className={styles.skillIndex}>
-                                            {sIdx + 1}
-                                        </div>
-                                        <span className={styles.skillLabel}>
-                                            {slot.label || ""}
-                                        </span>
-                                    </div>
-                                    {!isLast && (
-                                        <div className={styles.skillConnector}>
-                                            <ArrowRight size={24} strokeWidth={2.5} />
-                                        </div>
-                                    )}
-                                </div>
-                            )
-                        })}
-                    </div>
-                </div>
             </div>
         )
     }

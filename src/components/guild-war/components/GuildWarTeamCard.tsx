@@ -17,8 +17,8 @@ function isEquipmentEmpty(itemSet: any) {
     return !hasWeapon && !hasArmor && !hasAccessories && !hasNote;
 }
 
-export default function GuildWarTeamCard({ team, heroImageMap, index }) {
-    const [isExpanded, setIsExpanded] = useState(false)
+export default function GuildWarTeamCard({ team, heroImageMap, index, expandedTeamId, setExpandedTeamId }) {
+    const isExpanded = expandedTeamId === team.id
     const [activeTab, setActiveTab] = useState('overview')
 
     const hasEquipment = team.items && team.items.some((itemSet: any) => !isEquipmentEmpty(itemSet))
@@ -26,14 +26,14 @@ export default function GuildWarTeamCard({ team, heroImageMap, index }) {
     const tabs = [
         { id: 'overview', label: 'Overview', icon: Layout, color: '#818cf8', bg: 'rgba(99, 102, 241, 0.1)' },
         ...(hasEquipment ? [{ id: 'equipment', label: 'Equipment', icon: Briefcase, color: '#fbbf24', bg: 'rgba(245, 158, 11, 0.1)' }] : []),
-        { id: 'skills', label: 'Skill Rotation', icon: Zap, color: '#c084fc', bg: 'rgba(168, 85, 247, 0.1)' },
         { id: 'counters', label: 'Counters', icon: ShieldAlert, color: '#fb7185', bg: 'rgba(244, 63, 94, 0.1)', count: team.counter_teams?.length || 0 },
     ]
 
     return (
         <div className={clsx(
             styles.card,
-            isExpanded && styles.cardExpanded
+            isExpanded && styles.cardExpanded,
+            expandedTeamId !== null && !isExpanded && styles.cardDimmed
         )}>
             <div className={clsx(
                 styles.container,
@@ -47,7 +47,7 @@ export default function GuildWarTeamCard({ team, heroImageMap, index }) {
 
                 {/* Header Area */}
                 <div 
-                    onClick={() => setIsExpanded(!isExpanded)}
+                    onClick={() => setExpandedTeamId(isExpanded ? null : team.id)}
                     className={styles.header}
                 >
                     {!isExpanded ? (

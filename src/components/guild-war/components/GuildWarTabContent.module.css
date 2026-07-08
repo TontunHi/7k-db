@@ -86,10 +86,12 @@
 }
 
 .petBox {
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 2rem;
   padding: 1.5rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .petContent {
@@ -110,26 +112,24 @@
   position: relative;
   width: 3.5rem;
   height: 3.5rem;
-  border-radius: 0.75rem;
-  border: 1px solid var(--border);
-  background: var(--background);
+  border-radius: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.25);
   padding: 0.5rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
-  transition: border-color 0.3s ease;
-}
-
-:global(.dark) .supportPet {
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .supportPet:hover {
-  border-color: var(--primary);
+  border-color: #ff3e3e;
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(220, 38, 38, 0.15);
 }
 
 .noteBox {
   flex: 1;
-  background: var(--muted);
-  border: 1px solid var(--border);
+  background: rgba(220, 38, 38, 0.03);
+  border: 1px solid rgba(220, 38, 38, 0.15);
   border-radius: 2rem;
   padding: 2rem;
   display: flex;
@@ -137,6 +137,9 @@
   justify-content: center;
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 20px rgba(220, 38, 38, 0.02);
 }
 
 .noteIconBg {
@@ -145,12 +148,12 @@
   right: -0.5rem;
   width: 2.5rem;
   height: 2.5rem;
-  color: var(--primary-opacity);
+  color: rgba(220, 38, 38, 0.1);
   transform: rotate(12deg);
 }
 
 .noteText {
-  color: var(--muted-foreground);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.875rem;
   line-height: 1.625;
   font-style: italic;
@@ -175,16 +178,20 @@
 
 .heroEquipmentCard {
   position: relative;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 2.5rem;
-  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 2.25rem;
+  padding: 1.75rem;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .heroEquipmentCard:hover {
-  border-color: var(--primary-opacity);
+  border-color: rgba(220, 38, 38, 0.2);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
 }
 
 .equipmentGlow {
@@ -193,15 +200,11 @@
   right: 0;
   width: 8rem;
   height: 8rem;
-  background: var(--primary-opacity);
-  filter: blur(48px);
+  background: radial-gradient(circle, rgba(220, 38, 38, 0.15) 0%, transparent 70%);
+  filter: blur(32px);
   border-radius: 9999px;
   opacity: 0;
-  transition: opacity 0.3s ease;
-  display: none;
-}
-
-:global(.dark) .equipmentGlow {
+  transition: opacity 0.4s ease;
   display: block;
 }
 
@@ -219,19 +222,19 @@
 
 .heroPortraitWrapper {
   position: relative;
-  width: 7rem;
-  height: 7rem;
+  width: 7.25rem;
+  height: 7.25rem;
   margin-bottom: 1rem;
 }
 
 .portraitAccent {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, var(--primary-opacity), transparent);
+  background: radial-gradient(circle, rgba(220, 38, 38, 0.2) 0%, transparent 70%);
   border-radius: 9999px;
-  filter: blur(16px);
+  filter: blur(12px);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease;
 }
 
 .heroEquipmentCard:hover .portraitAccent {
@@ -242,26 +245,26 @@
   object-fit: contain;
   position: relative;
   z-index: 10;
-  transition: transform 0.7s ease;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .heroEquipmentCard:hover .heroPortraitImage {
-  transform: scale(1.1);
+  transform: scale(1.08) translateY(-2px);
 }
 
 .heroName {
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 900;
-  color: var(--foreground);
+  color: #ffffff;
   text-transform: uppercase;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.01em;
   line-height: 1;
 }
 
 .heroNameBar {
-  width: 2.5rem;
-  height: 2px;
-  background: var(--primary-opacity);
+  width: 2rem;
+  height: 3px;
+  background: linear-gradient(90deg, #dc2626, transparent);
   border-radius: 9999px;
   margin-top: 0.75rem;
 }
@@ -281,23 +284,37 @@
 .itemSlot {
   position: relative;
   aspect-ratio: 1 / 1;
-  border-radius: 1.25rem;
-  border: 1px solid var(--border);
+  border-radius: 1.15rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--background);
-  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-.itemFilledWeapon { border-color: rgba(239, 68, 68, 0.3); }
-.itemFilledArmor { border-color: rgba(59, 130, 246, 0.3); }
-.itemFilledAccessory { border-color: rgba(245, 158, 11, 0.3); }
+.itemFilledWeapon { 
+  border-color: rgba(239, 68, 68, 0.4); 
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);
+}
+
+.itemFilledArmor { 
+  border-color: rgba(59, 130, 246, 0.4); 
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.1);
+}
 
 .itemImage {
   object-fit: contain;
-  padding: 1.5rem;
+  padding: 1.25rem;
+  transition: transform 0.4s ease;
+}
+
+.heroEquipmentCard:hover .itemImage {
+  transform: scale(1.05);
 }
 
 .accessoriesGrid {
@@ -309,31 +326,43 @@
 .accessorySlot {
   position: relative;
   aspect-ratio: 1 / 1;
-  border-radius: 0.75rem;
-  border: 1px solid var(--border);
+  border-radius: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--background);
+  background: rgba(0, 0, 0, 0.3);
   overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.itemFilledAccessory { 
+  border-color: rgba(245, 158, 11, 0.4); 
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);
 }
 
 .accessoryImage {
   object-fit: contain;
-  padding: 1.25rem;
+  padding: 1.15rem;
+  transition: transform 0.4s ease;
+}
+
+.heroEquipmentCard:hover .accessoryImage {
+  transform: scale(1.05);
 }
 
 .dot {
   width: 4px;
   height: 4px;
   border-radius: 9999px;
-  background: var(--border);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .itemNote {
   margin-top: 1.5rem;
   padding-top: 1.25rem;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .itemNoteText {
@@ -346,7 +375,7 @@
 }
 
 .heroEquipmentCard:hover .itemNoteText {
-  color: var(--primary);
+  color: #ff3e3e;
 }
 
 /* Rotation Tab */
@@ -355,10 +384,12 @@
 }
 
 .rotationContent {
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 2.5rem;
   padding: 2rem;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 @media (min-width: 640px) {
@@ -393,15 +424,11 @@
 .skillGlow {
   position: absolute;
   inset: -0.5rem;
-  background: var(--primary-opacity);
+  background: radial-gradient(circle, rgba(220, 38, 38, 0.2) 0%, transparent 70%);
   border-radius: 2rem;
-  filter: blur(8px);
+  filter: blur(12px);
   opacity: 0;
-  transition: opacity 0.3s ease;
-  display: none;
-}
-
-:global(.dark) .skillGlow {
+  transition: opacity 0.4s ease;
   display: block;
 }
 
@@ -413,16 +440,12 @@
   position: relative;
   width: 5rem;
   height: 5rem;
-  border-radius: 2rem;
+  border-radius: 1.75rem;
   overflow: hidden;
-  border: 2px solid var(--border);
-  background: var(--background);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
-  transition: all 0.5s ease;
-}
-
-:global(.dark) .skillIcon {
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @media (min-width: 640px) {
@@ -433,40 +456,41 @@
 }
 
 .skillWrapper:hover .skillIcon {
-  border-color: var(--primary);
-  transform: scale(1.05);
+  border-color: #ff3e3e;
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 15px 30px rgba(220, 38, 38, 0.25);
 }
 
 .skillIndex {
   position: absolute;
   top: -0.5rem;
   right: -0.5rem;
-  width: 2rem;
-  height: 2rem;
+  width: 1.85rem;
+  height: 1.85rem;
   border-radius: 9999px;
-  background: var(--foreground);
-  color: var(--background);
+  background: #ff3e3e;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 10px;
   font-weight: 900;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  border: 4px solid var(--card);
+  box-shadow: 0 4px 10px rgba(255, 62, 62, 0.4);
+  border: 3px solid rgba(20, 20, 23, 1);
 }
 
 .skillLabel {
   margin-top: 1rem;
   font-size: 10px;
   font-weight: 900;
-  color: var(--muted-foreground);
+  color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   transition: color 0.3s ease;
 }
 
 .skillWrapper:hover .skillLabel {
-  color: var(--primary);
+  color: #ff3e3e;
 }
 
 .skillConnector {
@@ -474,13 +498,13 @@
   align-items: center;
   justify-content: center;
   color: var(--muted-foreground);
-  opacity: 0.3;
+  opacity: 0.25;
   transition: all 0.3s ease;
 }
 
 .skillStep:hover .skillConnector {
-  opacity: 0.6;
-  color: var(--primary);
+  opacity: 0.65;
+  color: #ff3e3e;
   transform: translateX(4px);
 }
 
@@ -499,10 +523,12 @@
 }
 
 .primaryTargets {
-  background: var(--muted);
-  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 2rem;
   padding: 2rem;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .targetList {
@@ -515,24 +541,32 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: var(--background);
-  border: 1px solid var(--border);
-  padding-right: 1rem;
-  border-radius: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding-right: 1.25rem;
+  border-radius: 0.85rem;
   overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.targetHero:hover {
+  border-color: rgba(239, 68, 68, 0.3);
+  transform: translateY(-2px);
+  background: rgba(239, 68, 68, 0.05);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
 }
 
 .targetPortrait {
   position: relative;
   width: 2.5rem;
   height: 2.5rem;
-  border-right: 1px solid var(--border);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .targetName {
   font-size: 10px;
   font-weight: 900;
-  color: var(--muted-foreground);
+  color: rgba(255, 255, 255, 0.6);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
