@@ -8,13 +8,24 @@ import GuildWarTabContent from './GuildWarTabContent'
 import { clsx } from 'clsx'
 import styles from './GuildWarTeamCard.module.css'
 
+function isEquipmentEmpty(itemSet: any) {
+    if (!itemSet) return true;
+    const hasWeapon = !!itemSet.weapon;
+    const hasArmor = !!itemSet.armor;
+    const hasAccessories = Array.isArray(itemSet.accessories) && itemSet.accessories.some((a: any) => !!a);
+    const hasNote = !!itemSet.note;
+    return !hasWeapon && !hasArmor && !hasAccessories && !hasNote;
+}
+
 export default function GuildWarTeamCard({ team, heroImageMap, index }) {
     const [isExpanded, setIsExpanded] = useState(false)
     const [activeTab, setActiveTab] = useState('overview')
 
+    const hasEquipment = team.items && team.items.some((itemSet: any) => !isEquipmentEmpty(itemSet))
+
     const tabs = [
         { id: 'overview', label: 'Overview', icon: Layout, color: '#818cf8', bg: 'rgba(99, 102, 241, 0.1)' },
-        { id: 'equipment', label: 'Equipment', icon: Briefcase, color: '#fbbf24', bg: 'rgba(245, 158, 11, 0.1)' },
+        ...(hasEquipment ? [{ id: 'equipment', label: 'Equipment', icon: Briefcase, color: '#fbbf24', bg: 'rgba(245, 158, 11, 0.1)' }] : []),
         { id: 'skills', label: 'Skill Rotation', icon: Zap, color: '#c084fc', bg: 'rgba(168, 85, 247, 0.1)' },
         { id: 'counters', label: 'Counters', icon: ShieldAlert, color: '#fb7185', bg: 'rgba(244, 63, 94, 0.1)', count: team.counter_teams?.length || 0 },
     ]

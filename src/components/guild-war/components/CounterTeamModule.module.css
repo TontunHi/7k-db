@@ -178,6 +178,20 @@
   }
 }
 
+.summaryAreaFull {
+  grid-column: span 12 !important;
+}
+
+@media (min-width: 640px) {
+  .summaryAreaFull {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: stretch;
+  }
+}
+
+
 .formationPreview {
   position: relative;
   padding: 2rem 0.5rem;
@@ -323,6 +337,21 @@
 @media (min-width: 1024px) {
   .itemsArea {
     grid-column: span 7;
+  }
+}
+
+@media (min-width: 640px) {
+  .itemsArea1 {
+    grid-template-columns: 1fr !important;
+    max-width: 280px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .itemsArea2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    max-width: 560px;
+    margin: 0 auto;
+    width: 100%;
   }
 }
 

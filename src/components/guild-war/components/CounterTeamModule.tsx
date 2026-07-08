@@ -7,8 +7,29 @@ import { getSlotType, getStaggerClass, getSkillImagePath } from '@/lib/formation
 import { clsx } from 'clsx'
 import styles from './CounterTeamModule.module.css'
 
+function isEquipmentEmpty(itemSet: any) {
+    if (!itemSet) return true;
+    const hasWeapon = !!itemSet.weapon;
+    const hasArmor = !!itemSet.armor;
+    const hasAccessories = Array.isArray(itemSet.accessories) && itemSet.accessories.some((a: any) => !!a);
+    const hasNote = !!itemSet.note;
+    return !hasWeapon && !hasArmor && !hasAccessories && !hasNote;
+}
+
 export default function CounterTeamModule({ ct, heroImageMap, accentColor = '#f43f5e' }) {
     const [isCollapsed, setIsCollapsed] = useState(true)
+
+    const validEquipmentCards = ((ct.selection_order && ct.selection_order.length > 0)
+        ? ct.selection_order
+        : (ct.heroes || []).map((h, i) => h ? i : null).filter(idx => idx !== null)
+    ).slice(0, 3).map((slotIdx, heroIdx) => {
+        const heroFile = ct.heroes?.[slotIdx]
+        const itemSet = ct.items?.[heroIdx]
+        if (!heroFile || !itemSet || isEquipmentEmpty(itemSet)) return null
+        return { heroFile, itemSet, heroIdx }
+    }).filter(Boolean) as any[]
+
+    const hasCounterEquipment = validEquipmentCards.length > 0
     
     return (
         <div className={clsx(
@@ -59,10 +80,15 @@ export default function CounterTeamModule({ ct, heroImageMap, accentColor = '#f4
 
             {!isCollapsed && (
                 <div className={styles.expandedContent}>
-                    <div className={styles.grid}>
+                    <div className={clsx(styles.grid, !hasCounterEquipment && styles.gridNoEquipment)}>
                         {/* Summary */}
-                        <div className={styles.summaryArea}>
+                        <div className={clsx(styles.summaryArea, !hasCounterEquipment && styles.summaryAreaFull)}>
                               <div className={styles.formationPreview}>
+                                    {ct.formation && (
+                                        <div className="absolute top-4 left-4 text-[10px] font-black text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20 capitalize tracking-wider">
+                                            {ct.formation}
+                                        </div>
+                                    )}
                                     <div className={styles.gridContainer}>
                                         {[0, 1, 2, 3, 4].map(slotIdx => {
                                             const heroFile = ct.heroes?.[slotIdx]
@@ -110,12 +136,13 @@ export default function CounterTeamModule({ ct, heroImageMap, accentColor = '#f4
                         </div>
 
                         {/* Items */}
-                        <div className={styles.itemsArea}>
-                            {((ct.selection_order && ct.selection_order.length > 0) ? ct.selection_order : (ct.heroes || []).map((h, i) => h ? i : null).filter(idx => idx !== null)).slice(0, 3).map((slotIdx, heroIdx) => {
-                                const heroFile = ct.heroes?.[slotIdx]
-                                const itemSet = ct.items?.[heroIdx]
-                                if (!heroFile || !itemSet) return null
-                                return (
+                        {hasCounterEquipment && (
+                            <div className={clsx(
+                                styles.itemsArea,
+                                validEquipmentCards.length === 1 && styles.itemsArea1,
+                                validEquipmentCards.length === 2 && styles.itemsArea2
+                            )}>
+                                {validEquipmentCards.map(({ heroFile, itemSet, heroIdx }) => (
                                     <div key={heroIdx} className={styles.itemCard}>
                                         <div className={styles.itemHeroPortrait}>
                                             <SafeImage src={`/heroes/${heroFile}`} alt="" fill className={styles.itemHeroImage} />
@@ -143,9 +170,9 @@ export default function CounterTeamModule({ ct, heroImageMap, accentColor = '#f4
                                             </div>
                                         )}
                                     </div>
-                                )
-                            })}
-                        </div>
+                                ))}
+                            </div>
+                        )}
                         
                         {/* Skill Rotation */}
                         {ct.skill_rotation && ct.skill_rotation.length > 0 && (

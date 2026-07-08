@@ -19,6 +19,11 @@ export default function GuildWarTabContent({ activeTab, team, heroImageMap }) {
                             <LayoutGrid className={styles.headerIcon} />
                         </div>
                         <h4 className={styles.boxTitle}>Formation</h4>
+                        {team.formation && (
+                            <span className="ml-auto text-[10px] font-black text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20 capitalize tracking-wider">
+                                {team.formation}
+                            </span>
+                        )}
                     </div>
                     
                     <div className={styles.formationGridWrapper}>
