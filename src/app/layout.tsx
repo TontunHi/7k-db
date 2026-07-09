@@ -4,7 +4,7 @@ import { Toaster } from "sonner"
 import { Suspense } from "react"
 import AnalyticsTracker from "@/components/analytics/AnalyticsTracker"
 import { Inter, Prompt, Cormorant_Garamond } from "next/font/google"
-import Script from "next/script"
+
 
 const inter = Inter({
   subsets: ["latin"],
@@ -60,9 +60,9 @@ export default async function RootLayout({ children }) {
   return (
     <html lang={lang} suppressHydrationWarning className={`${inter.variable} ${prompt.variable} ${cormorantGaramond.variable}`}>
       <head>
-        <Script
+        <script
           id="theme-init"
-          strategy="beforeInteractive"
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&true))document.documentElement.classList.add('dark');else document.documentElement.classList.remove('dark');}catch(e){}})();` }}
         />
       </head>
