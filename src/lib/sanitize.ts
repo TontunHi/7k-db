@@ -34,11 +34,6 @@ export function sanitizeHTML(dirty: string): string {
         allowedIframeHostnames: ["www.youtube.com", "youtube.com", "youtu.be", "player.vimeo.com"]
     })
 
-    // Decode safe characters back to plain text so they render correctly in text context
+    // Return clean sanitized HTML directly to avoid re-introducing unsafe HTML/XSS
     return clean
-        .replace(/&gt;/g, ">")
-        .replace(/&lt;/g, "<")
-        .replace(/&amp;/g, "&")
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'")
 }

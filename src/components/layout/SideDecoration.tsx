@@ -1,7 +1,5 @@
 "use client"
 
-import Image from "next/image"
-
 export default function SideDecoration() {
     return (
         <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden select-none">
@@ -14,12 +12,10 @@ export default function SideDecoration() {
                 }}
             >
                 <div className="relative w-full h-full opacity-60 dark:opacity-80">
-                    <Image
-                        src="/about_website/left.webp"
+                    <img
+                        src="/about_website/left.webp?v=2"
                         alt=""
-                        fill
-                        className="object-cover object-right"
-                        priority
+                        className="w-full h-full object-cover object-right"
                     />
                 </div>
             </div>
@@ -33,12 +29,10 @@ export default function SideDecoration() {
                 }}
             >
                 <div className="relative w-full h-full opacity-60 dark:opacity-80">
-                    <Image
-                        src="/about_website/right.webp"
+                    <img
+                        src="/about_website/right.webp?v=2"
                         alt=""
-                        fill
-                        className="object-cover object-left"
-                        priority
+                        className="w-full h-full object-cover object-left"
                     />
                 </div>
             </div>

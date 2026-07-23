@@ -3,6 +3,7 @@
 import pool, { initDB } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { type Hero, type Pet, type Item, type ActionResponse } from "./types"
+import { requireAdmin } from "./auth-guard"
 
 async function ensureDB() {
     await initDB()
@@ -22,6 +23,7 @@ export async function getHeroesRegistry() {
 }
 
 export async function updateHeroRegistry(filename: string, data: Partial<Hero>): Promise<ActionResponse> {
+    await requireAdmin()
     await ensureDB()
     const fields = [
         "type", "hero_group", "atk_phys", "atk_mag", "def", "hp", 
@@ -61,6 +63,7 @@ export async function getPetsRegistry() {
 }
 
 export async function upsertPetRegistry(data: Partial<Pet>): Promise<ActionResponse> {
+    await requireAdmin()
     await ensureDB()
     const { id, name, grade, atk_all, def, hp, image } = data
     
@@ -81,6 +84,7 @@ export async function upsertPetRegistry(data: Partial<Pet>): Promise<ActionRespo
 }
 
 export async function deletePetRegistry(id: number): Promise<ActionResponse> {
+    await requireAdmin()
     await ensureDB()
     await pool.query("DELETE FROM pets WHERE id = ?", [id])
     revalidatePath("/admin/registry")
@@ -102,6 +106,7 @@ export async function getItemsRegistry() {
 }
 
 export async function upsertItemRegistry(data: Partial<Item>): Promise<ActionResponse> {
+    await requireAdmin()
     await ensureDB()
     const { id, name, grade, item_type, weapon_group, item_set, atk_all_perc, def_perc, hp_perc, image } = data
     
@@ -122,6 +127,7 @@ export async function upsertItemRegistry(data: Partial<Item>): Promise<ActionRes
 }
 
 export async function deleteItemRegistry(id: number): Promise<ActionResponse> {
+    await requireAdmin()
     await ensureDB()
     await pool.query("DELETE FROM items WHERE id = ?", [id])
     revalidatePath("/admin/registry")
