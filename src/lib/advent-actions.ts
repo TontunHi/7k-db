@@ -7,15 +7,9 @@ import { requireAdmin } from './auth-guard'
 import { validateData, AdventSetSchema, type AdventSet as AdventSetInput } from './validation'
 import { type AdventSet, type ActionResponse } from './types'
 import { type ResultSetHeader, type RowDataPacket } from 'mysql2'
+import { ADVENT_BOSSES } from './advent-config'
 
-// Fixed boss order
-const BOSS_ORDER = [
-    { key: 'ae_teo', name: 'Teo', image: '/advent_expedition/ae_teo.webp' },
-    { key: 'ae_kyle', name: 'Kyle', image: '/advent_expedition/ae_kyle.webp' },
-    { key: 'ae_yeonhee', name: 'Yeonhee', image: '/advent_expedition/ae_yeonhee.webp' },
-    { key: 'ae_karma', name: 'Karma', image: '/advent_expedition/ae_karma.webp' },
-    { key: 'ae_god_of_destruction', name: 'God Of Destruction', image: '/advent_expedition/ae_god_of_destruction.webp' },
-]
+const BOSS_ORDER = ADVENT_BOSSES
 
 export async function getBosses() {
     await initDB()
@@ -176,4 +170,28 @@ export async function deleteSet(id: number): Promise<ActionResponse> {
         console.error("Delete Set Error:", error)
         return { success: false, error: error.message }
     }
+}
+
+export async function getAdventBossesWithPrimarySet() {
+    const bosses = await getBosses()
+    const enriched = await Promise.all(
+        bosses.map(async (b) => {
+            const sets = await getSetsByBoss(b.key)
+            const teams = sets.map((s, idx) => ({
+                id: s.id,
+                phase: s.phase || 'Phase 1',
+                team_name: s.team_name || `Team ${idx + 1}`,
+                formation: s.formation,
+                heroes: s.heroes || [],
+                note: s.note || '',
+                video_url: s.video_url || ''
+            }))
+            return {
+                ...b,
+                teams,
+                primarySet: teams[0] || null
+            }
+        })
+    )
+    return enriched
 }

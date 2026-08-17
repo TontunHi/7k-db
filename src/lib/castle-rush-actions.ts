@@ -7,17 +7,32 @@ import { requireAdmin } from './auth-guard'
 import { validateData, CastleRushSetSchema, type CastleRushSet as CastleRushSetInput } from './validation'
 import { type CastleRushSet, type ActionResponse } from './types'
 import { type ResultSetHeader, type RowDataPacket } from 'mysql2'
+import { CASTLE_RUSH_BOSSES } from './castle-rush-config'
 
-// Fixed boss order
-const BOSS_ORDER = [
-    { key: 'cr_rudy', name: 'Rudy', image: '/castle_rush/cr_rudy.webp' },
-    { key: 'cr_eileene', name: 'Eileene', image: '/castle_rush/cr_eileene.webp' },
-    { key: 'cr_rachel', name: 'Rachel', image: '/castle_rush/cr_rachel.webp' },
-    { key: 'cr_dellons', name: 'Dellons', image: '/castle_rush/cr_dellons.webp' },
-    { key: 'cr_jave', name: 'Jave', image: '/castle_rush/cr_jave.webp' },
-    { key: 'cr_spike', name: 'Spike', image: '/castle_rush/cr_spike.webp' },
-    { key: 'cr_kris', name: 'Kris', image: '/castle_rush/cr_kris.webp' },
-]
+const BOSS_ORDER = CASTLE_RUSH_BOSSES
+
+export async function getTodayCastleRushBoss() {
+    const now = new Date()
+    const formatter = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Bangkok', weekday: 'short' })
+    const dayOfWeek = formatter.format(now)
+    const dayMap: Record<string, string> = {
+        'Sun': 'cr_kris',
+        'Mon': 'cr_rudy',
+        'Tue': 'cr_eileene',
+        'Wed': 'cr_rachel',
+        'Thu': 'cr_dellons',
+        'Fri': 'cr_jave',
+        'Sat': 'cr_spike'
+    }
+    const todayKey = dayMap[dayOfWeek] || 'cr_rudy'
+    const bossInfo = BOSS_ORDER.find(b => b.key === todayKey) || BOSS_ORDER[0]
+    const sets = await getSetsByBoss(todayKey)
+    return {
+        ...bossInfo,
+        setCount: sets.length,
+        primarySet: sets[0] || null
+    }
+}
 
 export async function getBosses() {
     await initDB()

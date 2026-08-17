@@ -1,4 +1,4 @@
-import { getRaids } from '@/lib/raid-actions'
+import { getRaids, getActiveRaidBossKeys } from '@/lib/raid-actions'
 import RaidManagerView from './RaidManagerView'
 import { requireAdmin } from '@/lib/auth-guard'
 
@@ -15,11 +15,14 @@ export const metadata = {
  */
 export default async function AdminRaidPage() {
     await requireAdmin('MANAGE_RAIDS')
-    const raids = await getRaids()
+    const [raids, activeKeys] = await Promise.all([
+        getRaids(),
+        getActiveRaidBossKeys()
+    ])
 
     return (
         <main>
-            <RaidManagerView raids={raids} />
+            <RaidManagerView raids={raids} initialActiveKeys={activeKeys} />
         </main>
     )
 }

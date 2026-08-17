@@ -5,14 +5,46 @@ import CastleRushDetailView from '@/components/castle-rush/detail/CastleRushDeta
 
 export const dynamic = 'force-dynamic'
 
+const CR_HERO_IMAGE_MAP: Record<string, string> = {
+    cr_rudy: '/heroes/l+_rudy.webp',
+    cr_eileene: '/heroes/l+_eileene.webp',
+    cr_rachel: '/heroes/l+_rachel.webp',
+    cr_dellons: '/heroes/l+_dellons.webp',
+    cr_jave: '/heroes/l+_jave.webp',
+    cr_spike: '/heroes/l+_spike.webp',
+    cr_kris: '/heroes/l+_kris.webp',
+}
+
 export async function generateMetadata({ params }) {
     const { boss: bossKey } = await params
     const boss = await getBossInfo(bossKey)
     if (!boss) return { title: 'Boss Not Found' }
     
+    const dayLabel = (boss as any).dayName ? ` • ${(boss as any).dayName.toUpperCase()}` : ''
+    const heroImage = CR_HERO_IMAGE_MAP[bossKey] || boss.image
+    const ogUrl = `/api/og?title=${encodeURIComponent(boss.name)}&badge=${encodeURIComponent(`CASTLE RUSH${dayLabel}`)}&subtitle=${encodeURIComponent('Optimal Team Comps, Formations & Speed Setup')}&theme=gold&image=${encodeURIComponent(heroImage)}`
+
     return {
         title: `${boss.name} - Castle Rush`,
-        description: `Team recommendations for Castle Rush boss ${boss.name}.`
+        description: `Team recommendations for Castle Rush boss ${boss.name}.`,
+        openGraph: {
+            title: `${boss.name} — Castle Rush Guide | 7K-DB`,
+            description: `Best Castle Rush team setups, formations, and skill priority for ${boss.name}.`,
+            images: [
+                {
+                    url: ogUrl,
+                    width: 1200,
+                    height: 630,
+                    alt: `${boss.name} Castle Rush Guide`
+                }
+            ]
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: `${boss.name} — Castle Rush Guide | 7K-DB`,
+            description: `Best Castle Rush team setups, formations, and skill priority for ${boss.name}.`,
+            images: [ogUrl]
+        }
     }
 }
 

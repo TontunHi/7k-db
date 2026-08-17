@@ -1,0 +1,359 @@
+.wrapper {
+  margin-top: 2rem;
+  margin-bottom: 2.5rem;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.iconBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 75, 43, 0.15));
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  color: #ffd700;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+  margin: 0;
+}
+
+/* Grid Layout: adapts to 1 column if only Castle Rush, or 2 columns if Raid is active */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+.gridTwoCols {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .gridTwoCols {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Cinematic Boss Card */
+.bannerCard {
+  position: relative;
+  border-radius: 1.25rem;
+  background: #09090b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 240px;
+  text-decoration: none;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.3s ease,
+              box-shadow 0.4s ease;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+}
+
+.bannerCard:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 215, 0, 0.4);
+  box-shadow: 0 0 35px rgba(255, 215, 0, 0.15), 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+}
+
+.bannerCardRaid:hover {
+  border-color: rgba(255, 75, 43, 0.45);
+  box-shadow: 0 0 35px rgba(255, 75, 43, 0.18), 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+}
+
+/* Background Artwork */
+.bgImageWrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.bgImage {
+  object-fit: cover;
+  object-position: center right;
+  opacity: 0.65;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+}
+
+.bannerCard:hover .bgImage {
+  transform: scale(1.04);
+  opacity: 0.85;
+}
+
+/* Gradient Shading for Text Legibility */
+.gradientOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(5, 5, 5, 0.95) 0%,
+    rgba(5, 5, 5, 0.82) 45%,
+    rgba(5, 5, 5, 0.4) 80%,
+    rgba(5, 5, 5, 0.15) 100%
+  );
+  z-index: 1;
+}
+
+.gradientOverlayRaid {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 4, 4, 0.95) 0%,
+    rgba(10, 4, 4, 0.82) 45%,
+    rgba(10, 4, 4, 0.4) 80%,
+    rgba(10, 4, 4, 0.15) 100%
+  );
+  z-index: 1;
+}
+
+/* Card Content Container */
+.cardContent {
+  position: relative;
+  z-index: 2;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.tagGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.badgeGold {
+  background: rgba(255, 215, 0, 0.18);
+  color: #ffd700;
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.15);
+}
+
+.badgeRed {
+  background: rgba(255, 75, 43, 0.18);
+  color: #ff6b4a;
+  border: 1px solid rgba(255, 75, 43, 0.4);
+  box-shadow: 0 0 15px rgba(255, 75, 43, 0.15);
+}
+
+.dayTag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #e4e4e7;
+  letter-spacing: 0.02em;
+}
+
+.todayPill {
+  font-size: 0.625rem;
+  font-weight: 800;
+  color: #000000;
+  background: #ffd700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.375rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+.activePill {
+  font-size: 0.625rem;
+  font-weight: 800;
+  color: #ffffff;
+  background: #ff4b2b;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.375rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  box-shadow: 0 0 10px rgba(255, 75, 43, 0.4);
+}
+
+/* Boss Headline */
+.bossBody {
+  margin-bottom: 1.25rem;
+}
+
+.bossName {
+  font-size: 1.625rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  font-style: italic;
+  margin: 0 0 0.25rem 0;
+  line-height: 1.2;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+}
+
+.bossSubtitle {
+  font-size: 0.8125rem;
+  color: #a1a1aa;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* 7-Day Quick Selector Strip */
+.weekStrip {
+  display: flex;
+  gap: 0.375rem;
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.dayPill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.625rem;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  min-width: 3.85rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.dayPill:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.dayPillActive {
+  background: rgba(255, 215, 0, 0.2);
+  border-color: rgba(255, 215, 0, 0.6);
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.3);
+}
+
+.dayPillLabel {
+  font-size: 0.625rem;
+  font-weight: 800;
+  color: #71717a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.1rem;
+}
+
+.dayPillActive .dayPillLabel {
+  color: #ffd700;
+}
+
+.dayPillBoss {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #e4e4e7;
+  letter-spacing: -0.01em;
+}
+
+.dayPillActive .dayPillBoss {
+  color: #ffffff;
+}
+
+/* Bottom Action Row */
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.actionButtonGold {
+  background: linear-gradient(135deg, #ffd700, #ffaa00);
+  color: #000000;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.actionButtonGold:hover {
+  background: linear-gradient(135deg, #ffe033, #ffb81a);
+  transform: translateX(2px);
+}
+
+.actionButtonRed {
+  background: linear-gradient(135deg, #ff4b2b, #ff416c);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(255, 75, 43, 0.3);
+}
+
+.actionButtonRed:hover {
+  background: linear-gradient(135deg, #ff5e42, #ff557d);
+  transform: translateX(2px);
+}
+
+.extraCountBadge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #a1a1aa;
+}

@@ -10,9 +10,29 @@ export async function generateMetadata({ params }) {
     const boss = await getBossInfo(bossKey)
     if (!boss) return { title: 'Boss Not Found' }
     
+    const ogUrl = `/api/og?title=${encodeURIComponent(boss.name)}&badge=${encodeURIComponent('ADVENT EXPEDITION')}&subtitle=${encodeURIComponent('Phase 1 & 2 Strategy, Team Formations & Skill Rotations')}&theme=gold&image=${encodeURIComponent(boss.image)}`
+
     return {
         title: `${boss.name} - Advent Expedition`,
-        description: `Team recommendations for Advent Expedition boss ${boss.name}.`
+        description: `Team recommendations and strategies for Advent Expedition boss ${boss.name}.`,
+        openGraph: {
+            title: `${boss.name} — Advent Expedition Guide | 7K-DB`,
+            description: `Best team lineups, formations, and skill priority for ${boss.name}.`,
+            images: [
+                {
+                    url: ogUrl,
+                    width: 1200,
+                    height: 630,
+                    alt: `${boss.name} Advent Expedition Guide`
+                }
+            ]
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: `${boss.name} — Advent Expedition Guide | 7K-DB`,
+            description: `Best team lineups, formations, and skill priority for ${boss.name}.`,
+            images: [ogUrl]
+        }
     }
 }
 

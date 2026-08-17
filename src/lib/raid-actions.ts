@@ -7,16 +7,40 @@ import { requireAdmin } from './auth-guard'
 import { validateData, RaidSetSchema, type RaidSet as RaidSetInput } from './validation'
 import { type RaidSet, type ActionResponse } from './types'
 import { type ResultSetHeader, type RowDataPacket } from 'mysql2'
+import { getSetting, updateSetting } from './setting-actions'
+import { RAID_BOSSES } from './raid-config'
 
-// Raids with actual images - names derived from filenames
-const RAID_ORDER = [
-    { key: 'destroyer_gaze', name: 'Destroyer Gaze', image: '/raid/1_Destroyer_Gaze.webp' },
-    { key: 'ox_king', name: 'Ox King', image: '/raid/2_Ox_King.webp' },
-    { key: 'iron_devourer', name: 'Iron Devourer', image: '/raid/3_Iron_Devourer.webp' },
-    { key: 'calistra', name: 'Calistra', image: '/raid/4_Calistra.webp' },
-    { key: 'astrea', name: 'Astrea', image: '/raid/5_Astrea.webp' },
-    { key: 'leonid', name: 'Leonid', image: '/raid/6_Leonid.webp' },
-]
+const RAID_ORDER = RAID_BOSSES
+
+export async function getActiveRaidBossKeys(): Promise<string[]> {
+    try {
+        const raw = await getSetting('active_raid_bosses', '[]')
+        const parsed = JSON.parse(raw)
+        if (Array.isArray(parsed)) {
+            return parsed
+        }
+        return []
+    } catch {
+        return []
+    }
+}
+
+export async function setActiveRaidBossKeys(keys: string[]): Promise<ActionResponse> {
+    await requireAdmin()
+    const res = await updateSetting('active_raid_bosses', JSON.stringify(keys))
+    if (res.success) {
+        revalidatePath('/')
+        revalidatePath('/raid')
+        revalidatePath('/admin/raid')
+    }
+    return res
+}
+
+export async function getActiveRaids() {
+    const activeKeys = await getActiveRaidBossKeys()
+    const allRaids = await getRaids()
+    return allRaids.filter(r => activeKeys.includes(r.key))
+}
 
 export async function getRaids() {
     await initDB()

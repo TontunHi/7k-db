@@ -11,9 +11,29 @@ export async function generateMetadata({ params }) {
     const raid = await getRaidInfo(raidKey)
     if (!raid) return { title: 'Raid Not Found' }
     
+    const ogUrl = `/api/og?title=${encodeURIComponent(raid.name)}&badge=${encodeURIComponent('BOSS RAID GUIDE')}&subtitle=${encodeURIComponent('Speed Order, Formations & Tactical Rotation')}&theme=red&image=${encodeURIComponent(raid.image)}`
+
     return {
         title: `${raid.name} - Raid Guide`,
-        description: `Team recommendations and skill rotations for ${raid.name}.`
+        description: `Team recommendations and skill rotations for ${raid.name}.`,
+        openGraph: {
+            title: `${raid.name} — Raid Strategy Guide | 7K-DB`,
+            description: `Best team lineups, formations, and skill priority for ${raid.name}.`,
+            images: [
+                {
+                    url: ogUrl,
+                    width: 1200,
+                    height: 630,
+                    alt: `${raid.name} Raid Guide`
+                }
+            ]
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: `${raid.name} — Raid Strategy Guide | 7K-DB`,
+            description: `Best team lineups, formations, and skill priority for ${raid.name}.`,
+            images: [ogUrl]
+        }
     }
 }
 

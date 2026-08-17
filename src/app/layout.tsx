@@ -44,11 +44,20 @@ export const metadata = {
     siteName: "7K DB",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/api/og?title=SEVEN%20KNIGHTS%20REBIRTH&badge=STRATEGY%20DATABASE&subtitle=Hero%20Builds%2C%20Tier%20Lists%2C%20and%20Complete%20Boss%20Guides&theme=gold",
+        width: 1200,
+        height: 630,
+        alt: "7K DB - Seven Knights Rebirth Database"
+      }
+    ]
   },
   twitter: {
     card: "summary_large_image",
     title: "7K DB - Seven Knights Rebirth Database & Strategy Guide",
     description: "The ultimate resource for Seven Knights Rebirth hero builds, tier lists, and strategies.",
+    images: ["/api/og?title=SEVEN%20KNIGHTS%20REBIRTH&badge=STRATEGY%20DATABASE&subtitle=Hero%20Builds%2C%20Tier%20Lists%2C%20and%20Complete%20Boss%20Guides&theme=gold"]
   }
 }
 
