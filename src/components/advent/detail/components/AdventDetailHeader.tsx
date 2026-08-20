@@ -1,17 +1,30 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Compass, ArrowLeft } from 'lucide-react'
+import ModeQuickSwitchNav from '@/components/shared/ModeQuickSwitchNav'
+import { ADVENT_BOSSES } from '@/lib/advent-config'
 import styles from './AdventDetailHeader.module.css'
 
 export default function AdventDetailHeader({ boss }) {
     const hasImage = boss.image && !boss.image.includes('undefined');
 
+    const switchItems = ADVENT_BOSSES.map(b => ({
+        key: b.key,
+        name: b.name,
+        href: `/advent/${b.key}`
+    }))
+
     return (
         <div className={styles.container}>
-            <Link href="/advent" className={styles.backLink}>
-                <ArrowLeft className="w-5 h-5" />
-                <span>Back to Advent Expedition</span>
-            </Link>
+            {/* Quick Switch Nav & Breadcrumbs */}
+            <ModeQuickSwitchNav
+                modeTitle="Advent Expedition"
+                modeHref="/advent"
+                currentKey={boss.key}
+                currentName={boss.name}
+                items={switchItems}
+                theme="gold"
+            />
             
             <div className={styles.content}>
                 {/* Boss Image */}

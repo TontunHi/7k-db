@@ -1,7 +1,11 @@
+'use client'
+
+import React from 'react'
 import SafeImage from './SafeImage'
 import { cn } from '@/lib/utils'
 import { getSlotType, getStaggerClass } from '@/lib/formation-utils'
 import { resolveHeroImage } from '@/lib/hero-utils'
+import { useHeroQuickPeek } from './HeroQuickPeekContext'
 
 export default function FormationGrid({ 
     formation, 
@@ -9,12 +13,23 @@ export default function FormationGrid({
     staggerAmount = 'translate-y-6', // Allow customizing the translate amount
     customClasses = {} as any, // Override default class sets
     heroImageMap = {} as any, // Mapping slug -> actual_filename
-    hideEmpty = false // Option to skip rendering of empty slots
+    hideEmpty = false, // Option to skip rendering of empty slots
+    disableQuickPeek = false, // Option to disable modal click
+    onHeroClick = undefined as ((heroFile: string, index: number) => void) | undefined
 }) {
+    const { openQuickPeek } = useHeroQuickPeek()
     const allIndices = [0, 1, 2, 3, 4]
     const indices = hideEmpty ? allIndices.filter(i => heroes?.[i]) : allIndices
 
     if (indices.length === 0 && hideEmpty) return null
+
+    const handleCardClick = (heroFile: string, index: number) => {
+        if (onHeroClick) {
+            onHeroClick(heroFile, index)
+        } else if (!disableQuickPeek && heroFile) {
+            openQuickPeek(heroFile)
+        }
+    }
 
     return (
         <div className={cn(
@@ -38,18 +53,24 @@ export default function FormationGrid({
                 const cardClasses = typeof customClasses.card === 'function' 
                     ? customClasses.card({ isFront, heroFile, type })
                     : cn(
-                        "relative aspect-[3/4] rounded-lg overflow-hidden border flex flex-col transition-all duration-500 shadow-xl group/hero",
+                        "relative aspect-[3/4] rounded-lg overflow-hidden border flex flex-col transition-all duration-300 shadow-xl group/hero",
+                        heroFile ? "cursor-pointer" : "cursor-default",
                         stagger,
                         heroFile 
                             ? (isFront 
-                                ? "border-sky-500/40 bg-sky-950/20 shadow-[0_0_15px_rgba(14,165,233,0.1)] hover:border-sky-400 hover:shadow-[0_0_25px_rgba(14,165,233,0.25)]" 
-                                : "border-rose-600/40 bg-rose-950/20 shadow-[0_0_15px_rgba(225,29,72,0.1)] hover:border-rose-500 hover:shadow-[0_0_25px_rgba(225,29,72,0.25)]")
+                                ? "border-sky-500/40 bg-sky-950/20 shadow-[0_0_15px_rgba(14,165,233,0.1)] hover:border-sky-400 hover:scale-105 hover:shadow-[0_0_25px_rgba(14,165,233,0.35)]" 
+                                : "border-rose-600/40 bg-rose-950/20 shadow-[0_0_15px_rgba(225,29,72,0.1)] hover:border-rose-500 hover:scale-105 hover:shadow-[0_0_25px_rgba(225,29,72,0.35)]")
                             : "border-border/40 border-dashed bg-muted/40",
                         customClasses.cardString
                     )
 
                 const cardNode = (
-                    <div key={i} className={cardClasses}>
+                    <div 
+                        key={i} 
+                        className={cardClasses}
+                        onClick={() => heroFile && handleCardClick(heroFile, i)}
+                        title={heroFile ? "Click to view hero profile & recommended builds" : undefined}
+                    >
                         {heroFile ? (
                             <>
                                 <div 
@@ -60,14 +81,13 @@ export default function FormationGrid({
                                         alt="Hero" 
                                         fill 
                                         sizes="(max-width: 768px) 20vw, 10vw"
-                                        className={cn("object-cover transition-all duration-500 group-hover/link:scale-110", customClasses.image)} 
+                                        className={cn("object-cover transition-all duration-300 group-hover/link:scale-110", customClasses.image)} 
                                     />
-                                    {/* Removed gradient overlay for clear hero images */}
                                     
                                     {/* Inset border glow */}
                                     <div className={cn(
-                                        "absolute inset-0 opacity-0 group-hover/hero:opacity-100 transition-opacity duration-500",
-                                        isFront ? "shadow-[inset_0_0_20px_rgba(14,165,233,0.2)]" : "shadow-[inset_0_0_20px_rgba(225,29,72,0.2)]"
+                                        "absolute inset-0 opacity-0 group-hover/hero:opacity-100 transition-opacity duration-300 pointer-events-none",
+                                        isFront ? "shadow-[inset_0_0_20px_rgba(14,165,233,0.3)]" : "shadow-[inset_0_0_20px_rgba(225,29,72,0.3)]"
                                     )} />
                                 </div>
                                 

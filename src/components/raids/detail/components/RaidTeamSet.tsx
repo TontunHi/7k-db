@@ -1,9 +1,10 @@
+'use client'
+
 import { Video, ExternalLink, Users, ScrollText } from 'lucide-react'
 import FormationGrid from '@/components/shared/FormationGrid'
 import PetDisplay from '@/components/shared/PetDisplay'
 import RaidSkillRotation from '@/components/shared/RaidSkillRotation'
 import SafeImage from '@/components/shared/SafeImage'
-import HeroBuildTooltip from '@/components/advent/detail/components/HeroBuildTooltip'
 import { parseHeroDetails, resolveHeroImage } from '@/lib/hero-utils'
 import styles from './RaidTeamSet.module.css'
 
@@ -49,23 +50,7 @@ export default function RaidTeamSet({ set, index, heroImageMap, skillsMap }) {
                             customClasses={{
                                 container: "grid grid-cols-5 gap-3 max-w-full",
                                 emptyRender: () => null,
-                                cardString: "bg-black/40 border-[1px] border-white/5 aspect-[3/4] rounded-xl overflow-hidden transition-all duration-500 hover:border-red-500/50",
-                                renderWrapper: (cardNode, idx) => {
-                                    const heroFile = set.heroes?.[idx];
-                                    const heroName = heroFile ? parseHeroDetails(heroFile)?.name : '';
-                                    const align = idx < 2 ? 'left' : idx > 2 ? 'right' : 'center';
-                                    
-                                    return (
-                                        <HeroBuildTooltip 
-                                            key={idx} 
-                                            buildData={set.hero_builds?.[idx]} 
-                                            heroName={heroName}
-                                            align={align}
-                                        >
-                                            {cardNode}
-                                        </HeroBuildTooltip>
-                                    )
-                                }
+                                cardString: "bg-black/40 border-[1px] border-white/5 aspect-[3/4] rounded-xl overflow-hidden transition-all duration-500 hover:border-red-500/50"
                             }}
                         />
                     </div>

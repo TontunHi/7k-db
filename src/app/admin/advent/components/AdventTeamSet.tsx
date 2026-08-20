@@ -145,22 +145,6 @@ export default function AdventTeamSet({
                         petsList={assets.pets}
                         formations={assets.formations}
                         onUpdate={(teamData) => onTeamUpdate(index, teamData)}
-                        renderHeroAction={(hIdx, heroFile) => heroFile ? (
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onOpenBuildPicker(hIdx);
-                                }}
-                                className={clsx(
-                                    "absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all z-30 shadow-xl border backdrop-blur-md",
-                                    set.hero_builds?.[hIdx] 
-                                        ? "bg-primary/90 hover:bg-primary border-primary/50 text-white opacity-100" 
-                                        : "bg-black/60 hover:bg-primary/90 text-white border-white/10 opacity-0 group-hover:opacity-100"
-                                )}
-                            >
-                                {set.hero_builds?.[hIdx] ? 'Edit Build' : 'Set Build'}
-                            </button>
-                        ) : null}
                     />
 
                     {/* Speed Order Section */}

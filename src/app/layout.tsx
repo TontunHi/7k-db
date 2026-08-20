@@ -63,6 +63,8 @@ export const metadata = {
 
 import { getLocale } from "@/lib/i18n"
 
+import { HeroQuickPeekProvider } from "@/components/shared/HeroQuickPeekContext"
+
 export default async function RootLayout({ children }) {
   const lang = await getLocale()
 
@@ -83,11 +85,13 @@ export default async function RootLayout({ children }) {
           attribute="class"
           defaultTheme="dark"
         >
-          <Suspense fallback={null}>
-            <AnalyticsTracker />
-          </Suspense>
-          {children}
-          <Toaster theme="dark" position="top-center" richColors />
+          <HeroQuickPeekProvider>
+            <Suspense fallback={null}>
+              <AnalyticsTracker />
+            </Suspense>
+            {children}
+            <Toaster theme="dark" position="top-center" richColors />
+          </HeroQuickPeekProvider>
         </ThemeProvider>
       </body>
     </html>

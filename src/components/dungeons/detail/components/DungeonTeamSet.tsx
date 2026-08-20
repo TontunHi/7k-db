@@ -1,3 +1,5 @@
+'use client'
+
 import { clsx } from 'clsx'
 import { Video, ExternalLink, ScrollText } from 'lucide-react'
 import FormationGrid from '@/components/shared/FormationGrid'

@@ -1,3 +1,5 @@
+'use client'
+
 import { clsx } from 'clsx'
 import { Shield } from 'lucide-react'
 import FormationGrid from '@/components/shared/FormationGrid'

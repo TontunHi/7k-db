@@ -1,15 +1,29 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Crown, ArrowLeft } from 'lucide-react'
+import ModeQuickSwitchNav from '@/components/shared/ModeQuickSwitchNav'
+import { CASTLE_RUSH_BOSSES } from '@/lib/castle-rush-config'
 import styles from './CastleRushDetailHeader.module.css'
 
 export default function CastleRushDetailHeader({ boss }) {
+    const switchItems = CASTLE_RUSH_BOSSES.map(b => ({
+        key: b.key,
+        name: b.name,
+        href: `/castle-rush/${b.key}`,
+        subtext: b.dayName.slice(0, 3)
+    }))
+
     return (
         <div className={styles.container}>
-            <Link href="/castle-rush" className={styles.backLink}>
-                <ArrowLeft className="w-5 h-5" />
-                <span>Back to Castle Rush</span>
-            </Link>
+            {/* Quick Switch Nav & Breadcrumbs */}
+            <ModeQuickSwitchNav
+                modeTitle="Castle Rush"
+                modeHref="/castle-rush"
+                currentKey={boss.key}
+                currentName={boss.name}
+                items={switchItems}
+                theme="gold"
+            />
             
             <div className={styles.banner}>
                 <Image 
