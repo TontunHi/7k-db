@@ -1,5 +1,4 @@
 import BuildView from "@/components/build/BuildView"
-import ContributorPopup from "@/components/builds/ContributorPopup"
 import { getHeroBuildList } from "@/lib/hero-actions"
 import styles from './page.module.css'
 
@@ -36,7 +35,6 @@ export default async function BuildPage() {
     return (
         <main className={styles.main}>
             <BuildView heroes={heroes} />
-            <ContributorPopup />
         </main>
     )
 }

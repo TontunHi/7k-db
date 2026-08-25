@@ -3,6 +3,7 @@
 import pool, { initDB } from '@/lib/db'
 import { requireAdmin } from './auth-guard'
 import { validateData, CommunityBuildSubmissionSchema } from './validation'
+import { inferWeaponGroup } from './constants/stats'
 import { logSiteUpdate } from './log-actions'
 import { revalidatePath } from 'next/cache'
 import { type RowDataPacket, type ResultSetHeader } from 'mysql2'
@@ -26,10 +27,10 @@ export interface CommunityBuildSubmission {
     updated_at: string
 }
 
-export async function submitCommunityBuild(rawData: any) {
+export async function submitCommunityBuild(input: unknown) {
     await initDB()
 
-    const validation = validateData(CommunityBuildSubmissionSchema, rawData)
+    const validation = validateData(CommunityBuildSubmissionSchema, input)
     if (!validation.success) {
         return { success: false, error: validation.error }
     }
@@ -249,16 +250,11 @@ export async function getBuildSubmissionFormAssets() {
         if (rows.length > 0) {
             dbWeapons = rows
                 .filter(r => r.item_type === 'Weapon')
-                .map(r => {
-                    const lower = (r.image || '').toLowerCase()
-                    const isMagicFile = lower.includes('orb') || lower.includes('staff') || lower.includes('scripture')
-                    const rawGroup = r.weapon_group || (isMagicFile ? 'Magic' : 'Physical')
-                    return {
-                        image: r.image,
-                        name: r.name,
-                        weapon_group: rawGroup
-                    }
-                })
+                .map(r => ({
+                    image: r.image,
+                    name: r.name,
+                    weapon_group: inferWeaponGroup(r.image || r.name, r.weapon_group)
+                }))
 
             dbArmors = rows
                 .filter(r => r.item_type === 'Armor')
@@ -275,15 +271,11 @@ export async function getBuildSubmissionFormAssets() {
     // Fallback to directory images if DB items empty
     if (dbWeapons.length === 0) {
         const fallbackWeaponImgs = await getItemImages('weapon')
-        dbWeapons = fallbackWeaponImgs.map(img => {
-            const lower = img.toLowerCase()
-            const isMagic = lower.includes('orb') || lower.includes('staff') || lower.includes('scripture') || lower.includes('magic')
-            return {
-                image: img,
-                name: img.replace(/\.[^/.]+$/, '').replace(/_/g, ' '),
-                weapon_group: isMagic ? 'Magic' : 'Physical'
-            }
-        })
+        dbWeapons = fallbackWeaponImgs.map(img => ({
+            image: img,
+            name: img.replace(/\.[^/.]+$/, '').replace(/_/g, ' '),
+            weapon_group: inferWeaponGroup(img)
+        }))
     }
 
     if (dbArmors.length === 0) {

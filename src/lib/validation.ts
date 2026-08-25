@@ -244,6 +244,7 @@ export type HeroInput = z.infer<typeof HeroSchema>;
 export type Build = z.infer<typeof BuildSchema>;
 export type StageSetup = z.infer<typeof StageSetupSchema>;
 export type UserInput = z.infer<typeof UserSchema>;
+export type CommunityBuildSubmissionInput = z.infer<typeof CommunityBuildSubmissionSchema>;
 
 export const UserSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters").max(100),

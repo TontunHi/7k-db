@@ -22,6 +22,17 @@ import { toast } from 'sonner'
 import { type HeroListItem } from '@/lib/hero-actions'
 import { getBuildSubmissionFormAssets, submitCommunityBuild } from '@/lib/community-build-actions'
 import SafeImage from '@/components/shared/SafeImage'
+import { 
+    MIN_STATS_KEYS, 
+    AVAILABLE_SUBSTATS, 
+    DEDICATED_STATS_OPTIONS, 
+    WEAPON_MAIN_STATS, 
+    ARMOR_MAIN_STATS, 
+    ACCESSORY_MAIN_STATS, 
+    getDedicatedStatIcon, 
+    EMPTY_DEDICATED_STATS,
+    DedicatedStatsArray
+} from '@/lib/constants/stats'
 import styles from './CommunityBuildModal.module.css'
 
 interface CommunityBuildModalProps {
@@ -30,90 +41,6 @@ interface CommunityBuildModalProps {
 }
 
 const TRANSCENDENCE_LEVELS = ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6']
-
-const WEAPON_MAIN_STATS = [
-    "Crit Rate",
-    "Weakness Hit Chance",
-    "Crit Damage",
-    "All Attack (%)",
-    "All Attack",
-    "Defense (%)",
-    "Defense",
-    "HP (%)",
-    "HP",
-    "Effect Hit Rate"
-]
-
-const ARMOR_MAIN_STATS = [
-    "Damage Taken Reduction",
-    "Block Rate",
-    "Defense (%)",
-    "Defense",
-    "HP (%)",
-    "HP",
-    "All Attack (%)",
-    "All Attack",
-    "Effect Resistance"
-]
-
-const MIN_STATS_KEYS = [
-    { key: "physAtk", label: "Attack", icon: "/about_website/icon_physical_attack.webp" },
-    { key: "defense", label: "Defense", icon: "/about_website/icon_defense.webp" },
-    { key: "hp", label: "HP", icon: "/about_website/icon_hp.webp" },
-    { key: "speed", label: "Speed", icon: "/about_website/icon_speed.webp" },
-    { key: "critRate", label: "Crit Rate (%)", icon: "/about_website/icon_crit_rate.webp" },
-    { key: "critDamage", label: "Crit Damage (%)", icon: "/about_website/icon_crit_damage.webp" },
-    { key: "weaknessHit", label: "Weakness Hit (%)", icon: "/about_website/icon_weakness_hit_chance.webp" },
-    { key: "blockRate", label: "Block Rate (%)", icon: "/about_website/icon_block_rate.webp" },
-    { key: "damageReduction", label: "Damage Reduction (%)", icon: "/about_website/icon_damage_taken_reduction.webp" },
-    { key: "effectHit", label: "Effect Hit (%)", icon: "/about_website/icon_effect_hit_rate.webp" },
-    { key: "effectResist", label: "Effect Resist (%)", icon: "/about_website/icon_effect_resistance.webp" },
-    { key: "damageAmplification", label: "Damage Amp (%)", icon: "/about_website/icon_dedicated_damage_amplification.webp" },
-    { key: "crush", label: "Crush", icon: "/about_website/icon_dedicated_crush.webp" },
-    { key: "resilience", label: "Resilience", icon: "/about_website/icon_dedicated_resilience.webp" },
-    { key: "rejuvenate", label: "Rejuvenate", icon: "/about_website/icon_dedicated_rejuvenate.webp" }
-]
-
-const AVAILABLE_SUBSTATS = [
-    "Speed",
-    "Crit Rate",
-    "Crit Damage",
-    "Weakness Hit Chance",
-    "Block Rate",
-    "Damage Taken Reduction",
-    "Effect Hit Rate",
-    "Effect Resistance",
-    "All Attack (%)",
-    "Defense (%)",
-    "HP (%)"
-]
-
-const DEDICATED_STATS_OPTIONS = [
-    "All Attack (%)",
-    "Defense (%)",
-    "HP (%)",
-    "Effect Hit Rate",
-    "Effect Resistance",
-    "Damage Amplification",
-    "Crush",
-    "Resilience",
-    "Rejuvenate"
-]
-
-function getDedicatedStatIcon(stat: string | null) {
-    switch (stat) {
-        case "All Attack (%)": return "/about_website/icon_physical_attack.webp"
-        case "Defense (%)": return "/about_website/icon_defense.webp"
-        case "HP (%)": return "/about_website/icon_hp.webp"
-        case "Effect Hit Rate": return "/about_website/icon_effect_hit_rate.webp"
-        case "Effect Resistance": return "/about_website/icon_effect_resistance.webp"
-        case "Damage Amplification": return "/about_website/icon_dedicated_damage_amplification.webp"
-        case "Crush": return "/about_website/icon_dedicated_crush.webp"
-        case "Resilience": return "/about_website/icon_dedicated_resilience.webp"
-        case "Rejuvenate": return "/about_website/icon_dedicated_rejuvenate.webp"
-        default: return null
-    }
-}
 
 const MODES = [
     'PVP / Arena', 'Guild War', 'Castle Rush', 'Advent Expedition', 'Raid', 'Total War', 'General PvE'
@@ -185,9 +112,7 @@ export default function CommunityBuildModal({ preselectedHero, onClose }: Commun
     ])
     const [substats, setSubstats] = useState<string[]>([])
     const [minStats, setMinStats] = useState<Record<string, string>>({})
-    const [dedicatedStats, setDedicatedStats] = useState<Array<string | null>>([
-        null, null, null, null, null, null, null, null
-    ])
+    const [dedicatedStats, setDedicatedStats] = useState<DedicatedStatsArray>(EMPTY_DEDICATED_STATS)
     const [notes, setNotes] = useState('')
 
     const updateMinStat = (key: string, value: string) => {
@@ -278,7 +203,7 @@ export default function CommunityBuildModal({ preselectedHero, onClose }: Commun
     }
 
     const updateDedicatedStat = (slotIndex: number, value: string | null) => {
-        const next = [...dedicatedStats]
+        const next = [...dedicatedStats] as DedicatedStatsArray
         next[slotIndex] = value
         setDedicatedStats(next)
     }
