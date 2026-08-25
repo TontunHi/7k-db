@@ -28,10 +28,10 @@ function collectAllHeroes(teams: any[]): string[] {
     )
 }
 
-/* ─── component ─── */
 export default function GuildWarContent({ teams, heroImageMap }) {
     const [query, setQuery] = useState('')
     const [selectedHeroes, setSelectedHeroes] = useState<string[]>([])
+    const [expandedTeamId, setExpandedTeamId] = useState<string | null>(null)
 
     /* all unique heroes across all teams (stable) */
     const allHeroes = useMemo(() => collectAllHeroes(teams), [teams])
@@ -68,14 +68,11 @@ export default function GuildWarContent({ teams, heroImageMap }) {
         setQuery('')
     }
 
-    const [expandedTeamId, setExpandedTeamId] = useState<string | null>(null)
-
     return (
         <>
             {/* ── Search Bar ── */}
             <div className={searchStyles.searchSection}>
                 <div className={searchStyles.searchWrapper}>
-                    {/* Input row */}
                     <div className={searchStyles.inputRow}>
                         <Search className={searchStyles.searchIcon} size={16} />
 
@@ -106,8 +103,8 @@ export default function GuildWarContent({ teams, heroImageMap }) {
                             onChange={e => setQuery(e.target.value)}
                             placeholder={
                                 selectedHeroes.length === 0
-                                    ? 'Search by hero name…'
-                                    : 'Add another hero…'
+                                    ? 'Filter by enemy hero name (e.g. Teo, Yeonhee)…'
+                                    : 'Add another hero to match…'
                             }
                             className={searchStyles.input}
                         />
@@ -152,7 +149,7 @@ export default function GuildWarContent({ teams, heroImageMap }) {
                             {filteredTeams.length}
                         </span>
                         <span className={searchStyles.resultLabel}>
-                            {filteredTeams.length === 1 ? 'formation found' : 'formations found'}
+                            {filteredTeams.length === 1 ? 'matching defense team found' : 'matching defense teams found'}
                         </span>
                     </div>
                 )}
@@ -168,7 +165,7 @@ export default function GuildWarContent({ teams, heroImageMap }) {
                         </div>
                         <h2 className={styles.emptyTitle}>No formations found</h2>
                         <p className={styles.emptyText}>
-                            No team uses all selected heroes together.
+                            No defense team uses all selected heroes together.
                             Try removing a filter or searching for different heroes.
                         </p>
                     </div>

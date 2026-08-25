@@ -18,10 +18,11 @@ export default function AdventTeamSet({ set, index, heroImageMap }) {
             <div className={styles.headerWrapper}>
                 <div className={styles.topLine} />
                 
-                {/* Set Header */}
+                {/* Team Info / Name */}
                 <div className={styles.header}>
                     <div className={styles.headerInfo}>
-                        <h3 className={styles.teamTitle}>
+                        <span className={styles.setIndex}>Set {index + 1}</span>
+                        <h3 className={styles.teamName}>
                             {set.team_name || `Set ${index + 1}`}
                         </h3>
                     </div>

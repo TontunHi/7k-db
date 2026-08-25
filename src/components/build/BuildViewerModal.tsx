@@ -134,6 +134,13 @@ export default function BuildViewerModal({ hero, data, onClose }) {
                             ))}
                         </div>
 
+                        {/* Community Author Credit */}
+                        {build?.author_name && (
+                            <div className="flex items-center justify-center gap-1.5 px-3 py-1 bg-amber-400/10 border border-amber-400/30 rounded-lg text-xs text-amber-300 font-bold my-1 text-center">
+                                <span>Build by: <strong className="text-white">{build.author_name}</strong></span>
+                            </div>
+                        )}
+
                         {/* Recommended Upgrades Column */}
                         <div className={styles.skillPriorityContainer}>
                             <span className={styles.skillsTitle}>Recommended Upgrade</span>

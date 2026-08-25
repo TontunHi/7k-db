@@ -37,9 +37,14 @@ export async function getHeroData(filename: string) {
 
 export async function getHeroesMetadata() {
     await ensureDB()
-    const [rows] = await pool.query<({ filename: string; is_new_hero: number; type: string | null; sort_order: number })[] & RowDataPacket[]>("SELECT filename, is_new_hero, type, sort_order FROM heroes")
-    return rows.reduce((acc: Record<string, { is_new_hero: boolean; type: string | null; sort_order: number }>, r) => {
-        acc[r.filename] = { is_new_hero: !!r.is_new_hero, type: r.type || null, sort_order: r.sort_order || 0 }
+    const [rows] = await pool.query<({ filename: string; is_new_hero: number; type: string | null; hero_group: string | null; sort_order: number })[] & RowDataPacket[]>("SELECT filename, is_new_hero, type, hero_group, sort_order FROM heroes")
+    return rows.reduce((acc: Record<string, { is_new_hero: boolean; type: string | null; hero_group: string | null; sort_order: number }>, r) => {
+        const val = { is_new_hero: !!r.is_new_hero, type: r.type || null, hero_group: r.hero_group || null, sort_order: r.sort_order || 0 }
+        acc[r.filename] = val
+        const slug = r.filename.replace(/\.[^/.]+$/, "")
+        acc[slug] = val
+        const cleanName = slug.replace(/^(a|l\+\+|l\+|l|r)_/, "")
+        acc[cleanName] = val
         return acc
     }, {})
 }
@@ -100,6 +105,8 @@ export async function getHeroBuilds(heroFilename: string) {
         ...row,
         id: row.id,
         cLevel: row.c_level,
+        author_name: row.author_name || null,
+        author_contact: row.author_contact || null,
         mode: typeof row.modes === 'string' ? JSON.parse(row.modes) : (row.modes || []),
         weapons: typeof row.weapons === 'string' ? JSON.parse(row.weapons) : (row.weapons || []),
         armors: typeof row.armors === 'string' ? JSON.parse(row.armors) : (row.armors || []),
@@ -133,8 +140,8 @@ export async function saveHeroBuilds(heroFilename: string, builds: BuildInput[])
         for (let i = 0; i < validatedBuilds.length; i++) {
             const build = validatedBuilds[i]
             await connection.query(`
-        INSERT INTO builds (hero_filename, c_level, modes, note, weapons, armors, accessories, substats, min_stats, dedicated_stats, build_index)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO builds (hero_filename, c_level, modes, note, weapons, armors, accessories, substats, min_stats, dedicated_stats, build_index, author_name, author_contact)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `, [
                 slug,
                 build.cLevel,
@@ -146,7 +153,9 @@ export async function saveHeroBuilds(heroFilename: string, builds: BuildInput[])
                 JSON.stringify(build.substats),
                 JSON.stringify(build.minStats || {}),
                 JSON.stringify(build.dedicatedStats || [null, null, null, null, null, null, null, null]),
-                i + 1
+                i + 1,
+                build.author_name || null,
+                build.author_contact || null
             ])
         }
 

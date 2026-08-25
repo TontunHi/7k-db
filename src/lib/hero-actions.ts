@@ -9,6 +9,7 @@ export interface HeroListItem {
     name: string;
     is_new_hero: boolean;
     type: string | null;
+    hero_group: string | null;
     sort_order: number;
 }
 
@@ -53,17 +54,21 @@ export async function getHeroBuildList(): Promise<HeroListItem[]> {
         heroes = imageFiles
             .map((file): HeroListItem | null => {
                 const slug = file.replace(/\.[^/.]+$/, "")
+                const cleanName = slug.replace(/^(a|l\+\+|l\+|l|r)_/, "")
                 const grade = getGradeFromFilename(file, imageFiles)
                 if (grade === "unknown") return null
+
+                const meta = metadata[slug] || metadata[cleanName] || metadata[file]
 
                 return {
                     filename: file,
                     slug: slug,
                     grade: grade,
-                    name: file.replace(/^(a|l\+\+|l\+|l|r)_/, "").replace(/\.[^/.]+$/, "").replace(/_/g, " "),
-                    is_new_hero: metadata[slug]?.is_new_hero || false,
-                    type: metadata[slug]?.type || null,
-                    sort_order: metadata[slug]?.sort_order || 0
+                    name: cleanName.replace(/_/g, " "),
+                    is_new_hero: meta?.is_new_hero || false,
+                    type: meta?.type || null,
+                    hero_group: meta?.hero_group || (meta?.type?.toLowerCase() === 'magic' ? 'Magic' : 'Physical'),
+                    sort_order: meta?.sort_order || 0
                 }
             })
             .filter((h): h is HeroListItem & { sort_order: number } => h !== null)

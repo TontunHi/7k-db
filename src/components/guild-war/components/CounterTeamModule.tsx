@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { ChevronDown, Zap, ArrowRight } from 'lucide-react'
 import SafeImage from '@/components/shared/SafeImage'
 import PetDisplay from '@/components/shared/PetDisplay'
+import { useHeroQuickPeek } from '@/components/shared/HeroQuickPeekContext'
 import { getSlotType, getStaggerClass, getSkillImagePath } from '@/lib/formation-utils'
 import { clsx } from 'clsx'
 import styles from './CounterTeamModule.module.css'
@@ -18,6 +19,7 @@ function isEquipmentEmpty(itemSet: any) {
 
 export default function CounterTeamModule({ ct, heroImageMap, accentColor = '#f43f5e' }) {
     const [isCollapsed, setIsCollapsed] = useState(true)
+    const { openQuickPeek } = useHeroQuickPeek()
 
     const validEquipmentCards = ((ct.selection_order && ct.selection_order.length > 0)
         ? ct.selection_order
@@ -97,12 +99,17 @@ export default function CounterTeamModule({ ct, heroImageMap, accentColor = '#f4
                                             const hasStagger = getStaggerClass(ct.formation, slotIdx) !== ''
                                             
                                             return (
-                                                <div key={slotIdx} className={clsx(
-                                                    styles.heroSlot,
-                                                    hasStagger && styles.stagger,
-                                                    heroFile && (isFront ? styles.slotFront : styles.slotBack),
-                                                    !heroFile && styles.slotEmpty
-                                                )}>
+                                                <div 
+                                                    key={slotIdx} 
+                                                    onClick={() => heroFile && openQuickPeek(heroFile)}
+                                                    className={clsx(
+                                                        styles.heroSlot,
+                                                        hasStagger && styles.stagger,
+                                                        heroFile && (isFront ? styles.slotFront : styles.slotBack),
+                                                        !heroFile && styles.slotEmpty,
+                                                        heroFile && "cursor-pointer hover:scale-105 transition-transform"
+                                                    )}
+                                                >
                                                     {heroFile && (
                                                         <div className={styles.heroImageWrapper}>
                                                             <SafeImage src={`/heroes/${heroFile}`} alt="" fill className={styles.heroPortrait} />

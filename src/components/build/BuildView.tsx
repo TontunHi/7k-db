@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Loader2 } from "lucide-react"
 import BuildViewerModal from "./BuildViewerModal"
+import CommunityBuildModal from "./CommunityBuildModal"
 import { fetchHeroBuildData } from "@/lib/viewer-actions"
 import { trackCustomPageView } from "../analytics/AnalyticsTracker"
 import { useBuildFilter } from "./hooks/useBuildFilter"
@@ -23,6 +24,7 @@ export default function BuildView({ heroes }) {
     const [selectedHero, setSelectedHero] = useState(null)
     const [viewerData, setViewerData] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
+    const [isCommunityModalOpen, setIsCommunityModalOpen] = useState(false)
 
     const handleHeroClick = async (hero) => {
         setIsLoading(true)
@@ -53,8 +55,8 @@ export default function BuildView({ heroes }) {
             </div>
 
             <div className={styles.content}>
-                {/* Page Header */}
-                <BuildHeader />
+                {/* Page Header with Suggest a Build trigger */}
+                <BuildHeader onOpenCommunityBuild={() => setIsCommunityModalOpen(true)} />
 
                 {/* Filters */}
                 <FilterBar 
@@ -92,7 +94,7 @@ export default function BuildView({ heroes }) {
                 )}
             </div>
             
-            {/* Modal */}
+            {/* Hero Detail Modal */}
             {selectedHero && viewerData && (
                 <BuildViewerModal
                     hero={selectedHero}
@@ -100,7 +102,13 @@ export default function BuildView({ heroes }) {
                     onClose={closeViewer}
                 />
             )}
+
+            {/* Community Build Suggestion Modal */}
+            {isCommunityModalOpen && (
+                <CommunityBuildModal
+                    onClose={() => setIsCommunityModalOpen(false)}
+                />
+            )}
         </div>
     )
 }
-

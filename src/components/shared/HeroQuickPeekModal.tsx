@@ -12,6 +12,8 @@ export interface HeroBuildItem {
     title?: string
     mode?: string[]
     cLevel?: number
+    author_name?: string | null
+    author_contact?: string | null
     weapons?: Array<{ image?: string; name?: string; stat?: string }>
     armors?: Array<{ image?: string; name?: string; stat?: string }>
     accessories?: Array<{ image?: string; name?: string; stat?: string; refined?: string }>
@@ -151,6 +153,17 @@ export default function HeroQuickPeekModal({
                                             </button>
                                         )
                                     })}
+                                </div>
+                            )}
+
+                            {/* Author Credit Badge */}
+                            {currentBuild?.author_name && (
+                                <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-400/10 border border-amber-400/30 rounded-xl text-xs text-amber-300 font-bold w-fit">
+                                    <Sparkles size={13} className="text-amber-400" />
+                                    <span>Build by: <strong className="text-white">{currentBuild.author_name}</strong></span>
+                                    {currentBuild.author_contact && (
+                                        <span className="text-zinc-400 text-[11px] font-normal">({currentBuild.author_contact})</span>
+                                    )}
                                 </div>
                             )}
 

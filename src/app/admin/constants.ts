@@ -3,6 +3,7 @@ export const NAV_SECTIONS = [
         title: "General",
         items: [
             { name: "Manage Builds", href: "/admin/builds", color: "bg-blue-500", perm: "MANAGE_BUILDS" },
+            { name: "Submissions Queue", href: "/admin/submissions", color: "bg-purple-500", perm: "MANAGE_BUILDS" },
             { name: "Manage Tierlist", href: "/admin/tierlist", color: "bg-pink-500", perm: "MANAGE_TIERLIST" },
         ]
     },

@@ -11,6 +11,8 @@ import { getHeroImageMap } from '@/lib/hero-utils-server'
 import { getLocale, getTranslations } from "@/lib/i18n"
 import styles from './page.module.css'
 
+import UpdateAnnouncementModal from '@/components/home/UpdateAnnouncementModal'
+
 export const revalidate = 60;
 
 export const metadata = {
@@ -42,6 +44,9 @@ export default async function HomePage() {
 
     return (
         <div className={styles.page}>
+            {/* Daily Update Announcement Popup (Once per day) */}
+            <UpdateAnnouncementModal />
+
             {/* Background Layer */}
             <BackgroundEffects />
 

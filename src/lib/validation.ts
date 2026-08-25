@@ -174,7 +174,33 @@ export const BuildSchema = z.object({
   })),
   substats: z.array(z.string()),
   minStats: z.record(z.string(), z.string().or(z.number())).optional(),
-  dedicatedStats: z.array(z.string().nullable()).optional()
+  dedicatedStats: z.array(z.string().nullable()).optional(),
+  author_name: z.string().max(100).optional().nullable(),
+  author_contact: z.string().max(100).optional().nullable()
+})
+
+export const CommunityBuildSubmissionSchema = z.object({
+  hero_filename: z.string().min(1),
+  author_name: z.string().min(1, "Author name or IGN is required").max(100),
+  author_contact: z.string().max(100).optional().nullable(),
+  c_level: z.string().max(50).optional().nullable(),
+  modes: z.array(z.string()).optional().nullable(),
+  weapons: z.array(z.object({
+    image: z.string().optional().nullable(),
+    stat: z.string().optional().nullable()
+  })).optional().nullable(),
+  armors: z.array(z.object({
+    image: z.string().optional().nullable(),
+    stat: z.string().optional().nullable()
+  })).optional().nullable(),
+  accessories: z.array(z.object({
+    image: z.string().optional().nullable(),
+    refined: z.string().optional().nullable()
+  })).optional().nullable(),
+  substats: z.array(z.string()).optional().nullable(),
+  min_stats: z.record(z.string(), z.string().or(z.number())).optional().nullable(),
+  dedicated_stats: z.array(z.string().nullable()).optional().nullable(),
+  note: SafeHtmlNoteSchema
 })
 
 export const StageSetupSchema = z.object({

@@ -210,6 +210,45 @@ async function runMigrations() {
             if (checkDed.length === 0) { await connection.query(`ALTER TABLE builds ADD COLUMN dedicated_stats JSON AFTER min_stats`); }
         } catch (e) {}
 
+        try {
+            const [checkAuthor] = await connection.query(`SHOW COLUMNS FROM builds LIKE "author_name"`);
+            if (checkAuthor.length === 0) { await connection.query(`ALTER TABLE builds ADD COLUMN author_name VARCHAR(100) NULL AFTER build_index`); }
+        } catch (e) {}
+
+        try {
+            const [checkAuthorContact] = await connection.query(`SHOW COLUMNS FROM builds LIKE "author_contact"`);
+            if (checkAuthorContact.length === 0) { await connection.query(`ALTER TABLE builds ADD COLUMN author_contact VARCHAR(100) NULL AFTER author_name`); }
+        } catch (e) {}
+
+        await connection.query(`
+          CREATE TABLE IF NOT EXISTS community_build_submissions (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            hero_filename VARCHAR(255) NOT NULL,
+            author_name VARCHAR(100) NOT NULL,
+            author_contact VARCHAR(100) NULL,
+            c_level VARCHAR(50) NULL,
+            modes JSON NULL,
+            weapons JSON NULL,
+            armors JSON NULL,
+            accessories JSON NULL,
+            substats JSON NULL,
+            min_stats JSON NULL,
+            dedicated_stats JSON NULL,
+            note TEXT NULL,
+            status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
+            admin_note TEXT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            INDEX idx_status (status),
+            INDEX idx_hero (hero_filename)
+          )
+        `);
+
+        try {
+            const [checkDed] = await connection.query(`SHOW COLUMNS FROM community_build_submissions LIKE 'dedicated_stats'`);
+            if (checkDed.length === 0) { await connection.query(`ALTER TABLE community_build_submissions ADD COLUMN dedicated_stats JSON NULL AFTER min_stats`); }
+        } catch (e) {}
+
         await connection.query(`
           CREATE TABLE IF NOT EXISTS tierlist (
             id INT AUTO_INCREMENT PRIMARY KEY,

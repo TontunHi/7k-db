@@ -60,6 +60,8 @@ export async function GET(request: Request) {
                 title: b.mode && b.mode.length > 0 ? b.mode.join(' / ') : `Build #${idx + 1}`,
                 mode: b.mode,
                 cLevel: b.cLevel,
+                author_name: b.author_name || null,
+                author_contact: b.author_contact || null,
                 weapons: b.weapons,
                 armors: b.armors,
                 accessories: b.accessories,

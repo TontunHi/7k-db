@@ -3,11 +3,14 @@ import { LayoutGrid, PawPrint, Info, Box, Zap, Target, Shield, ArrowRight } from
 import SafeImage from '@/components/shared/SafeImage'
 import PetDisplay from '@/components/shared/PetDisplay'
 import { getSlotType, getStaggerClass, getSkillImagePath } from '@/lib/formation-utils'
+import { useHeroQuickPeek } from '@/components/shared/HeroQuickPeekContext'
 import CounterTeamModule from './CounterTeamModule'
 import { clsx } from 'clsx'
 import styles from './GuildWarTabContent.module.css'
 
 export default function GuildWarTabContent({ activeTab, team, heroImageMap }) {
+    const { openQuickPeek } = useHeroQuickPeek()
+
     if (activeTab === 'overview') {
         return (
             <div className="flex flex-col gap-6">
@@ -36,13 +39,17 @@ export default function GuildWarTabContent({ activeTab, team, heroImageMap }) {
                                     const stagger = getStaggerClass(team.formation, slotIdx)
                                     
                                     return (
-                                        <div key={slotIdx} className={clsx(
-                                            "relative aspect-[3/4] transition-all duration-500",
-                                            stagger,
-                                            heroFile 
-                                                ? (isFront ? "rounded-2xl border border-sky-500/30 bg-sky-500/10 shadow-lg overflow-hidden" : "rounded-2xl border border-rose-500/30 bg-rose-500/10 shadow-lg overflow-hidden")
-                                                : "opacity-0 pointer-events-none"
-                                        )}>
+                                        <div 
+                                            key={slotIdx} 
+                                            onClick={() => heroFile && openQuickPeek(heroFile)}
+                                            className={clsx(
+                                                "relative aspect-[3/4] transition-all duration-500",
+                                                stagger,
+                                                heroFile 
+                                                    ? (isFront ? "rounded-2xl border border-sky-500/30 bg-sky-500/10 shadow-lg overflow-hidden cursor-pointer hover:scale-105" : "rounded-2xl border border-rose-500/30 bg-rose-500/10 shadow-lg overflow-hidden cursor-pointer hover:scale-105")
+                                                    : "opacity-0 pointer-events-none"
+                                            )}
+                                        >
                                             {heroFile && (
                                                 <div className="relative flex-1 w-full h-full">
                                                     <SafeImage src={`/heroes/${heroFile}`} alt="" fill className="object-cover" />
