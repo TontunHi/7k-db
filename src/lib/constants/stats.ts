@@ -23,18 +23,28 @@ export const MIN_STATS_KEYS: StatKeyConfig[] = [
 ]
 
 export const WEAPON_MAIN_STATS = [
-    "Crit Rate",
     "Weakness Hit Chance",
-    "Speed",
-    "Damage Taken Reduction"
+    "Crit Rate",
+    "Crit Damage",
+    "All Attack (%)",
+    "All Attack",
+    "Defense (%)",
+    "Defense",
+    "HP (%)",
+    "HP",
+    "Effect Hit Rate"
 ] as const
 
 export const ARMOR_MAIN_STATS = [
-    "Block Rate",
     "Damage Taken Reduction",
-    "HP",
+    "Block Rate",
+    "All Attack (%)",
+    "All Attack",
+    "Defense (%)",
     "Defense",
-    "Speed"
+    "HP (%)",
+    "HP",
+    "Effect Resistance"
 ] as const
 
 export const ACCESSORY_MAIN_STATS = [
